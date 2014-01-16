@@ -1,11 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4"
+         xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+    <display-name>Prototype</display-name>
+    <mime-mapping>
+        <extension>html</extension>
+        <mime-type>text/html;charset=utf-8</mime-type>
+    </mime-mapping>
 
-<web-app version="3.0"
-         xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-         metadata-complete="false">
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
 
-         
+    <filter>
+        <filter-name>default</filter-name>
+        <servlet-name>default</servlet-name>
+        <filter-class>org.ayfaar.app.utils.servlet.DefaultFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>default</filter-name>
+        <url-pattern>/css/*</url-pattern>
+        <url-pattern>/js/*</url-pattern>
+        <url-pattern>/libs/*</url-pattern>
+        <url-pattern>/uploading/*</url-pattern>
+        <url-pattern>/images/*</url-pattern>
+        <url-pattern>*.html</url-pattern>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/applicationContext.xml</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>spring</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
 </web-app>
-

@@ -1,0 +1,44 @@
+<div id="term">
+    <div class="block loading" data-bind="visible: loading">Загрузка...</div>
+    <span class="current-term-title" data-bind="text: name"></span>
+    <div data-bind="invisible: loading">
+        <div data-bind="visible: found">
+            <span class="info" data-bind="visible: from">
+                Перенапраленно с синонима: <span data-bind="text: from.name"></span>
+            </span>
+            <p data-bind="text: description"></p>
+            <span class="info" data-bind="invisible: description">Нет короткого определения</span>
+            <span class="header" data-bind="visible: related[0]">Связан с</span>
+            <div data-bind="source: related" data-template="related-template"></div>
+            <script type="text/kendo-x-tmpl" id="related-template">
+                <button class="grey" data-bind="text: getLabel, click: navigate"></button>
+            </script>
+        </div>
+        <div data-bind="invisible: found">
+            <span class="header">Термин не найден, желаете создать?</span>
+            <textarea class="description" data-bind="value: description" placeholder="Короткое описание"></textarea>
+            <button data-bind="click: save">Сохранить</button>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    #term .current-term-title {
+        font-size: 2em;
+    }
+    #term .info {
+        color: grey;
+        font-style: italic;
+        display: block;
+    }
+    #term .header {
+        display: block;
+        font-size: 1.2em;
+        padding-top: 20px;
+        color: gray;
+    }
+
+    #term .description {
+        width: 100%;
+        height: 50px;
+    }
+</style>

@@ -1,0 +1,24 @@
+<div id="item">
+    <div class="block loading" data-bind="visible: loading">Загрузка...</div>
+    <div class="block" data-bind="invisible: loading">
+        <!--<button class="grey" data-bind="attr: {title: prev.number}, visible: prev, click: navigatePrev">←</button>-->
+        <span class="current-item-title" data-bind="text: number"></span>
+        <button class="grey" title="Следующий пункт" data-bind="visible: next, click: navigateNext, text: nextButtonLabel"></button>
+        <p class="content" data-bind="text: content"></p>
+        <div data-bind="visible: linkedTerms, source: linkedTerms" data-template="item-template"></div>
+        <script type="text/kendo-x-tmpl" id="item-template">
+            <button class="grey" data-bind="text: name, attr: {title: description}, click: navigateToTerm"></button>
+        </script>
+    </div>
+</div>
+<style type="text/css">
+    #item .current-item-title {
+        font-size: 24px;
+    }
+    #item .block {
+        max-width: 600px;
+    }
+    #item .content {
+        text-align: justify;
+    }
+</style>
