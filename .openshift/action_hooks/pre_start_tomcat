@@ -1,0 +1,1 @@
+export JAVA_OPTS="$JAVA_OPTS -Dorg.apache.catalina.connector.URI_ENCODING=\"UTF-8\" -Dorg.apache.catalina.connector.USE_BODY_ENCODING_FOR_QUERY_STRING=\"true\""

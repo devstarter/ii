@@ -70,6 +70,7 @@
     <Connector address="${OPENSHIFT_JBOSSEWS_IP}"
                port="${OPENSHIFT_JBOSSEWS_HTTP_PORT}"
                protocol="HTTP/1.1"
+			   URIEncoding="UTF-8"
                connectionTimeout="20000"
                redirectPort="8443"/>
 
