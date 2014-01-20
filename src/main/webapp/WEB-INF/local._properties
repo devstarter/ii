@@ -1,8 +1,0 @@
-database.url=jdbc:mysql://localhost:3306/ii?zeroDateTimeBehavior=convertToNull
-database.username=ii
-database.password=ii
-database.driver=com.mysql.jdbc.Driver
-database.dialect=org.hibernate.dialect.MySQL5Dialect
-database.show_sql=true
-database.format_sql=false
-database.hibernate_hbm2ddl_auto=update
