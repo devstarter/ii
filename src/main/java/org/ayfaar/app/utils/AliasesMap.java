@@ -19,17 +19,19 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
 
+    private List<Term> allTerms;
+
     @PostConstruct
     private void load() {
-        List<Term> terms = termDao.getAll();
+        allTerms = termDao.getAll();
 
-        sort(terms, new Comparator<Term>() {
+        sort(allTerms, new Comparator<Term>() {
             @Override
             public int compare(Term o1, Term o2) {
                 return new Integer(o2.getName().length()).compareTo(o1.getName().length());
             }
         });
-        for (Term term : terms) {
+        for (Term term : allTerms) {
             put(term.getName(), new Proxy(term));
         }
     }
@@ -53,5 +55,9 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
             }
             return prime;
         }
+    }
+
+    public List<Term> getAllTerms() {
+        return allTerms;
     }
 }

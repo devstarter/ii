@@ -17,7 +17,7 @@ public class Router {
     @RequestMapping("/")
     @ResponseBody
     public FileSystemResource returnIndex(HttpServletRequest request) {
-        return new FileSystemResource(request.getRealPath("index.html"));
+        return new FileSystemResource(request.getServletContext().getRealPath("index.html"));
     }
 
     /*@RequestMapping("/")
