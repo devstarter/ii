@@ -23,7 +23,7 @@
             query: viewModel.query
         }, function(r) {
             viewModel.set("loadingTerms", false);
-            viewModel.set("terms", r.termList);
+            viewModel.set("terms", r);
             searchInContent();
         });
         viewModel.set("loadingTerms", true);
@@ -33,12 +33,6 @@
             query: viewModel.query
         }, function(r) {
             viewModel.set("loadingContents", false);
-            viewModel.set("getNumber", function(d){
-                return d.number;
-            });
-            viewModel.set("getPart", function(d){
-                return d.part;
-            });
             viewModel.set("contents", r)
         });
         viewModel.set("loadingContents", true);
