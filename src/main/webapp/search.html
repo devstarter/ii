@@ -1,0 +1,37 @@
+<div id="search">
+    <input class="k-input prompt" data-bind="value: query"/><button data-bind="click: search">Искать</button>
+    <div class="block loading" data-bind="visible: loadingTerms">Загрузка терминов...</div>
+    <div data-bind="invisible: loadingTerms">
+        <h3>Темины</h3>
+        <div data-bind="source: terms" data-template="search-terms-template"></div>
+        <script type="text/kendo-x-tmpl" id="search-terms-template">
+            <button class="grey" data-bind="text: name, click: navigate"></button>
+        </script>
+    </div>
+    <div class="block loading" data-bind="visible: loadingContents">Загрузка результатов поиска по содержимому...</div>
+    <div data-bind="invisible: loadingContents">
+        <h3>Упоминания в содержимом</h3>
+        <div data-bind="source: contents" data-template="search-content-template"></div>
+        <script type="text/kendo-x-tmpl" id="search-content-template">
+            <!--<span data-bind="text: getNumber"></span>-->
+            <div class="contentResultBlock" data-bind="html: part, click: navigate, attr: {title: number}"></div>
+            <div class="divider"></div>
+        </script>
+    </div>
+    <style type="text/css">
+        #search .divider {
+            /*clear: both;*/
+            padding: 10px;
+        }
+        #search .number {
+            /*float: left;*/
+        }
+        #search .contentResultBlock {
+            cursor: pointer;
+            /*display: inline;*/
+        }
+        #search .prompt {
+            width: 300px;
+        }
+    </style>
+</div>

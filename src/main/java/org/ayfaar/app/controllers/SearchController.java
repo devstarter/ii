@@ -44,11 +44,12 @@ public class SearchController {
     private List<ModelMap> searchInContent(@RequestParam String query) {
         List<ModelMap> modelMaps = new ArrayList<ModelMap>();
         List<Item> items = itemDao.find(query);
-        Pattern pattern = Pattern.compile("([^\\.\\?!]+[\\s\\(>«])(" + query + ")([»<\\s,:\\.\\?!\\)][^\\.]+)",
+        Pattern pattern = Pattern.compile("([^\\.\\?!]+[\\s\\(>«])(" + query + ")([»<\\s,:\\.\\?!\\)\\-][^\\.]+)",
                 Pattern.CASE_INSENSITIVE);
         for (Item item : items) {
             ModelMap map = new ModelMap();
             map.put("uri", item.getUri());
+            map.put("number", item.getNumber());
             Matcher matcher = pattern.matcher(item.getContent());
             if (matcher.find()) {
                 String part = matcher.group(1)+"<strong>"+matcher.group(2)+"</strong>"+matcher.group(3)+".";
@@ -61,9 +62,10 @@ public class SearchController {
 
     @RequestMapping("term")
     @Model
+    @ResponseBody
     private List<Term> searchAsTerm(@RequestParam String query) {
         List<Term> allTerms = aliasesMap.getAllTerms();
-        List<Term> matches = new ArrayList<Term>();
+        List<String> matches = new ArrayList<String>();
 
         Pattern pattern = null;
         if (isCosmicCode(query)) {
@@ -79,14 +81,25 @@ public class SearchController {
 
         for (Term term : allTerms) {
             if (term.getName().equals(query)) {
-                matches.add(0, term);
-            } else if (term.getName().contains(query)) {
-                matches.add(term);
-            } else if (pattern != null && pattern.matcher(term.getName()).find()) {
-                matches.add(term);
+                matches.add(0, term.getName());
+            } else if (term.getName().contains(query) || pattern != null && pattern.matcher(term.getName()).find()) {
+                matches.add(term.getName());
             }
         }
 
-        return matches;
+        List<Term> terms = new ArrayList<Term>();
+        for (String match : matches) {
+            Term prime = aliasesMap.get(match).getPrime();
+            boolean has = false;
+            for (Term term : terms) {
+                if (term.getUri().equals(prime.getUri())) {
+                    has = true;
+                }
+            }
+
+            if (!has) terms.add(prime);
+        }
+
+        return terms;
     }
 }

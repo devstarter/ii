@@ -36,6 +36,10 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
         }
     }
 
+    public void reload() {
+        load();
+    }
+
     public class Proxy {
         private Term term;
         private Term prime;

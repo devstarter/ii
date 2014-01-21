@@ -115,6 +115,7 @@ public class TermController {
                 findAliases(primeTerm, termName, "");
             }
         }
+        aliasesMap.reload();
         return primeTerm;
     }
 

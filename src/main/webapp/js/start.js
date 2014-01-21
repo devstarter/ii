@@ -69,6 +69,12 @@ router.route("term::term", function(term) {
         ii.term.load(term);
     });
 });
+router.route("search::query", function(query) {
+    query = query.replace("+", " ");
+    ensure({ html: "search.html", js: "js/search.js", parent: "content"}, function(){
+        ii.search.load(query);
+    });
+});
 
 $(document).ready(function() {
     router.start();
