@@ -8,7 +8,14 @@
                 contents: [],
                 query: query,
                 search: function(e) {
-                    location.hash = "#search:"+viewModel.query.replace(" ", "+");
+                    var q = typeof e == "string" ? e : viewModel.query;
+                    location.hash = "#search:"+q.replace(" ", "+");
+                },
+                onkeypress: function(e) {
+                    if(e.keyCode == 13)
+                    {
+                        viewModel.search(e.target.value);
+                    }
                 },
                 navigate: function(e) {
                     ii.navigateToUri(e.data.uri);

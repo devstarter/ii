@@ -1,5 +1,6 @@
 <div id="search">
-    <input class="k-input prompt" data-bind="value: query"/><button data-bind="click: search">Искать</button>
+    <input class="k-input prompt" data-bind="value: query, events: {keydown: onkeypress}"/>
+    <button data-bind="click: search">Искать</button>
     <div class="block loading" data-bind="visible: loadingTerms">Загрузка терминов...</div>
     <div data-bind="invisible: loadingTerms">
         <h3>Темины</h3>
@@ -13,25 +14,30 @@
         <h3>Упоминания в содержимом</h3>
         <div data-bind="source: contents" data-template="search-content-template"></div>
         <script type="text/kendo-x-tmpl" id="search-content-template">
-            <!--<span data-bind="text: getNumber"></span>-->
-            <div class="contentResultBlock" data-bind="html: part, click: navigate, attr: {title: number}"></div>
-            <div class="divider"></div>
+            <div class="contentResultBlock">
+                <span class="number">#=data.number#</span>&nbsp;&nbsp;
+                <div data-bind="click: navigate">#=data.part#</div>
+                <div class="divider"></div>
+            </div>
         </script>
     </div>
     <style type="text/css">
         #search .divider {
-            /*clear: both;*/
-            padding: 10px;
+            clear: both;
         }
         #search .number {
-            /*float: left;*/
+            float: left;
         }
         #search .contentResultBlock {
             cursor: pointer;
-            /*display: inline;*/
+            padding-bottom: 20px;
+            text-align: justify;
+        }
+        #search .contentResultBlock div {
+            display: inline;
         }
         #search .prompt {
-            width: 300px;
+            width: 500px;
         }
     </style>
 </div>
