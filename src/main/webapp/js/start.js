@@ -11,7 +11,7 @@
         }
         if (uri.indexOf("ии:термин:") == 0) {
             var needReload = location.hash.indexOf("#term:") != 0;
-            location.hash = "#term:"+uri.replace("ии:термин:", "");
+            location.hash = "#term:"+uri.replace("ии:термин:", "").replace(" ", "+");
             if (needReload) location.reload();
         }
     },
@@ -64,6 +64,7 @@ router.route("item::item", function(item) {
     });
 });
 router.route("term::term", function(term) {
+    term = term.replace("+", " ");
     ensure({ html: "term.html", js: "js/term.js", parent: "content"}, function(){
         ii.term.load(term);
     });
