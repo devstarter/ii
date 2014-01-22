@@ -80,12 +80,14 @@ function termRoute(term) {
         ii.term.load(term);
     });
 }
-router.route("?:query", function(query) {
+router.route("search::query", searchRoute);
+router.route("?:query", searchRoute);
+function searchRoute(query) {
     query = query.replace("+", " ");
     ensure({ html: "search.html", js: "js/search.js", parent: "content"}, function(){
         ii.search.load(query);
     });
-});
+}
 router.route(":hash", function(hash) {
     if (isItemNumber(hash)) {
         itemRoute(hash)
