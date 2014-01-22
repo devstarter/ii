@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import static org.ayfaar.app.utils.TermUtils.isCosmicCode;
 
 @Controller
-@RequestMapping("api/search")
+@RequestMapping("search")
 public class SearchController {
     @Autowired AliasesMap aliasesMap;
     @Autowired TermDao termDao;
@@ -53,7 +53,7 @@ public class SearchController {
             Matcher matcher = pattern.matcher(item.getContent());
             if (matcher.find()) {
                 String part = matcher.group(1)+"<strong>"+matcher.group(2)+"</strong>"+matcher.group(3)+".";
-                map.put("part", part.trim());
+                map.put("part", "... "+part.trim()+" ...");
                 modelMaps.add(map);
             }
         }

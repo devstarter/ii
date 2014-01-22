@@ -3,9 +3,14 @@
     var viewModel;
     ii.term = {
         load: function(term) {
+            document.title = term;
             viewModel = kendo.observable({
                 loading: true,
                 related: [],
+                search: function(e) {
+                    e.preventDefault();
+                    ii.navigateToSearch(e.data.name)
+                },
                 navigate: function(e) {
                     ii.navigateToUri(e.data.uri);
                 },

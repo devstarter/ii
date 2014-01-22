@@ -5,6 +5,7 @@
         <span class="current-item-title" data-bind="text: number"></span>
         <button class="grey" title="Следующий пункт" data-bind="visible: next, click: navigateNext, text: nextButtonLabel"></button>
         <p class="content" data-bind="text: content"></p>
+        <button class="grey" title="Следующий пункт" data-bind="visible: next, click: navigateNext, text: nextButtonLabel"></button>
         <div data-bind="visible: linkedTerms, source: linkedTerms" data-template="item-template"></div>
         <script type="text/kendo-x-tmpl" id="item-template">
             <button class="grey" data-bind="text: name, attr: {title: description}, click: navigateToTerm"></button>

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("api/item")
+@RequestMapping("item")
 public class LinkController {
     @Autowired LinkDao linkDao;
 

@@ -2,6 +2,7 @@
     var searchApiUrl = ii.apiUrl + "search/", viewModel;
     ii.search = {
         load: function(query) {
+            document.title = "Поиск "+query;
             query = query.replace("+", " ");
             viewModel = kendo.observable({
                 terms: [],
@@ -9,7 +10,8 @@
                 query: query,
                 search: function(e) {
                     var q = typeof e == "string" ? e : viewModel.query;
-                    location.hash = "#search:"+q.replace(" ", "+");
+//                    location.hash = "#search:"+q.replace(" ", "+");
+                    ii.navigateToSearch(q);
                 },
                 onkeypress: function(e) {
                     if(e.keyCode == 13)

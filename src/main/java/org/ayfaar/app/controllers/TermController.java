@@ -24,7 +24,7 @@ import static org.springframework.util.Assert.notNull;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("api/term")
+@RequestMapping("term")
 public class TermController {
 
     private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(TermController.class.getName());

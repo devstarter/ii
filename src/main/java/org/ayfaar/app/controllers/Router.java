@@ -2,7 +2,6 @@ package org.ayfaar.app.controllers;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.web.DefaultRedirectStrategy;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -10,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Controller
+//@Controller
 public class Router {
 //    @Autowired ServletContext context;
     private final DefaultRedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
@@ -20,12 +19,12 @@ public class Router {
     @RequestMapping("/")
     @ResponseBody
     public Object returnIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String path = request.getServletContext().getRealPath("index.html");
+        String path = request.getServletContext().getRealPath("ii");
         if (path != null) {
             return new FileSystemResource(path);
         } else {
             redirectStrategy.setContextRelative(true);
-            redirectStrategy.sendRedirect(request, response, "index.html");
+            redirectStrategy.sendRedirect(request, response, "ii");
             return null;
         }
     }

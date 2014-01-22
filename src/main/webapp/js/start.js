@@ -3,15 +3,20 @@
     error: function (text) {
         noty({text: text, type: 'error', layout: 'topCenter', timeout: 1000});
     },
+    navigateToSearch: function(query) {
+        var needReload = location.hash.indexOf("#?") != 0;
+        location.hash = "#?"+query.replace(" ", "+");
+        if (needReload) location.reload();
+    },
     navigateToUri: function(uri) {
         if (uri.indexOf("ии:пункт:") == 0) {
-            var needReload = location.hash.indexOf("#item:") != 0;
-            location.hash = "#item:"+uri.replace("ии:пункт:", "");
+            var needReload = isItemNumber(location.hash.replace("#", ""));//.indexOf("#item:") != 0;
+            location.hash = "#"+uri.replace("ии:пункт:", "");
             if (needReload) location.reload();
         }
         if (uri.indexOf("ии:термин:") == 0) {
-            var needReload = location.hash.indexOf("#term:") != 0;
-            location.hash = "#term:"+uri.replace("ии:термин:", "").replace(" ", "+");
+            var needReload = isItemNumber(location.hash.replace("#", "")) || location.hash.indexOf("#?") == 0;//location.hash.indexOf("#term:") != 0;
+            location.hash = "#"+uri.replace("ии:термин:", "").replace(" ", "+");
             if (needReload) location.reload();
         }
     },
@@ -56,24 +61,37 @@ $.ajaxSetup({
     }
 });
 
+function isItemNumber(s) {
+    return s.match("\\d+\\.\\d+");
+}
+
 var router = new kendo.Router();
 
-router.route("item::item", function(item) {
+router.route("item::item", itemRoute);
+function itemRoute(item) {
     ensure({ html: "item.html", js: "js/item.js", parent: "content"}, function(){
         ii.item.load(item);
     });
-});
-router.route("term::term", function(term) {
+}
+router.route("term::term", termRoute);
+function termRoute(term) {
     term = term.replace("+", " ");
     ensure({ html: "term.html", js: "js/term.js", parent: "content"}, function(){
         ii.term.load(term);
     });
-});
-router.route("search::query", function(query) {
+}
+router.route("?:query", function(query) {
     query = query.replace("+", " ");
     ensure({ html: "search.html", js: "js/search.js", parent: "content"}, function(){
         ii.search.load(query);
     });
+});
+router.route(":hash", function(hash) {
+    if (isItemNumber(hash)) {
+        itemRoute(hash)
+    } else {
+        termRoute(hash)
+    }
 });
 
 $(document).ready(function() {

@@ -27,7 +27,7 @@ import static org.springframework.util.Assert.notNull;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("api/item")
+@RequestMapping("item")
 public class ItemController {
 
     @Autowired CommonDao commonDao;

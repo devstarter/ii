@@ -2,6 +2,7 @@
     var itemApiUrl, viewModel;
     ii.item = {
         load: function(item) {
+            document.title = "ИИ "+item;
             itemApiUrl = ii.apiUrl + "item/";
 
             viewModel = kendo.observable({
