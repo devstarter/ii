@@ -56,10 +56,20 @@ public class ItemController {
         notNull(item, "Item not found");
         ModelMap modelMap = (ModelMap) getModelMap(item);
 //        modelMap.put("linkedTerms", getLinkedTerms(item));
-//        modelMap.put("prev", itemDao.getByNumber(getPrev(item.getNumber())));
-        modelMap.put("next", getModelMap(itemDao.get(item.getNext())));
-        if (modelMap.get("next") != null) {
-            ((ModelMap) modelMap.get("next")).remove("content");
+        Item next = itemDao.get(item.getNext());
+        if (next !=  null) {
+            ModelMap nextMap = new ModelMap();
+            nextMap.put("uri", next.getUri());
+            nextMap.put("number", next.getNumber());
+            modelMap.put("next", nextMap);
+        }
+
+        Item prev = itemDao.getByNumber(getPrev(item.getNumber()));
+        if (prev != null) {
+            ModelMap prevMap = new ModelMap();
+            prevMap.put("uri", prev.getUri());
+            prevMap.put("number", prev.getNumber());
+            modelMap.put("prev", prevMap);
         }
         return modelMap;
     }

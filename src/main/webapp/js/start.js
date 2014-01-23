@@ -10,7 +10,7 @@
     },
     navigateToUri: function(uri) {
         if (uri.indexOf("ии:пункт:") == 0) {
-            var needReload = isItemNumber(location.hash.replace("#", ""));//.indexOf("#item:") != 0;
+            var needReload = !isItemNumber(location.hash.replace("#", ""));//.indexOf("#item:") != 0;
             location.hash = "#"+uri.replace("ии:пункт:", "");
             if (needReload) location.reload();
         }
