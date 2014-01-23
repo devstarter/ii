@@ -15,7 +15,7 @@
 //                wipeDown: function() { alert("down"); },
                     min_move_x: 20,
                     min_move_y: 20,
-                    preventDefaultEvents: true
+                    preventDefaultEvents: false
                 });
             }
             document.title = "ИИ "+item;
