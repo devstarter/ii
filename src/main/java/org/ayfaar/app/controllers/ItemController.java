@@ -16,12 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Collections.sort;
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -103,18 +102,26 @@ public class ItemController {
         return getLinkedTerms(item);
     }
 
-    public Set<Term> getLinkedTerms(Item item) {
+    public List<Term> getLinkedTerms(Item item) {
         Set<Term> contains = new HashSet<Term>();
 
         for (Map.Entry<String, AliasesMap.Proxy> entry : aliasesMap.entrySet()) {
             Matcher matcher = Pattern.compile("([\\s\\(>«])(" + entry.getKey()
                     + ")([»<\\s,:\\.\\?!\\)])").matcher(item.getContent());
             if (matcher.find()) {
-                contains.add(entry.getValue().getPrime());
+                contains.add(entry.getValue().getTerm());
             }
         }
 
-        return contains;
+        List<Term> sorted = new ArrayList<Term>(contains);
+        sort(sorted, new Comparator<Term>() {
+            @Override
+            public int compare(Term o1, Term o2) {
+                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+            }
+        });
+
+        return sorted;
     }
 
     @RequestMapping("{number}/{term}")

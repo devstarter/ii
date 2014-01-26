@@ -89,7 +89,7 @@ public class SearchController {
 
         List<Term> terms = new ArrayList<Term>();
         for (String match : matches) {
-            Term prime = aliasesMap.get(match).getPrime();
+            Term prime = aliasesMap.get(match).getTerm();
             boolean has = false;
             for (Term term : terms) {
                 if (term.getUri().equals(prime.getUri())) {

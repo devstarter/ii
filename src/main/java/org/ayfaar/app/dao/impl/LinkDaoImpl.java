@@ -46,4 +46,13 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
                 .addOrder(Order.desc("weight"))
                 .list();
     }
+
+    @Override
+    public Link getForAbbreviation(String uri) {
+        return (Link) criteria()
+                .createAlias("uid2", "uid2")
+                .add(eq("uid2.id", uri))
+                .add(eq("type", Link.ABBREVIATION))
+                .uniqueResult();
+    }
 }

@@ -5,6 +5,7 @@ import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.model.UID;
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.AliasesMap;
@@ -16,7 +17,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
@@ -56,9 +62,18 @@ public class TermController {
         notNull(term, "Термин не найден");
 
         Term alias = null;
-        if (!aliasesMap.get(termName).getPrime().getUri().equals(term.getUri())) {
+        if (!aliasesMap.get(termName).getTerm().getUri().equals(term.getUri())) {
             alias = term;
-            term = aliasesMap.get(termName).getPrime();
+            term = aliasesMap.get(termName).getTerm();
+        }
+        Matcher matcher = Pattern.compile("^[А-Я]+$").matcher(termName);
+        if (matcher.find()) {
+            // может быть аббравиатурой
+            Link link = linkDao.getForAbbreviation(term.getUri());
+            if (link != null && link.getUid1() instanceof Term) {
+                alias = term;
+                term = (Term) link.getUid1();
+            }
         }
 
         ModelMap modelMap = (ModelMap) getModelMap(term);
@@ -83,10 +98,12 @@ public class TermController {
     public Collection<ModelMap> getRelated(@RequestParam String uri) {
         Set<UID> related = new LinkedHashSet<UID>();
         for (Link link : linkDao.getRelated(uri)) {
-            if (link.getUid1().getUri().equals(uri)) {
-                related.add(link.getUid2());
-            } else {
-                related.add(link.getUid1());
+            if (!link.getType().equals(Link.ABBREVIATION)) {
+                if (link.getUid1().getUri().equals(uri)) {
+                    related.add(link.getUid2());
+                } else {
+                    related.add(link.getUid1());
+                }
             }
         }
         return convertToPlainObjects(related, new ValueObjectUtils.Modifier<UID>() {
@@ -124,7 +141,7 @@ public class TermController {
         try {
             morpher = new Morpher(target);
             if (morpher.getData()) {
-                Map<String, Term> aliases = new HashMap<String, Term>();
+                Set<String> aliases = new HashSet<String>();
                 for (Morpher.Morph morph : morpher.getAllMorph()) {
                     if (morph == null) {
                         return;
@@ -133,20 +150,20 @@ public class TermController {
                     if (morph != null && !alias.isEmpty()
                             && !alias.equals(primeTerm.getName())) {
 
-                        if (aliases.get(alias) == null) {
-                            Term aliasTerm = termDao.getByName(alias);
-                            if (aliasTerm == null) {
-                                aliasTerm = termDao.save(new Term(alias));
-                                log.info("Alias added: "+aliasTerm.getName());
+                        if (!aliases.contains(alias)) {
+                            TermMorph termMorph = commonDao.get(TermMorph.class, alias);
+                            if (termMorph == null) {
+                                commonDao.save(new TermMorph(alias, primeTerm.getUri()));
+                                log.info("Alias added: "+alias);
                             }
-                            aliases.put(alias, aliasTerm);
+                            aliases.add(alias);
                         }
                     }
                 }
-                for (Map.Entry<String, Term> entry : aliases.entrySet()) {
+               /* for (Map.Entry<String, Term> entry : aliases.entrySet()) {
                     if (primeTerm.getUri().equals(entry.getValue().generateUri())) continue;
                     commonDao.save(new Link(primeTerm, entry.getValue(), Link.ALIAS, Link.MORPHEME_WEIGHT));
-                }
+                }*/
             }
         } catch (Exception e) {
             log.throwing(getClass().getName(), "findAliases", e);

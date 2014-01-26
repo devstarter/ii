@@ -10,4 +10,6 @@ public interface LinkDao extends BasicCrudDao<Link> {
     Link getPrimeForAlias(String uri);
 
     List<Link> getRelated(String uri);
+
+    Link getForAbbreviation(String uri);
 }

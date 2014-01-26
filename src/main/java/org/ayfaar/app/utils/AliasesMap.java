@@ -1,16 +1,15 @@
 package org.ayfaar.app.utils;
 
+import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
-import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.model.TermMorph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Collections.sort;
 
@@ -18,21 +17,53 @@ import static java.util.Collections.sort;
 public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
+    @Autowired CommonDao commonDao;
 
     private List<Term> allTerms;
+    private List<TermMorph> allTermMorphs;
+    private Map<String, Proxy> proxyMap;
 
     @PostConstruct
     private void load() {
         allTerms = termDao.getAll();
+        allTermMorphs = commonDao.getAll(TermMorph.class);
 
-        sort(allTerms, new Comparator<Term>() {
+        proxyMap = new HashMap<String, Proxy>();
+        Map<String, Proxy> tmpMap = new HashMap<String, Proxy>();
+
+        for (Term term : allTerms) {
+            Proxy proxy = proxyMap.get(term.getUri());
+            if (proxy == null) {
+                proxy = new Proxy(term);
+                proxyMap.put(term.getUri(), proxy);
+            }
+            tmpMap.put(term.getName(), proxy);
+        }
+        for (TermMorph termMorph : allTermMorphs) {
+            Proxy proxy = proxyMap.get(termMorph.getTermUri());
+            if (proxy == null) {
+                proxy = new Proxy(termMorph.getTermUri());
+                proxyMap.put(termMorph.getTermUri(), proxy);
+            }
+            tmpMap.put(termMorph.getName(), proxy);
+        }
+
+        List<Map.Entry<String, Proxy>> entries =
+                new ArrayList<Map.Entry<String, Proxy>>(tmpMap.entrySet());
+
+        sort(entries, new Comparator<Map.Entry<String, Proxy>>() {
             @Override
-            public int compare(Term o1, Term o2) {
-                return new Integer(o2.getName().length()).compareTo(o1.getName().length());
+            public int compare(Map.Entry<String, Proxy> o1, Map.Entry<String, Proxy> o2) {
+                int i = new Integer(o2.getKey().length()).compareTo(o1.getKey().length());
+                if (i == 0) {
+                    i = o1.getKey().compareTo(o2.getKey());
+                }
+                return i;
             }
         });
-        for (Term term : allTerms) {
-            put(term.getName(), new Proxy(term));
+
+        for (Map.Entry<String, Proxy> entry : entries) {
+            put(entry.getKey(), entry.getValue());
         }
     }
 
@@ -41,23 +72,33 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
     }
 
     public class Proxy {
+        private String uri;
         private Term term;
-        private Term prime;
 
         public Proxy(Term term) {
             this.term = term;
+            uri = term.getUri();
         }
 
-        public Term getPrime() {
-            if (prime == null) {
-                Link link = linkDao.getPrimeForAlias(term.getUri());
+        public Proxy(String uri) {
+            this.uri = uri;
+        }
+
+        public Term getTerm() {
+            if (term == null) {
+                /*Link link = linkDao.getPrimeForAlias(term.getUri());
                 if (link != null) {
                     prime = (Term) link.getUid1();
                 } else {
                     prime = term;
-                }
+                }*/
+                term = termDao.get(uri);
             }
-            return prime;
+            return term;
+        }
+
+        public String getUri() {
+            return uri;
         }
     }
 
