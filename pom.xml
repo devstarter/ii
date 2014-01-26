@@ -8,7 +8,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>Ayfaar App</name>
+    <name>Ayfaar II App</name>
 
     <properties>
         <sf.version>2.0-SNAPSHOT</sf.version>
