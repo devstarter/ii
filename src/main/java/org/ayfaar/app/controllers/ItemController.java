@@ -104,12 +104,15 @@ public class ItemController {
 
     public List<Term> getLinkedTerms(Item item) {
         Set<Term> contains = new HashSet<Term>();
+        String content = item.getContent().toLowerCase();
 
         for (Map.Entry<String, AliasesMap.Proxy> entry : aliasesMap.entrySet()) {
-            Matcher matcher = Pattern.compile("([\\s\\(>«])(" + entry.getKey()
-                    + ")([»<\\s,:\\.\\?!\\)])").matcher(item.getContent());
+            String key = entry.getKey().toLowerCase();
+            Matcher matcher = Pattern.compile("([\\s\\(>«]|^)?(" + key
+                    + ")([»<\\s,:\\.\\?!\\)])"/*, Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE*/).matcher(content);
             if (matcher.find()) {
                 contains.add(entry.getValue().getTerm());
+                content = content.replaceAll(key, "");
             }
         }
 
