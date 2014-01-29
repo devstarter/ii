@@ -98,7 +98,7 @@ public class TermController {
     public Collection<ModelMap> getRelated(@RequestParam String uri) {
         Set<UID> related = new LinkedHashSet<UID>();
         for (Link link : linkDao.getRelated(uri)) {
-            if (!link.getType().equals(Link.ABBREVIATION)) {
+            if (!Link.ABBREVIATION.equals(link.getType())) {
                 if (link.getUid1().getUri().equals(uri)) {
                     related.add(link.getUid2());
                 } else {

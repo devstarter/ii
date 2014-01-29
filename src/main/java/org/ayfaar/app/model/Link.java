@@ -10,8 +10,8 @@ import javax.persistence.ManyToOne;
 @Entity
 @Audited
 public class Link {
-    public static final byte ALIAS = 1;
-    public static final byte ABBREVIATION = 2;
+    public static final Byte ALIAS = 1;
+    public static final Byte ABBREVIATION = 2;
 //    public static final byte DIRECTION = 2;
 //    public static final byte PRIORITY = 3;
 //    public static final byte MORPHEME_WEIGHT = -1;
