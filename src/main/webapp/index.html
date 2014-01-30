@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>ИИССИИДИОЛОГИЯ</title>
@@ -33,7 +33,62 @@
     <script src="js/search.js"></script>
 </head>
 <body>
-    <span style="color: grey;font-size: 1.5em;">ИИССИИДИОЛОГИЯ</span>
-    <div id="content"></div>
+<!-- <span style="color: grey;font-size: 1.5em;">ИИССИИДИОЛОГИЯ</span> -->
+<div id="content">
+    <div id="main">
+        <style type="text/css">
+            #main .main_about,  #main .main_start{
+                background-color: rgb(184, 225, 243);
+                padding: 5px;
+                padding-right: 20px;
+                border: solid 1px teal;
+                text-align: center;
+            }
+            #main .main_about:hover, #main .main_start:hover {
+                background-color: rgb(102, 185, 232);
+            }
+            #main .main_about span,  #main .main_start span{
+                color: grey;
+                font-size: 1.5em;
+            }
+            #main a{
+                text-decoration: none;
+            }
+            #main h1 span{
+                color: rgb(7, 131, 199);
+            }
+            #main .header {
+                margin: 0 auto 30px auto;
+                width: 150px;
+                height: 145px;
+            }
+            .footer {
+                margin: 30px auto;
+                width: 300px;
+            }
+            .search-input {
+                padding-left: 10px;
+                width: 80%;
+            }
+            .search-button {
+                color: #ffffff;
+            }
+        </style>
+        <div class="header">
+            <img src="images/logo.png" alt="iissiidiology logo">
+        </div>
+        <h1>Интерактивная Иссидиология</h1>
+        <div style="margin-top:40px;">
+            Поиск пунктов, терминов, словосочетаний в материалах:
+            <input class="k-input search-input" type="text">
+            <a class="button search-button" onclick="window.location.href='#?' + document.getElementById('.search-input').value">Найти</a>
+            Примеры поиска: <a href="#?НАСМ">НАСМ</a>, <a href="#?ННААССММ">ННААССММ</a>, <a href="#?10.10176">10.10176</a>
+        </div>
+        <div class="footer">
+            <a class="button grey" href="#1.0001">Начать чтение</a>
+            <a class="button grey" href="#about">О проекте</a>
+        </div>
+    </div>
+</div>
 </body>
 </html>

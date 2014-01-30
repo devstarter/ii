@@ -88,6 +88,12 @@ function searchRoute(query) {
         ii.search.load(query);
     });
 }
+router.route("main", function() {
+    location.reload();
+});
+router.route("about", function() {
+    ensure({ html: "about.html", parent: "content"});
+});
 router.route(":hash", function(hash) {
     if (isItemNumber(hash)) {
         itemRoute(hash)

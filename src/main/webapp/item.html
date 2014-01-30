@@ -3,10 +3,10 @@
     <div class="block" data-bind="invisible: loading">
         <button class="grey" data-bind="attr: {title: prev.number}, visible: prev, click: navigatePrev">←</button>
         <span class="current-item-title" data-bind="text: number"></span>
+        <button class="grey" title="Следующий пункт" data-bind="visible: next, click: navigateNext">→</button>
+        <span class="content" data-bind="text: content"></span>
         <button class="grey" title="Следующий пункт" data-bind="visible: next, click: navigateNext, text: nextButtonLabel"></button>
-        <p class="content" data-bind="text: content"></p>
-        <button class="grey" title="Следующий пункт" data-bind="visible: next, click: navigateNext, text: nextButtonLabel"></button>
-        <div data-bind="visible: linkedTerms, source: linkedTerms" data-template="item-template"></div>
+        <div class="related" data-bind="visible: linkedTerms, source: linkedTerms" data-template="item-template"></div>
         <script type="text/kendo-x-tmpl" id="item-template">
             <button class="grey" data-bind="text: name, attr: {title: description}, click: navigateToTerm"></button>
         </script>
@@ -15,6 +15,9 @@
 <style type="text/css">
     #item .current-item-title {
         font-size: 24px;
+    }
+    #item .related {
+        padding-top: 30px;
     }
     #item .block {
         max-width: 600px;
