@@ -35,17 +35,9 @@
 <body>
 <!-- <span style="color: grey;font-size: 1.5em;">ИИССИИДИОЛОГИЯ</span> -->
 <div id="content">
-    <!--
-    <script language="javascript">
-        window.location.href = "main.html"
-    </script>
-    -->
-    <!-- put content of main.html here -->
     <div id="main">
         <style type="text/css">
             #main .main_about,  #main .main_start{
-                width: 240px;
-                height: 50px;
                 background-color: rgb(184, 225, 243);
                 padding: 5px;
                 padding-right: 20px;
@@ -65,25 +57,36 @@
             #main h1 span{
                 color: rgb(7, 131, 199);
             }
+            #main .header {
+                margin: 0 auto 30px auto;
+                width: 150px;
+                height: 145px;
+            }
+            .footer {
+                margin: 30px auto;
+                width: 300px;
+            }
+            .search-input {
+                padding-left: 10px;
+                width: 80%;
+            }
+            .search-button {
+                color: #ffffff;
+            }
         </style>
-        <img src="files/images/ii_logo.png" alt="iissiidiology  logo" width="200" height="200" style="margin-left:60px;"><br>
-        <h3><span>Интерактивная Иссидиология</span></h3>
-        <br>
-        <a href="about.html">
-            <div class="main_about" style="margin-top: 0px;">
-                <span>О проекте</span>
-            </div>
-        </a>
-
-        <a href="#1.0001" style="text-decoration: none;">
-            <div class="main_start" style="margin-top: 30px;">
-                <span>Читать книги</span>
-            </div>
-        </a>
-
-        <div style="margin-top:40px;"> Поиск словосочетания в материалах:<p></p>
-            <input id="start_search_text" type="text" size="40"> <br>
-            <input type="submit" value="Найти" onclick="window.location.href='#' + document.getElementById('start_search_text').value" />
+        <div class="header">
+            <img src="images/logo.png" alt="iissiidiology logo">
+        </div>
+        <h1>Интерактивная Иссидиология</h1>
+        <div style="margin-top:40px;">
+            Поиск пунктов, терминов, словосочетаний в материалах:
+            <input class="k-input search-input" type="text">
+            <a class="button search-button" onclick="window.location.href='#?' + document.getElementById('.search-input').value">Найти</a>
+            Примеры поиска: <a href="#?НАСМ">НАСМ</a>, <a href="#?ННААССММ">ННААССММ</a>, <a href="#?10.10176">10.10176</a>
+        </div>
+        <div class="footer">
+            <a class="button grey" href="#1.0001">Начать чтение</a>
+            <a class="button grey" href="#about">О проекте</a>
         </div>
     </div>
 </div>

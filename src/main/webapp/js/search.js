@@ -4,6 +4,10 @@
         load: function(query) {
             document.title = "Поиск "+query;
             query = query.replace("+", " ");
+            if (isItemNumber(query)) {
+                location.hash = "#"+query;
+                return
+            }
             viewModel = kendo.observable({
                 terms: [],
                 contents: [],

@@ -45,6 +45,7 @@
             }
 
             function setData(r) {
+                window.scrollTo(0, 0);
                 for(var p in r) {
                     viewModel.set(p, r[p]);
                 }
