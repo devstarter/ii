@@ -1,0 +1,25 @@
+<div id="article">
+    <div class="block loading" data-bind="visible: loading">Загрузка...</div>
+    <div class="block" data-bind="invisible: loading">
+        <span class="current-item-title" data-bind="text: name"></span>
+        <p class="content" data-bind="text: content"></p>
+        <div class="related" data-bind="visible: relatedTerms, source: relatedTerms" data-template="term-template"></div>
+        <script type="text/kendo-x-tmpl" id="term-template">
+            <button class="grey" data-bind="text: name, attr: {title: description}, click: navigateToTerm"></button>
+        </script>
+    </div>
+</div>
+<style type="text/css">
+    #item .current-item-title {
+        font-size: 24px;
+    }
+    #item .related {
+        padding-top: 30px;
+    }
+    #item .block {
+        max-width: 600px;
+    }
+    #item .content {
+        text-align: justify;
+    }
+</style>

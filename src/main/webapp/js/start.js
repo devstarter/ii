@@ -19,6 +19,11 @@
             location.hash = "#"+uri.replace("ии:термин:", "").replaceAll(" ", "+");
             if (needReload) location.reload();
         }
+        if (uri.indexOf("статья:") == 0) {
+            var needReload = location.hash.indexOf("#a/") == 0;
+            location.hash = "#"+uri.replace("статья:", "");
+            if (needReload) location.reload();
+        }
     },
     labelByUri: function(uri) {
         if (uri.indexOf("ии:пункт:") == 0) {
@@ -94,6 +99,11 @@ function searchRoute(query) {
 }
 router.route("main", function() {
     location.reload();
+});
+router.route("a/:id", function(id) {
+    ensure({ html: "article.html", js: "js/article.js", parent: "content"}, function(){
+        ii.article.load(id);
+    });
 });
 router.route("about", function() {
     ensure({ html: "about.html", parent: "content"});
