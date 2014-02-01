@@ -16,8 +16,9 @@ public class Article extends UID {
 
     @Column(unique = true)
     private Integer id;
+    @Column(nullable = false)
     private String name;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     public Article(String name, String content) {

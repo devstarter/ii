@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.Collections.sort;
 
@@ -104,5 +106,29 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
 
     public List<Term> getAllTerms() {
         return allTerms;
+    }
+
+    public List<Term> findTermsInside(String content) {
+        Set<Term> contains = new HashSet<Term>();
+        content = content.toLowerCase();
+
+        for (Map.Entry<String, AliasesMap.Proxy> entry : entrySet()) {
+            String key = entry.getKey().toLowerCase();
+            Matcher matcher = Pattern.compile("([\\s\\(>«]|^)?(" + key
+                    + ")([»<\\*\\s,:\\.\\?!\\)])"/*, Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE*/).matcher(content);
+            if (matcher.find()) {
+                contains.add(entry.getValue().getTerm());
+                content = content.replaceAll(key, "");
+            }
+        }
+
+        List<Term> sorted = new ArrayList<Term>(contains);
+        sort(sorted, new Comparator<Term>() {
+            @Override
+            public int compare(Term o1, Term o2) {
+                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+            }
+        });
+        return sorted;
     }
 }

@@ -16,11 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.util.Collections.sort;
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -94,37 +89,11 @@ public class ItemController {
     @RequestMapping("{number}/linked-terms")
     @Model
     @ResponseBody
-//    @Cacheable("items")
     public Object getLinkedTerms(@PathVariable String number) {
         Item item = itemDao.getByNumber(number);
         notNull(item, "Пункт не найден");
 
-        return getLinkedTerms(item);
-    }
-
-    public List<Term> getLinkedTerms(Item item) {
-        Set<Term> contains = new HashSet<Term>();
-        String content = item.getContent().toLowerCase();
-
-        for (Map.Entry<String, AliasesMap.Proxy> entry : aliasesMap.entrySet()) {
-            String key = entry.getKey().toLowerCase();
-            Matcher matcher = Pattern.compile("([\\s\\(>«]|^)?(" + key
-                    + ")([»<\\*\\s,:\\.\\?!\\)])"/*, Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE*/).matcher(content);
-            if (matcher.find()) {
-                contains.add(entry.getValue().getTerm());
-                content = content.replaceAll(key, "");
-            }
-        }
-
-        List<Term> sorted = new ArrayList<Term>(contains);
-        sort(sorted, new Comparator<Term>() {
-            @Override
-            public int compare(Term o1, Term o2) {
-                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-            }
-        });
-
-        return sorted;
+        return aliasesMap.findTermsInside(item.getContent());
     }
 
     @RequestMapping("{number}/{term}")

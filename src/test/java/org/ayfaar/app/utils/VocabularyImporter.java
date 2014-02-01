@@ -48,7 +48,8 @@ public class VocabularyImporter {
                 String term = matcher.group(1);
                 String body = matcher.group(2);
                 if(body.indexOf("см. ") == 0) {
-                    saveAliases(body.replace("см. ", ""), term);
+                    String alias = body.replace("см. ", "").replace("«", "").replace("»", "").replace(".", "");
+                    saveAliases(alias, term);
                 } else {
                     currentArticle = new Article(term, body);
                 }
@@ -56,7 +57,6 @@ public class VocabularyImporter {
                 currentArticle.setContent(currentArticle.getContent() + "<br/>"+line);
             }
         }
-        saveItem();
     }
 
     private static void saveAliases(String termName, String aliasName) {
@@ -69,8 +69,8 @@ public class VocabularyImporter {
     private static Term getTerm(String termName) {
         Term term = termDao.getByName(termName);
         if (term == null) {
-            termController.add(currentArticle.getName(), "");
-            term = termDao.getByName(currentArticle.getName());
+            termController.add(termName, "");
+            term = termDao.getByName(termName);
         }
         return term;
     }
@@ -88,7 +88,7 @@ public class VocabularyImporter {
         articleDao.save(currentArticle);
 
         Term term = getTerm(currentArticle.getName());
-        Link link = new Link(currentArticle, term, Link.DEFINITION);
+        Link link = new Link(term, currentArticle, Link.DEFINITION);
         linkDao.save(link);
     }
 }
