@@ -20,7 +20,7 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
         return criteria()
                 .createAlias("uid1", "uid1")
                 .createAlias("uid2", "uid2")
-                .add(eq("uid1.id", uri))
+                .add(eq("uid1.uri", uri))
                 .add(eq("type", Link.ALIAS))
                 .list();
     }
@@ -30,7 +30,7 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
         return (Link) criteria()
                 .createAlias("uid1", "uid1")
                 .createAlias("uid2", "uid2")
-                .add(eq("uid2.id", uri))
+                .add(eq("uid2.uri", uri))
                 .add(eq("type", Link.ALIAS))
                 .uniqueResult();
     }
@@ -40,7 +40,7 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
         return criteria()
                 .createAlias("uid1", "uid1")
                 .createAlias("uid2", "uid2")
-                .add(or(eq("uid1.id", uri), eq("uid2.id", uri)))
+                .add(or(eq("uid1.uri", uri), eq("uid2.uri", uri)))
                 .add(or(ne("type", Link.ALIAS), isNull("type")))
 //                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .addOrder(Order.desc("weight"))
@@ -51,7 +51,7 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
     public Link getForAbbreviation(String uri) {
         return (Link) criteria()
                 .createAlias("uid2", "uid2")
-                .add(eq("uid2.id", uri))
+                .add(eq("uid2.uri", uri))
                 .add(eq("type", Link.ABBREVIATION))
                 .uniqueResult();
     }

@@ -44,7 +44,7 @@ public class SearchController {
     private List<ModelMap> searchInContent(@RequestParam String query) {
         List<ModelMap> modelMaps = new ArrayList<ModelMap>();
         List<Item> items = itemDao.find(query);
-        Pattern pattern = Pattern.compile("([^\\.\\?!]+[\\s\\(>«])(" + query + ")([»<\\s,:\\.\\?!\\)\\-][^\\.]+)",
+        Pattern pattern = Pattern.compile("([^\\.\\?!]+[\\s\\(>«])(" + query + ")([»\\*<\\s,:\\.\\?!\\)\\-][^\\.]+)",
                 Pattern.CASE_INSENSITIVE);
         for (Item item : items) {
             ModelMap map = new ModelMap();
@@ -53,7 +53,7 @@ public class SearchController {
             Matcher matcher = pattern.matcher(item.getContent());
             if (matcher.find()) {
                 String part = matcher.group(1)+"<strong>"+matcher.group(2)+"</strong>"+matcher.group(3)+".";
-                map.put("part", "... "+part.trim()+" ...");
+                map.put("part", part.trim());
                 modelMaps.add(map);
             }
         }

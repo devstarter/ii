@@ -5,7 +5,7 @@
     },
     navigateToSearch: function(query) {
         var needReload = location.hash.indexOf("#?") != 0;
-        location.hash = "#?"+query.replace(" ", "+");
+        location.hash = "#?"+query.replaceAll(" ", "+");
         if (needReload) location.reload();
     },
     navigateToUri: function(uri) {
@@ -16,7 +16,7 @@
         }
         if (uri.indexOf("ии:термин:") == 0) {
             var needReload = isItemNumber(location.hash.replace("#", "")) || location.hash.indexOf("#?") == 0;//location.hash.indexOf("#term:") != 0;
-            location.hash = "#"+uri.replace("ии:термин:", "").replace(" ", "+");
+            location.hash = "#"+uri.replace("ии:термин:", "").replaceAll(" ", "+");
             if (needReload) location.reload();
         }
     },
@@ -65,6 +65,10 @@ function isItemNumber(s) {
     return s.match("\\d+\\.\\d+");
 }
 
+String.prototype.replaceAll = function(target, replacement) {
+    return this.split(target).join(replacement);
+};
+
 var router = new kendo.Router();
 
 router.route("item::item", itemRoute);
@@ -75,7 +79,7 @@ function itemRoute(item) {
 }
 router.route("term::term", termRoute);
 function termRoute(term) {
-    term = term.replace("+", " ");
+    term = term.replaceAll("+", " ");
     ensure({ html: "term.html", js: "js/term.js", parent: "content"}, function(){
         ii.term.load(term);
     });
@@ -83,7 +87,7 @@ function termRoute(term) {
 router.route("search::query", searchRoute);
 router.route("?:query", searchRoute);
 function searchRoute(query) {
-    query = query.replace("+", " ");
+    query = query.replaceAll("+", " ");
     ensure({ html: "search.html", js: "js/search.js", parent: "content"}, function(){
         ii.search.load(query);
     });

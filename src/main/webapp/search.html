@@ -14,28 +14,28 @@
         <h3>Упоминания в содержимом</h3>
         <div data-bind="source: contents" data-template="search-content-template"></div>
         <script type="text/kendo-x-tmpl" id="search-content-template">
-            <div class="contentResultBlock">
-                <span class="number">#=data.number#</span>&nbsp;&nbsp;
-                <div data-bind="click: navigate">#=data.part#</div>
-                <div class="divider"></div>
-            </div>
+            <blockquote class="contentResultBlock">
+                <p data-bind="click: navigate">#=data.part#</p>
+                <p><cite>&mdash; #=data.number#</cite></p>
+                <!--div class="divider"></div-->
+            </blockquote>
         </script>
     </div>
     <style type="text/css">
-        #search .divider {
+        /*#search .divider {
             clear: both;
         }
         #search .number {
             float: left;
-        }
+        }*/
         #search .contentResultBlock {
             cursor: pointer;
-            padding-bottom: 20px;
+            /*padding-bottom: 20px;*/
             text-align: justify;
         }
-        #search .contentResultBlock div {
+        /*#search .contentResultBlock div {
             display: inline;
-        }
+        }*/
         #search .prompt {
             width: 500px;
         }

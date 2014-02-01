@@ -109,7 +109,7 @@ public class ItemController {
         for (Map.Entry<String, AliasesMap.Proxy> entry : aliasesMap.entrySet()) {
             String key = entry.getKey().toLowerCase();
             Matcher matcher = Pattern.compile("([\\s\\(>«]|^)?(" + key
-                    + ")([»<\\s,:\\.\\?!\\)])"/*, Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE*/).matcher(content);
+                    + ")([»<\\*\\s,:\\.\\?!\\)])"/*, Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE*/).matcher(content);
             if (matcher.find()) {
                 contains.add(entry.getValue().getTerm());
                 content = content.replaceAll(key, "");
