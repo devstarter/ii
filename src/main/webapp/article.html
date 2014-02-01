@@ -3,7 +3,7 @@
     <div class="block" data-bind="invisible: loading">
         <span style="color: grey">Статья</span>
         <span class="current-item-title" data-bind="text: name"></span>
-        <p class="content" data-bind="text: content"></p>
+        <p class="content" data-bind="html: content"></p>
         <div class="related" data-bind="visible: relatedTerms, source: relatedTerms" data-template="term-template"></div>
         <script type="text/kendo-x-tmpl" id="term-template">
             <button class="grey" data-bind="text: name, attr: {title: description}, click: navigateToTerm"></button>
@@ -11,16 +11,16 @@
     </div>
 </div>
 <style type="text/css">
-    #item .current-item-title {
+    #article .current-item-title {
         font-size: 24px;
     }
-    #item .related {
+    #article .related {
         padding-top: 30px;
     }
-    #item .block {
+    #article .block {
         max-width: 600px;
     }
-    #item .content {
+    #article .content {
         text-align: justify;
     }
 </style>
