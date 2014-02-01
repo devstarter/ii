@@ -1,6 +1,7 @@
 <div id="article">
     <div class="block loading" data-bind="visible: loading">Загрузка...</div>
     <div class="block" data-bind="invisible: loading">
+        <span style="color: grey">Статья</span>
         <span class="current-item-title" data-bind="text: name"></span>
         <p class="content" data-bind="text: content"></p>
         <div class="related" data-bind="visible: relatedTerms, source: relatedTerms" data-template="term-template"></div>

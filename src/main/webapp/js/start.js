@@ -20,17 +20,20 @@
             if (needReload) location.reload();
         }
         if (uri.indexOf("статья:") == 0) {
-            var needReload = location.hash.indexOf("#a/") == 0;
-            location.hash = "#"+uri.replace("статья:", "");
+            var needReload = location.hash.indexOf("#a/") != 0;
+            location.hash = "#a/"+uri.replace("статья:", "");
             if (needReload) location.reload();
         }
     },
-    labelByUri: function(uri) {
-        if (uri.indexOf("ии:пункт:") == 0) {
-            return uri.replace("ии:пункт:", "");
+    getLabel: function(d) {
+        if (d.uri.indexOf("ии:пункт:") == 0) {
+            return d.uri.replace("ии:пункт:", "");
         }
-        if (uri.indexOf("ии:термин:") == 0) {
-            return uri.replace("ии:термин:", "");
+        if (d.uri.indexOf("ии:термин:") == 0) {
+            return d.uri.replace("ии:термин:", "");
+        }
+        if (d.uri.indexOf("статья:") == 0) {
+            return "Статья «"+d.name+"»";
         }
     }
 };

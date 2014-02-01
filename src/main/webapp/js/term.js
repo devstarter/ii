@@ -33,7 +33,7 @@
                         viewModel.set(p, r[p]);
                     }
                     viewModel.set("getLabel", function(data) {
-                        return ii.labelByUri(data.uri);
+                        return ii.getLabel(data);
                     });
                     viewModel.set("found", true);
                     viewModel.set("loading", false);
