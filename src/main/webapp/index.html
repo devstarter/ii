@@ -4,11 +4,12 @@
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ИИССИИДИОЛОГИЯ</title>
+    <title>Интерактивная Ииссиидиология</title>
     <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,bold,italic" rel="stylesheet" type="text/css" />
     <link href="css/styles.css" rel="stylesheet" type="text/css" />
     <!--<link href="css/font/font-awesome.min.css" rel="stylesheet" type="text/css" />-->
-
+	<link href="images/favicon.ico" rel="shortcut icon">
+	
     <script src="libs/jquery/jquery-1.9.1.js"></script>
     <script src="libs/jquery/jquery.history.min.js"></script>
     <script src="libs/jquery/jquery.touchwipe.min.js"></script>
@@ -54,7 +55,9 @@
             #main a{
                 text-decoration: none;
             }
-            #main h1 span{
+            #main h1 {
+                text-align: center;
+                font-size: 180%;
                 color: rgb(7, 131, 199);
             }
             #main .header {
@@ -77,11 +80,11 @@
         <div class="header">
             <img src="images/logo.png" alt="iissiidiology logo">
         </div>
-        <h1>Интерактивная Иссидиология</h1>
+        <h1>Интерактивная Ииссиидиология</h1>
         <div style="margin-top:40px;">
             Поиск пунктов, терминов, словосочетаний в материалах:
-            <input class="k-input search-input" type="text">
-            <a class="button search-button" onclick="window.location.href='#?' + document.getElementById('.search-input').value">Найти</a>
+            <input class="k-input search-input" id="search-input" type="text" onkeypress="if (event.keyCode == 13) {location.href='#?'+document.getElementById('search-input').value}"> 
+            <a class="button search-button" onclick="location.href='#?' + document.getElementById('search-input').value">Найти</a>
             Примеры поиска: <a href="#?НАСМ">НАСМ</a>, <a href="#?ННААССММ">ННААССММ</a>, <a href="#?10.10176">10.10176</a>
         </div>
         <div class="footer">

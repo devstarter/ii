@@ -23,7 +23,7 @@ public class ItemDaoImpl extends AbstractHibernateDAO<Item> implements ItemDao {
     @Override
     public List<Item> find(String query) {
         return criteria()
-                .add(sqlRestriction("content REGEXP '[\\s\\(>«]" + query + "[»<\\s,:\\.\\?!\\)\\-]'"))
+                .add(sqlRestriction("content REGEXP '[\\s\\(>«]" + query + "[»<\\*\\s,:\\.\\?!\\)\\-]'"))
                 .setMaxResults(100)
                 .list();
     }

@@ -7,6 +7,10 @@ html,body{
     padding: 5px;
 }
 
+blockquote{  background:url(../images/quote_left.png) no-repeat left .4em; margin-bottom:30px; -webkit-margin-start: 0;}
+blockquote p{ padding-left:26px;}
+blockquote p cite{ color:#aa98b0; }
+
 
 /* ********************************************* */
 /* Buttons */
