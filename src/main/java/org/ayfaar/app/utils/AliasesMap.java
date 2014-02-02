@@ -114,8 +114,8 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
 
         for (Map.Entry<String, AliasesMap.Proxy> entry : entrySet()) {
             String key = entry.getKey().toLowerCase();
-            Matcher matcher = Pattern.compile("([\\s\\(>«]|^)?(" + key
-                    + ")([»<\\*\\s,:\\.\\?!\\)])"/*, Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE*/).matcher(content);
+            Matcher matcher = Pattern.compile("[\\W|^]" + key
+                    + "[\\W|$]"/*, Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE*/).matcher(content);
             if (matcher.find()) {
                 contains.add(entry.getValue().getTerm());
                 content = content.replaceAll(key, "");

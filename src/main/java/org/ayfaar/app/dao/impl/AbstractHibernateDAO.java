@@ -73,6 +73,10 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         return currentSession().createQuery(hql);
     }
 
+    protected SQLQuery sqlQuery(String hql) {
+        return currentSession().createSQLQuery(hql);
+    }
+
     protected Query queryByName(String queryName) {
         return currentSession().getNamedQuery(queryName);
     }
