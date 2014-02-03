@@ -2,10 +2,7 @@ package org.ayfaar.app.model;
 
 import org.hibernate.envers.Audited;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 @Audited
@@ -24,6 +21,8 @@ public class Link {
     private Byte type;
     private Byte weight;
     private String note;
+    @Column(columnDefinition = "TEXT")
+    private String quote;
 
     @ManyToOne
     private UID uid1;
@@ -33,7 +32,7 @@ public class Link {
 
     public Link(UID uid1, UID uid2) {
         if (uid1.getUri().equals(uid2.getUri())) {
-            throw new RuntimeException("Link to save URI");
+            throw new RuntimeException("Link to same URI");
         }
         this.uid1 = uid1;
         this.uid2 = uid2;
@@ -76,6 +75,22 @@ public class Link {
         this.weight = weight;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getQuote() {
+        return quote;
+    }
+
+    public void setQuote(String quote) {
+        this.quote = quote;
+    }
+
     public UID getUid1() {
         return uid1;
     }
@@ -90,13 +105,5 @@ public class Link {
 
     public void setUid2(UID uid2) {
         this.uid2 = uid2;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
     }
 }

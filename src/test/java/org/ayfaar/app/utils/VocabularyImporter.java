@@ -39,7 +39,7 @@ public class VocabularyImporter {
 
         for(String line: FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\Том 9 - Словарь размечено.txt"))) {
 
-            Matcher matcher = compile("9\\.\\|([^\\|]+)\\|\\s–\\s(.+)").matcher(line);
+            Matcher matcher = compile("9\\.\\|([^\\|]+)\\|\\s[–\\-—]\\s(.+)").matcher(line);
             if (matcher.find()) {
                 if (currentArticle != null) {
                     saveItem();

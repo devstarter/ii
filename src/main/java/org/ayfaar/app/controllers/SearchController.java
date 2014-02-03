@@ -76,13 +76,14 @@ public class SearchController {
                 }
                 regexp += "("+query.charAt(i)+")+";
             }
-            pattern = Pattern.compile(regexp);
+            pattern = Pattern.compile(regexp.toLowerCase());
         }
 
         for (Term term : allTerms) {
-            if (term.getName().equals(query)) {
+            if (term.getName().toLowerCase().equals(query.toLowerCase())) {
                 matches.add(0, term.getName());
-            } else if (term.getName().contains(query) || pattern != null && pattern.matcher(term.getName()).find()) {
+            } else if (term.getName().toLowerCase().contains(query.toLowerCase())
+                    || pattern != null && pattern.matcher(term.getName().toLowerCase()).find()) {
                 matches.add(term.getName());
             }
         }

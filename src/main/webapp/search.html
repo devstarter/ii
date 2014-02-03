@@ -3,7 +3,7 @@
     <button data-bind="click: search">Искать</button>
     <div class="block loading" data-bind="visible: loadingTerms">Загрузка терминов...</div>
     <div data-bind="invisible: loadingTerms">
-        <h3>Темины</h3>
+        <h3>Термины</h3>
         <div data-bind="source: terms" data-template="search-terms-template"></div>
         <script type="text/kendo-x-tmpl" id="search-terms-template">
             <button class="grey" data-bind="text: name, click: navigate"></button>

@@ -50,7 +50,6 @@ public class TermController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @Model
-//    @Cacheable("terms")
     public ModelMap altGet(@RequestParam String name) {
         return get(name);
     }
@@ -94,7 +93,6 @@ public class TermController {
     @RequestMapping("related")
     @Model
     @ResponseBody
-//    @Cacheable("terms")
     public Collection<ModelMap> getRelated(@RequestParam String uri) {
         Set<UID> related = new LinkedHashSet<UID>();
         for (Link link : linkDao.getRelated(uri)) {
@@ -116,7 +114,6 @@ public class TermController {
 
     @RequestMapping(value = "/", method = POST)
     @Model
-//    @CacheEvict(value = {"items", "terms"}, allEntries=true)
     public Term add(@RequestParam String name, @RequestParam(required = false) String description) {
         Term primeTerm = termDao.getByName(name);
         if (primeTerm == null) {
