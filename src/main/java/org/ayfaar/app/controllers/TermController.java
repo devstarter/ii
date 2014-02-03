@@ -17,10 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,13 +47,7 @@ public class TermController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @Model
-    public ModelMap altGet(@RequestParam String name) {
-        return get(name);
-    }
-
-    @RequestMapping("{termName}")
-    @Model
-    public ModelMap get(@PathVariable String termName) {
+    public ModelMap get(@RequestParam("name") String termName) {
         Term term = termDao.getByName(termName);
         notNull(term, "Термин не найден");
 
@@ -87,6 +78,20 @@ public class TermController {
 //        modelMap.put("related", getRelated(term.getUri()));
 //        modelMap.put("aliases", aliases);
 
+        // QUOTES
+
+        List<ModelMap> quotes = new ArrayList<ModelMap>();
+        for (Link link : linkDao.getRelatedWithQuote(term.getUri())) {
+            ModelMap map = new ModelMap();
+            String sourceUri = link.getUid1().getUri().equals(term.getUri())
+                    ? link.getUid2().getUri()
+                    : link.getUid1().getUri();
+            map.put("quote", link.getQuote());
+            map.put("uri", sourceUri);
+            quotes.add(map);
+        }
+        modelMap.put("quotes", quotes);
+
         return modelMap;
     }
 
@@ -96,7 +101,7 @@ public class TermController {
     public Collection<ModelMap> getRelated(@RequestParam String uri) {
         Set<UID> related = new LinkedHashSet<UID>();
         for (Link link : linkDao.getRelated(uri)) {
-            if (!Link.ABBREVIATION.equals(link.getType())) {
+            if (!Link.ABBREVIATION.equals(link.getType()) && link.getQuote() == null) {
                 if (link.getUid1().getUri().equals(uri)) {
                     related.add(link.getUid2());
                 } else {

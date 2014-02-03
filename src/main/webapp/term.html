@@ -8,6 +8,13 @@
             </span>
             <p data-bind="text: description"></p>
             <span class="info" data-bind="invisible: description">Нет короткого определения</span>
+            <div data-bind="source: quotes" data-template="quotes-template"></div>
+            <script type="text/kendo-x-tmpl" id="quotes-template">
+                <blockquote>
+                    <div>#=data.quote#</div>
+                    <cite>&mdash; <a data-bind="text: getLabel, click: navigate"></a></cite>
+                </blockquote>
+            </script>
             <span class="header" data-bind="visible: related[0]">Связан с</span>
             <div data-bind="source: related" data-template="related-template"></div>
             <script type="text/kendo-x-tmpl" id="related-template">

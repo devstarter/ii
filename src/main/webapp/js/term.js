@@ -7,6 +7,10 @@
             viewModel = kendo.observable({
                 loading: true,
                 related: [],
+                quotes: [],
+                getLabel: function(data) {
+                    return ii.getLabel(data);
+                },
                 search: function(e) {
                     e.preventDefault();
                     ii.navigateToSearch(e.data.name)

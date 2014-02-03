@@ -8,8 +8,9 @@ html,body{
 }
 
 blockquote{  background:url(../images/quote_left.png) no-repeat left .4em; margin-bottom:30px; -webkit-margin-start: 0;}
+blockquote > * {padding-left:26px;}
 blockquote p{ padding-left:26px;}
-blockquote p cite{ color:#aa98b0; }
+blockquote cite{ color:#aa98b0; display: block; cursor: pointer}
 
 
 /* ********************************************* */
