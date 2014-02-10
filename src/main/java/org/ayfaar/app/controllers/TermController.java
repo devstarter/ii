@@ -156,6 +156,7 @@ public class TermController {
                             TermMorph termMorph = commonDao.get(TermMorph.class, alias);
                             if (termMorph == null) {
                                 commonDao.save(new TermMorph(alias, primeTerm.getUri()));
+                                aliasesMap.put(alias, primeTerm);
                                 log.info("Alias added: "+alias);
                             }
                             aliases.add(alias);
@@ -193,5 +194,9 @@ public class TermController {
             return (Term) link.getUid1();
         }
         return term;
+    }
+
+    public Term add(String termName) {
+        return add(termName, null);
     }
 }

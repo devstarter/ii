@@ -6,7 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static org.hibernate.criterion.Restrictions.sqlRestriction;
+import static org.ayfaar.app.utils.RegExpUtils.W;
+import static org.ayfaar.app.utils.RegExpUtils.w;
 
 @SuppressWarnings("unchecked")
 @Repository
@@ -22,9 +23,10 @@ public class ItemDaoImpl extends AbstractHibernateDAO<Item> implements ItemDao {
 
     @Override
     public List<Item> find(String query) {
-        return sqlQuery("SELECT * FROM item WHERE LOWER(content) REGEXP '([^A-Za-zА-Яа-я0-9Ёё]|^)"
+        query = query.replaceAll("\\*", w+"*");
+        return sqlQuery("SELECT * FROM item WHERE LOWER(content) REGEXP '("+ W +"|^)"
                     + query.toLowerCase()
-                    + "[^A-Za-zА-Яа-я0-9Ёё]'")
+                    + W + "'")
             .addEntity(Item.class)
             .setMaxResults(20)
             .list();

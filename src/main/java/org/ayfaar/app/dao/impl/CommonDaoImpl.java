@@ -1,6 +1,7 @@
 package org.ayfaar.app.dao.impl;
 
 import org.ayfaar.app.dao.CommonDao;
+import org.ayfaar.app.utils.Content;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
@@ -20,8 +21,11 @@ import java.util.List;
 import static org.apache.commons.beanutils.PropertyUtils.setProperty;
 import static org.ayfaar.app.utils.EntityUtils.getPrimaryKeyFiledName;
 import static org.ayfaar.app.utils.EntityUtils.getPrimaryKeyValue;
+import static org.ayfaar.app.utils.RegExpUtils.W;
+import static org.ayfaar.app.utils.RegExpUtils.w;
 import static org.hibernate.criterion.Restrictions.eq;
 
+@SuppressWarnings("unchecked")
 @Repository
 @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class CommonDaoImpl implements CommonDao {
@@ -133,5 +137,21 @@ public class CommonDaoImpl implements CommonDao {
             throw new RuntimeException(e);
         }
         return reattachedParent;
+    }
+
+    @Override
+    public List<Content> findInAllContent(String query) {
+        query = query.replaceAll("\\*", "["+w+"]*").toLowerCase();
+        String itemQuery = "SELECT uri, NULL, content FROM item WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "'";
+        String articleQuery = "SELECT uri, name, content FROM article WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "'";
+        List<Object[]> list = sessionFactory.getCurrentSession().createSQLQuery(
+                itemQuery + " UNION " + articleQuery)
+                .setMaxResults(20)
+                .list();
+        List<Content> contents = new ArrayList<Content>();
+        for (Object[] o : list) {
+            contents.add(new Content((String) o[0], (String) o[1], (String) o[2]));
+        }
+        return contents;
     }
 }

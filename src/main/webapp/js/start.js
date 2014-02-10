@@ -24,16 +24,25 @@
             location.hash = "#a/"+uri.replace("статья:", "");
             if (needReload) location.reload();
         }
+        if (uri.indexOf("http") == 0) {
+            window.open(uri,'_blank');
+        }
     },
     getLabel: function(d) {
-        if (d.uri.indexOf("ии:пункт:") == 0) {
-            return d.uri.replace("ии:пункт:", "");
+        var uri = d.uri;
+        if (uri.indexOf("ии:пункт:") == 0) {
+            return uri.replace("ии:пункт:", "");
         }
-        if (d.uri.indexOf("ии:термин:") == 0) {
-            return d.uri.replace("ии:термин:", "");
+        if (uri.indexOf("ии:термин:") == 0) {
+            return uri.replace("ии:термин:", "");
         }
-        if (d.uri.indexOf("статья:") == 0) {
+        if (uri.indexOf("статья:") == 0) {
             return "Статья «"+d.name+"»";
+        }
+        if (uri.indexOf("http") == 0) {
+            var parser = document.createElement('a');
+            parser.href = uri;
+            return parser.hostname;
         }
     }
 };

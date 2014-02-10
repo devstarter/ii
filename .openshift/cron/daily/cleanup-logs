@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd $OPENSHIFT_JBOSSEWS_LOG_DIR   
+ 
+rm catalina.out.1
+mv catalina.out catalina.out.1

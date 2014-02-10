@@ -1,11 +1,12 @@
 package org.ayfaar.app.controllers;
 
+import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.TermDao;
-import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.utils.Content;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -26,6 +27,7 @@ public class SearchController {
     @Autowired AliasesMap aliasesMap;
     @Autowired TermDao termDao;
     @Autowired ItemDao itemDao;
+    @Autowired CommonDao commonDao;
 
     /*public Object search(String query) {
         ModelMap modelMap = new ModelMap();
@@ -43,17 +45,18 @@ public class SearchController {
     @ResponseBody
     private List<ModelMap> searchInContent(@RequestParam String query) {
         List<ModelMap> modelMaps = new ArrayList<ModelMap>();
-        List<Item> items = itemDao.find(query);
+        List<Content> items = commonDao.findInAllContent(query);
+        query = query.replaceAll("\\*", "\\w*");
 		Pattern pattern = Pattern.compile("([^\\.\\?!]*)([\\W|^]" + query + "[\\W|$])([^\\.\\?!]*)",
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-        for (Item item : items) {
+        for (Content item : items) {
             ModelMap map = new ModelMap();
             map.put("uri", item.getUri());
-            map.put("number", item.getNumber());
+            map.put("name", item.getName());
             Matcher matcher = pattern.matcher(item.getContent());
             if (matcher.find()) {
-                String part = matcher.group(1)+"<strong>"+matcher.group(2)+"</strong>"+matcher.group(3)+".";
-                map.put("part", part.trim());
+                String quote = matcher.group(1)+"<strong>"+matcher.group(2)+"</strong>"+matcher.group(3)+".";
+                map.put("quote", quote.trim());
                 modelMaps.add(map);
             }
         }

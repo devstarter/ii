@@ -17,6 +17,9 @@
 //                    location.hash = "#search:"+q.replace(" ", "+");
                     ii.navigateToSearch(q);
                 },
+                getLabel: function(data) {
+                    return ii.getLabel(data);
+                },
                 onkeypress: function(e) {
                     if(e.keyCode == 13)
                     {

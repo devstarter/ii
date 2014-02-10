@@ -1,5 +1,6 @@
 package org.ayfaar.app.dao;
 
+import org.ayfaar.app.utils.Content;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,4 +31,6 @@ public interface CommonDao {
     <E> E getRandom(Class<E> clazz);
 
     <E> E initialize(Class<E> className, E detachedParent, String fieldName);
+
+    List<Content> findInAllContent(String query);
 }

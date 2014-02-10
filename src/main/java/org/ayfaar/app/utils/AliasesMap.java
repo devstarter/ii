@@ -73,6 +73,10 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
         load();
     }
 
+    public void put(String alias, Term term) {
+        put(alias, new Proxy(term));
+    }
+
     public class Proxy {
         private String uri;
         private Term term;

@@ -1,21 +1,35 @@
 package org.ayfaar.app.controllers;
 
+import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
+import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Link;
+import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("item")
+@RequestMapping("link")
 public class LinkController {
     @Autowired LinkDao linkDao;
+    @Autowired TermDao termDao;
+    @Autowired ItemDao itemDao;
+    @Autowired TermController termController;
 
-    @RequestMapping("{uid1}/{uid2}")
+    @RequestMapping(value = "add", method = POST)
     @Model
-    public Link link(@PathVariable String uid1, @PathVariable String uid2) {
+    public Link link(@RequestParam("term") String termName,
+                     @RequestParam("item") String itemNumber,
+                     @RequestParam String quote) {
+        Term term = termDao.getByName(termName);
+        if (term == null) {
+            term = termController.add(termName);
+        }
         return null;
     }
 }

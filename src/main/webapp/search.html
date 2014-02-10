@@ -14,10 +14,9 @@
         <h3>Упоминания в содержимом</h3>
         <div data-bind="source: contents" data-template="search-content-template"></div>
         <script type="text/kendo-x-tmpl" id="search-content-template">
-            <blockquote class="contentResultBlock">
-                <p data-bind="click: navigate">#=data.part#</p>
-                <p><cite>&mdash; #=data.number#</cite></p>
-                <!--div class="divider"></div-->
+            <blockquote>
+                <div>#=data.quote#</div>
+                <cite>&mdash; <a data-bind="text: getLabel, click: navigate"></a></cite>
             </blockquote>
         </script>
     </div>
@@ -28,11 +27,11 @@
         #search .number {
             float: left;
         }*/
-        #search .contentResultBlock {
+        /*#search .contentResultBlock {
             cursor: pointer;
-            /*padding-bottom: 20px;*/
+            *//*padding-bottom: 20px;*//*
             text-align: justify;
-        }
+        }*/
         /*#search .contentResultBlock div {
             display: inline;
         }*/
