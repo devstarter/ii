@@ -3,6 +3,7 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
+import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.Model;
@@ -30,6 +31,8 @@ public class LinkController {
         if (term == null) {
             term = termController.add(termName);
         }
-        return null;
+        Item item = itemDao.getByNumber(itemNumber);
+        Link link = linkDao.save(new Link(term, item, quote));
+        return link;
     }
 }

@@ -51,6 +51,12 @@ public class Link {
     public Link() {
     }
 
+    public Link(UID uid1, UID uid2, String quote) {
+        this.uid1 = uid1;
+        this.uid2 = uid2;
+        this.quote = quote;
+    }
+
     public Integer getLinkId() {
         return linkId;
     }
