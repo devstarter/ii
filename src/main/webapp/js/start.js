@@ -120,6 +120,9 @@ router.route("a/:id", function(id) {
 router.route("about", function() {
     ensure({ html: "about.html", parent: "content"});
 });
+router.route("main_panel", function() {
+    ensure({ html: "main_panel.html", parent: "content"});
+});
 router.route(":hash", function(hash) {
     if (isItemNumber(hash)) {
         itemRoute(hash)
@@ -129,6 +132,16 @@ router.route(":hash", function(hash) {
 });
 
 $(document).ready(function() {
+	function showHide(element_id) {
+		if (document.getElementById(element_id)) { 
+			var obj = document.getElementById(element_id); 
+			if (obj.style.display != "block") { 
+				obj.style.display = "block"; 
+			}
+			else obj.style.display = "none";
+		}
+	} 
+		
     router.start();
 
 //    router.navigate("item\:1.0778");
