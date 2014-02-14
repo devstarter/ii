@@ -3,7 +3,7 @@ debug.properties
 *.docx
 target
 /II.rar
-.idea/deployment.xml
-.idea/workspace.xml
-.idea/encodings.xml
-src/test/test.iml
+/src/test/test.iml
+/.idea/deployment.xml
+/.idea/encodings.xml
+/.idea/workspace.xml
