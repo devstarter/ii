@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.ayfaar.app.utils.RegExpUtils.w;
 import static org.ayfaar.app.utils.RegExpUtils.W;
+import static org.ayfaar.app.utils.RegExpUtils.w;
 import static org.ayfaar.app.utils.TermUtils.isCosmicCode;
 
 @Controller
@@ -49,7 +49,7 @@ public class SearchController {
         List<ModelMap> modelMaps = new ArrayList<ModelMap>();
         List<Content> items = commonDao.findInAllContent(query);
         query = query.replaceAll("\\*", "["+ w +"]*");
-		Pattern pattern = Pattern.compile("([^\\.\\?!]*)(["+ W +"|^])(" + query + ")(["+ W +"|$])([^\\.\\?!]*)",
+		Pattern pattern = Pattern.compile("([^\\.\\?!]*)("+ W +"|^)(" + query + ")("+ W +"|$)([^\\.\\?!]*)",
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
         System.out.println("тест" + query + "\n");
         for (Content item : items) {

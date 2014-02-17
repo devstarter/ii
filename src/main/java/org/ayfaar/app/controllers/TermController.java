@@ -49,13 +49,13 @@ public class TermController {
     @Model
     public ModelMap get(@RequestParam("name") String termName) {
         Term term = termDao.getByName(termName);
-        notNull(term, "Термин не найден");
-
         Term alias = null;
         if (!aliasesMap.get(termName).getTerm().getUri().equals(term.getUri())) {
             alias = term;
             term = aliasesMap.get(termName).getTerm();
         }
+        notNull(term, "Термин не найден");
+
         Matcher matcher = Pattern.compile("^[А-Я]+$").matcher(termName);
         if (matcher.find()) {
             // может быть аббравиатурой
