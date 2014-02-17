@@ -141,7 +141,7 @@ public class CommonDaoImpl implements CommonDao {
 
     @Override
     public List<Content> findInAllContent(String query) {
-        query = query.replaceAll("\\*", "["+w+"]*").toLowerCase();
+        query = query.toLowerCase().replaceAll("\\*", "["+w+"]*");
         String itemQuery = "SELECT uri, NULL, content FROM item WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "'";
         String articleQuery = "SELECT uri, name, content FROM article WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "'";
         List<Object[]> list = sessionFactory.getCurrentSession().createSQLQuery(

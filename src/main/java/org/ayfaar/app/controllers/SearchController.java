@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.ayfaar.app.utils.RegExpUtils.w;
+import static org.ayfaar.app.utils.RegExpUtils.W;
 import static org.ayfaar.app.utils.TermUtils.isCosmicCode;
 
 @Controller
@@ -46,16 +48,19 @@ public class SearchController {
     private List<ModelMap> searchInContent(@RequestParam String query) {
         List<ModelMap> modelMaps = new ArrayList<ModelMap>();
         List<Content> items = commonDao.findInAllContent(query);
-        query = query.replaceAll("\\*", "\\w*");
-		Pattern pattern = Pattern.compile("([^\\.\\?!]*)([\\W|^]" + query + "[\\W|$])([^\\.\\?!]*)",
+        query = query.replaceAll("\\*", "["+ w +"]*");
+		Pattern pattern = Pattern.compile("([^\\.\\?!]*)(["+ W +"|^])(" + query + ")(["+ W +"|$])([^\\.\\?!]*)",
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+        System.out.println("тест" + query + "\n");
         for (Content item : items) {
             ModelMap map = new ModelMap();
             map.put("uri", item.getUri());
             map.put("name", item.getName());
             Matcher matcher = pattern.matcher(item.getContent());
             if (matcher.find()) {
-                String quote = matcher.group(1)+"<strong>"+matcher.group(2)+"</strong>"+matcher.group(3)+".";
+                String quote = matcher.group(1)+matcher.group(2)+
+                        "<strong>"+matcher.group(3)+"</strong>"+
+                        matcher.group(4)+matcher.group(5);
                 map.put("quote", quote.trim());
                 modelMaps.add(map);
             }
