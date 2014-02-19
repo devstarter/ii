@@ -49,7 +49,7 @@ public class SearchController {
         List<ModelMap> modelMaps = new ArrayList<ModelMap>();
         List<Content> items = commonDao.findInAllContent(query);
         query = query.replaceAll("\\*", "["+ w +"]*");
-		Pattern pattern = Pattern.compile("([^\\.\\?!]*)("+ W +"|^)(" + query + ")("+ W +"|$)([^\\.\\?!]*)",
+		Pattern pattern = Pattern.compile("([^\\.\\?!]*)("+ W +"|^)(" + query + ")("+ W +"|$)([^\\.\\?!]*)([\\.\\?!]*)",
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
         System.out.println("тест" + query + "\n");
         for (Content item : items) {
@@ -60,7 +60,7 @@ public class SearchController {
             if (matcher.find()) {
                 String quote = matcher.group(1)+matcher.group(2)+
                         "<strong>"+matcher.group(3)+"</strong>"+
-                        matcher.group(4)+matcher.group(5);
+                        matcher.group(4)+matcher.group(5)+matcher.group(6);
                 map.put("quote", quote.trim());
                 modelMaps.add(map);
             }
