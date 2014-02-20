@@ -49,18 +49,19 @@ public class SearchController {
         List<ModelMap> modelMaps = new ArrayList<ModelMap>();
         List<Content> items = commonDao.findInAllContent(query);
         query = query.replaceAll("\\*", "["+ w +"]*");
-		Pattern pattern = Pattern.compile("([^\\.\\?!]*)("+ W +"|^)(" + query + ")("+ W +"|$)([^\\.\\?!]*)([\\.\\?!]*)",
+
+		// [^\.\?!]* - star is greedy, so pattern will find the last match to make first group as long as possible
+        Pattern pattern = Pattern.compile("([^\\.\\?!]*)\\b(" + query + ")\\b([^\\.\\?!]*)([\\.\\?!]*)",
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-        System.out.println("тест" + query + "\n");
+
         for (Content item : items) {
             ModelMap map = new ModelMap();
             map.put("uri", item.getUri());
             map.put("name", item.getName());
             Matcher matcher = pattern.matcher(item.getContent());
             if (matcher.find()) {
-                String quote = matcher.group(1)+matcher.group(2)+
-                        "<strong>"+matcher.group(3)+"</strong>"+
-                        matcher.group(4)+matcher.group(5)+matcher.group(6);
+                // (?iu) - insensitive, unicode, \b - a word boundary, $1 - first group
+                String quote = matcher.group().replaceAll("(?iu)\\b(" + query + ")\\b", "<strong>$1</strong>");
                 map.put("quote", quote.trim());
                 modelMaps.add(map);
             }

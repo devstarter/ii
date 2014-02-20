@@ -23,9 +23,9 @@ public class ItemDaoImpl extends AbstractHibernateDAO<Item> implements ItemDao {
 
     @Override
     public List<Item> find(String query) {
-        query = query.replaceAll("\\*", w+"*");
+	    query = query.toLowerCase().replaceAll("\\*", "["+w+"]*");
         return sqlQuery("SELECT * FROM item WHERE LOWER(content) REGEXP '("+ W +"|^)"
-                    + query.toLowerCase()
+                    + query
                     + W + "'")
             .addEntity(Item.class)
             .setMaxResults(20)
