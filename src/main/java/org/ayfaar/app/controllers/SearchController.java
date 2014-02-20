@@ -3,6 +3,7 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.TermDao;
+import org.ayfaar.app.dao.TermMorphDao;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.AliasesMap;
@@ -30,6 +31,7 @@ public class SearchController {
     @Autowired TermDao termDao;
     @Autowired ItemDao itemDao;
     @Autowired CommonDao commonDao;
+    @Autowired TermMorphDao termMorphDao;
 
     /*public Object search(String query) {
         ModelMap modelMap = new ModelMap();
@@ -47,10 +49,21 @@ public class SearchController {
     @ResponseBody
     private List<ModelMap> searchInContent(@RequestParam String query) {
         List<ModelMap> modelMaps = new ArrayList<ModelMap>();
-        List<Content> items = commonDao.findInAllContent(query);
-        query = query.replaceAll("\\*", "["+ w +"]*");
 
-		// [^\.\?!]* - star is greedy, so pattern will find the last match to make first group as long as possible
+        List<String> morphsList = termMorphDao.getAllMorphs(query);
+        if(!morphsList.isEmpty()){
+            String newQuery = "";
+            for (String morph : morphsList){
+                newQuery += (morph + "|");
+            }
+            newQuery = newQuery.substring(0, newQuery.length() - 1);
+            query = newQuery;
+        }
+
+        query = query.replaceAll("\\*", "["+ w +"]*");
+        List<Content> items = commonDao.findInAllContent(query);
+
+        // [^\.\?!]* - star is greedy, so pattern will find the last match to make first group as long as possible
         Pattern pattern = Pattern.compile("([^\\.\\?!]*)\\b(" + query + ")\\b([^\\.\\?!]*)([\\.\\?!]*)",
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 

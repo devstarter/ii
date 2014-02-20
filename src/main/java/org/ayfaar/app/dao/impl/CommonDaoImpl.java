@@ -141,7 +141,8 @@ public class CommonDaoImpl implements CommonDao {
 
     @Override
     public List<Content> findInAllContent(String query) {
-        query = query.toLowerCase().replaceAll("\\*", "["+w+"]*");
+        // case insensitive !!
+        query = query.toLowerCase();
         String itemQuery = "SELECT uri, NULL, content FROM item WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "'";
         String articleQuery = "SELECT uri, name, content FROM article WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "'";
         List<Object[]> list = sessionFactory.getCurrentSession().createSQLQuery(
@@ -154,4 +155,11 @@ public class CommonDaoImpl implements CommonDao {
         }
         return contents;
     }
+    /* // such sql-query spend about 45 seconds
+     SELECT uri, NULL, content FROM item
+     WHERE LOWER(content) REGEXP '([^a-za-zа-яа-я0-9ёё]|^)(фокуса|фокусам|фокусами|фокусах|фокусе|фокусов|фокусом|фокусу|фокусы)[^a-za-zа-яа-я0-9ёё]'
+     UNION
+     SELECT uri, name, content FROM article
+     WHERE LOWER(content) REGEXP '([^a-za-zа-яа-я0-9ёё]|^)(фокуса|фокусам|фокусами|фокусах|фокусе|фокусов|фокусом|фокусу|фокусы)[^a-za-zа-яа-я0-9ёё]' limit 20
+     */
 }
