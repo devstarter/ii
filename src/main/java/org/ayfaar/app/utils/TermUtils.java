@@ -4,8 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TermUtils {
-    private static final String cosmicCodeRegExp = "[А-Я-]+";
-    private static final String nonCosmicCodeRegExp = ".[а-я]+";
+    private static final String cosmicCodeRegExp = "[А-ЯЁ-]+";
+    private static final String nonCosmicCodeRegExp = ".[а-яё]+";
 
     public static boolean isCosmicCode(String term) {
         return term != null && !term.isEmpty() && term.matches("^"+cosmicCodeRegExp+"$");

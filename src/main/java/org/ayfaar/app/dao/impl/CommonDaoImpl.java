@@ -141,13 +141,16 @@ public class CommonDaoImpl implements CommonDao {
 
     @Override
     public List<Content> findInAllContent(String query) {
-        // case insensitive !!
-        query = query.toLowerCase();
-        String itemQuery = "SELECT uri, NULL, content FROM item WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "'";
-        String articleQuery = "SELECT uri, name, content FROM article WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "'";
+        /* Notes:
+         *  - case insensitive searching
+         *  - need brackets around query for case query="word1|word2|...|wordN"
+         *  - it is important to LIMIT every part of SELECT query
+         */
+        query = "(" + query.toLowerCase() + ")";
+        String itemQuery = "SELECT uri, NULL, content FROM item WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "' LIMIT 15 ";
+        String articleQuery = "SELECT uri, name, content FROM article WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "' LIMIT 15 ";
         List<Object[]> list = sessionFactory.getCurrentSession().createSQLQuery(
                 itemQuery + " UNION " + articleQuery)
-                .setMaxResults(20)
                 .list();
         List<Content> contents = new ArrayList<Content>();
         for (Object[] o : list) {
@@ -155,11 +158,14 @@ public class CommonDaoImpl implements CommonDao {
         }
         return contents;
     }
-    /* // such sql-query spend about 45 seconds
-     SELECT uri, NULL, content FROM item
-     WHERE LOWER(content) REGEXP '([^a-za-zа-яа-я0-9ёё]|^)(фокуса|фокусам|фокусами|фокусах|фокусе|фокусов|фокусом|фокусу|фокусы)[^a-za-zа-яа-я0-9ёё]'
-     UNION
-     SELECT uri, name, content FROM article
-     WHERE LOWER(content) REGEXP '([^a-za-zа-яа-я0-9ёё]|^)(фокуса|фокусам|фокусами|фокусах|фокусе|фокусов|фокусом|фокусу|фокусы)[^a-za-zа-яа-я0-9ёё]' limit 20
+    /*
+    such query take about 20 sec!!! what can be done?? make optimizing of substring query? (уу-вву-форм)(ы|а|ой|...) ??
+
+    SELECT uri, NULL, content
+    FROM item
+    WHERE LOWER(content)
+    REGEXP '([^A-Za-zА-Яа-я0-9Ёё]|^)(уу-вву-форм|уу-вву-формам|уу-вву-формами|уу-вву-формах|уу-вву-форме|уу-вву-формой|уу-вву-форму|уу-вву-формы|уу-вву-форма)[^A-Za-zА-Яа-я0-9Ёё]'
+    LIMIT 15
+
      */
 }

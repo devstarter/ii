@@ -24,12 +24,34 @@ public class TermMorphDaoImpl extends AbstractHibernateDAO<TermMorph> implements
 
     @Override
     public List<String> getAllMorphs(String termMorph) {
-        String query = "SELECT name FROM term_morph WHERE LOWER(name) LIKE '"
-                + termMorph.toLowerCase()
-                + "' OR LOWER(term_uri) LIKE 'ии:термин:"
+        List<String> result;
+        String query, nominative;
+
+        // handling nominative case
+        nominative = termMorph;
+        query = "SELECT name FROM term_morph WHERE LOWER(term_uri) LIKE 'ии:термин:"
+                + nominative.toLowerCase()
+                + "'";
+        result = sessionFactory.getCurrentSession().createSQLQuery(query).list();
+        if(!result.isEmpty()){
+            result.add(nominative);
+            return result;
+        }
+
+        // handling another cases
+        query = "SELECT term_uri FROM term_morph WHERE LOWER(name) LIKE '"
                 + termMorph.toLowerCase()
                 + "'";
-
-        return sessionFactory.getCurrentSession().createSQLQuery(query).list();
+        result = sessionFactory.getCurrentSession().createSQLQuery(query).list();
+        if(result.isEmpty()){
+            return result;
+        }
+        nominative = result.get(0).replaceFirst("ии:термин:","");
+        query = "SELECT name FROM term_morph WHERE term_uri LIKE '"
+                + result.get(0).toString()
+                + "'";
+        result = sessionFactory.getCurrentSession().createSQLQuery(query).list();
+        result.add(nominative);
+        return result;
     }
 }

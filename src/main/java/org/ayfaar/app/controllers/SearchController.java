@@ -50,6 +50,7 @@ public class SearchController {
     private List<ModelMap> searchInContent(@RequestParam String query) {
         List<ModelMap> modelMaps = new ArrayList<ModelMap>();
 
+        // get all cases of the word
         List<String> morphsList = termMorphDao.getAllMorphs(query);
         if(!morphsList.isEmpty()){
             String newQuery = "";

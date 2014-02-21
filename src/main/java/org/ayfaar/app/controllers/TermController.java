@@ -56,7 +56,7 @@ public class TermController {
         }
         notNull(term, "Термин не найден");
 
-        Matcher matcher = Pattern.compile("^[А-Я]+$").matcher(termName);
+        Matcher matcher = Pattern.compile("^[А-ЯЁ]+$").matcher(termName);
         if (matcher.find()) {
             // может быть аббравиатурой
             Link link = linkDao.getForAbbreviation(term.getUri());
