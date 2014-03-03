@@ -18,8 +18,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
@@ -56,15 +54,15 @@ public class TermController {
         }
         notNull(term, "Термин не найден");
 
-        Matcher matcher = Pattern.compile("^[А-ЯЁ]+$").matcher(termName);
-        if (matcher.find()) {
-            // может быть аббравиатурой
-            Link link = linkDao.getForAbbreviation(term.getUri());
-            if (link != null && link.getUid1() instanceof Term) {
+//        Matcher matcher = Pattern.compile("^[А-ЯЁ]+$").matcher(termName);
+//        if (matcher.find()) {
+            // может быть аббравиатурой или сокращением
+            Link _link = linkDao.getForAbbreviation(term.getUri());
+            if (_link != null && _link.getUid1() instanceof Term) {
                 alias = term;
-                term = (Term) link.getUid1();
+                term = (Term) _link.getUid1();
             }
-        }
+//        }
 
         ModelMap modelMap = (ModelMap) getModelMap(term);
 
