@@ -34,5 +34,7 @@ public interface CommonDao {
 
 //    List<Content> findInAllContent(String query);
 
-    List<Content> findInAllContent(String query, Integer start, Integer limit);
+    List<Content> findInAllContent(String query, Integer start, Integer pageSize);
+
+    List<Content> findInAllContent(List<String> aliases, Integer start, Integer pageSize);
 }

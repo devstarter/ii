@@ -56,7 +56,7 @@
             pageCounter++;
             viewModel.set("loadingContents", false);
             viewModel.set("contents", viewModel.contents.toJSON().concat(r));
-            viewModel.set("showLoadMore", r.length == 20)
+            viewModel.set("showLoadMore", r.length > 0)
         });
         if (viewModel.contents.length == 0) {
             viewModel.set("loadingContents", true);

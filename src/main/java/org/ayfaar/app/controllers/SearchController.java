@@ -103,7 +103,12 @@ public class SearchController {
         query = query.replaceAll("\\*", "["+ w +"]*");
 
         final Integer pageSize = 20;
-        List<Content> items = commonDao.findInAllContent(query, page*pageSize, pageSize);
+        List<Content> items;
+        if (aliasesList.size() > 0) {
+            items = commonDao.findInAllContent(aliasesList, page*pageSize, pageSize);
+        } else {
+            items = commonDao.findInAllContent(query, page*pageSize, pageSize);
+        }
 
         // [^\.\?!]* - star is greedy, so pattern will find the last match to make first group as long as possible
         Pattern pattern = Pattern.compile("([^\\.\\?!]*)\\b(" + query + ")\\b([^\\.\\?!]*)([\\.\\?!]*)",
@@ -118,11 +123,8 @@ public class SearchController {
                 // (?iu) - insensitive, unicode, \b - a word boundary, $1 - first group
                 String quote = matcher.group().replaceAll("(?iu)\\b(" + query + ")\\b", "<strong>$1</strong>");
                 map.put("quote", quote.trim());
-            } else {
-                map.put("quote", item.getContent());
+                modelMaps.add(map);
             }
-            // add item in any case, even if don't found quote
-            modelMaps.add(map);
         }
         return modelMaps;
     }

@@ -161,4 +161,27 @@ public class CommonDaoImpl implements CommonDao {
         }
         return contents;
     }
+
+    @Override
+    public List<Content> findInAllContent(List<String> aliases, Integer start, Integer limit) {
+        String where = " WHERE ";
+        for (String alias : aliases) {
+            where += " content like '%"+alias+"%' OR";
+        }
+        where = where.substring(0, where.length() - 2);
+
+        String itemQuery = "SELECT uri, NULL, content FROM item"+ where;
+//                + " order by SUBSTRING(number FROM SUBSTRING_INDEX(number, \".\", 0))";
+        String articleQuery = "SELECT uri, name, content FROM article"+where;
+        List<Object[]> list = sessionFactory.getCurrentSession().createSQLQuery(
+                itemQuery + " UNION " + articleQuery)
+                .setFirstResult(start)
+                .setMaxResults(limit)
+                .list();
+        List<Content> contents = new ArrayList<Content>();
+        for (Object[] o : list) {
+            contents.add(new Content((String) o[0], (String) o[1], (String) o[2]));
+        }
+        return contents;
+    }
 }
