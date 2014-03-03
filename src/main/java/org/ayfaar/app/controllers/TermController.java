@@ -189,11 +189,7 @@ public class TermController {
     }
 
     public Term getPrime(Term term) {
-        Link link = linkDao.getPrimeForAlias(term.getUri());
-        if (link != null) {
-            return (Term) link.getUid1();
-        }
-        return term;
+        return (Term) linkDao.getPrimeForAlias(term.getUri());
     }
 
     public Term add(String termName) {

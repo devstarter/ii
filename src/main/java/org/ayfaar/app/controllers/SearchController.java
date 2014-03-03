@@ -1,10 +1,9 @@
 package org.ayfaar.app.controllers;
 
-import org.ayfaar.app.dao.CommonDao;
-import org.ayfaar.app.dao.ItemDao;
-import org.ayfaar.app.dao.TermDao;
-import org.ayfaar.app.dao.TermMorphDao;
+import org.ayfaar.app.dao.*;
+import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.Content;
@@ -17,10 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.ayfaar.app.utils.RegExpUtils.W;
 import static org.ayfaar.app.utils.RegExpUtils.w;
 import static org.ayfaar.app.utils.TermUtils.isCosmicCode;
 
@@ -30,6 +29,7 @@ public class SearchController {
     @Autowired AliasesMap aliasesMap;
     @Autowired TermDao termDao;
     @Autowired ItemDao itemDao;
+    @Autowired LinkDao linkDao;
     @Autowired CommonDao commonDao;
     @Autowired TermMorphDao termMorphDao;
 
@@ -47,22 +47,63 @@ public class SearchController {
     @RequestMapping("content")
     @Model
     @ResponseBody
-    private List<ModelMap> searchInContent(@RequestParam String query) {
+    private List<ModelMap> searchInContent(@RequestParam String query,
+                                           @RequestParam(required = false, defaultValue = "0") Integer page) {
+        query = query.toLowerCase();
         List<ModelMap> modelMaps = new ArrayList<ModelMap>();
 
+        AliasesMap.Proxy proxy = aliasesMap.get(query);
+
+        Term term = null;
+        if (proxy != null) {
+            term = proxy.getTerm();
+        } else {
+            for (Map.Entry<String, AliasesMap.Proxy> entry : aliasesMap.entrySet()) {
+                if (entry.getKey().toLowerCase().equals(query)) {
+                    term = entry.getValue().getTerm();
+                    break;
+                }
+            }
+        }
+
+        List<String> aliasesList = new ArrayList<String>();
+
+        if (term != null) {
+            Term primeTerm = (Term) linkDao.getPrimeForAlias(term.getUri());
+            if (primeTerm == null) {
+                primeTerm = term;
+            }
+            List<Link> links = linkDao.getAliases(primeTerm.getUri());
+            for (Link link : links) {
+                Term aliasTerm = (Term) link.getUid2();
+                aliasesList.add(aliasTerm.getName());
+                for (TermMorph morph : termMorphDao.getList("termUri", aliasTerm.getUri())) {
+                    aliasesList.add(morph.getName());
+                }
+            }
+            for (TermMorph morph : termMorphDao.getList("termUri", primeTerm.getUri())) {
+                aliasesList.add(morph.getName());
+            }
+        }
+
+
         // get all cases of the word
-        List<String> morphsList = termMorphDao.getAllMorphs(query);
-        if(!morphsList.isEmpty()){
+        // test case
+        aliasesList.addAll(termMorphDao.getAllMorphs(query));
+
+        if(!aliasesList.isEmpty()){
             String newQuery = "";
-            for (String morph : morphsList){
-                newQuery += (morph + "|");
+            for (String alias : aliasesList){
+                newQuery += (alias.toLowerCase() + "|");
             }
             newQuery = newQuery.substring(0, newQuery.length() - 1);
             query = newQuery;
         }
 
         query = query.replaceAll("\\*", "["+ w +"]*");
-        List<Content> items = commonDao.findInAllContent(query);
+
+        final Integer pageSize = 20;
+        List<Content> items = commonDao.findInAllContent(query, page*pageSize, pageSize);
 
         // [^\.\?!]* - star is greedy, so pattern will find the last match to make first group as long as possible
         Pattern pattern = Pattern.compile("([^\\.\\?!]*)\\b(" + query + ")\\b([^\\.\\?!]*)([\\.\\?!]*)",
@@ -77,8 +118,11 @@ public class SearchController {
                 // (?iu) - insensitive, unicode, \b - a word boundary, $1 - first group
                 String quote = matcher.group().replaceAll("(?iu)\\b(" + query + ")\\b", "<strong>$1</strong>");
                 map.put("quote", quote.trim());
-                modelMaps.add(map);
+            } else {
+                map.put("quote", item.getContent());
             }
+            // add item in any case, even if don't found quote
+            modelMaps.add(map);
         }
         return modelMaps;
     }
@@ -113,7 +157,7 @@ public class SearchController {
 
         List<Term> terms = new ArrayList<Term>();
         for (String match : matches) {
-            Term prime = aliasesMap.get(match).getTerm();
+            Term prime = aliasesMap.get(match.toLowerCase()).getTerm();
             boolean has = false;
             for (Term term : terms) {
                 if (term.getUri().equals(prime.getUri())) {

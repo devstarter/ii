@@ -32,5 +32,7 @@ public interface CommonDao {
 
     <E> E initialize(Class<E> className, E detachedParent, String fieldName);
 
-    List<Content> findInAllContent(String query);
+//    List<Content> findInAllContent(String query);
+
+    List<Content> findInAllContent(String query, Integer start, Integer limit);
 }
