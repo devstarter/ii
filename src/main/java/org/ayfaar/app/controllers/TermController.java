@@ -193,4 +193,15 @@ public class TermController {
     public Term add(String termName) {
         return add(termName, null);
     }
+
+    @RequestMapping("autocomplete")
+    @ResponseBody
+    public List<String> autoComplete(@RequestParam("filter[filters][0][value]") String filter) {
+        List<Term> terms = termDao.getLike("name", /*"%" +*/ filter + "%");
+        List<String> names = new ArrayList<String>();
+        for (Term term : terms) {
+            names.add(term.getName());
+        }
+        return names;
+    }
 }

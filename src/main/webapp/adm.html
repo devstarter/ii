@@ -3,7 +3,23 @@
 <head>
     <title></title>
     <script src="libs/jquery/jquery-1.9.1.js"></script>
+    <script src="libs/kendo/kendo.web.min.js"></script>
+    <link href="libs/kendo/kendo.common.min.css" rel="stylesheet" type="text/css" />
+    <link href="libs/kendo/kendo.blueopal.min.css" rel="stylesheet" type="text/css" />
     <script>
+        $(document).ready(function() {
+            $("#term").kendoAutoComplete({
+                minLength: 3,
+                dataSource: {
+                    serverFiltering: true,
+                    serverPaging: true,
+                    pageSize: 20,
+                    transport: {
+                        read: "/api/term/autocomplete"
+                    }
+                }
+            });
+        });
         function send() {
             $.post("/api/link/add", {
                 term: $("#term")[0].value,
@@ -16,23 +32,23 @@
                     alert("Ссылка не создана!");
                 }
             });
-            function reset() {
-                $("#term")[0].value = "";
-                $("#item")[0].value = "";
-                $("#quote")[0].value = "";
-            }
+        }
+        function reset() {
+            $("#term")[0].value = "";
+            $("#item")[0].value = "";
+            $("#quote")[0].value = "";
         }
     </script>
 </head>
 <body>
     <div>
-        <input placeholder="term" id="term"/>
-        <input placeholder="item" id="item"/>
+        <input placeholder="Термин" id="term"/>
+        <input placeholder="Пункта" id="item" class="k-input"/>
         <br/>
-        <textarea placeholder="quote" id="quote" style="margin: 2px; width: 308px; height: 93px;"></textarea>
+        <textarea placeholder="Цитата (не обязательно)" id="quote" style="margin: 2px; width: 308px; height: 93px;" class="k-input"></textarea>
         <br/>
-        <button onclick="send()">Добавить цитату</button>
-        <button onclick="reset()">Обнулить</button>
+        <button onclick="send()" class="k-button">Добавить цитату</button>
+        <button onclick="reset()" class="k-button">Обнулить</button>
     </div>
 </body>
 </html>
