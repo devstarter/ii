@@ -27,6 +27,9 @@ public class LinkController {
     public Link link(@RequestParam("term") String termName,
                      @RequestParam("item") String itemNumber,
                      @RequestParam String quote) {
+        if (termName.isEmpty() || itemNumber.isEmpty()) {
+            return null;
+        }
         Term term = termDao.getByName(termName);
         if (term == null) {
             term = termController.add(termName);

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="libs/jquery/jquery-1.9.1.js"></script>
+    <script>
+        function send() {
+            $.post("/api/link/add", {
+                term: $("#term")[0].value,
+                item: $("#item")[0].value,
+                quote: $("#quote")[0].value
+            }, function(r) {
+                $("#term")[0].value = "";
+                $("#item")[0].value = "";
+                $("#quote")[0].value = "";
+            })
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <input placeholder="term" id="term"/>
+        <input placeholder="item" id="item"/>
+        <br/>
+        <textarea placeholder="quote" id="quote" style="margin: 2px; width: 308px; height: 93px;"></textarea>
+        <br/>
+        <button onclick="send()">Добавить цитату</button>
+    </div>
+</body>
+</html>
