@@ -10,14 +10,17 @@
                 item: $("#item")[0].value,
                 quote: $("#quote")[0].value
             }, function(r) {
-                if (!r) {
+                if (r) {
+                    alert("Есть!");
+                } else {
                     alert("Ссылка не создана!");
-                    return;
                 }
+            });
+            function reset() {
                 $("#term")[0].value = "";
                 $("#item")[0].value = "";
                 $("#quote")[0].value = "";
-            })
+            }
         }
     </script>
 </head>
@@ -29,6 +32,7 @@
         <textarea placeholder="quote" id="quote" style="margin: 2px; width: 308px; height: 93px;"></textarea>
         <br/>
         <button onclick="send()">Добавить цитату</button>
+        <button onclick="reset()">Обнулить</button>
     </div>
 </body>
 </html>
