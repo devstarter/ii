@@ -6,11 +6,11 @@ import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.spring.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -23,10 +23,10 @@ public class LinkController {
     @Autowired TermController termController;
 
     @RequestMapping(value = "add", method = POST)
-    @Model
-    public Link link(@RequestParam("term") String termName,
-                     @RequestParam("item") String itemNumber,
-                     @RequestParam String quote) {
+    @ResponseBody
+    public Integer link(@RequestParam("term") String termName,
+                        @RequestParam("item") String itemNumber,
+                        @RequestParam String quote) {
         if (termName.isEmpty() || itemNumber.isEmpty()) {
             return null;
         }
@@ -36,6 +36,6 @@ public class LinkController {
         }
         Item item = itemDao.getByNumber(itemNumber);
         Link link = linkDao.save(new Link(term, item, quote));
-        return link;
+        return link.getLinkId();
     }
 }

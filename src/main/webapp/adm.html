@@ -10,6 +10,10 @@
                 item: $("#item")[0].value,
                 quote: $("#quote")[0].value
             }, function(r) {
+                if (!r) {
+                    alert("Ссылка не создана!");
+                    return;
+                }
                 $("#term")[0].value = "";
                 $("#item")[0].value = "";
                 $("#quote")[0].value = "";
