@@ -28,7 +28,7 @@ public class LinkController {
     @Autowired TermController termController;
     @Autowired JavaMailSender mailSender;
 
-    @RequestMapping(value = "add", method = POST)
+    @RequestMapping(value = "addQuote", method = POST)
     @ResponseBody
     public Integer link(@RequestParam("term") String termName,
                         @RequestParam("item") String itemNumber,
@@ -51,6 +51,23 @@ public class LinkController {
         helper.setText(quote + "\nlink id: " + link.getLinkId() + "\nhttp://ii.ayfaar.org/#" + termName);
         mailSender.send(helper.getMimeMessage());
 
+        return link.getLinkId();
+    }
+
+    @RequestMapping(value = "addAlias", method = POST)
+    @ResponseBody
+    public Integer addAlias(@RequestParam("term1") String term,
+                            @RequestParam("term2") String alias,
+                            @RequestParam Byte type) {
+        Term primTerm = termDao.getByName(term);
+        if (primTerm == null) {
+            primTerm = termController.add(term);
+        }
+        Term aliasTerm = termDao.getByName(alias);
+        if (aliasTerm == null) {
+            aliasTerm = termController.add(alias);
+        }
+        Link link = linkDao.save(new Link(primTerm, aliasTerm, type));
         return link.getLinkId();
     }
 }

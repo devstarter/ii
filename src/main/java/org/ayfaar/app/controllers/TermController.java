@@ -15,7 +15,10 @@ import org.ayfaar.app.utils.ValueObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
 
@@ -172,19 +175,7 @@ public class TermController {
         }
     }
 
-    @RequestMapping("{term}/{alias}")
-    @Model
-    public Link addAlias(@PathVariable String term, @PathVariable String alias) {
-        Term primTerm = commonDao.get(Term.class, "name", term);
-        if (primTerm == null) {
-            primTerm = commonDao.save(new Term(term));
-        }
-        Term aliasTerm = commonDao.get(Term.class, "name", alias);
-        if (aliasTerm == null) {
-            aliasTerm = commonDao.save(new Term(alias));
-        }
-        return commonDao.save(new Link(primTerm, aliasTerm, Link.ALIAS));
-    }
+
 
     public Term getPrime(Term term) {
         return (Term) linkDao.getPrimeForAlias(term.getUri());
