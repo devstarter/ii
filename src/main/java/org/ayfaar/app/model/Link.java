@@ -25,9 +25,11 @@ public class Link {
     private String quote;
 
     @ManyToOne
+    @Column(nullable = false)
     private UID uid1;
 
     @ManyToOne
+    @Column(nullable = false)
     private UID uid2;
 
     public Link(UID uid1, UID uid2) {
