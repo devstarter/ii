@@ -25,7 +25,6 @@ import java.util.*;
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 import static org.springframework.util.Assert.notNull;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("term")
@@ -118,8 +117,8 @@ public class TermController {
         });
     }
 
-    @RequestMapping(value = "/", method = POST)
-    @Model
+//    @RequestMapping(value = "/", method = POST)
+//    @Model
     public Term add(@RequestParam String name, @RequestParam(required = false) String description) {
         Term primeTerm = termDao.getByName(name);
         if (primeTerm == null) {

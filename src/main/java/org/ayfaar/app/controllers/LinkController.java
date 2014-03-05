@@ -58,7 +58,7 @@ public class LinkController {
     @ResponseBody
     public Integer addAlias(@RequestParam("term1") String term,
                             @RequestParam("term2") String alias,
-                            @RequestParam Byte type) {
+                            @RequestParam Byte type) throws MessagingException {
         Term primTerm = termDao.getByName(term);
         if (primTerm == null) {
             primTerm = termController.add(term);
@@ -68,6 +68,17 @@ public class LinkController {
             aliasTerm = termController.add(alias);
         }
         Link link = linkDao.save(new Link(primTerm, aliasTerm, type));
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+        helper.setFrom("ii@ayfaar.org");
+        helper.setTo("ylebid@gmail.com");
+        helper.setSubject("Создана связь (" + term + " + " + alias + ")");
+        helper.setText("link id: " + link.getLinkId() +
+                "\nhttp://ii.ayfaar.org/#" + term
+                +"\nhttp://ii.ayfaar.org/#" + alias);
+        mailSender.send(helper.getMimeMessage());
+
         return link.getLinkId();
     }
 }
