@@ -26,7 +26,7 @@
         }
 		if (uri.indexOf("песня:") == 0) {
             var needReload = location.hash.indexOf("#s/") != 0;
-            location.hash = "#s/"+uri.replace("песня:", "");
+            setHash("s/"+uri.replace("песня:", ""));
             if (needReload) location.reload();
         }
         if (uri.indexOf("http") == 0) {
