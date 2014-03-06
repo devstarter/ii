@@ -1,5 +1,5 @@
 ﻿(function ($, undefined) {
-    var searchApiUrl = ii.apiUrl + "search/", viewModel;
+    var searchApiUrl = ii.apiUrl + "search/", viewModel, pageCounter = 0;
     ii.search = {
         load: function(query) {
             document.title = "Поиск "+query;
@@ -12,6 +12,7 @@
                 terms: [],
                 contents: [],
                 query: query,
+                loadNextPageLabel: "Искать далее...",
                 search: function(e) {
                     var q = typeof e == "string" ? e : viewModel.query;
 //                    location.hash = "#search:"+q.replace(" ", "+");
@@ -28,6 +29,9 @@
                 },
                 navigate: function(e) {
                     ii.navigateToUri(e.data.uri);
+                },
+                loadNextPage: function(e) {
+                    searchInContent();
                 }
             });
             kendo.bind($('#search'), viewModel);
@@ -46,11 +50,19 @@
     };
     function searchInContent() {
         $.get(searchApiUrl+"content", {
-            query: viewModel.query
+            query: viewModel.query,
+            page: pageCounter
         }, function(r) {
+            pageCounter++;
             viewModel.set("loadingContents", false);
-            viewModel.set("contents", r)
+            viewModel.set("contents", viewModel.contents.toJSON().concat(r));
+            viewModel.set("showLoadMore", r.length > 0)
+            if (!r.length) {
+                pageCounter = 0;
+            }
         });
-        viewModel.set("loadingContents", true);
+        if (viewModel.contents.length == 0) {
+            viewModel.set("loadingContents", true);
+        }
     }
 })(jQuery);

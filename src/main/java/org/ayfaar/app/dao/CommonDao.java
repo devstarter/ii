@@ -32,5 +32,9 @@ public interface CommonDao {
 
     <E> E initialize(Class<E> className, E detachedParent, String fieldName);
 
-    List<Content> findInAllContent(String query);
+//    List<Content> findInAllContent(String query);
+
+    List<Content> findInAllContent(String query, Integer start, Integer pageSize);
+
+    List<Content> findInAllContent(List<String> aliases, Integer start, Integer pageSize);
 }

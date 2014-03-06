@@ -15,16 +15,16 @@ import org.ayfaar.app.utils.ValueObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 import static org.springframework.util.Assert.notNull;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("term")
@@ -56,15 +56,15 @@ public class TermController {
         }
         notNull(term, "Термин не найден");
 
-        Matcher matcher = Pattern.compile("^[А-ЯЁ]+$").matcher(termName);
-        if (matcher.find()) {
-            // может быть аббравиатурой
-            Link link = linkDao.getForAbbreviation(term.getUri());
-            if (link != null && link.getUid1() instanceof Term) {
+//        Matcher matcher = Pattern.compile("^[А-ЯЁ]+$").matcher(termName);
+//        if (matcher.find()) {
+            // может быть аббравиатурой или сокращением
+            Link _link = linkDao.getForAbbreviation(term.getUri());
+            if (_link != null && _link.getUid1() instanceof Term) {
                 alias = term;
-                term = (Term) link.getUid1();
+                term = (Term) _link.getUid1();
             }
-        }
+//        }
 
         ModelMap modelMap = (ModelMap) getModelMap(term);
 
@@ -117,8 +117,8 @@ public class TermController {
         });
     }
 
-    @RequestMapping(value = "/", method = POST)
-    @Model
+//    @RequestMapping(value = "/", method = POST)
+//    @Model
     public Term add(@RequestParam String name, @RequestParam(required = false) String description) {
         Term primeTerm = termDao.getByName(name);
         if (primeTerm == null) {
@@ -174,29 +174,24 @@ public class TermController {
         }
     }
 
-    @RequestMapping("{term}/{alias}")
-    @Model
-    public Link addAlias(@PathVariable String term, @PathVariable String alias) {
-        Term primTerm = commonDao.get(Term.class, "name", term);
-        if (primTerm == null) {
-            primTerm = commonDao.save(new Term(term));
-        }
-        Term aliasTerm = commonDao.get(Term.class, "name", alias);
-        if (aliasTerm == null) {
-            aliasTerm = commonDao.save(new Term(alias));
-        }
-        return commonDao.save(new Link(primTerm, aliasTerm, Link.ALIAS));
-    }
+
 
     public Term getPrime(Term term) {
-        Link link = linkDao.getPrimeForAlias(term.getUri());
-        if (link != null) {
-            return (Term) link.getUid1();
-        }
-        return term;
+        return (Term) linkDao.getPrimeForAlias(term.getUri());
     }
 
     public Term add(String termName) {
         return add(termName, null);
+    }
+
+    @RequestMapping("autocomplete")
+    @ResponseBody
+    public List<String> autoComplete(@RequestParam("filter[filters][0][value]") String filter) {
+        List<Term> terms = termDao.getLike("name", /*"%" +*/ filter + "%");
+        List<String> names = new ArrayList<String>();
+        for (Term term : terms) {
+            names.add(term.getName());
+        }
+        return names;
     }
 }

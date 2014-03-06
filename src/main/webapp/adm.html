@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="libs/jquery/jquery-1.9.1.js"></script>
+    <script src="libs/kendo/kendo.web.min.js"></script>
+    <link href="libs/kendo/kendo.common.min.css" rel="stylesheet" type="text/css" />
+    <link href="libs/kendo/kendo.blueopal.min.css" rel="stylesheet" type="text/css" />
+    <script>
+        var addQuoteContainer, addAliasContainer, linkTypeDDL;
+
+        $(document).ready(function() {
+            addQuoteContainer = $(".add-quote");
+            addAliasContainer = $(".add-alias");
+
+            $(".term").kendoAutoComplete({
+                minLength: 3,
+                dataSource: {
+                    serverFiltering: true,
+                    serverPaging: true,
+                    pageSize: 20,
+                    transport: {
+                        read: "/api/term/autocomplete"
+                    }
+                }
+            });
+            linkTypeDDL = addAliasContainer.find(".type").kendoDropDownList({
+                dataTextField: "label",
+                dataValueField: "value",
+                dataSource: [
+                    {value: null, label: "Равнозначная"},
+                    {value: 1, label: "Синоним"},
+                    {value: 2, label: "Аббравиатура (сокращение)"}
+                ]
+            }).data("kendoDropDownList");
+        });
+
+        function sendAddQuote() {
+            $.post("/api/link/addQuote", {
+                term: addQuoteContainer.find("input.term")[0].value,
+                item: addQuoteContainer.find("input.item")[0].value,
+                quote: addQuoteContainer.find(".quote")[0].value
+            }, function(r) {
+                if (r) {
+                    alert("Есть!");
+                } else {
+                    alert("Ссылка не создана!");
+                }
+            });
+        }
+        function resetAddQuote() {
+            addQuoteContainer.find(".term")[0].value = "";
+            addQuoteContainer.find(".item")[0].value = "";
+            addQuoteContainer.find(".quote")[0].value = "";
+        }
+
+        function sendAddAlias() {
+            $.post("/api/link/addAlias", {
+                term1: addAliasContainer.find("input.term1")[0].value,
+                term2: addAliasContainer.find("input.term2")[0].value,
+                type: linkTypeDDL.value()
+            }, function(r) {
+                if (r) {
+                    alert("Есть!");
+                } else {
+                    alert("Ссылка не создана!");
+                }
+            });
+        }
+        function resetAddAlias() {
+            addAliasContainer.find(".term1")[0].value = "";
+            addAliasContainer.find(".term1")[0].value = "";
+            linkTypeDDL.value(null)
+        }
+
+    </script>
+    <style type="text/css">
+        .panel {
+            border: 1px solid #0099cc;
+            width: 320px;
+            padding: 10px;
+            margin: 10px;
+            padding-top: 0px;
+            border-radius: 3px;
+            float: left;
+        }
+        .quote {
+            margin: 2px;
+            width: 308px;
+            height: 150px;
+        }
+        .controls {
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel add-quote">
+        <h3>Связать термин с пунктом</h3>
+        <input placeholder="Термин" class="term" style="width: 250px"/>
+        <input placeholder="Пункта" class="item" style="width: 50px"/>
+        <br/>
+        <textarea placeholder="Цитата (не обязательно)" class="quote k-input"></textarea>
+        <div class="controls">
+            <button onclick="sendAddQuote()" class="k-button">Добавить цитату</button>
+            <button onclick="resetAddQuote()" class="k-button">Обнулить</button>
+        </div>
+    </div>
+    <div class="panel add-alias">
+        <h3>Связать термин с термином</h3>
+        <input placeholder="Термин1" class="term term1" style="width: 250px"/>
+        <br/>
+        <input placeholder="Термин2" class="term term2" style="width: 250px"/>
+        <br/>
+        <label for="werwesds">Тип связи</label>
+        <input id="werwesds" class="type"/>
+        <div class="controls">
+            <button onclick="sendAddAlias()" class="k-button">Добавить связь</button>
+            <button onclick="resetAddAlias()" class="k-button">Обнулить</button>
+        </div>
+    </div>
+</body>
+</html>

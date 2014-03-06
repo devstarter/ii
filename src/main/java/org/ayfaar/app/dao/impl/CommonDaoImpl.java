@@ -22,7 +22,6 @@ import static org.apache.commons.beanutils.PropertyUtils.setProperty;
 import static org.ayfaar.app.utils.EntityUtils.getPrimaryKeyFiledName;
 import static org.ayfaar.app.utils.EntityUtils.getPrimaryKeyValue;
 import static org.ayfaar.app.utils.RegExpUtils.W;
-import static org.ayfaar.app.utils.RegExpUtils.w;
 import static org.hibernate.criterion.Restrictions.eq;
 
 @SuppressWarnings("unchecked")
@@ -140,17 +139,21 @@ public class CommonDaoImpl implements CommonDao {
     }
 
     @Override
-    public List<Content> findInAllContent(String query) {
+    public List<Content> findInAllContent(String query, Integer start, Integer limit) {
         /* Notes:
          *  - case insensitive searching
          *  - need brackets around query for case query="word1|word2|...|wordN"
-         *  - it is important to LIMIT every part of SELECT query
+         *  - it is important to LIMIT every part of SELECT query {why ?}
          */
-        query = "(" + query.toLowerCase() + ")";
-        String itemQuery = "SELECT uri, NULL, content FROM item WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "' LIMIT 15 ";
-        String articleQuery = "SELECT uri, name, content FROM article WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "' LIMIT 15 ";
+        query = "("+query+")";
+        String where = " WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "'";
+        String itemQuery = "SELECT uri, NULL, content FROM item"+ where;
+//                + " order by SUBSTRING(number FROM SUBSTRING_INDEX(number, \".\", 0))";
+        String articleQuery = "SELECT uri, name, content FROM article"+where;
         List<Object[]> list = sessionFactory.getCurrentSession().createSQLQuery(
                 itemQuery + " UNION " + articleQuery)
+                .setFirstResult(start)
+                .setMaxResults(limit)
                 .list();
         List<Content> contents = new ArrayList<Content>();
         for (Object[] o : list) {
@@ -158,14 +161,27 @@ public class CommonDaoImpl implements CommonDao {
         }
         return contents;
     }
-    /*
-    such query take about 20 sec!!! what can be done?? make optimizing of substring query? (уу-вву-форм)(ы|а|ой|...) ??
 
-    SELECT uri, NULL, content
-    FROM item
-    WHERE LOWER(content)
-    REGEXP '([^A-Za-zА-Яа-я0-9Ёё]|^)(уу-вву-форм|уу-вву-формам|уу-вву-формами|уу-вву-формах|уу-вву-форме|уу-вву-формой|уу-вву-форму|уу-вву-формы|уу-вву-форма)[^A-Za-zА-Яа-я0-9Ёё]'
-    LIMIT 15
+    @Override
+    public List<Content> findInAllContent(List<String> aliases, Integer start, Integer limit) {
+        String where = " WHERE ";
+        for (String alias : aliases) {
+            where += " content like '%"+alias+"%' OR";
+        }
+        where = where.substring(0, where.length() - 2);
 
-     */
+        String itemQuery = "SELECT uri, NULL, content FROM item"+ where;
+//                + " order by SUBSTRING(number FROM SUBSTRING_INDEX(number, \".\", 0))";
+        String articleQuery = "SELECT uri, name, content FROM article"+where;
+        List<Object[]> list = sessionFactory.getCurrentSession().createSQLQuery(
+                itemQuery + " UNION " + articleQuery)
+                .setFirstResult(start)
+                .setMaxResults(limit)
+                .list();
+        List<Content> contents = new ArrayList<Content>();
+        for (Object[] o : list) {
+            contents.add(new Content((String) o[0], (String) o[1], (String) o[2]));
+        }
+        return contents;
+    }
 }

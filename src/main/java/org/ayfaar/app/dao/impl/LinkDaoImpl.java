@@ -2,6 +2,7 @@ package org.ayfaar.app.dao.impl;
 
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
+import org.ayfaar.app.model.UID;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
@@ -23,18 +24,23 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
                 .createAlias("uid1", "uid1")
                 .createAlias("uid2", "uid2")
                 .add(eq("uid1.uri", uri))
-                .add(eq("type", Link.ALIAS))
+                .add(or(eq("type", Link.ALIAS),eq("type", Link.ABBREVIATION)))
                 .list();
     }
 
     @Override
-    public Link getPrimeForAlias(String uri) {
-        return (Link) criteria()
+    public UID getPrimeForAlias(String uri) {
+        Link link = (Link) criteria()
                 .createAlias("uid1", "uid1")
                 .createAlias("uid2", "uid2")
                 .add(eq("uid2.uri", uri))
-                .add(eq("type", Link.ALIAS))
+                .add(or(eq("type", Link.ALIAS),eq("type", Link.ABBREVIATION)))
                 .uniqueResult();
+        if (link != null) {
+            return link.getUid1();
+        } else {
+            return null;
+        }
     }
 
     @Override

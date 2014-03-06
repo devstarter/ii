@@ -75,8 +75,17 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
         load();
     }
 
-    public void put(String alias, Term term) {
-        put(alias, new Proxy(term));
+    public Proxy put(String alias, Term term) {
+        return put(alias, new Proxy(term));
+    }
+
+    @Override
+    public Proxy put(String key, Proxy value) {
+        return super.put(key.toLowerCase(), value);
+    }
+
+    public Proxy get(String key) {
+        return super.get(key.toLowerCase());
     }
 
     public class Proxy {

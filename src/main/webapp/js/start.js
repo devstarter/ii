@@ -5,23 +5,23 @@
     },
     navigateToSearch: function(query) {
         var needReload = location.hash.indexOf("#?") != 0;
-        location.hash = "#?"+query.replaceAll(" ", "+");
+        setHash("?"+query.replaceAll(" ", "+"));
         if (needReload) location.reload();
     },
     navigateToUri: function(uri) {
         if (uri.indexOf("ии:пункт:") == 0) {
             var needReload = !isItemNumber(location.hash.replace("#", ""));//.indexOf("#item:") != 0;
-            location.hash = "#"+uri.replace("ии:пункт:", "");
+            setHash(uri.replace("ии:пункт:", ""));
             if (needReload) location.reload();
         }
         if (uri.indexOf("ии:термин:") == 0) {
             var needReload = isItemNumber(location.hash.replace("#", "")) || location.hash.indexOf("#?") == 0;//location.hash.indexOf("#term:") != 0;
-            location.hash = "#"+uri.replace("ии:термин:", "").replaceAll(" ", "+");
+            setHash(uri.replace("ии:термин:", "").replaceAll(" ", "+"));
             if (needReload) location.reload();
         }
         if (uri.indexOf("статья:") == 0) {
             var needReload = location.hash.indexOf("#a/") != 0;
-            location.hash = "#a/"+uri.replace("статья:", "");
+            setHash("a/"+uri.replace("статья:", ""));
             if (needReload) location.reload();
         }
 		if (uri.indexOf("песня:") == 0) {
@@ -54,6 +54,15 @@
         }
     }
 };
+
+function setHash(newHash) {
+    var sharpIdx = window.location.href.indexOf("#");
+    if (sharpIdx === -1) {
+        window.location.href = window.location.href + "#" + newHash;
+    } else {
+        window.location.href = window.location.href.substr(0, sharpIdx) + "#" + newHash;
+    }
+}
 
 $(document).ajaxStart(function() {
     if (NProgress) NProgress.start();
