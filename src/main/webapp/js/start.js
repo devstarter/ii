@@ -1,7 +1,7 @@
 ﻿var ii = {
     apiUrl: "api/",
     error: function (text) {
-        noty({text: text, type: 'error', layout: 'topCenter', timeout: 1000});
+        noty({text: text, type: 'error', layout: 'topCenter', timeout: 3000});
     },
     navigateToSearch: function(query) {
         var needReload = location.hash.indexOf("#?") != 0;
@@ -24,6 +24,11 @@
             location.hash = "#a/"+uri.replace("статья:", "");
             if (needReload) location.reload();
         }
+		if (uri.indexOf("песня:") == 0) {
+            var needReload = location.hash.indexOf("#s/") != 0;
+            location.hash = "#s/"+uri.replace("песня:", "");
+            if (needReload) location.reload();
+        }
         if (uri.indexOf("http") == 0) {
             window.open(uri,'_blank');
         }
@@ -38,6 +43,9 @@
         }
         if (uri.indexOf("статья:") == 0) {
             return "Статья «"+d.name+"»";
+        }
+		if (uri.indexOf("песня:") == 0) {
+            return "Песня «"+d.name+"»";
         }
         if (uri.indexOf("http") == 0) {
             var parser = document.createElement('a');
@@ -115,6 +123,11 @@ router.route("main", function() {
 router.route("a/:id", function(id) {
     ensure({ html: "article.html", js: "js/article.js", parent: "content"}, function(){
         ii.article.load(id);
+    });
+});
+router.route("s/:id", function(id) {
+    ensure({ html: "song.html", js: "js/song.js", parent: "content"}, function(){
+        ii.song.load(id);
     });
 });
 router.route("about", function() {
