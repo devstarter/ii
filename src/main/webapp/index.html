@@ -38,6 +38,21 @@
 <!-- <span style="color: grey;font-size: 1.5em;">ИИССИИДИОЛОГИЯ</span> -->
 <div id="content">
     <div id="main">
+        <script>
+            $(document).ready(function() {
+                $("#search-input").kendoAutoComplete({
+                    minLength: 3,
+                    dataSource: {
+                        serverFiltering: true,
+                        serverPaging: true,
+                        pageSize: 20,
+                        transport: {
+                            read: "/api/term/autocomplete"
+                        }
+                    }
+                });
+            });
+        </script>
         <style type="text/css">
             #main .main_about,  #main .main_start{
                 background-color: rgb(184, 225, 243);
@@ -66,13 +81,15 @@
                 width: 150px;
                 height: 145px;
             }
+            #main .k-autocomplete {
+                padding: 0;
+            }
             .footer {
                 margin: 30px auto;
                 width: 420px;
 				margin-left: 100px;
             }
             .search-input {
-                padding-left: 10px;
                 width: 80%;
             }
             .search-button {

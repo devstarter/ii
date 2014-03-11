@@ -1,6 +1,7 @@
 <div id="search">
-    <input class="k-input prompt" data-bind="value: query, events: {keydown: onkeypress}"/>
-    <button data-bind="click: search">Искать</button>
+    <input class="k-input prompt" type="text" data-bind="value: query, events: {keydown: onkeypress}"
+            data-role="autocomplete" data-source="{serverFiltering: true, serverPaging: true, pageSize: 20, transport: {read: '/api/term/autocomplete'}}"/>
+    <button class="search-button" data-bind="click: search">Искать</button>
     <div class="block loading" data-bind="visible: loadingTerms">Загрузка терминов...</div>
     <div data-bind="invisible: loadingTerms">
         <h3>Термины</h3>
@@ -22,6 +23,13 @@
         <button class="grey" data-bind="visible: showLoadMore, click: loadNextPage, text: loadNextPageLabel"></button>
     </div>
     <style type="text/css">
+        #search .k-autocomplete {
+            padding: 0;
+        }
+        #search .search-button {
+            color: #ffffff;
+            font-size: 100%;
+        }
         /*#search .divider {
             clear: both;
         }
@@ -37,7 +45,7 @@
             display: inline;
         }*/
         #search .prompt {
-            width: 500px;
+            width: 400px;
         }
     </style>
 </div>
