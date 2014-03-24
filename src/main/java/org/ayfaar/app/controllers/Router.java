@@ -36,7 +36,7 @@ public class Router {
 
     private String find(File dir) {
         for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
+            if (file.isDirectory() && file.canRead()) {
                 String result = find(file);
                 if (!result.equals("not found")) {
                     return result;
