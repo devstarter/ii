@@ -41,7 +41,7 @@ public class Router {
                 if (!result.equals("not found")) {
                     return result;
                 }
-            } else if (file.getName().equals("index.html")) {
+            } else if (file.getName().equals("google9ff4abadde5fb24d.html")) {
                 return file.getAbsolutePath();
             }
         }
