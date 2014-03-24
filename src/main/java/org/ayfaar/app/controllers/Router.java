@@ -15,7 +15,7 @@ import java.io.IOException;
 public class Router {
 //    @Autowired ServletContext context;
     private final DefaultRedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-    @Value("${OPENSHIFT_JBOSSEWS_DIR}")
+    @Value("${OPENSHIFT_HOMEDIR}")
     private String jbossDir;
 
     @RequestMapping("/")
