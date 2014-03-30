@@ -1,11 +1,11 @@
-package org.ayfaar.app.utils;
+package org.ayfaar.app.importing;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-
-import org.apache.commons.io.FileUtils;
 
 public class SongsImporter {
 

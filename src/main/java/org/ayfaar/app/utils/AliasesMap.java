@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import static java.util.Collections.sort;
 import static java.util.regex.Pattern.compile;
-import static org.ayfaar.app.utils.RegExpUtils.W;
 
 @Component
 public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
@@ -129,8 +128,8 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
 
         for (Map.Entry<String, AliasesMap.Proxy> entry : entrySet()) {
             String key = entry.getKey().toLowerCase();
-            Matcher matcher = compile("((" + W + ")|^)" + key
-                    + "((" + W + ")|$)", Pattern.UNICODE_CHARACTER_CLASS)
+            Matcher matcher = compile("((" + RegExpUtils.W + ")|^)" + key
+                    + "((" + RegExpUtils.W + ")|$)", Pattern.UNICODE_CHARACTER_CLASS)
                     .matcher(content);
             if (matcher.find()) {
                 contains.add(entry.getValue().getTerm());

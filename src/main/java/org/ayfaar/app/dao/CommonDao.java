@@ -1,11 +1,14 @@
 package org.ayfaar.app.dao;
 
 import org.ayfaar.app.utils.Content;
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.RevisionType;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 public interface CommonDao {
@@ -24,6 +27,8 @@ public interface CommonDao {
 
     <E> E getByCode(Class<E> entity, String code);
 
+    <E> List<E> getList(Class<E> clazz, String property, Object value);
+
     <E> List<E> getFor(Class<E> clazz, String entity, Serializable id);
 
     <E> E getSingleFor(Class<E> clazz, String entity, Serializable id);
@@ -37,4 +42,10 @@ public interface CommonDao {
     List<Content> findInAllContent(String query, Integer start, Integer pageSize);
 
     List<Content> findInAllContent(List<String> aliases, Integer start, Integer pageSize);
+
+    <E> List<E> getLike(Class<E> className, String field, String value, Integer limit);
+
+    <E> AuditReader getAuditReader();
+
+    Collection<?> findAuditEntities(Number revision, RevisionType revisionType);
 }

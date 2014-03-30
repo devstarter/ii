@@ -1,16 +1,36 @@
 package org.ayfaar.app.utils;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.ayfaar.app.annotations.Uri;
 import org.ayfaar.app.model.UID;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.SessionImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.IdentifierGenerator;
 
 import java.io.Serializable;
 
+//@Component
 public class UriGenerator implements IdentifierGenerator {
-        @Override
-        public Serializable generate(SessionImplementor session, Object object) throws HibernateException {
-            UID uid = (UID) object;
-            return uid.generateUri();
-        }
+    public static String generate(UID object) throws HibernateException {
+        return (String) new UriGenerator().generate(null, object);
     }
+
+    @Override
+    public Serializable generate(SessionImplementor session, Object object) throws HibernateException {
+        Uri annotation = object.getClass().getAnnotation(Uri.class);
+        String uri = annotation.nameSpace();
+        try {
+            Object property = PropertyUtils.getProperty(object, annotation.field());
+            uri = uri + property;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return uri;
+    }
+
+    public static String getValueFromUri(Class objectClass, String uri) {
+        Uri annotation = (Uri) objectClass.getAnnotation(Uri.class);
+        return uri.replace(annotation.nameSpace(), "");
+    }
+}

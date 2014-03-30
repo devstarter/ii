@@ -24,6 +24,17 @@
                     }
                 }
             });
+            $(".category").kendoAutoComplete({
+                minLength: 3,
+                dataSource: {
+                    serverFiltering: true,
+                    serverPaging: true,
+                    pageSize: 20,
+                    transport: {
+                        read: "/api/category/autocomplete"
+                    }
+                }
+            });
             linkTypeDDL = addAliasContainer.find(".type").kendoDropDownList({
                 dataTextField: "label",
                 dataValueField: "value",
@@ -73,6 +84,22 @@
             linkTypeDDL.value(null)
         }
 
+        function sendAddCategory() {
+            var container = $(".add-category");
+            $.post("/api/category/add", {
+                category: container.find("input.main")[0].value,
+                parent: container.find("input.parent")[0].value,
+                from: container.find(".from")[0].value,
+                to: container.find(".to")[0].value
+            }, function(r) {
+                if (r) {
+                    alert("Есть!");
+                } else {
+                    alert("Категория не создана!");
+                }
+            });
+        }
+
     </script>
     <style type="text/css">
         .panel {
@@ -92,13 +119,19 @@
         .controls {
             padding-top: 20px;
         }
+        .term {
+            width: 250px
+        }
+        .item {
+            width: 50px
+        }
     </style>
 </head>
 <body>
     <div class="panel add-quote">
         <h3>Связать термин с пунктом</h3>
-        <input placeholder="Термин" class="term" style="width: 250px"/>
-        <input placeholder="Пункта" class="item" style="width: 50px"/>
+        <input placeholder="Термин" class="term"/>
+        <input placeholder="Пункта" class="item"/>
         <br/>
         <textarea placeholder="Цитата (не обязательно)" class="quote k-input"></textarea>
         <div class="controls">
@@ -108,15 +141,28 @@
     </div>
     <div class="panel add-alias">
         <h3>Связать термин с термином</h3>
-        <input placeholder="Термин1" class="term term1" style="width: 250px"/>
+        <input placeholder="Термин1" class="term term1"/>
         <br/>
-        <input placeholder="Термин2" class="term term2" style="width: 250px"/>
+        <input placeholder="Термин2" class="term term2"/>
         <br/>
         <label for="werwesds">Тип связи</label>
         <input id="werwesds" class="type"/>
         <div class="controls">
             <button onclick="sendAddAlias()" class="k-button">Добавить связь</button>
             <button onclick="resetAddAlias()" class="k-button">Обнулить</button>
+        </div>
+    </div>
+    <div class="panel add-category">
+        <h3>Добавить категорию</h3>
+        <input placeholder="Имя новой категории" class="category main"/>
+        <br/>
+        <input placeholder="Родительская категория" class="category parent"/>
+        <br/>
+        Пункты&nbsp;
+        <input placeholder="С" class="item from"/>&nbsp;
+        <input placeholder="По" class="item to"/>
+        <div class="controls">
+            <button onclick="sendAddCategory()" class="k-button">Добавить категорию</button>
         </div>
     </div>
 </body>

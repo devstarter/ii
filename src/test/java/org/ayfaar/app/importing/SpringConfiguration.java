@@ -1,4 +1,4 @@
-package org.ayfaar.app.utils;
+package org.ayfaar.app.importing;
 
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -9,7 +9,8 @@ import javax.servlet.ServletContext;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackages = "org.ayfaar.app")
+@ComponentScan(basePackages = "org.ayfaar.app"/*, excludeFilters = @ComponentScan.Filter(
+        type = FilterType.ASSIGNABLE_TYPE, value = Synchronizer.class)*/)
 @PropertySource({
         "file:D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\webapp\\WEB-INF\\database.properties",
         "file:D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\webapp\\WEB-INF\\debug.properties"

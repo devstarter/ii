@@ -17,8 +17,7 @@
         <property name="targetDataSource" ref="dataSourceTarget"/>
     </bean>
 
-    <bean id="sessionFactory"
-          class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="packagesToScan" value="org.ayfaar"/>
         <property name="namingStrategy" ref="namingStrategy"/>
@@ -30,23 +29,11 @@
                 <prop key="hibernate.hbm2ddl.auto">${database.hibernate_hbm2ddl_auto}</prop>
             </props>
         </property>
-        <property name="eventListeners">
-            <map key-type="java.lang.String" value-type="org.hibernate.event.EventListeners">
-                <entry key="post-insert" value-ref="auditEventListener"/>
-                <entry key="post-update" value-ref="auditEventListener"/>
-                <entry key="post-delete" value-ref="auditEventListener"/>
-                <entry key="pre-collection-update" value-ref="auditEventListener"/>
-                <entry key="pre-collection-remove" value-ref="auditEventListener"/>
-                <entry key="post-collection-recreate" value-ref="auditEventListener"/>
-            </map>
-        </property>
     </bean>
-
-    <bean id="auditEventListener" class="org.hibernate.envers.event.AuditEventListener" />
 
     <bean id="namingStrategy" class="org.hibernate.cfg.ImprovedNamingStrategy"/>
 
-    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 

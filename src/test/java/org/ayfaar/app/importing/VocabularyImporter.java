@@ -1,4 +1,4 @@
-package org.ayfaar.app.utils;
+package org.ayfaar.app.importing;
 
 import org.apache.commons.io.FileUtils;
 import org.ayfaar.app.controllers.TermController;

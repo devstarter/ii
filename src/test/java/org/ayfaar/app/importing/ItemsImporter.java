@@ -1,8 +1,9 @@
-package org.ayfaar.app.utils;
+package org.ayfaar.app.importing;
 
 import org.apache.commons.io.FileUtils;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.UriGenerator;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -49,7 +50,7 @@ public class ItemsImporter {
 
         Item storedItem = itemDao.getByNumber(currentItem.getNumber());
         if (storedItem != null) {
-            currentItem.setUri(currentItem.generateUri());
+            currentItem.setUri(UriGenerator.generate(currentItem));
         }
         itemDao.save(currentItem);
 

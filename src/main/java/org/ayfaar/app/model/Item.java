@@ -1,5 +1,6 @@
 package org.ayfaar.app.model;
 
+import org.ayfaar.app.annotations.Uri;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -9,9 +10,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @Entity
 @PrimaryKeyJoinColumn(name="uri")
 @Audited
+@Uri(nameSpace = "ии:пункт:", field = "number")
 public class Item extends UID {
-
-    public static final String NAME_SPACE = "ии:пункт:";
 
     @Column(unique = true)
     private String number;
@@ -29,11 +29,6 @@ public class Item extends UID {
     }
 
     public Item() {
-    }
-
-    @Override
-    public String generateUri() {
-        return NAME_SPACE+number;
     }
 
     public String getNumber() {

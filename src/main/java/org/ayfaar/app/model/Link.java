@@ -10,6 +10,8 @@ public class Link {
     public static final Byte ALIAS = 1;
     public static final Byte ABBREVIATION = 2;
     public static final Byte DEFINITION = 3;
+//    public static final Byte START = 4;
+//    public static final Byte END = 5;
 //    public static final byte DIRECTION = 2;
 //    public static final byte PRIORITY = 3;
 //    public static final byte MORPHEME_WEIGHT = -1;

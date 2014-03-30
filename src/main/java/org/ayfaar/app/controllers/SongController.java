@@ -2,8 +2,6 @@ package org.ayfaar.app.controllers;
 
 
 import org.ayfaar.app.dao.SongDao;
-
-import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Song;
 import org.ayfaar.app.spring.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Locale;
-
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("song")

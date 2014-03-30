@@ -2,7 +2,7 @@ package org.ayfaar.app.utils;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.hibernate.collection.PersistentBag;
+import org.hibernate.collection.internal.PersistentBag;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.ui.ModelMap;
 
