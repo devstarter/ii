@@ -1,17 +1,22 @@
 package org.ayfaar.app.importing;
 
+import au.com.bytecode.opencsv.CSVReader;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Category;
+import org.ayfaar.app.model.Item;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+
+import static java.util.Arrays.asList;
 
 @Slf4j
 public class CategoryImporter {
@@ -34,23 +39,40 @@ public class CategoryImporter {
         Category razdelCat = null;
         Category glavaCat = null;
 
-        for(String line: FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\paragraphs\\Параграфы, БДК, Том 10.csv"))) {
-            String[] columns = line.split(";");
-            String type = columns[0];
-            String tom = columns[1];
+//        List<String> lines = FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\paragraphs\\Параграфы, БДК, Том 10,14.utf.csv"));
+        CSVReader reader = new CSVReader(new FileReader("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\paragraphs\\Параграфы, БДК, Том 10,14.utf.csv"), ';');
+        String [] nextLine;
+        List<String> columns;
+//        List myEntries = reader.readAll();
+//        ListIterator iterator = myEntries.listIterator();
+        while ((nextLine = reader.readNext()) != null){
+            columns = asList(nextLine);
+            String cikl = columns.get(0);
+            String tom = columns.get(1);
             int tomNumber = Integer.valueOf(tom.replace("Том ", ""));
-            String razdel = columns[2];
-            String glava = columns[3];
-            String paragraphNumber = columns[4];
-            String paragraphDescription = columns[5];
-            String[] items = columns[6].split("-");
-            String itemFrom = tomNumber+"."+items[0];
-            String itemTo = tomNumber+"."+items[1];
+            String codeRazdela = columns.get(2);
+            String uniqCodeRazdela = columns.get(3);
+            String nameRazdela = columns.get(4);
+            String codeGlavy = columns.get(6);
+            String uniqCodeGlavy = columns.get(7);
+            String nameGlavy = columns.get(8);
+            String paragraphNumber = columns.get(9);
+            String paragraphDescription = columns.get(10);
+            String[] items = columns.get(11).split("-");
 
-            typeCat = getCat(type, typeCat, null);
+            String itemFrom = tomNumber+"."+items[0];
+            String itemTo = null;
+
+            if (items.length == 1) {
+                itemTo = null;
+            } else {
+                itemTo = tomNumber+"."+items[1];
+            }
+
+            typeCat = getCat(cikl, typeCat, null);
             tomCat = getCat(tom, tomCat, typeCat);
-            razdelCat = getCat(razdel, razdelCat, tomCat);
-            glavaCat = getCat(glava, glavaCat, razdelCat);
+            razdelCat = getCat(uniqCodeRazdela, nameRazdela, razdelCat, tomCat);
+            glavaCat = getCat(uniqCodeGlavy, nameGlavy, glavaCat, razdelCat);
 
             Category prevParagraphCat = paragraphCat;
             String paragraphName = "Параграф "+paragraphNumber;
@@ -58,8 +80,12 @@ public class CategoryImporter {
             if (paragraphCat == null) {
                 paragraphCat = new Category(paragraphName, glavaCat.getUri());
                 paragraphCat.setDescription(paragraphDescription);
-                paragraphCat.setStart(itemDao.getByNumber(itemFrom).getUri());
-                paragraphCat.setEnd(itemDao.getByNumber(itemTo).getUri());
+                Item number = itemDao.getByNumber(itemFrom);
+                paragraphCat.setStart(number.getUri());
+                if (itemTo != null) {
+                    Item byNumber = itemDao.getByNumber(itemTo);
+                    paragraphCat.setEnd(byNumber.getUri());
+                }
                 commonDao.save(paragraphCat);
                 log.info(paragraphCat.getName());
             }
@@ -70,14 +96,42 @@ public class CategoryImporter {
         }
     }
 
-    private Category getCat(String categoryName, Category prevCategory, Category parent) {
-        Category category = categoriesMap.get(categoryName);
-        if (category == null) {
-            category = commonDao.get(Category.class, "name", categoryName);
-            if (category == null) {
-                category = commonDao.save(new Category(categoryName, parent != null ? parent.getUri() : null));
+    private void fillColumns(List<String> columns, ListIterator<String> iterator) {
+        String next = iterator.next();
+        int i = next.indexOf(";");
+        String add = "";
+        if (i == -1) {
+            add = next;
+        } else {
+            add = next.substring(0, i);
+            List<String> nextColumns = asList(next.substring(i).split(";"));
+            for (String nextColumn : nextColumns) {
+                columns.add(nextColumn);
             }
-            categoriesMap.put(categoryName, category);
+        }
+        columns.set(columns.size()-1, columns.get(columns.size()-1) + add);
+        if (columns.size() < 11) {
+            fillColumns(columns, iterator);
+        }
+    }
+
+    private Category getCat(String categoryUniqCode, Category prevCategory, Category parent) {
+        return getCat(categoryUniqCode, null, prevCategory, parent);
+    }
+    private Category getCat(String categoryUniqCode, String categoryName, Category prevCategory, Category parent) {
+//        String[] split = categoryName.split("\\.\\s");
+//        categoryName = split[0];
+//        String categoryDescription = null;
+//        if (split.length > 1) {
+//            categoryDescription = split[1];
+//        }
+        Category category = categoriesMap.get(categoryUniqCode);
+        if (category == null) {
+            category = commonDao.get(Category.class, "name", categoryUniqCode);
+            if (category == null) {
+                category = commonDao.save(new Category(categoryUniqCode, categoryName, parent != null ? parent.getUri() : null));
+            }
+            categoriesMap.put(categoryUniqCode, category);
         }
         if (prevCategory != null && !category.equals(prevCategory)) {
             prevCategory.setNext(category.getUri());

@@ -28,6 +28,10 @@ public class Category extends UID {
         this(name);
         this.parent = parent;
     }
+    public Category(String name, String description, String parent) {
+        this(name, parent);
+        this.description = description;
+    }
 
     public Category(String name) {
         this.name = name;
