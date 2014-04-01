@@ -16,6 +16,7 @@ public class CategoryExporterTest {
         CommonDao commonDao = ctx.getBean(CommonDao.class);
         CategorySync categorySync = ctx.getBean(CategorySync.class);
 
+        categorySync.synchronize(commonDao.get(Category.class, "категория:Параграф 10.1.1.1"));
         for (Category category : commonDao.getAll(Category.class)) {
             categorySync.synchronize(category);
         }

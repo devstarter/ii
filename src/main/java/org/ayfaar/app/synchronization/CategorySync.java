@@ -4,6 +4,7 @@ import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
 import org.ayfaar.app.controllers.ItemController;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Category;
+import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ParagraphHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,33 +16,43 @@ import static java.lang.String.format;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
-public class CategorySync {
+public class CategorySync implements EntitySynchronizer<Category> {
     @Autowired MediaWikiBotProvider mediaWikiBotProvider;
     @Autowired ParagraphHelper paragraphHelper;
     @Autowired ItemDao itemDao;
+    @Autowired ItemSync itemSync;
 
+    @Override
     public void synchronize(Category category) throws Exception {
-        SimpleArticle article = new SimpleArticle("Category:"+category.getName());
+        boolean paragraphMode = category.getStart() != null;
+        SimpleArticle article = new SimpleArticle(paragraphMode ? category.getName() : "Category:"+category.getName());
         validateTitle(article.getTitle());
         PrintStream out = new PrintStream(System.out, true, "UTF-8");
 
         StringBuilder sb = new StringBuilder();
-//        sb.append("= ").append(category.getName()).append(" =\n");
 
-        if (category.getDescription() != null) {
-            sb.append(format("== %s ==\n", category.getDescription()));
-        }
-
-        if (category.getStart() != null) {
-            article.setTitle(category.getName());
-            String itemNumber = itemDao.get(category.getStart()).getNumber();
-            String endNumber = itemDao.get(category.getEnd()).getNumber();
+        if (paragraphMode) {
+            sb.append(format("{{DISPLAYTITLE:%s %s}}\n", category.getName().replace("Параграф", "§"), category.getDescription()));
+            Item currentItem = itemDao.get(category.getStart());
+            String itemNumber = currentItem.getNumber();
+            String endNumber = null;
+            if (category.getEnd() != null) {
+                endNumber = itemDao.get(category.getEnd()).getNumber();
+            }
             do {
+                itemSync.synchronize(currentItem);
                 sb.append(format("[[%s]]. {{:%s}}<br /><br />", itemNumber, itemNumber));
                 itemNumber = ItemController.getNext(itemNumber);
-            } while (!itemNumber.equals(endNumber));
+                currentItem = itemDao.getByNumber(itemNumber);
+            } while (endNumber != null && !itemNumber.equals(endNumber));
+
             if (category.getNext() != null) {
-                sb.append(format("Следующая(ий) [[%s]]", getValueFromUri(Category.class, category.getNext())));
+                String next = getValueFromUri(Category.class, category.getNext());
+                sb.append(format("Следующая(ий) [[%s|%s]]", next, next.replace("Параграф", "§")));
+            }
+        } else {
+            if (category.getDescription() != null) {
+                sb.append(format("== %s ==\n", category.getDescription()));
             }
         }
 
@@ -50,6 +61,9 @@ public class CategorySync {
         }
 
         article.setText(sb.toString());
+        if (article.getText().isEmpty()) {
+            article.setText("1");
+        }
 //        try {
             mediaWikiBotProvider.getBot().writeContent(article);
 //            System.out.println(article.getTitle());
