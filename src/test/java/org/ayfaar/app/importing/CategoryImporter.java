@@ -14,7 +14,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 
 import static java.util.Arrays.asList;
 
@@ -93,25 +92,6 @@ public class CategoryImporter {
                 prevParagraphCat.setNext(paragraphCat.getUri());
                 commonDao.save(prevParagraphCat);
             }
-        }
-    }
-
-    private void fillColumns(List<String> columns, ListIterator<String> iterator) {
-        String next = iterator.next();
-        int i = next.indexOf(";");
-        String add = "";
-        if (i == -1) {
-            add = next;
-        } else {
-            add = next.substring(0, i);
-            List<String> nextColumns = asList(next.substring(i).split(";"));
-            for (String nextColumn : nextColumns) {
-                columns.add(nextColumn);
-            }
-        }
-        columns.set(columns.size()-1, columns.get(columns.size()-1) + add);
-        if (columns.size() < 11) {
-            fillColumns(columns, iterator);
         }
     }
 
