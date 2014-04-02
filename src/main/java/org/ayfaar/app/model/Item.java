@@ -17,6 +17,8 @@ public class Item extends UID {
     private String number;
     @Column(columnDefinition = "TEXT")
     private String content;
+    @Column(columnDefinition = "TEXT")
+    private String wiki;
     private String next;
 
     public Item(String number, String content) {
@@ -53,5 +55,13 @@ public class Item extends UID {
 
     public void setNext(String next) {
         this.next = next;
+    }
+
+    public String getWiki() {
+        return wiki;
+    }
+
+    public void setWiki(String wiki) {
+        this.wiki = wiki;
     }
 }

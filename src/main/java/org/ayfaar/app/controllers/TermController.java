@@ -49,12 +49,17 @@ public class TermController {
     @Model
     public ModelMap get(@RequestParam("name") String termName) {
         Term term = termDao.getByName(termName);
+        notNull(term, "Термин не найден");
+        return get(term);
+    }
+
+    public ModelMap get(Term term) {
+        String termName = term.getName();
         Term alias = null;
         if (!aliasesMap.get(termName).getTerm().getUri().equals(term.getUri())) {
             alias = term;
             term = aliasesMap.get(termName).getTerm();
         }
-        notNull(term, "Термин не найден");
 
 //        Matcher matcher = Pattern.compile("^[А-ЯЁ]+$").matcher(termName);
 //        if (matcher.find()) {

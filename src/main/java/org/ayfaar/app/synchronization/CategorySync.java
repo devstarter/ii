@@ -9,7 +9,6 @@ import org.ayfaar.app.utils.ParagraphHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.PrintStream;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
@@ -17,7 +16,7 @@ import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
 public class CategorySync implements EntitySynchronizer<Category> {
-    @Autowired MediaWikiBotProvider mediaWikiBotProvider;
+    @Autowired MediaWikiBotHelper mediaWikiBotHelper;
     @Autowired ParagraphHelper paragraphHelper;
     @Autowired ItemDao itemDao;
     @Autowired ItemSync itemSync;
@@ -27,7 +26,6 @@ public class CategorySync implements EntitySynchronizer<Category> {
         boolean paragraphMode = category.getStart() != null;
         SimpleArticle article = new SimpleArticle(paragraphMode ? category.getName() : "Category:"+category.getName());
         validateTitle(article.getTitle());
-        PrintStream out = new PrintStream(System.out, true, "UTF-8");
 
         StringBuilder sb = new StringBuilder();
 
@@ -40,7 +38,7 @@ public class CategorySync implements EntitySynchronizer<Category> {
                 endNumber = itemDao.get(category.getEnd()).getNumber();
             }
             do {
-                itemSync.synchronize(currentItem);
+                itemSync.synchronize(currentItem, category.getName());
                 sb.append(format("[[%s]]. {{:%s}}<br /><br />", itemNumber, itemNumber));
                 itemNumber = ItemController.getNext(itemNumber);
                 currentItem = itemDao.getByNumber(itemNumber);
@@ -64,15 +62,7 @@ public class CategorySync implements EntitySynchronizer<Category> {
         if (article.getText().isEmpty()) {
             article.setText("1");
         }
-//        try {
-            mediaWikiBotProvider.getBot().writeContent(article);
-//            System.out.println(article.getTitle());
-
-        out.println(article.getTitle());
-//        } catch (Exception e) {
-            //mediaWikiBotProvider.getBot().writeContent(article);
-//        }
-//        Thread.sleep(1000);
+        mediaWikiBotHelper.saveArticle(article);
     }
 
     private static final Pattern INVALID_CHARS_PATTERN =
