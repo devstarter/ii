@@ -1,6 +1,4 @@
 debug.properties
-*.doc
-*.docx
 target
 /II.rar
 /src/test/test.iml

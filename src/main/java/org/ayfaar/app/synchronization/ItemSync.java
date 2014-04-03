@@ -48,12 +48,12 @@ public class ItemSync implements EntitySynchronizer<Item> {
                         matcher.group(5)
                 ));
                 foundTerms.add(entry.getValue().getUri());
-                termSync.synchronize(entry.getValue().getTerm());
+//                termSync.synchronize(entry.getValue().getTerm());
             }
         }
 
         if (item.getNext() != null || paragraph != null) {
-            content += "<noinclude>\n";
+            content += "\n<noinclude>\n";
             if (item.getNext() != null) {
                 content += format("[[%s|Следующий пункт]] ", UriGenerator.getValueFromUri(Item.class, item.getNext()));
             }

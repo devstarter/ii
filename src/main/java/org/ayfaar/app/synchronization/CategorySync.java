@@ -38,7 +38,7 @@ public class CategorySync implements EntitySynchronizer<Category> {
                 endNumber = itemDao.get(category.getEnd()).getNumber();
             }
             do {
-//                itemSync.synchronize(currentItem, category.getName());
+                itemSync.synchronize(currentItem, category.getName());
                 sb.append(format("[[%s]]. {{:%s}}<br /><br />", itemNumber, itemNumber));
                 itemNumber = ItemController.getNext(itemNumber);
                 currentItem = itemDao.getByNumber(itemNumber);

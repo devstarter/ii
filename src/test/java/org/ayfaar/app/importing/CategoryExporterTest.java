@@ -18,18 +18,18 @@ public class CategoryExporterTest {
         CommonDao commonDao = ctx.getBean(CommonDao.class);
 
 //        if (false) {
-        CategorySync categorySync = ctx.getBean(CategorySync.class);
+            CategorySync categorySync = ctx.getBean(CategorySync.class);
 //        categorySync.synchronize(commonDao.get(Category.class, "категория:Параграф 10.1.1.1"));
-        boolean skip = true;
-        List<Category> categories = commonDao.getAll(Category.class);
-        for (Category category : categories) {
-            if (skip && category.getName().equals("Параграф 10.3.7.1")) {
-                skip = false;
+            boolean skip = true;
+            List<Category> categories = commonDao.getAll(Category.class);
+            for (Category category : categories) {
+                if (skip && category.getName().equals("Параграф 10.4.1.4")) {
+                    skip = false;
+                }
+                if (!skip) {
+                    categorySync.synchronize(category);
+                }
             }
-            if (!skip) {
-                categorySync.synchronize(category);
-            }
-        }
 
 //        }
 //            ItemSync itemSync = ctx.getBean(ItemSync.class);
