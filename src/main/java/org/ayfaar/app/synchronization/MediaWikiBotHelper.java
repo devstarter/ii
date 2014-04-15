@@ -19,7 +19,8 @@ public class MediaWikiBotHelper {
 
     public MediaWikiBot getBot() {
         if (bot == null) {
-            bot = new MediaWikiBot("http://direct.ayfaar.org/mediawiki/");
+            bot = new MediaWikiBot("http://mediawiki/");
+//            bot = new MediaWikiBot("http://direct.ayfaar.org/mediawiki/");
             bot.login("admin", "ayfaar");
         }
         return bot;
@@ -31,5 +32,9 @@ public class MediaWikiBotHelper {
 
         getBot().writeContent(article);
         out.println(article.getTitle());
+    }
+
+    public void saveArticle(String title, String text) {
+        saveArticle(new SimpleArticle(text, title));
     }
 }

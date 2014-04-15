@@ -46,17 +46,17 @@ public class CategoryImporter {
 //        ListIterator iterator = myEntries.listIterator();
         while ((nextLine = reader.readNext()) != null){
             columns = asList(nextLine);
-            String cikl = columns.get(0);
-            String tom = columns.get(1);
-            int tomNumber = Integer.valueOf(tom.replace("Том ", ""));
-            String codeRazdela = columns.get(2);
-            String uniqCodeRazdela = columns.get(3);
-            String nameRazdela = columns.get(4);
-            String codeGlavy = columns.get(6);
-            String uniqCodeGlavy = columns.get(7);
-            String nameGlavy = columns.get(8);
-            String paragraphNumber = columns.get(9);
-            String paragraphDescription = columns.get(10);
+            String cikl = columns.get(0).trim();
+            String tom = columns.get(1).trim();
+            int tomNumber = Integer.valueOf(tom.replace("Том ", "").trim());
+            String codeRazdela = columns.get(2).trim();
+            String uniqCodeRazdela = columns.get(3).trim();
+            String nameRazdela = columns.get(4).trim();
+            String codeGlavy = columns.get(6).trim();
+            String uniqCodeGlavy = columns.get(7).trim();
+            String nameGlavy = columns.get(8).trim();
+            String paragraphNumber = columns.get(9).trim();
+            String paragraphDescription = columns.get(10).trim();
             String[] items = columns.get(11).split("-");
 
             String itemFrom = tomNumber+"."+items[0];
@@ -72,6 +72,19 @@ public class CategoryImporter {
             tomCat = getCat(tom, tomCat, typeCat);
             razdelCat = getCat(uniqCodeRazdela, nameRazdela, razdelCat, tomCat);
             glavaCat = getCat(uniqCodeGlavy, nameGlavy, glavaCat, razdelCat);
+
+            if (typeCat.getStart() == null) {
+                typeCat.setStart(tomCat.getUri());
+                commonDao.save(typeCat);
+            }
+            if (tomCat.getStart() == null) {
+                tomCat.setStart(razdelCat.getUri());
+                commonDao.save(tomCat);
+            }
+            if (razdelCat.getStart() == null) {
+                razdelCat.setStart(glavaCat.getUri());
+                commonDao.save(razdelCat);
+            }
 
             Category prevParagraphCat = paragraphCat;
             String paragraphName = "Параграф "+paragraphNumber;
@@ -92,13 +105,18 @@ public class CategoryImporter {
                 prevParagraphCat.setNext(paragraphCat.getUri());
                 commonDao.save(prevParagraphCat);
             }
+            if (glavaCat.getStart() == null) {
+                glavaCat.setStart(paragraphCat.getUri());
+                commonDao.save(glavaCat);
+            }
         }
     }
 
     private Category getCat(String categoryUniqCode, Category prevCategory, Category parent) {
         return getCat(categoryUniqCode, null, prevCategory, parent);
     }
-    private Category getCat(String categoryUniqCode, String categoryName, Category prevCategory, Category parent) {
+    private Category getCat(String categoryUniqCode, String categoryName,
+                            Category prevCategory, Category parent) {
 //        String[] split = categoryName.split("\\.\\s");
 //        categoryName = split[0];
 //        String categoryDescription = null;

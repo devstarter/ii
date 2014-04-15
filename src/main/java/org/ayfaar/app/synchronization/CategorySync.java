@@ -2,6 +2,7 @@ package org.ayfaar.app.synchronization;
 
 import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
 import org.ayfaar.app.controllers.ItemController;
+import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Component;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
+import static org.ayfaar.app.model.Category.PARAGRAPH_NAME;
+import static org.ayfaar.app.model.Category.PARAGRAPH_SIGN;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
@@ -20,6 +23,7 @@ public class CategorySync implements EntitySynchronizer<Category> {
     @Autowired ParagraphHelper paragraphHelper;
     @Autowired ItemDao itemDao;
     @Autowired ItemSync itemSync;
+    @Autowired CategoryDao categoryDao;
 
     @Override
     public void synchronize(Category category) throws Exception {
@@ -45,8 +49,12 @@ public class CategorySync implements EntitySynchronizer<Category> {
             } while (endNumber != null && !itemNumber.equals(endNumber));
 
             if (category.getNext() != null) {
-                String next = getValueFromUri(Category.class, category.getNext());
-                sb.append(format("Следующая(ий) [[%s|%s]]", next, next.replace("Параграф", "§")));
+//                String next = getValueFromUri(Category.class, category.getNext());
+                Category next = categoryDao.get(category.getNext());
+                sb.append(format("Следующая(ий) [[%s|%s %s]]",
+                        next.getName(),
+                        next.getName().replace(PARAGRAPH_NAME, PARAGRAPH_SIGN),
+                        next.getDescription()));
             }
         } else {
             if (category.getDescription() != null) {

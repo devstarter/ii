@@ -23,7 +23,7 @@ public class CategoryExporterTest {
             boolean skip = true;
             List<Category> categories = commonDao.getAll(Category.class);
             for (Category category : categories) {
-                if (skip && category.getName().equals("Параграф 10.4.1.4")) {
+                if (skip && category.getName().equals("Параграф 14.16.2.9")) {
                     skip = false;
                 }
                 if (!skip) {

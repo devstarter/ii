@@ -15,6 +15,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @Uri(nameSpace = "категория:")
 public class Category extends UID {
 
+    public static final String PARAGRAPH_NAME = "Параграф";
+    public static final String PARAGRAPH_SIGN = "§";
     @Column(unique = true)
     private String name;
     @Column(columnDefinition = "TEXT")
@@ -83,5 +85,10 @@ public class Category extends UID {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isParagraph() {
+        return name.indexOf(PARAGRAPH_NAME) == 0;
+//        return start != null && !start.isEmpty();
     }
 }

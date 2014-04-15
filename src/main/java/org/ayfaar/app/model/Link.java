@@ -7,9 +7,26 @@ import javax.persistence.*;
 @Entity
 @Audited
 public class Link {
+    /**
+     * Синомим, первым следует указывать более точное понятие или код
+     */
     public static final Byte ALIAS = 1;
+
+    /**
+     * Аббревиатура или сокращение, первым указывают полное значение
+     */
     public static final Byte ABBREVIATION = 2;
+
+    /**
+     * Ссылка на словарную статью
+     */
     public static final Byte DEFINITION = 3;
+
+    /**
+     * Ссылка на группу к которой относиться понятие. Первым указываеться понятие
+     * вторым группа
+     */
+//    public static final Byte GROUP = 4;
 //    public static final Byte START = 4;
 //    public static final Byte END = 5;
 //    public static final byte DIRECTION = 2;
