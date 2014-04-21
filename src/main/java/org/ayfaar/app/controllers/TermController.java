@@ -125,6 +125,7 @@ public class TermController {
 //    @RequestMapping(value = "/", method = POST)
 //    @Model
     public Term add(@RequestParam String name, @RequestParam(required = false) String description) {
+        name = name.replace("\"", "").replace("«", "").replace("»", "").trim();
         Term primeTerm = termDao.getByName(name);
         if (primeTerm == null) {
             primeTerm = termDao.save(new Term(name, description));

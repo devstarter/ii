@@ -18,7 +18,7 @@ import static org.ayfaar.app.model.Category.PARAGRAPH_SIGN;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
-public class CategorySync implements EntitySynchronizer<Category> {
+public class CategorySync extends EntitySynchronizer<Category> {
     @Autowired MediaWikiBotHelper mediaWikiBotHelper;
     @Autowired ParagraphHelper paragraphHelper;
     @Autowired ItemDao itemDao;
@@ -27,7 +27,7 @@ public class CategorySync implements EntitySynchronizer<Category> {
 
     @Override
     public void synchronize(Category category) throws Exception {
-        boolean paragraphMode = category.getStart() != null;
+        boolean paragraphMode = category.isParagraph();
         SimpleArticle article = new SimpleArticle(paragraphMode ? category.getName() : "Category:"+category.getName());
         validateTitle(article.getTitle());
 
@@ -42,7 +42,7 @@ public class CategorySync implements EntitySynchronizer<Category> {
                 endNumber = itemDao.get(category.getEnd()).getNumber();
             }
             do {
-                itemSync.synchronize(currentItem, category.getName());
+                itemSync.scheduleSync(currentItem, category.getName());
                 sb.append(format("[[%s]]. {{:%s}}<br /><br />", itemNumber, itemNumber));
                 itemNumber = ItemController.getNext(itemNumber);
                 currentItem = itemDao.getByNumber(itemNumber);

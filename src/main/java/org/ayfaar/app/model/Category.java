@@ -2,14 +2,13 @@ package org.ayfaar.app.model;
 
 import lombok.NoArgsConstructor;
 import org.ayfaar.app.annotations.Uri;
-import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
-@Audited
+//@Audited
 @PrimaryKeyJoinColumn(name="uri")
 @NoArgsConstructor
 @Uri(nameSpace = "категория:")

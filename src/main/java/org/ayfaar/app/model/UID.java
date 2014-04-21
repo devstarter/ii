@@ -1,12 +1,11 @@
 package org.ayfaar.app.model;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
 @Entity
-@Audited
+//@Audited
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class UID {
 

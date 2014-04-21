@@ -21,6 +21,7 @@ public class TOCSync {
     @Autowired CommonDao commonDao;
     @Autowired CategoryDao categoryDao;
     @Autowired MediaWikiBotHelper mediaWikiBotHelper;
+    @Autowired CategorySync categorySync;
 
     private StringBuilder sb;
     private PrintStream out;
@@ -37,6 +38,8 @@ public class TOCSync {
     }
 
     private void syncChildren(Category parent, String depth) {
+        categorySync.scheduleSync(parent);
+
         String name = parent.getName();
         String label = name;
         int i = label.lastIndexOf("/");

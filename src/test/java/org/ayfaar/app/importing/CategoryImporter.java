@@ -44,6 +44,7 @@ public class CategoryImporter {
         List<String> columns;
 //        List myEntries = reader.readAll();
 //        ListIterator iterator = myEntries.listIterator();
+        reader.readNext(); // skip header
         while ((nextLine = reader.readNext()) != null){
             columns = asList(nextLine);
             String cikl = columns.get(0).trim();

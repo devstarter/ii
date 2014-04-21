@@ -41,14 +41,14 @@ public class LinkController {
             term = termController.add(termName);
         }
         Item item = itemDao.getByNumber(itemNumber);
-        Link link = linkDao.save(new Link(term, item, quote));
+        Link link = linkDao.save(new Link(term, item, quote.isEmpty() ? null : quote));
 
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
         helper.setFrom("ii@ayfaar.org");
         helper.setTo("ylebid@gmail.com");
         helper.setSubject("Создана связь (" + termName + " + " + itemNumber + ")");
-        helper.setText(quote + "\nlink id: " + link.getLinkId() + "\nhttp://ii.ayfaar.org/#" + termName);
+        helper.setText(quote + "\nlink id: " + link.getLinkId() + "\nhttp://ii.ayfaar.org/#" + termName.replace(" ", "+"));
         mailSender.send(helper.getMimeMessage());
 
         return link.getLinkId();

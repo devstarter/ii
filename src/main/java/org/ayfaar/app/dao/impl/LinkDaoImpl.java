@@ -53,7 +53,7 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
                 .createAlias("uid1", "uid1")
                 .createAlias("uid2", "uid2")
                 .add(or(eq("uid1.uri", uri), eq("uid2.uri", uri)))
-                .add(or(eq("type", Link.ALIAS), isNull("type")))
+                .add(or(in("type", new Byte[]{Link.ALIAS, Link.CODE}), isNull("type")))
 //                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .addOrder(Order.desc("weight"));
     }

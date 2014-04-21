@@ -1,11 +1,9 @@
 package org.ayfaar.app.model;
 
-import org.hibernate.envers.Audited;
-
 import javax.persistence.*;
 
 @Entity
-@Audited
+//@Audited
 public class Link {
     /**
      * Синомим, первым следует указывать более точное понятие или код
@@ -23,10 +21,16 @@ public class Link {
     public static final Byte DEFINITION = 3;
 
     /**
+     * Ссылка на код понятия
+     * Первый понятие, воторой код
+     */
+    public static final Byte CODE = 4;
+
+    /**
      * Ссылка на группу к которой относиться понятие. Первым указываеться понятие
      * вторым группа
      */
-//    public static final Byte GROUP = 4;
+//    public static final Byte GROUP = ;
 //    public static final Byte START = 4;
 //    public static final Byte END = 5;
 //    public static final byte DIRECTION = 2;

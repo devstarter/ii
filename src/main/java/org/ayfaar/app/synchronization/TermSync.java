@@ -13,13 +13,16 @@ import org.springframework.ui.ModelMap;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 import static java.lang.String.format;
+import static java.util.regex.Pattern.*;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
-public class TermSync implements EntitySynchronizer<Term> {
+public class TermSync extends EntitySynchronizer<Term> {
     @Autowired
     MediaWikiBotHelper mediaWikiBotHelper;
     @Autowired
@@ -68,7 +71,9 @@ public class TermSync implements EntitySynchronizer<Term> {
             UID source = link.getUid1().getUri().equals(term.getUri())
                     ? link.getUid2()
                     : link.getUid1();
-            sb.append(format("{{Quote|text=%s|sign=[[%s]]}}\n", link.getQuote(), getValueFromUri(source.getClass(), source.getUri())));
+            String text = link.getQuote();
+            text = markTerms(text);
+            sb.append(format("{{Quote|text=%s|sign=[[%s]]}}\n", text, getValueFromUri(source.getClass(), source.getUri())));
         }
 
         Set<UID> related = new LinkedHashSet<UID>();
@@ -100,4 +105,25 @@ public class TermSync implements EntitySynchronizer<Term> {
         mediaWikiBotHelper.saveArticle(article);
         alreadySync.add(fromTerm.getUri());
     }
+
+    public String markTerms(String content) {
+        for (Map.Entry<String, AliasesMap.Proxy> entry : aliasesMap.entrySet()) {
+            String key = entry.getKey();
+            Matcher matcher = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|\\-])|^)(" + key
+                    + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|\\-])|$)", UNICODE_CHARACTER_CLASS|UNICODE_CASE|CASE_INSENSITIVE)
+                    .matcher(content);
+            if (matcher.find()) {
+                content = matcher.replaceAll(format("%s[[%s|%s]]%s",
+                        matcher.group(2) != null ? matcher.group(2) : "",
+                        getValueFromUri(Term.class, entry.getValue().getUri()),
+                        matcher.group(3),
+                        matcher.group(5) != null ? matcher.group(5) : ""
+                ));
+                scheduleSync(entry.getValue().getTerm());
+            }
+        }
+        return content;
+    }
+
+
 }
