@@ -24,7 +24,7 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
                 .createAlias("uid1", "uid1")
                 .createAlias("uid2", "uid2")
                 .add(eq("uid1.uri", uri))
-                .add(or(eq("type", Link.ALIAS),eq("type", Link.ABBREVIATION)))
+                .add(or(in("type", new Object[] {Link.ALIAS, Link.ABBREVIATION, Link.CODE})))
                 .list();
     }
 
@@ -34,7 +34,7 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
                 .createAlias("uid1", "uid1")
                 .createAlias("uid2", "uid2")
                 .add(eq("uid2.uri", uri))
-                .add(or(eq("type", Link.ALIAS),eq("type", Link.ABBREVIATION)))
+                .add(or(in("type", new Object[] {Link.ALIAS, Link.ABBREVIATION, Link.CODE})))
                 .uniqueResult();
         if (link != null) {
             return link.getUid1();

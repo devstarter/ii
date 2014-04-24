@@ -110,7 +110,7 @@ public class TermSync extends EntitySynchronizer<Term> {
         for (Map.Entry<String, AliasesMap.Proxy> entry : aliasesMap.entrySet()) {
             String key = entry.getKey();
             Matcher matcher = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|\\-])|^)(" + key
-                    + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|\\-])|$)", UNICODE_CHARACTER_CLASS|UNICODE_CASE|CASE_INSENSITIVE)
+                    + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|])|$)", UNICODE_CHARACTER_CLASS|UNICODE_CASE|CASE_INSENSITIVE)
                     .matcher(content);
             if (matcher.find()) {
                 content = matcher.replaceAll(format("%s[[%s|%s]]%s",
