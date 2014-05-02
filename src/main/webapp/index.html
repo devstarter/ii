@@ -49,6 +49,10 @@
                         transport: {
                             read: "/api/term/autocomplete"
                         }
+                    },
+                    select: function(e) {
+                        var dataItem = this.dataItem(e.item.index());
+                        setHash(dataItem);
                     }
                 });
             });

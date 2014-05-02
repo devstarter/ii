@@ -6,6 +6,7 @@ import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.utils.AliasesMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -27,6 +28,7 @@ public class LinkController {
     @Autowired ItemDao itemDao;
     @Autowired TermController termController;
     @Autowired JavaMailSender mailSender;
+    @Autowired AliasesMap aliasesMap;
 
     @RequestMapping(value = "addQuote", method = POST)
     @ResponseBody
@@ -38,7 +40,11 @@ public class LinkController {
         }
         Term term = termDao.getByName(termName);
         if (term == null) {
-            term = termController.add(termName);
+            if (aliasesMap.get(termName) != null) {
+                term = aliasesMap.get(termName).getTerm();
+            } else {
+                term = termController.add(termName);
+            }
         }
         Item item = itemDao.getByNumber(itemNumber);
         Link link = linkDao.save(new Link(term, item, quote.isEmpty() ? null : quote));
