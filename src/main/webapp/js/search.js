@@ -21,12 +21,6 @@
                 getLabel: function(data) {
                     return ii.getLabel(data);
                 },
-                onkeypress: function(e) {
-                    if(e.keyCode == 13)
-                    {
-                        viewModel.search(e.target.value);
-                    }
-                },
                 navigate: function(e) {
                     ii.navigateToUri(e.data.uri);
                 },
@@ -36,6 +30,11 @@
             });
             kendo.bind($('#search'), viewModel);
             if (query) search(query);
+            $("#search").find(".prompt").keypress(function (e) {
+                if (e.which == 13) {
+                    viewModel.search(viewModel.query);
+                }
+            });
         }
     };
     var search = function(e) {

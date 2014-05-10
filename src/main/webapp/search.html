@@ -1,9 +1,11 @@
 <div id="search">
-    <input class="k-input prompt" type="text" data-bind="value: query, events: {keydown: onkeypress}"
-            data-role="autocomplete" data-source="{serverFiltering: true, serverPaging: true, pageSize: 20, transport: {read: '/api/term/autocomplete'}}"/>
+    <input class="k-input prompt" type="text"
+           data-bind="value: query"
+            data-role="autocomplete"
+            data-source="{serverFiltering: true, serverPaging: true, pageSize: 20, transport: {read: '/api/term/autocomplete'}}"/>
     <button class="search-button" data-bind="click: search">Искать</button>
     <div class="block loading" data-bind="visible: loadingTerms">Загрузка терминов...</div>
-    <div data-bind="invisible: loadingTerms">
+    <div data-bind="visible: terms.length">
         <h3>Термины</h3>
         <div data-bind="source: terms" data-template="search-terms-template"></div>
         <script type="text/kendo-x-tmpl" id="search-terms-template">
@@ -12,15 +14,19 @@
     </div>
     <div class="block loading" data-bind="visible: loadingContents">Загрузка результатов поиска по содержимому...</div>
     <div data-bind="invisible: loadingContents">
-        <h3>Упоминания в содержимом</h3>
-        <div data-bind="source: contents" data-template="search-content-template"></div>
-        <script type="text/kendo-x-tmpl" id="search-content-template">
-            <blockquote>
-                <div>#=data.quote#</div>
-                <cite>&mdash; <a data-bind="text: getLabel, click: navigate"></a></cite>
-            </blockquote>
-        </script>
-        <button class="grey" data-bind="visible: showLoadMore, click: loadNextPage, text: loadNextPageLabel"></button>
+        <div data-bind="invisible: contents.length">
+            <strong>Ничего не найдено.</strong> Побробуйте со звёздочкой в конце для учёта всех вариантов окончания слова. Например птиц*</div>
+        <div data-bind="visible: contents.length">
+            <h3>Упоминания в содержимом</h3>
+            <div data-bind="source: contents" data-template="search-content-template"></div>
+            <script type="text/kendo-x-tmpl" id="search-content-template">
+                <blockquote>
+                    <div>#=data.quote#</div>
+                    <cite>&mdash; <a data-bind="text: getLabel, click: navigate"></a></cite>
+                </blockquote>
+            </script>
+            <button class="grey" data-bind="visible: showLoadMore, click: loadNextPage, text: loadNextPageLabel"></button>
+        </div>
     </div>
     <style type="text/css">
         #search .k-autocomplete {

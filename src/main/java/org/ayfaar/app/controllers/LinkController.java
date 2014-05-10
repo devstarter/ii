@@ -53,8 +53,9 @@ public class LinkController {
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
         helper.setFrom("ii@ayfaar.org");
         helper.setTo("ylebid@gmail.com");
-        helper.setSubject("Создана связь (" + termName + " + " + itemNumber + ")");
-        helper.setText(quote + "\nlink id: " + link.getLinkId() + "\nhttp://ii.ayfaar.org/#" + termName.replace(" ", "+"));
+        helper.setSubject("Создана связь (" + term.getName() + " + " + itemNumber + ")");
+        helper.setText(quote + "\nlink id: " + link.getLinkId() + "\nhttp://ii.ayfaar.org/#"
+                + term.getName().replace(" ", "+"));
         mailSender.send(helper.getMimeMessage());
 
         return link.getLinkId();
