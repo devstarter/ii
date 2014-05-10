@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static org.hibernate.criterion.Restrictions.isNull;
+import static org.hibernate.criterion.Restrictions.*;
 
 @Repository
 public class CategoryDaoImpl extends AbstractHibernateDAO<Category> implements CategoryDao {
@@ -18,6 +18,14 @@ public class CategoryDaoImpl extends AbstractHibernateDAO<Category> implements C
     @Override
     public List<Category> getTopLevel() {
         return list(criteria().add(isNull("parent")));
+    }
+
+    @Override
+    public Category getForItem(String itemUri) {
+        return (Category) criteria()
+                .add(le("start", itemUri))
+                .add(ge("end", itemUri))
+                .uniqueResult();
     }
 
 //    @Override

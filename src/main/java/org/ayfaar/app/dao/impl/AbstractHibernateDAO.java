@@ -6,10 +6,7 @@ import org.hibernate.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.cfg.ImprovedNamingStrategy;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Example;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.*;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
@@ -29,6 +26,7 @@ import static org.apache.commons.beanutils.PropertyUtils.getProperty;
 import static org.apache.commons.beanutils.PropertyUtils.setProperty;
 import static org.hibernate.criterion.Projections.rowCount;
 import static org.hibernate.criterion.Restrictions.eq;
+import static org.hibernate.criterion.Restrictions.like;
 import static org.springframework.util.Assert.notNull;
 
 @SuppressWarnings("unchecked")
@@ -157,6 +155,14 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
     public List<E> getList(String property, @NotNull Object o) {
         return criteria()
                 .add(eq(property, o))
+                .list();
+    }
+
+    @Nullable
+    @Override
+    public List<E> getLike(String property, @NotNull String value, MatchMode matchMode) {
+        return criteria()
+                .add(like(property, value, matchMode))
                 .list();
     }
 

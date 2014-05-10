@@ -15,6 +15,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 public class Category extends UID {
 
     public static final String PARAGRAPH_NAME = "Параграф";
+    public static final String TOM_NAME = "Том";
     public static final String PARAGRAPH_SIGN = "§";
     @Column(unique = true)
     private String name;
@@ -89,5 +90,13 @@ public class Category extends UID {
     public boolean isParagraph() {
         return name.indexOf(PARAGRAPH_NAME) == 0;
 //        return start != null && !start.isEmpty();
+    }
+
+    public boolean isTom() {
+        return name.indexOf(TOM_NAME) == 0;
+    }
+
+    public boolean isCikl() {
+        return name.equals("БДК") || name.equals("Основы");
     }
 }

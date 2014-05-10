@@ -6,6 +6,7 @@ import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import static java.util.Collections.sort;
 import static java.util.regex.Pattern.compile;
 
 @Component
+@Lazy
 public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;

@@ -7,5 +7,7 @@ import java.util.List;
 public interface CategoryDao extends BasicCrudDao<Category> {
     List<Category> getTopLevel();
 
+    Category getForItem(String itemUri);
+
 //    List<Category> getChildren(String uri);
 }

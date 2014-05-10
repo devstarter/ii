@@ -1,6 +1,5 @@
 package org.ayfaar.app.synchronization;
 
-import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
 import org.ayfaar.app.controllers.TermController;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
@@ -16,10 +15,11 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 import static java.util.regex.Pattern.*;
-import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
+import static org.ayfaar.app.synchronization.SyncUtils.getArticleName;
 
 @Component
 public class TermSync extends EntitySynchronizer<Term> {
@@ -31,6 +31,7 @@ public class TermSync extends EntitySynchronizer<Term> {
     AliasesMap aliasesMap;
     @Autowired
     LinkDao linkDao;
+    @Autowired SyncUtils syncUtils;
 
     private Set<String> alreadySync = new HashSet<String>();
 
@@ -41,23 +42,21 @@ public class TermSync extends EntitySynchronizer<Term> {
             return;
         }
 
-        String termName = term.getName();
-        Term alias = null;
-        if (!aliasesMap.get(termName).getTerm().getUri().equals(term.getUri())) {
-            Term mainTerm = aliasesMap.get(termName).getTerm();
-            saveRedirect(term, mainTerm);
-            synchronize(mainTerm);
+        // может быть аббравиатурой или сокращением или кодом
+        Term prime = (Term) linkDao.getPrimeForAlias(term.getUri());
+        if (prime != null) {
+            saveRedirect(term, prime);
+            scheduleSync(prime);
             return;
         }
 
-        // может быть аббравиатурой или сокращением
-        Link _link = linkDao.getForAbbreviation(term.getUri());
+        /*Link _link = linkDao.getForAbbreviation(term.getUri());
         if (_link != null && _link.getUid1() instanceof Term) {
             Term mainTerm = (Term) _link.getUid1();
             saveRedirect(term, mainTerm);
             synchronize(mainTerm);
             return;
-        }
+        }*/
 
         StringBuilder sb = new StringBuilder();
 
@@ -73,12 +72,18 @@ public class TermSync extends EntitySynchronizer<Term> {
                     : link.getUid1();
             String text = link.getQuote();
             text = markTerms(text);
-            sb.append(format("{{Quote|text=%s|sign=[[%s]]}}\n", text, getValueFromUri(source.getClass(), source.getUri())));
+            sb.append(format("{{Quote|text=%s|sign=[[%s]]}}\n", text, getArticleName(source.getClass(), source.getUri())));
+            syncUtils.scheduleSync(source);
+        }
+
+        Set<UID> aliases = new LinkedHashSet<UID>();
+        for (Link link : linkDao.getAliases(term.getUri())) {
+            aliases.add(link.getUid2());
         }
 
         Set<UID> related = new LinkedHashSet<UID>();
         for (Link link : linkDao.getRelated(term.getUri())) {
-            if (!Link.ABBREVIATION.equals(link.getType()) && link.getQuote() == null) {
+            if (link.getQuote() == null) {
                 if (link.getUid1().getUri().equals(term.getUri())) {
                     related.add(link.getUid2());
                 } else {
@@ -86,43 +91,62 @@ public class TermSync extends EntitySynchronizer<Term> {
                 }
             }
         }
+        if (aliases.size() > 0) {
+            sb.append(format("== Сокращения или синонимы ==\n"));
+            for (UID uid : aliases) {
+                sb.append(format("[[%s]], ", getArticleName(uid.getClass(), uid.getUri())));
+                syncUtils.scheduleSync(uid);
+            }
+            sb.delete(sb.length()-2, sb.length());
+            sb.append("\n");
+        }
         if (related.size() > 0) {
             sb.append(format("== Связан с ==\n"));
             for (UID uid : related) {
-                sb.append(format("[[%s]] ", getValueFromUri(uid.getClass(), uid.getUri())));
+                sb.append(format("[[%s]], ", getArticleName(uid.getClass(), uid.getUri())));
+                syncUtils.scheduleSync(uid);
             }
+            sb.delete(sb.length()-2, sb.length());
         }
 
-        SimpleArticle article = new SimpleArticle(term.getName());
-        article.setText(sb.length() == 0 ? "Ожидается наполнение" : sb.toString());
-        mediaWikiBotHelper.saveArticle(article);
+        mediaWikiBotHelper.saveArticle(term.getName(), sb.length() == 0 ? "Ожидается наполнение" : sb.toString());
         alreadySync.add(term.getUri());
     }
 
     private void saveRedirect(Term fromTerm, Term toTerm) {
-        SimpleArticle article = new SimpleArticle(fromTerm.getName());
-        article.setText(format("#redirect [[%s]]", toTerm.getName()));
-        mediaWikiBotHelper.saveArticle(article);
+        mediaWikiBotHelper.saveArticle(fromTerm.getName(), format("#redirect [[%s]]", toTerm.getName()));
         alreadySync.add(fromTerm.getUri());
     }
 
     public String markTerms(String content) {
+        String result = content;
         for (Map.Entry<String, AliasesMap.Proxy> entry : aliasesMap.entrySet()) {
             String key = entry.getKey();
-            Matcher matcher = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|\\-])|^)(" + key
-                    + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|])|$)", UNICODE_CHARACTER_CLASS|UNICODE_CASE|CASE_INSENSITIVE)
-                    .matcher(content);
-            if (matcher.find()) {
-                content = matcher.replaceAll(format("%s[[%s|%s]]%s",
-                        matcher.group(2) != null ? matcher.group(2) : "",
-                        getValueFromUri(Term.class, entry.getValue().getUri()),
-                        matcher.group(3),
-                        matcher.group(5) != null ? matcher.group(5) : ""
-                ));
-                scheduleSync(entry.getValue().getTerm());
+            Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|\\-])|^)(" + key
+                    + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|])|$)", UNICODE_CHARACTER_CLASS | UNICODE_CASE | CASE_INSENSITIVE);
+            Matcher contentMatcher = pattern.matcher(content);
+            if (contentMatcher.find()) {
+                Matcher matcher = pattern.matcher(result);
+                if (matcher.find()) {
+                    scheduleSync(entry.getValue().getTerm());
+                    String articleName = getArticleName(Term.class, entry.getValue().getUri());
+                    String found = contentMatcher.group(3);
+                    String charBefore = contentMatcher.group(2) != null ? contentMatcher.group(2) : "";
+                    String charAfter = contentMatcher.group(5) != null ? contentMatcher.group(5) : "";
+                    String articleReplacer = articleName.equals(found)
+                            ? articleName
+                            : format("%s|%s", articleName, found);
+                    String fullReplacer = format("%s[[%s]]%s",
+                            charBefore,
+                            articleReplacer,
+                            charAfter
+                    );
+                    result = matcher.replaceAll(fullReplacer);
+                }
+                content = contentMatcher.replaceAll("");
             }
         }
-        return content;
+        return result;
     }
 
 

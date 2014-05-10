@@ -2,6 +2,7 @@ package org.ayfaar.app.dao.impl;
 
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Term;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,6 +28,13 @@ public class TermDaoImpl extends AbstractHibernateDAO<Term> implements TermDao {
                 .add(ilike(field, value))
                 .setMaxResults(20)
         );
+    }
+
+    @Override
+    public List<Term> getGreaterThan(String field, Object value) {
+        return criteria()
+                .add(Restrictions.gt(field, value))
+                .list();
     }
 
 }

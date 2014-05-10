@@ -1,6 +1,7 @@
 package org.ayfaar.app.dao;
 
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.MatchMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +15,9 @@ public interface BasicCrudDao<E> {
     @Nullable E get(@NotNull Serializable id);
     @Nullable E get(String property, @NotNull Object o);
     @Nullable List<E> getList(String property, @NotNull Object o);
+
+    @Nullable
+    List<E> getLike(String property, @NotNull String value, MatchMode matchMode);
 
     void remove(@NotNull Serializable id);
 

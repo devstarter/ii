@@ -9,11 +9,15 @@ import org.springframework.stereotype.Component;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 import static java.lang.String.format;
 import static org.ayfaar.app.model.Category.PARAGRAPH_SIGN;
+import static org.ayfaar.app.synchronization.SyncUtils.getArticleName;
+import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
 @Slf4j
@@ -23,24 +27,62 @@ public class TOCSync {
     @Autowired MediaWikiBotHelper mediaWikiBotHelper;
     @Autowired CategorySync categorySync;
 
+    public static final String NS_NAME = "Содержание";
+
     private StringBuilder sb;
     private PrintStream out;
+    private Queue<Category> queue;
 
-    public void synchronize() throws UnsupportedEncodingException {
+    public TOCSync() throws UnsupportedEncodingException {
         out = new PrintStream(System.out, true, "UTF-8");
-
-        sb = new StringBuilder();
-        List<Category> topCategories = categoryDao.getTopLevel();
-        for (Category category : topCategories) {
-            syncChildren(category, "=");
-        }
-        mediaWikiBotHelper.saveArticle("Содержание", sb.toString());
     }
 
-    private void syncChildren(Category parent, String depth) {
-        categorySync.scheduleSync(parent);
+    public void synchronize() throws UnsupportedEncodingException {
+        sb = new StringBuilder();
+        List<Category> topCategories = categoryDao.getTopLevel();
+        List<Category> toms = new ArrayList<Category>();
 
-        String name = parent.getName();
+        for (Category category : topCategories) {
+//            sb.append(format("[[%s:%s]]\n", NS_NAME, getArticleName(Category.class, category.getUri())));
+            for (Category child : getChildren(category)) {
+                setLine(child, "");
+                toms.add(child);
+            }
+        }
+        mediaWikiBotHelper.saveArticle(NS_NAME+":Тома", sb.toString());
+
+        queue = new ArrayDeque<Category>(toms);
+        Category category = queue.poll();
+        while (category != null) {
+            sb = new StringBuilder();
+            for (Category child : getChildren(category)) {
+                recursiveCompute(child, "=");
+            }
+            if (category.getParent() != null) {
+                Category parent = categoryDao.get(category.getParent());
+                sb.append(format("\n[[%s|%s%s]]",
+                        getArticleName(Category.class, parent.getUri()),
+                        getValueFromUri(Category.class, parent.getUri()),
+                        parent.getDescription() != null ? ". "+parent.getDescription() : ""));
+            }
+            mediaWikiBotHelper.saveArticle(NS_NAME + ":" + category.getName(), sb.toString());
+            category = queue.poll();
+        }
+
+    }
+
+    private void recursiveCompute(Category category, String depth) {
+        if (!category.isParagraph()) {
+            queue.add(category);
+        }
+        setLine(category, depth);
+        for (Category child : getChildren(category)) {
+            recursiveCompute(child, depth+"=");
+        }
+    }
+
+    private void setLine(Category category, String depth) {
+        String name = category.getName();
         String label = name;
         int i = label.lastIndexOf("/");
         if (i > 0) {
@@ -48,26 +90,29 @@ public class TOCSync {
         }
 
         String line;
-        if (parent.isParagraph()) {
+        if (category.isParagraph()) {
+            categorySync.scheduleSync(category);
             label = PARAGRAPH_SIGN + "" + name.substring(name.lastIndexOf(".")+1);
             line = format("* [[%s|%s. %s]]\n",
-                    name,
+                    getArticleName(Category.class, category),
                     label,
-                    parent.getDescription());
+                    category.getDescription());
         } else {
-            line = format("%s [[%s%s|%s. %s]] %s\n",
-                    depth,
-                    ":Category:",
+            line = format("%s[[%s:%s|%s%s]]%s\n",
+                    depth.isEmpty() ? "" : depth+" ",
+                    NS_NAME,
                     name,
                     label,
-                    parent.getDescription() != null ? parent.getDescription() : "",
-                    depth);
+                    category.getDescription() != null ? ". "+category.getDescription() : "",
+                    depth.isEmpty() ? "" : " "+depth);
+        }
+        if (category.isTom()) {
+            line = "* "+line;
         }
         sb.append(line);
-        out.println(line);
-//        if (parent.getDescription() != null && !parent.getDescription().isEmpty()) {
-//            sb.append(format("%s\n", parent.getDescription()));
-//        }
+    }
+
+    private List<Category> getChildren(Category parent) {
         List<Category> children = new ArrayList<Category>();
         if (parent.getStart() != null) {
             Category child = categoryDao.get(parent.getStart());
@@ -81,8 +126,6 @@ public class TOCSync {
                 }
             }
         }
-        for (Category category : children) {
-            syncChildren(category, depth+"=");
-        }
+        return children;
     }
 }

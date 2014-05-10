@@ -2,8 +2,10 @@ package org.ayfaar.app.synchronization;
 
 import org.ayfaar.app.model.UID;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class EntitySynchronizer<E extends UID> {
     abstract void synchronize(E entity) throws Exception;
@@ -15,9 +17,10 @@ public abstract class EntitySynchronizer<E extends UID> {
     }
 
     public void syncScheduled() throws Exception {
-        for (Map.Entry<String, E> entry : scheduled.entrySet()) {
+        Set<Map.Entry<String, E>> syncPass = new HashSet<Map.Entry<String, E>>(scheduled.entrySet());
+        scheduled.clear();
+        for (Map.Entry<String, E> entry : syncPass) {
             synchronize(entry.getValue());
         }
-        scheduled.clear();
     }
 }

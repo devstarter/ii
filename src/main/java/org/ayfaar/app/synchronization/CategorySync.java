@@ -1,6 +1,5 @@
 package org.ayfaar.app.synchronization;
 
-import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
 import org.ayfaar.app.controllers.ItemController;
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.ItemDao;
@@ -15,6 +14,7 @@ import java.util.regex.Pattern;
 import static java.lang.String.format;
 import static org.ayfaar.app.model.Category.PARAGRAPH_NAME;
 import static org.ayfaar.app.model.Category.PARAGRAPH_SIGN;
+import static org.ayfaar.app.synchronization.SyncUtils.getArticleName;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
@@ -27,13 +27,16 @@ public class CategorySync extends EntitySynchronizer<Category> {
 
     @Override
     public void synchronize(Category category) throws Exception {
-        boolean paragraphMode = category.isParagraph();
-        SimpleArticle article = new SimpleArticle(paragraphMode ? category.getName() : "Category:"+category.getName());
-        validateTitle(article.getTitle());
+        if (!category.isParagraph()) {
+            throw new RuntimeException("Should be paragraph");
+        }
+        String articleName = getArticleName(Category.class, category.getUri());
+//        mediaWikiBotHelper.isSyncNeeded(articleName);
+        validateTitle(articleName);
 
         StringBuilder sb = new StringBuilder();
 
-        if (paragraphMode) {
+        if (category.isParagraph()) {
             sb.append(format("{{DISPLAYTITLE:%s %s}}\n", category.getName().replace("Параграф", "§"), category.getDescription()));
             Item currentItem = itemDao.get(category.getStart());
             String itemNumber = currentItem.getNumber();
@@ -42,8 +45,12 @@ public class CategorySync extends EntitySynchronizer<Category> {
                 endNumber = itemDao.get(category.getEnd()).getNumber();
             }
             do {
-                itemSync.scheduleSync(currentItem, category.getName());
-                sb.append(format("[[%s]]. {{:%s}}<br /><br />", itemNumber, itemNumber));
+                itemSync.scheduleSync(currentItem);
+                String itemId = getArticleName(Item.class, currentItem.getUri());
+                sb.append(format("[[%s|%s]]. {{:%s}}<br/><br/>\n",
+                        itemId,
+                        itemNumber,
+                        itemId));
                 itemNumber = ItemController.getNext(itemNumber);
                 currentItem = itemDao.getByNumber(itemNumber);
             } while (endNumber != null && !itemNumber.equals(endNumber));
@@ -51,8 +58,8 @@ public class CategorySync extends EntitySynchronizer<Category> {
             if (category.getNext() != null) {
 //                String next = getValueFromUri(Category.class, category.getNext());
                 Category next = categoryDao.get(category.getNext());
-                sb.append(format("Следующая(ий) [[%s|%s %s]]",
-                        next.getName(),
+                sb.append(format("[[%s|Следующий %s %s]]\n",
+                        getArticleName(Category.class, next.getUri()),
                         next.getName().replace(PARAGRAPH_NAME, PARAGRAPH_SIGN),
                         next.getDescription()));
             }
@@ -63,14 +70,14 @@ public class CategorySync extends EntitySynchronizer<Category> {
         }
 
         if (category.getParent() != null) {
-            sb.append(format("[[Category:%s]]", getValueFromUri(Category.class, category.getParent())));
+            Category parent = categoryDao.get(category.getParent());
+            sb.append(format("\n[[%s|%s. %s]]",
+                    getArticleName(Category.class, parent.getUri()),
+                    getValueFromUri(Category.class, parent.getUri()),
+                    parent.getDescription()));
         }
 
-        article.setText(sb.toString());
-        if (article.getText().isEmpty()) {
-            article.setText("1");
-        }
-        mediaWikiBotHelper.saveArticle(article);
+        mediaWikiBotHelper.saveArticle(articleName, sb.toString());
     }
 
     private static final Pattern INVALID_CHARS_PATTERN =

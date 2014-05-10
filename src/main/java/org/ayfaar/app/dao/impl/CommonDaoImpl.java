@@ -26,8 +26,7 @@ import static org.apache.commons.beanutils.PropertyUtils.setProperty;
 import static org.ayfaar.app.utils.EntityUtils.getPrimaryKeyFiledName;
 import static org.ayfaar.app.utils.EntityUtils.getPrimaryKeyValue;
 import static org.ayfaar.app.utils.RegExpUtils.W;
-import static org.hibernate.criterion.Restrictions.eq;
-import static org.hibernate.criterion.Restrictions.ilike;
+import static org.hibernate.criterion.Restrictions.*;
 
 @SuppressWarnings("unchecked")
 @Repository
@@ -60,14 +59,14 @@ public class CommonDaoImpl implements CommonDao {
     @Override
     public <E> E get(Class<E> clazz, String property, Object value) {
         return (E) sessionFactory.getCurrentSession()
-                .createCriteria(clazz).add(Restrictions.eq(property, value))
+                .createCriteria(clazz).add(eq(property, value))
                 .uniqueResult();
     }
 
     @Override
     public <E> List<E> getList(Class<E> clazz, String property, Object value) {
         return sessionFactory.getCurrentSession()
-                .createCriteria(clazz).add(Restrictions.eq(property, value))
+                .createCriteria(clazz).add(value == null ? isNull(property) : eq(property, value))
                 .list();
     }
 
@@ -124,7 +123,7 @@ public class CommonDaoImpl implements CommonDao {
     public <E> E getByCode(Class<E> className, String code) {
         return (E) sessionFactory.getCurrentSession()
                 .createCriteria(className)
-                .add(Restrictions.eq("code", code))
+                .add(eq("code", code))
                 .uniqueResult();
     }
 
