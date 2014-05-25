@@ -6,6 +6,7 @@
             <span class="info" data-bind="visible: from">
                 Перенапраленно с: <span data-bind="text: from.name"></span>
             </span>
+            <p data-bind="text: shortDescription" class="shortDescription"></p>
             <p data-bind="text: description"></p>
             <!--<span class="info" data-bind="invisible: description">Нет короткого определения</span>-->
             <div data-bind="source: quotes" data-template="quotes-template"></div>
@@ -48,5 +49,8 @@
     #term .description {
         width: 100%;
         height: 50px;
+    }
+    #term .shortDescription {
+        font-size: 130%
     }
 </style>

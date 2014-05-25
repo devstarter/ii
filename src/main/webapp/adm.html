@@ -2,16 +2,18 @@
 <html>
 <head>
     <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="libs/jquery/jquery-1.9.1.js"></script>
     <script src="libs/kendo/kendo.web.min.js"></script>
     <link href="libs/kendo/kendo.common.min.css" rel="stylesheet" type="text/css" />
     <link href="libs/kendo/kendo.blueopal.min.css" rel="stylesheet" type="text/css" />
     <script>
-        var addQuoteContainer, addAliasContainer, linkTypeDDL;
+        var addQuoteContainer, addAliasContainer, addTermContainer, linkTypeDDL;
 
         $(document).ready(function() {
             addQuoteContainer = $(".add-quote");
             addAliasContainer = $(".add-alias");
+            addTermContainer = $(".add-term");
 
             $(".term").kendoAutoComplete({
                 minLength: 3,
@@ -100,6 +102,19 @@
                 }
             });
         }
+        function sendAddTerm() {
+            $.post("/api/term/add", {
+                name: addTermContainer.find("input.term")[0].value,
+                shortDescription: addTermContainer.find(".short")[0].value,
+                description: addTermContainer.find(".long")[0].value
+            }, function(r) {
+                if (r) {
+                    alert("Есть!");
+                } else {
+                    alert("Термин не создан!");
+                }
+            });
+        }
 
     </script>
     <style type="text/css">
@@ -153,17 +168,14 @@
             <button onclick="resetAddAlias()" class="k-button">Обнулить</button>
         </div>
     </div>
-    <div class="panel add-category">
-        <h3>Добавить категорию</h3>
-        <input placeholder="Имя новой категории" class="category main"/>
+    <div class="panel add-term">
+        <h3>Добавить термин</h3>
+        <input placeholder="Термин" class="term"/>
         <br/>
-        <input placeholder="Родительская категория" class="category parent"/>
-        <br/>
-        Пункты&nbsp;
-        <input placeholder="С" class="item from"/>&nbsp;
-        <input placeholder="По" class="item to"/>
+        <textarea placeholder="Короткое описание" class="short k-input"></textarea>
+        <textarea placeholder="Описание" class="long k-input"></textarea>
         <div class="controls">
-            <button onclick="sendAddCategory()" class="k-button">Добавить категорию</button>
+            <button onclick="sendAddTerm()" class="k-button">Добавить термин</button>
         </div>
     </div>
 </body>

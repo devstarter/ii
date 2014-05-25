@@ -43,13 +43,12 @@ public class TOCSync {
         List<Category> toms = new ArrayList<Category>();
 
         for (Category category : topCategories) {
-//            sb.append(format("[[%s:%s]]\n", NS_NAME, getArticleName(Category.class, category.getUri())));
             for (Category child : getChildren(category)) {
                 setLine(child, "");
                 toms.add(child);
             }
         }
-        mediaWikiBotHelper.saveArticle(NS_NAME+":Тома", sb.toString());
+//        mediaWikiBotHelper.saveArticle(NS_NAME+":Тома", sb.toString());
 
         queue = new ArrayDeque<Category>(toms);
         Category category = queue.poll();

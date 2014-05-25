@@ -4,30 +4,30 @@
         noty({text: text, type: 'error', layout: 'topCenter', timeout: 3000});
     },
     navigateToSearch: function(query) {
-        var needReload = location.hash.indexOf("#?") != 0;
+//        var needReload = location.hash.indexOf("#?") != 0;
         setHash("?"+query.replaceAll(" ", "+"));
-        if (needReload) location.reload();
+//        if (needReload) location.reload();
     },
     navigateToUri: function(uri) {
         if (uri.indexOf("ии:пункт:") == 0) {
-            var needReload = !isItemNumber(location.hash.replace("#", ""));//.indexOf("#item:") != 0;
+//            var needReload = !isItemNumber(location.hash.replace("#", ""));//.indexOf("#item:") != 0;
             setHash(uri.replace("ии:пункт:", ""));
-            if (needReload) location.reload();
+//            if (needReload) location.reload();
         }
         if (uri.indexOf("ии:термин:") == 0) {
-            var needReload = isItemNumber(location.hash.replace("#", "")) || location.hash.indexOf("#?") == 0;//location.hash.indexOf("#term:") != 0;
+//            var needReload = isItemNumber(location.hash.replace("#", "")) || location.hash.indexOf("#?") == 0;//location.hash.indexOf("#term:") != 0;
             setHash(uri.replace("ии:термин:", "").replaceAll(" ", "+"));
-            if (needReload) location.reload();
+//            if (needReload) location.reload();
         }
         if (uri.indexOf("статья:") == 0) {
-            var needReload = location.hash.indexOf("#a/") != 0;
+//            var needReload = location.hash.indexOf("#a/") != 0;
             setHash("a/"+uri.replace("статья:", ""));
-            if (needReload) location.reload();
+//            if (needReload) location.reload();
         }
 		if (uri.indexOf("песня:") == 0) {
-            var needReload = location.hash.indexOf("#s/") != 0;
+//            var needReload = location.hash.indexOf("#s/") != 0;
             setHash("s/"+uri.replace("песня:", ""));
-            if (needReload) location.reload();
+//            if (needReload) location.reload();
         }
         if (uri.indexOf("http") == 0) {
             window.open(uri,'_blank');
@@ -107,14 +107,41 @@ var router = new kendo.Router();
 
 router.route("item::item", itemRoute);
 function itemRoute(item) {
-    ensure({ html: "item.html", js: "js/item.js", parent: "content"}, function(){
+    switchTo("item", function() {
         ii.item.load(item);
     });
+}
+function switchTo(id, callback){
+    var container = $("#"+id+"-container");
+    if (!container.length) {
+        savePrevContent();
+        container = $("<div id=\""+id+"-container\"></div>");
+        container.hide();
+        $("body").append(container);
+        ensure({ html: id+".html", js: "js/"+id+".js", parent: id+"-container"}, function () {
+            $("#content").append(container);
+            container.show();
+            callback();
+        });
+    } else {
+        if (!container.is(":visible")) {
+            savePrevContent();
+        }
+        $("#content").append(container);
+        container.show();
+        callback();
+    }
+}
+function savePrevContent(){
+    var prevContent = $("#content").children();
+    $("body").append(prevContent);
+    $("#content").empty();
+    prevContent.hide();
 }
 router.route("term::term", termRoute);
 function termRoute(term) {
     term = term.replaceAll("+", " ");
-    ensure({ html: "term.html", js: "js/term.js", parent: "content"}, function(){
+    switchTo("term", function() {
         ii.term.load(term);
     });
 }
@@ -122,7 +149,7 @@ router.route("search::query", searchRoute);
 router.route("?:query", searchRoute);
 function searchRoute(query) {
     query = query.replaceAll("+", " ");
-    ensure({ html: "search.html", js: "js/search.js", parent: "content"}, function(){
+    switchTo("search", function() {
         ii.search.load(query);
     });
 }
@@ -130,12 +157,12 @@ router.route("main", function() {
     location.reload();
 });
 router.route("a/:id", function(id) {
-    ensure({ html: "article.html", js: "js/article.js", parent: "content"}, function(){
+    switchTo("article", function() {
         ii.article.load(id);
     });
 });
 router.route("s/:id", function(id) {
-    ensure({ html: "song.html", js: "js/song.js", parent: "content"}, function(){
+    switchTo("song", function() {
         ii.song.load(id);
     });
 });

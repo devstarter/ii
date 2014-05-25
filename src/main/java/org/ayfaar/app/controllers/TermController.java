@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers;
 
+import org.apache.commons.lang.WordUtils;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
@@ -44,6 +45,12 @@ public class TermController {
             add(termin.getName());
         }
     }*/
+
+    @RequestMapping(value = "add", method = RequestMethod.POST)
+    @Model
+    public void add(Term term) {
+        add(term.getName(), term.getShortDescription(), term.getDescription());
+    }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @Model
@@ -124,11 +131,16 @@ public class TermController {
 
 //    @RequestMapping(value = "/", method = POST)
 //    @Model
-    public Term add(@RequestParam String name, @RequestParam(required = false) String description) {
+    public Term add(String name, String description) {
+        return add(name, null, description);
+    }
+
+    public Term add(String name, String shortDescription, String description) {
         name = name.replace("\"", "").replace("«", "").replace("»", "").trim();
+        name = WordUtils.capitalize(name, new char[]{'@'}); // Делаем первую букву большой, @ - знак который не появляеться в названии, чтобы поднялась только первая буква всей фразы
         Term primeTerm = termDao.getByName(name);
         if (primeTerm == null) {
-            primeTerm = termDao.save(new Term(name, description));
+            primeTerm = termDao.save(new Term(name, shortDescription, description));
             String termName = primeTerm.getName();
             log.info("Added: "+ termName);
             if (TermUtils.isComposite(termName)) {

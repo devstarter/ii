@@ -49,6 +49,7 @@
                 for(var p in r) {
                     viewModel.set(p, r[p]);
                 }
+                viewModel.content = viewModel.content.replaceAll("\n", "<br/>");
                 viewModel.set("loading", false);
                 viewModel.set("nextButtonLabel", function(d) {
                     return d.next ? d.next.number + " →" : "";

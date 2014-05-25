@@ -27,9 +27,9 @@ public class ItemsImporter {
         ctx = new AnnotationConfigApplicationContext(SpringConfiguration.class);
         itemDao = ctx.getBean(ItemDao.class);
 
-        for(String line: FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\Том 10.txt"))) {
+        for(String line: FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\Том 15.txt"))) {
 
-            Matcher matcher = compile("(\\d+\\.\\d+)\\.\\s(.+)").matcher(line);
+            Matcher matcher = compile("(\\d+\\.\\d\\d\\d\\d+)\\.\\s(.+)").matcher(line);
             if (matcher.find()) {
                 if (currentItem != null && saveAllowed) {
                     saveItem();
@@ -37,18 +37,19 @@ public class ItemsImporter {
                 currentItem = new Item(matcher.group(1), matcher.group(2));
 //                saveAllowed = saveAllowed || currentItem.getNumber().equals(skipUntilNumber);
             } else if (currentItem != null) {
-                currentItem.setContent(currentItem.getContent() + line);
+                currentItem.setContent(currentItem.getContent() + "\n" + line);
             }
         }
         saveItem();
     }
 
     private static void saveItem() {
-        System.out.print(currentItem.getNumber() + ": ");
+        System.out.print(currentItem.getNumber() + "\n");
 //        System.out.println(currentItem.getContent());
 
         Item storedItem = itemDao.getByNumber(currentItem.getNumber());
         if (storedItem != null) {
+            storedItem.setContent(currentItem.getContent());
             currentItem = storedItem;
 //            currentItem.setUri(UriGenerator.generate(currentItem));
         }
