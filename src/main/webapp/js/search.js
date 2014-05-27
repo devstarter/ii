@@ -24,6 +24,9 @@
                 navigate: function(e) {
                     ii.navigateToUri(e.data.uri);
                 },
+                navigateToExactTerm: function(e) {
+                    ii.navigateToUri(e.data.exactMatchTerm.uri);
+                },
                 loadNextPage: function(e) {
                     searchInContent();
                 }
@@ -34,6 +37,7 @@
                 if (e.which == 13) {
                     viewModel.search(viewModel.query);
                 }
+                pageCounter = 0;
             });
         }
     };
@@ -42,7 +46,8 @@
             query: viewModel.query
         }, function(r) {
             viewModel.set("loadingTerms", false);
-            viewModel.set("terms", r);
+            viewModel.set("terms", r.terms);
+            viewModel.set("exactMatchTerm", r.exactMatchTerm);
             searchInContent();
         });
         viewModel.set("loadingTerms", true);

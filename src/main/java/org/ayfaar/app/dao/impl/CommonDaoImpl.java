@@ -156,6 +156,7 @@ public class CommonDaoImpl implements CommonDao {
          *  - need brackets around query for case query="word1|word2|...|wordN"
          *  - it is important to LIMIT every part of SELECT query {why ?}
          */
+//        query = query.replaceAll("\\s", "\\\\s");
         query = "("+query+")";
         String where = " WHERE LOWER(content) REGEXP '("+ W +"|^)" + query + W + "'";
         String itemQuery = "SELECT uri, NULL, content FROM item"+ where;
@@ -177,7 +178,9 @@ public class CommonDaoImpl implements CommonDao {
     public List<Content> findInAllContent(List<String> aliases, Integer start, Integer limit) {
         String where = " WHERE ";
         for (String alias : aliases) {
-            where += " content like '%"+alias+"%' OR";
+            for (char c : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')'}) {
+                where += " content like '%"+alias+c+"%' OR";
+            }
         }
         where = where.substring(0, where.length() - 2);
 

@@ -44,7 +44,8 @@
                     {value: null, label: "Равнозначная"},
                     {value: 1, label: "Синоним"},
                     {value: 2, label: "Аббравиатура (сокращение)"},
-                    {value: 4, label: "Космический Код понятия"}
+                    {value: 4, label: "Космический Код понятия"},
+                    {value: 0, label: "Морфологический синоним"}
                 ]
             }).data("kendoDropDownList");
         });
@@ -141,13 +142,16 @@
         .item {
             width: 50px
         }
+        .type {
+            width: 250px;
+        }
     </style>
 </head>
 <body>
     <div class="panel add-quote">
         <h3>Связать термин с пунктом</h3>
         <input placeholder="Термин" class="term"/>
-        <input placeholder="Пункта" class="item"/>
+        <input placeholder="Пункт" class="item"/>
         <br/>
         <textarea placeholder="Цитата (не обязательно)" class="quote k-input"></textarea>
         <div class="controls">
@@ -162,6 +166,7 @@
         <input placeholder="Термин2" class="term term2"/>
         <br/>
         <label for="werwesds">Тип связи</label>
+        <br/>
         <input id="werwesds" class="type"/>
         <div class="controls">
             <button onclick="sendAddAlias()" class="k-button">Добавить связь</button>

@@ -3,14 +3,17 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
+import org.ayfaar.app.dao.TermMorphDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.utils.AliasesMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,6 +32,7 @@ public class LinkController {
     @Autowired TermController termController;
     @Autowired JavaMailSender mailSender;
     @Autowired AliasesMap aliasesMap;
+    @Autowired TermMorphDao termMorphDao;
 
     @RequestMapping(value = "addQuote", method = POST)
     @ResponseBody
@@ -70,6 +74,11 @@ public class LinkController {
         if (primTerm == null) {
             primTerm = termController.add(term);
         }
+        if (type == 0) {
+            // Morph
+            termMorphDao.save(new TermMorph(alias, primTerm.getUri()));
+            return 1;
+        }
         Term aliasTerm = termDao.getByName(alias);
         if (aliasTerm == null) {
             aliasTerm = termController.add(alias);
@@ -87,5 +96,10 @@ public class LinkController {
         mailSender.send(helper.getMimeMessage());
 
         return link.getLinkId();
+    }
+
+    @RequestMapping("remove/{id}")
+    public void remove(@PathVariable Integer id) {
+        linkDao.remove(id);
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -22,6 +23,7 @@ import java.util.regex.Pattern;
 
 import static org.ayfaar.app.utils.RegExpUtils.w;
 import static org.ayfaar.app.utils.TermUtils.isCosmicCode;
+import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Controller
 @RequestMapping("search")
@@ -32,6 +34,8 @@ public class SearchController {
     @Autowired LinkDao linkDao;
     @Autowired CommonDao commonDao;
     @Autowired TermMorphDao termMorphDao;
+
+    private Map<String, List<ModelMap>> searchInContentCatch = new HashMap<String, List<ModelMap>>();
 
     /*public Object search(String query) {
         ModelMap modelMap = new ModelMap();
@@ -50,6 +54,12 @@ public class SearchController {
     private List<ModelMap> searchInContent(@RequestParam String query,
                                            @RequestParam(required = false, defaultValue = "0") Integer page) {
         query = query.toLowerCase();
+        String catchKey = query+"#$%^&"+page;
+        List<ModelMap> catchedResult = searchInContentCatch.get(catchKey);
+        if (catchedResult != null) {
+            return catchedResult;
+        }
+
         List<ModelMap> modelMaps = new ArrayList<ModelMap>();
 
         AliasesMap.Proxy proxy = aliasesMap.get(query);
@@ -126,15 +136,17 @@ public class SearchController {
                 modelMaps.add(map);
             }
         }
+        searchInContentCatch.put(catchKey, modelMaps);
         return modelMaps;
     }
 
     @RequestMapping("term")
     @Model
     @ResponseBody
-    private List<Term> searchAsTerm(@RequestParam String query) {
+    private ModelMap searchAsTerm(@RequestParam String query) {
         List<Term> allTerms = aliasesMap.getAllTerms();
         List<String> matches = new ArrayList<String>();
+        Term exactMatchTerm = null;
 
         Pattern pattern = null;
         if (isCosmicCode(query)) {
@@ -150,11 +162,16 @@ public class SearchController {
 
         for (Term term : allTerms) {
             if (term.getName().toLowerCase().equals(query.toLowerCase())) {
-                matches.add(0, term.getName());
+                exactMatchTerm = term;
             } else if (term.getName().toLowerCase().contains(query.toLowerCase())
                     || pattern != null && pattern.matcher(term.getName().toLowerCase()).find()) {
                 matches.add(term.getName());
             }
+        }
+
+        TermMorph morph = termMorphDao.getByName(query);
+        if (morph != null) {
+            exactMatchTerm = aliasesMap.get(getValueFromUri(Term.class, morph.getTermUri())).getTerm();
         }
 
         List<Term> terms = new ArrayList<Term>();
@@ -169,7 +186,10 @@ public class SearchController {
 
             if (!has) terms.add(prime);
         }
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("terms", terms);
+        modelMap.put("exactMatchTerm", exactMatchTerm);
 
-        return terms;
+        return modelMap;
     }
 }

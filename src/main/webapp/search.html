@@ -6,7 +6,10 @@
     <button class="search-button" data-bind="click: search">Искать</button>
     <div class="block loading" data-bind="visible: loadingTerms">Загрузка терминов...</div>
     <div data-bind="visible: terms.length">
-        <h3>Термины</h3>
+        <div data-bind="visible: exactMatchTerm" class="exact-match">
+            Найден термин <button data-bind="text: exactMatchTerm.name, click: navigateToExactTerm"></button>
+        </div>
+        <h3>В названиях терминов</h3>
         <div data-bind="source: terms" data-template="search-terms-template"></div>
         <script type="text/kendo-x-tmpl" id="search-terms-template">
             <button class="grey" data-bind="text: name, click: navigate"></button>
@@ -17,7 +20,7 @@
         <div data-bind="invisible: contents.length">
             <strong>Ничего не найдено.</strong> Побробуйте со звёздочкой в конце для учёта всех вариантов окончания слова. Например птиц*</div>
         <div data-bind="visible: contents.length">
-            <h3>Упоминания в содержимом</h3>
+            <h3>В содержимом</h3>
             <div data-bind="source: contents" data-template="search-content-template"></div>
             <script type="text/kendo-x-tmpl" id="search-content-template">
                 <blockquote>
@@ -29,6 +32,20 @@
         </div>
     </div>
     <style type="text/css">
+        button {
+            color: #ffffff;
+        }
+        button.grey {
+            color: #3A3A3A;
+        }
+        .exact-match {
+            padding: 10px;
+            margin-top: 10px;
+            background: lemonchiffon;
+            border-width: 2px;
+            border-color: gold;
+            border-style: solid;
+        }
         #search .k-autocomplete {
             padding: 0;
         }
