@@ -62,6 +62,9 @@ function setHash(newHash) {
     } else {
         window.location.href = window.location.href.substr(0, sharpIdx) + "#" + newHash;
     }
+    if (ga) {
+        ga('send', 'event', 'navigation', newHash);
+    }
 }
 
 $(document).ajaxStart(function() {
