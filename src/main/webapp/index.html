@@ -90,11 +90,12 @@
             }
             .footer {
                 margin: 30px auto;
-                width: 420px;
-				margin-left: 100px;
+                text-align: center;
+                /*width: 420px;*/
+				/*margin-left: 100px;*/
             }
             .search-input {
-                width: 80%;
+                width: 100%;
             }
             .search-button {
                 color: #ffffff;
@@ -106,11 +107,23 @@
         <h1>Интерактивная Ииссиидиология</h1>
         <div style="margin-top:40px;">
             Поиск пунктов, терминов, словосочетаний в материалах:
-            <input class="k-input search-input" id="search-input" type="text" onkeypress="if (event.keyCode == 13) {location.href='#?'+document.getElementById('search-input').value}"> 
-            <a class="button search-button" onclick="location.href='#?' + document.getElementById('search-input').value">Найти</a>
+            <table style="width: 100%">
+                <tr>
+                    <td style="width: 100%">
+                        <input class="k-input search-input" id="search-input" type="text"
+                               onkeypress="if (event.keyCode == 13) {location.href='#?'+document.getElementById('search-input').value}">
+                    </td>
+                    <td>
+                        <a class="button search-button" onclick="location.href='#?' + document.getElementById('search-input').value">Найти</a>
+                    </td>
+                </tr>
+            </table>
             Примеры поиска: <a href="#?птиц*">птиц*</a>, <a href="#?НАСМ">НАСМ</a>, <a href="#?10.10176">10.10176</a>
         </div>
         <div class="footer">
+            <a class="button grey" href="https://www.youtube.com/watch?v=6oZJHu1dEnQ" target="_blank">
+                <img src="https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/video-16.png"/>
+                Видео гид</a>
             <a class="button grey" href="#1.0001">Начать чтение</a>
             <a class="button grey" href="#main_panel">Материалы</a>
 			<a class="button grey" href="#about">О проекте</a>
