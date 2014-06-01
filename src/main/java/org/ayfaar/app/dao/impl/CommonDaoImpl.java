@@ -178,8 +178,12 @@ public class CommonDaoImpl implements CommonDao {
     public List<Content> findInAllContent(List<String> aliases, Integer start, Integer limit) {
         String where = " WHERE ";
         for (String alias : aliases) {
-            for (char c : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')'}) {
-                where += " content like '%"+alias+c+"%' OR";
+            if (alias.length() < 4) {
+                for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')'}) {
+                    where += " content like '%" + alias + endChar + "%' OR";
+                }
+            } else {
+                where += " content like '%" + alias + "%' OR";
             }
         }
         where = where.substring(0, where.length() - 2);
