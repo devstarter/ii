@@ -54,6 +54,7 @@ public class SearchController {
     private List<ModelMap> searchInContent(@RequestParam String query,
                                            @RequestParam(required = false, defaultValue = "0") Integer page) {
         query = query.toLowerCase();
+        query = query.trim();
         String catchKey = query+"#$%^&"+page;
         List<ModelMap> catchedResult = searchInContentCatch.get(catchKey);
         if (catchedResult != null) {
@@ -144,6 +145,7 @@ public class SearchController {
     @Model
     @ResponseBody
     private ModelMap searchAsTerm(@RequestParam String query) {
+        query = query.trim();
         List<Term> allTerms = aliasesMap.getAllTerms();
         List<String> matches = new ArrayList<String>();
         Term exactMatchTerm = null;

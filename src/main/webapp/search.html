@@ -18,7 +18,10 @@
     <div class="block loading" data-bind="visible: loadingContents">Загрузка результатов поиска по содержимому...</div>
     <div data-bind="invisible: loadingContents">
         <div data-bind="invisible: contents.length">
-            <strong>Ничего не найдено.</strong> Побробуйте со звёздочкой в конце для учёта всех вариантов окончания слова. Например птиц*</div>
+            <strong>Ничего не найдено.</strong> Побробуйте со звёздочкой после корня слова для учёта всех вариантов
+            окончания слова. Например "лийллусцивный" - "лийллусцивн*" (будут учтены "лийллусцивн<u>о</u>", "лийллусцивн<u>ые</u>",
+            "лийллусцивн<u>ость</u>" и т. д.
+        </div>
         <div data-bind="visible: contents.length">
             <h3>В содержимом</h3>
             <div data-bind="source: contents" data-template="search-content-template"></div>
