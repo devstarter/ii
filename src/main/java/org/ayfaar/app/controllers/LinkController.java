@@ -74,7 +74,7 @@ public class LinkController {
         if (primTerm == null) {
             primTerm = termController.add(term);
         }
-        if (type == 0) {
+        if (type != null && type == 0) {
             // Morph
             termMorphDao.save(new TermMorph(alias, primTerm.getUri()));
             return 1;
