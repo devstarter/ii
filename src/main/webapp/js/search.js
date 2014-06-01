@@ -3,7 +3,7 @@
     ii.search = {
         load: function(query) {
             document.title = "Поиск "+query;
-            query = query.replace("+", " ");
+            query = query.replace("+", " ").trim();
             if (isItemNumber(query)) {
                 location.hash = "#"+query;
                 return

@@ -16,10 +16,7 @@ import org.ayfaar.app.utils.ValueObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -211,5 +208,10 @@ public class TermController {
             names.add(term.getName());
         }
         return names;
+    }
+
+    @RequestMapping("remove/{name}")
+    public void remove(@PathVariable String name) {
+        termDao.remove(termDao.getByName(name).getUri());
     }
 }
