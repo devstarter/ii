@@ -4,10 +4,7 @@ import org.apache.commons.lang.WordUtils;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
-import org.ayfaar.app.model.Link;
-import org.ayfaar.app.model.Term;
-import org.ayfaar.app.model.TermMorph;
-import org.ayfaar.app.model.UID;
+import org.ayfaar.app.model.*;
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.Morpher;
@@ -90,14 +87,16 @@ public class TermController {
         // QUOTES
 
         List<ModelMap> quotes = new ArrayList<ModelMap>();
-        for (Link link : linkDao.getRelatedWithQuote(term.getUri())) {
-            ModelMap map = new ModelMap();
-            String sourceUri = link.getUid1().getUri().equals(term.getUri())
-                    ? link.getUid2().getUri()
-                    : link.getUid1().getUri();
-            map.put("quote", link.getQuote());
-            map.put("uri", sourceUri);
-            quotes.add(map);
+        for (Link link : linkDao.getRelated(term.getUri())) {
+            UID source = link.getUid1().getUri().equals(term.getUri())
+                    ? link.getUid2()
+                    : link.getUid1();
+            if (link.getQuote() != null || source instanceof Item) {
+                ModelMap map = new ModelMap();
+                map.put("quote", link.getQuote());
+                map.put("uri", source.getUri());
+                quotes.add(map);
+            }
         }
         modelMap.put("quotes", quotes);
 
