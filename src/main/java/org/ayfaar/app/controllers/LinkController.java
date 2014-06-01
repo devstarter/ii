@@ -90,9 +90,10 @@ public class LinkController {
         helper.setFrom("ii@ayfaar.org");
         helper.setTo("ylebid@gmail.com");
         helper.setSubject("Создана связь (" + term + " + " + alias + ")");
-        helper.setText("link id: " + link.getLinkId() +
-                "\nhttp://ii.ayfaar.org/#" + term
-                +"\nhttp://ii.ayfaar.org/#" + alias);
+        helper.setText("link id: " + link.getLinkId()
+                        + " <a href=\"http://ii.ayfaar.org/api/link/remove/" + link.getLinkId() + "\">удалить</a>"
+                + "\nhttp://ii.ayfaar.org/#" + term
+                + "\nhttp://ii.ayfaar.org/#" + alias);
         mailSender.send(helper.getMimeMessage());
 
         return link.getLinkId();
