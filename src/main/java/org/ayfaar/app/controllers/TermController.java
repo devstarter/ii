@@ -93,7 +93,7 @@ public class TermController {
                     : link.getUid1();
             if (link.getQuote() != null || source instanceof Item) {
                 ModelMap map = new ModelMap();
-                map.put("quote", link.getQuote());
+                map.put("quote", link.getQuote() != null ? link.getQuote() : ((Item) source).getContent());
                 map.put("uri", source.getUri());
                 quotes.add(map);
             }
