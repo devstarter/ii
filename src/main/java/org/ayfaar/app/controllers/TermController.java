@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+import static org.ayfaar.app.model.Link.*;
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 import static org.springframework.util.Assert.notNull;
@@ -64,12 +65,12 @@ public class TermController {
 
 //        Matcher matcher = Pattern.compile("^[А-ЯЁ]+$").matcher(termName);
 //        if (matcher.find()) {
-            // может быть аббравиатурой или сокращением
-            Link _link = linkDao.getForAbbreviation(term.getUri());
-            if (_link != null && _link.getUid1() instanceof Term) {
-                alias = term;
-                term = (Term) _link.getUid1();
-            }
+        // может быть аббравиатурой или сокращением
+        Link _link = linkDao.getForAbbreviation(term.getUri());
+        if (_link != null && _link.getUid1() instanceof Term) {
+            alias = term;
+            term = (Term) _link.getUid1();
+        }
 //        }
 
         ModelMap modelMap = (ModelMap) getModelMap(term);
@@ -84,10 +85,14 @@ public class TermController {
 //        modelMap.put("related", getRelated(term.getUri()));
 //        modelMap.put("aliases", aliases);
 
-        // QUOTES
+        // LINKS
 
         List<ModelMap> quotes = new ArrayList<ModelMap>();
-        for (Link link : linkDao.getRelated(term.getUri())) {
+        Set<UID> related = new LinkedHashSet<UID>();
+        Set<UID> aliases = new LinkedHashSet<UID>();
+
+        UID code = null;
+        for (Link link : linkDao.getAllLinks(term.getUri())) {
             UID source = link.getUid1().getUri().equals(term.getUri())
                     ? link.getUid2()
                     : link.getUid1();
@@ -96,9 +101,28 @@ public class TermController {
                 map.put("quote", link.getQuote() != null ? link.getQuote() : ((Item) source).getContent());
                 map.put("uri", source.getUri());
                 quotes.add(map);
+            } else if (ABBREVIATION.equals(link.getType()) || ALIAS.equals(link.getType())) {
+                aliases.add(source);
+            } else if (CODE.equals(link.getType())) {
+                code = source;
+            } else {
+                related.add(source);
             }
         }
+        modelMap.put("code", code);
         modelMap.put("quotes", quotes);
+        modelMap.put("related", convertToPlainObjects(related, new ValueObjectUtils.Modifier<UID>() {
+            @Override
+            public void modify(UID entity, ModelMap map) {
+                map.remove("content");
+            }
+        }));
+        modelMap.put("aliases", convertToPlainObjects(aliases, new ValueObjectUtils.Modifier<UID>() {
+            @Override
+            public void modify(UID entity, ModelMap map) {
+                map.remove("content");
+            }
+        }));
 
         return modelMap;
     }
@@ -109,7 +133,7 @@ public class TermController {
     public Collection<ModelMap> getRelated(@RequestParam String uri) {
         Set<UID> related = new LinkedHashSet<UID>();
         for (Link link : linkDao.getRelated(uri)) {
-            if (!Link.ABBREVIATION.equals(link.getType()) && link.getQuote() == null) {
+            if (!ABBREVIATION.equals(link.getType()) && link.getQuote() == null) {
                 if (link.getUid1().getUri().equals(uri)) {
                     related.add(link.getUid2());
                 } else {

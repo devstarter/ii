@@ -24,9 +24,6 @@
                 navigate: function(e) {
                     ii.navigateToUri(e.data.uri);
                 },
-                navigateToExactTerm: function(e) {
-                    ii.navigateToUri(e.data.exactMatchTerm.uri);
-                },
                 loadNextPage: function(e) {
                     searchInContent();
                 }

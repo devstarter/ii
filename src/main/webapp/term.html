@@ -6,6 +6,17 @@
             <span class="info" data-bind="visible: from">
                 Перенапраленно с: <span data-bind="text: from.name"></span>
             </span>
+            <span class="info" data-bind="visible: code">Код понятия:
+                <span data-bind="text: code.name"></span>
+            </span>
+            <span class="info" data-bind="visible: aliases.length">Синонимы и сокращения:
+                <span data-bind="source: aliases" data-template="aliases-template"></span>
+                <script type="text/kendo-x-tmpl" id="aliases-template">
+                    <span data-bind="text: getLabel"></span>
+                </script>
+            </span>
+
+
             <p data-bind="text: shortDescription" class="shortDescription"></p>
             <p data-bind="text: description"></p>
             <!--<span class="info" data-bind="invisible: description">Нет короткого определения</span>-->
@@ -16,8 +27,9 @@
                     <cite>&mdash; <a data-bind="text: getLabel, click: navigate"></a></cite>
                 </blockquote>
             </script>
-            <span class="header" data-bind="visible: related[0]">Также связан с</span>
+            <span class="header" data-bind="visible: related.length">Также связан с</span>
             <div data-bind="source: related" data-template="related-template"></div>
+
             <script type="text/kendo-x-tmpl" id="related-template">
                 <button class="grey" data-bind="text: getLabel, click: navigate"></button>
             </script>

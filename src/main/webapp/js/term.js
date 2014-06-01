@@ -7,6 +7,7 @@
             viewModel = kendo.observable({
                 loading: true,
                 related: [],
+                aliases: [],
                 quotes: [],
                 getLabel: function(data) {
                     return ii.getLabel(data);
@@ -17,6 +18,9 @@
                 },
                 navigate: function(e) {
                     ii.navigateToUri(e.data.uri);
+                },
+                navigateToCode: function(e) {
+                    ii.navigateToUri(e.data.code.uri);
                 },
                 save: function(e) {
                     console.trace("save");
@@ -42,9 +46,9 @@
                     viewModel.set("found", true);
                     viewModel.set("loading", false);
 
-                    $.get(termApiUrl+"related", {uri: r.uri}, function(a) {
+                    /*$.get(termApiUrl+"related", {uri: r.uri}, function(a) {
                         viewModel.set("related", a)
-                    })
+                    })*/
                 },
                 error: function(e) {
                     viewModel.set("name", term);
