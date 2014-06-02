@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+import static java.util.Collections.sort;
 import static org.ayfaar.app.model.Link.*;
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
@@ -109,6 +110,12 @@ public class TermController {
                 related.add(source);
             }
         }
+        sort(quotes, new Comparator<ModelMap>() {
+            @Override
+            public int compare(ModelMap o1, ModelMap o2) {
+                return ((String) o1.get("uri")).compareTo((String) o2.get("uri"));
+            }
+        });
         modelMap.put("code", code);
         modelMap.put("quotes", quotes);
         modelMap.put("related", convertToPlainObjects(related, new ValueObjectUtils.Modifier<UID>() {
