@@ -25,6 +25,12 @@
                 loading: true,
                 next: {},
                 linkedTerms: [],
+                backLabel: function() {
+                    return ii.prevScreen == "search" ? "Назад к результам поиска" : null
+                },
+                goBack: function() {
+                    window.browser.back();
+                },
                 navigateToTerm: function(e) {
                     ii.navigateToUri(e.data.uri);
                 },

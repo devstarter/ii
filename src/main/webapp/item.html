@@ -1,4 +1,5 @@
 <div id="item">
+    <!--<div data-bind="visible: backLabel"><button class="grey" data-bind="text: backLabel, click: goBack"></button></div>-->
     <div class="block loading" data-bind="visible: loading">Загрузка...</div>
     <div class="block" data-bind="invisible: loading">
         <button class="grey" data-bind="attr: {title: prev.number}, visible: prev, click: navigatePrev">←</button>

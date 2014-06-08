@@ -131,6 +131,7 @@ function savePrevContent(){
     $("body").append(prevContent);
     $("#content").empty();
     prevContent.hide();
+    ii.prevScreen = prevContent.first().attr("id").replace("-container", "");
 }
 
 router.route("term::term", termRoute);
