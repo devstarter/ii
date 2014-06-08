@@ -17,7 +17,7 @@
     </div>
     <div class="block loading" data-bind="visible: loadingContents">Загрузка результатов поиска по содержимому...</div>
     <div data-bind="invisible: loadingContents">
-        <div data-bind="invisible: contents.length">
+        <div data-bind="visible: noResult">
             <strong>Ничего не найдено.</strong> Побробуйте со звёздочкой после корня слова для учёта всех вариантов
             окончания слова. Например "лийллусцивный" - "лийллусцивн*" (будут учтены "лийллусцивн<u>о</u>", "лийллусцивн<u>ые</u>",
             "лийллусцивн<u>ость</u>" и т. д.

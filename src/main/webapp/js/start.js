@@ -4,30 +4,20 @@
         noty({text: text, type: 'error', layout: 'topCenter', timeout: 3000});
     },
     navigateToSearch: function(query) {
-//        var needReload = location.hash.indexOf("#?") != 0;
         setHash("?"+query.replaceAll(" ", "+"));
-//        if (needReload) location.reload();
     },
     navigateToUri: function(uri) {
         if (uri.indexOf("ии:пункт:") == 0) {
-//            var needReload = !isItemNumber(location.hash.replace("#", ""));//.indexOf("#item:") != 0;
             setHash(uri.replace("ии:пункт:", ""));
-//            if (needReload) location.reload();
         }
         if (uri.indexOf("ии:термин:") == 0) {
-//            var needReload = isItemNumber(location.hash.replace("#", "")) || location.hash.indexOf("#?") == 0;//location.hash.indexOf("#term:") != 0;
             setHash(uri.replace("ии:термин:", "").replaceAll(" ", "+"));
-//            if (needReload) location.reload();
         }
         if (uri.indexOf("статья:") == 0) {
-//            var needReload = location.hash.indexOf("#a/") != 0;
             setHash("a/"+uri.replace("статья:", ""));
-//            if (needReload) location.reload();
         }
 		if (uri.indexOf("песня:") == 0) {
-//            var needReload = location.hash.indexOf("#s/") != 0;
             setHash("s/"+uri.replace("песня:", ""));
-//            if (needReload) location.reload();
         }
         if (uri.indexOf("http") == 0) {
             window.open(uri,'_blank');
@@ -62,9 +52,9 @@ function setHash(newHash) {
     } else {
         window.location.href = window.location.href.substr(0, sharpIdx) + "#" + newHash;
     }
-    if (ga) {
-        ga('send', 'event', 'navigation', newHash);
-    }
+//    if (ga) {
+//        ga('send', 'event', 'navigation', newHash);
+//    }
 }
 
 $(document).ajaxStart(function() {
@@ -110,6 +100,7 @@ var router = new kendo.Router();
 
 router.route("item::item", itemRoute);
 function itemRoute(item) {
+    ga('send', 'pageview', "item/"+item);
     switchTo("item", function() {
         ii.item.load(item);
     });
@@ -141,9 +132,11 @@ function savePrevContent(){
     $("#content").empty();
     prevContent.hide();
 }
+
 router.route("term::term", termRoute);
 function termRoute(term) {
     term = term.replaceAll("+", " ");
+    ga('send', 'pageview', "term/"+term);
     switchTo("term", function() {
         ii.term.load(term);
     });
@@ -152,27 +145,33 @@ router.route("search::query", searchRoute);
 router.route("?:query", searchRoute);
 function searchRoute(query) {
     query = query.replaceAll("+", " ");
+    ga('send', 'pageview', "search/"+query);
     switchTo("search", function() {
         ii.search.load(query);
     });
 }
 router.route("main", function() {
+    ga('send', 'pageview', "main");
     location.reload();
 });
 router.route("a/:id", function(id) {
+    ga('send', 'pageview', "article/"+id);
     switchTo("article", function() {
         ii.article.load(id);
     });
 });
 router.route("s/:id", function(id) {
+    ga('send', 'pageview', "song/"+id);
     switchTo("song", function() {
         ii.song.load(id);
     });
 });
 router.route("about", function() {
+    ga('send', 'pageview', "about");
     ensure({ html: "about.html", parent: "content"});
 });
 router.route("main_panel", function() {
+    ga('send', 'pageview', "main_panel");
     ensure({ html: "main_panel.html", parent: "content"});
 });
 router.route(":hash", function(hash) {
@@ -195,27 +194,4 @@ $(document).ready(function() {
 	} 
 		
     router.start();
-
-//    router.navigate("item\:1.0778");
-
-    /*$.history.on('load change push', function(event, hash, type) {
-        if (hash.indexOf("edit/")==0) {
-            loadAdmin(hash.replace("edit/", ""));
-            return
-        }
-        switch (hash) {
-            case "play":
-                loadGame();
-                break;
-            case "admin":
-                loadAdmin(0);
-                break;
-            case "admin-goals":
-                loadAdminGoals();
-                break;
-            default:
-                loadGame();
-                break;
-        }
-    }).listen('hash');*/
 });

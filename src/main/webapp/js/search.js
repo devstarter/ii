@@ -1,7 +1,12 @@
 ﻿(function ($, undefined) {
-    var searchApiUrl = ii.apiUrl + "search/", viewModel, pageCounter = 0;
+    var searchApiUrl = ii.apiUrl + "search/", viewModel, pageCounter = 0, currentQuery;
     ii.search = {
         load: function(query) {
+            if (currentQuery == query) {
+                return;
+            }
+            currentQuery = query;
+
             document.title = "Поиск "+query;
             query = query.replace("+", " ").trim();
             if (isItemNumber(query)) {
@@ -57,7 +62,8 @@
             pageCounter++;
             viewModel.set("loadingContents", false);
             viewModel.set("contents", viewModel.contents.toJSON().concat(r));
-            viewModel.set("showLoadMore", r.length > 0)
+            viewModel.set("noResult", viewModel.contents.length == 0);
+            viewModel.set("showLoadMore", r.length > 0);
             if (!r.length) {
                 pageCounter = 0;
             }
