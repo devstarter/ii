@@ -11,6 +11,11 @@
         var addQuoteContainer, addAliasContainer, addTermContainer, linkTypeDDL;
 
         $(document).ready(function() {
+			$.ajaxSetup({
+				error: function (e, status, error) {
+					alert("Ошибка!");
+				}
+			});
             addQuoteContainer = $(".add-quote");
             addAliasContainer = $(".add-alias");
             addTermContainer = $(".add-term");
@@ -119,8 +124,6 @@
                 addTermContainer.find("input.term")[0].value = "";
                 addTermContainer.find(".short")[0].value = "";
                 addTermContainer.find(".long")[0].value = "";
-            }, function(e) {
-                alert("Ошибка!")
             });
         }
 
