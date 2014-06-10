@@ -61,6 +61,7 @@
                 } else {
                     alert("Ссылка не создана!");
                 }
+                addQuoteContainer.find(".term")[0].value = "";
             });
         }
         function resetAddQuote() {
@@ -80,11 +81,12 @@
                 } else {
                     alert("Ссылка не создана!");
                 }
+                addAliasContainer.find("input.term2")[0].value = "";
             });
         }
         function resetAddAlias() {
-            addAliasContainer.find(".term1")[0].value = "";
-            addAliasContainer.find(".term1")[0].value = "";
+            addAliasContainer.find("input.term1")[0].value = "";
+            addAliasContainer.find("input.term2")[0].value = "";
             linkTypeDDL.value(null)
         }
 
@@ -114,6 +116,11 @@
                 } else {
                     alert("Термин не создан!");
                 }
+                addTermContainer.find("input.term")[0].value = "";
+                addTermContainer.find(".short")[0].value = "";
+                addTermContainer.find(".long")[0].value = "";
+            }, function(e) {
+                alert("Ошибка!")
             });
         }
 
@@ -178,6 +185,7 @@
         <input placeholder="Термин" class="term"/>
         <br/>
         <textarea placeholder="Короткое описание" class="short k-input"></textarea>
+        <br/>
         <textarea placeholder="Описание" class="long k-input"></textarea>
         <div class="controls">
             <button onclick="sendAddTerm()" class="k-button">Добавить термин</button>
