@@ -50,7 +50,7 @@ public class TermSync extends EntitySynchronizer<Term> {
             return;
         }
 
-        /*Link _link = linkDao.getForAbbreviation(term.getUri());
+        /*Link _link = linkDao.getForAbbreviationOrAlias(term.getUri());
         if (_link != null && _link.getUid1() instanceof Term) {
             Term mainTerm = (Term) _link.getUid1();
             saveRedirect(term, mainTerm);

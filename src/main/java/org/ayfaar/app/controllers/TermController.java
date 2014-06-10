@@ -64,10 +64,8 @@ public class TermController {
             term = aliasesMap.get(termName).getTerm();
         }
 
-//        Matcher matcher = Pattern.compile("^[А-ЯЁ]+$").matcher(termName);
-//        if (matcher.find()) {
-        // может быть аббравиатурой или сокращением
-        Link _link = linkDao.getForAbbreviation(term.getUri());
+        // может быть аббравиатурой, сокращением или синонимов
+        Link _link = linkDao.getForAbbreviationOrAlias(term.getUri());
         if (_link != null && _link.getUid1() instanceof Term) {
             alias = term;
             term = (Term) _link.getUid1();
@@ -76,15 +74,7 @@ public class TermController {
 
         ModelMap modelMap = (ModelMap) getModelMap(term);
 
-//        List<UID> aliases = new ArrayList<UID>();
-
-//        for (Link link : linkDao.getAliases(term.getUri())) {
-//            aliases.add(link.getUid2());
-//        }
-
         modelMap.put("from", alias);
-//        modelMap.put("related", getRelated(term.getUri()));
-//        modelMap.put("aliases", aliases);
 
         // LINKS
 

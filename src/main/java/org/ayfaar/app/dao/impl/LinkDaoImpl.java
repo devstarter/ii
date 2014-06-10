@@ -68,11 +68,11 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
     }
 
     @Override
-    public Link getForAbbreviation(String uri) {
+    public Link getForAbbreviationOrAlias(String uri) {
         return (Link) criteria()
                 .createAlias("uid2", "uid2")
                 .add(eq("uid2.uri", uri))
-                .add(eq("type", Link.ABBREVIATION))
+                .add(in("type", new Byte[]{Link.ABBREVIATION, Link.ALIAS}))
                 .uniqueResult();
     }
 
