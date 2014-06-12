@@ -155,22 +155,26 @@ public class TermController {
     public Term add(String name, String shortDescription, String description) {
         name = name.replace("\"", "").replace("«", "").replace("»", "").trim();
         name = WordUtils.capitalize(name, new char[]{'@'}); // Делаем первую букву большой, @ - знак который не появляеться в названии, чтобы поднялась только первая буква всей фразы
-        Term primeTerm = termDao.getByName(name);
-        if (primeTerm == null) {
-            primeTerm = termDao.save(new Term(name, shortDescription, description));
-            String termName = primeTerm.getName();
+        Term term = termDao.getByName(name);
+        if (term == null) {
+            term = termDao.save(new Term(name, shortDescription, description));
+            String termName = term.getName();
             log.info("Added: "+ termName);
             if (TermUtils.isComposite(termName)) {
                 String target = TermUtils.getNonCosmicCodePart(termName);
                 if (target != null) {
-                    findAliases(primeTerm, target, termName.replace(target, ""));
+                    findAliases(term, target, termName.replace(target, ""));
                 }
             } else if (!TermUtils.isCosmicCode(termName)) {
-                findAliases(primeTerm, termName, "");
+                findAliases(term, termName, "");
             }
+        } else {
+            term.setShortDescription(shortDescription);
+            term.setDescription(description);
+            termDao.save(term);
         }
         aliasesMap.reload();
-        return primeTerm;
+        return term;
     }
 
     private void findAliases(Term primeTerm, String target, String prefix) {
