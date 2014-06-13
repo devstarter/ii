@@ -5,10 +5,10 @@
             data-source="{serverFiltering: true, serverPaging: true, pageSize: 20, transport: {read: '/api/term/autocomplete'}}"/>
     <button class="search-button" data-bind="click: search">Искать</button>
     <div class="block loading" data-bind="visible: loadingTerms">Загрузка терминов...</div>
+    <div data-bind="visible: exactMatchTerm" class="exact-match">
+        Найден термин <button data-bind="text: exactMatchTerm.name, click: navigateToExactTerm"></button>
+    </div>
     <div data-bind="visible: terms.length">
-        <div data-bind="visible: exactMatchTerm" class="exact-match">
-            Найден термин <button data-bind="text: exactMatchTerm.name, click: navigateToExactTerm"></button>
-        </div>
         <h3>В названиях терминов</h3>
         <div data-bind="source: terms" data-template="search-terms-template"></div>
         <script type="text/kendo-x-tmpl" id="search-terms-template">

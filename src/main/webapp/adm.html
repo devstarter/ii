@@ -112,18 +112,18 @@
         }
         function sendAddTerm() {
             $.post("/api/term/add", {
-                name: addTermContainer.find("input.term")[0].value,
-                shortDescription: addTermContainer.find(".short")[0].value,
-                description: addTermContainer.find(".long")[0].value
+                name: addTermContainer.find("input.term").val(),
+                shortDescription: addTermContainer.find(".short").val(),
+                description: addTermContainer.find(".long").val()
             }, function(r) {
                 if (r) {
                     alert("Есть!");
                 } else {
                     alert("Термин не создан!");
                 }
-                addTermContainer.find("input.term")[0].value = "";
-                addTermContainer.find(".short")[0].value = "";
-                addTermContainer.find(".long")[0].value = "";
+                addTermContainer.find("input.term").val("");
+                addTermContainer.find(".short").val("");
+                addTermContainer.find(".long").val("");
             });
         }
 
