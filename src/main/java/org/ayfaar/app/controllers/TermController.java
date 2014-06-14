@@ -64,8 +64,8 @@ public class TermController {
             term = aliasesMap.get(termName).getTerm();
         }
 
-        // может быть аббравиатурой, сокращением или синонимов
-        Link _link = linkDao.getForAbbreviationOrAlias(term.getUri());
+        // может быть аббравиатурой, сокращением, кодом или синонимов
+        Link _link = linkDao.getForAbbreviationOrAliasOrCode(term.getUri());
         if (_link != null && _link.getUid1() instanceof Term) {
             alias = term;
             term = (Term) _link.getUid1();
@@ -83,7 +83,11 @@ public class TermController {
         Set<UID> aliases = new LinkedHashSet<UID>();
 
         UID code = null;
-        for (Link link : linkDao.getAllLinks(term.getUri())) {
+        List<Link> links = linkDao.getAllLinks(term.getUri());
+        if (alias != null) {
+            links.addAll(linkDao.getAllLinks(alias.getUri()));
+        }
+        for (Link link : links) {
             UID source = link.getUid1().getUri().equals(term.getUri())
                     ? link.getUid2()
                     : link.getUid1();
