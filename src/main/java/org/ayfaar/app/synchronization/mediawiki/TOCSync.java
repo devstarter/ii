@@ -1,4 +1,4 @@
-package org.ayfaar.app.synchronization;
+package org.ayfaar.app.synchronization.mediawiki;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.dao.CategoryDao;
@@ -16,7 +16,7 @@ import java.util.Queue;
 
 import static java.lang.String.format;
 import static org.ayfaar.app.model.Category.PARAGRAPH_SIGN;
-import static org.ayfaar.app.synchronization.SyncUtils.getArticleName;
+import static org.ayfaar.app.synchronization.mediawiki.SyncUtils.getArticleName;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component

@@ -2,6 +2,10 @@ package org.ayfaar.app.synchronization;
 
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.importing.SpringConfiguration;
+import org.ayfaar.app.synchronization.mediawiki.ItemSync;
+import org.ayfaar.app.synchronization.mediawiki.MediaWikiBotHelper;
+import org.ayfaar.app.synchronization.mediawiki.SyncUtils;
+import org.ayfaar.app.synchronization.mediawiki.TermSync;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +16,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = SpringConfiguration.class)
 public class TermSyncTest {
 
-    @Autowired MediaWikiBotHelper botHelper;
+    @Autowired
+    MediaWikiBotHelper botHelper;
     @Autowired TermDao termDao;
-    @Autowired TermSync termSync;
-    @Autowired ItemSync itemSync;
-    @Autowired SyncUtils syncUtils;
+    @Autowired
+    TermSync termSync;
+    @Autowired
+    ItemSync itemSync;
+    @Autowired
+    SyncUtils syncUtils;
 
     @Test
     public void testSynchronize() throws Exception {

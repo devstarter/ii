@@ -2,7 +2,7 @@ package org.ayfaar.app.importing;
 
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Category;
-import org.ayfaar.app.synchronization.CategorySync;
+import org.ayfaar.app.synchronization.mediawiki.CategorySync;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 

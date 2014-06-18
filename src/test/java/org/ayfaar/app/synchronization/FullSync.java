@@ -7,6 +7,7 @@ import org.ayfaar.app.importing.SpringConfiguration;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.synchronization.mediawiki.*;
 import org.hibernate.criterion.MatchMode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,14 +19,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = SpringConfiguration.class)
 public class FullSync {
 
-    @Autowired MediaWikiBotHelper botHelper;
+    @Autowired
+    MediaWikiBotHelper botHelper;
     @Autowired TermDao termDao;
     @Autowired ItemDao itemDao;
-    @Autowired TermSync termSync;
+    @Autowired
+    TermSync termSync;
     @Autowired CategoryDao categoryDao;
-    @Autowired CategorySync categorySync;
-    @Autowired ItemSync itemSync;
-    @Autowired TOCSync tocSync;
+    @Autowired
+    CategorySync categorySync;
+    @Autowired
+    ItemSync itemSync;
+    @Autowired
+    TOCSync tocSync;
 
     @Test
     public void dump() throws Exception {

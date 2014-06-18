@@ -82,4 +82,18 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
                 .add(isNotNull("quote"))
                 .list();
     }
+
+    @Override
+    public List<Link> getByUris(String uri1, String uri2) {
+        return criteria()
+                .createAlias("uid1", "uid1")
+                .createAlias("uid2", "uid2")
+                .add(
+                    or(
+                        and(eq("uid1.uri", uri1), eq("uid2.uri", uri2)),
+                        and(eq("uid1.uri", uri2), eq("uid2.uri", uri1))
+                    )
+                )
+                .list();
+    }
 }

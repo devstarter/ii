@@ -2,6 +2,8 @@ package org.ayfaar.app.synchronization;
 
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.importing.SpringConfiguration;
+import org.ayfaar.app.synchronization.mediawiki.CategorySync;
+import org.ayfaar.app.synchronization.mediawiki.MediaWikiBotHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +14,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = SpringConfiguration.class)
 public class CategorySyncTest {
 
-    @Autowired MediaWikiBotHelper botHelper;
-    @Autowired CategorySync categorySync;
+    @Autowired
+    MediaWikiBotHelper botHelper;
+    @Autowired
+    CategorySync categorySync;
     @Autowired CategoryDao categoryDao;
 
     @Test

@@ -29,6 +29,11 @@ public class UriGenerator implements IdentifierGenerator {
         return uri;
     }
 
+    public static String generate(Class clazz, String id) {
+        Uri annotation = (Uri) clazz.getAnnotation(Uri.class);
+        return annotation.nameSpace() + id;
+    }
+
     public static String getValueFromUri(Class objectClass, String uri) {
         Uri annotation = (Uri) objectClass.getAnnotation(Uri.class);
         return uri.replace(annotation.nameSpace(), "");

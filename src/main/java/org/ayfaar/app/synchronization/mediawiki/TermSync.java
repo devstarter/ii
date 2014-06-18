@@ -1,4 +1,4 @@
-package org.ayfaar.app.synchronization;
+package org.ayfaar.app.synchronization.mediawiki;
 
 import org.ayfaar.app.controllers.TermController;
 import org.ayfaar.app.dao.LinkDao;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 import static java.util.regex.Pattern.*;
-import static org.ayfaar.app.synchronization.SyncUtils.getArticleName;
+import static org.ayfaar.app.synchronization.mediawiki.SyncUtils.getArticleName;
 
 @Component
 public class TermSync extends EntitySynchronizer<Term> {

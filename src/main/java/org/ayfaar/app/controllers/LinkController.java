@@ -9,9 +9,8 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.utils.EmailNotifier;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -30,7 +28,7 @@ public class LinkController {
     @Autowired TermDao termDao;
     @Autowired ItemDao itemDao;
     @Autowired TermController termController;
-    @Autowired JavaMailSender mailSender;
+    @Autowired EmailNotifier emailNotifier;
     @Autowired AliasesMap aliasesMap;
     @Autowired TermMorphDao termMorphDao;
 
@@ -53,14 +51,7 @@ public class LinkController {
         Item item = itemDao.getByNumber(itemNumber);
         Link link = linkDao.save(new Link(term, item, quote.isEmpty() ? null : quote));
 
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
-        helper.setFrom("ii@ayfaar.org");
-        helper.setTo("ylebid@gmail.com");
-        helper.setSubject("Создана связь (" + term.getName() + " + " + itemNumber + ")");
-        helper.setText(quote + "\nlink id: " + link.getLinkId() + "\nhttp://ii.ayfaar.org/#"
-                + term.getName().replace(" ", "+"));
-        mailSender.send(helper.getMimeMessage());
+        emailNotifier.newQuoteLink(term.getName(), itemNumber, quote, link.getLinkId());
 
         return link.getLinkId();
     }
@@ -85,16 +76,7 @@ public class LinkController {
         }
         Link link = linkDao.save(new Link(primTerm, aliasTerm, type));
 
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
-        helper.setFrom("ii@ayfaar.org");
-        helper.setTo("ylebid@gmail.com");
-        helper.setSubject("Создана связь (" + term + " + " + alias + ")");
-        helper.setText("link id: " + link.getLinkId()
-                        + " <a href=\"http://ii.ayfaar.org/api/link/remove/" + link.getLinkId() + "\">удалить</a>"
-                + "\nhttp://ii.ayfaar.org/#" + term
-                + "\nhttp://ii.ayfaar.org/#" + alias);
-        mailSender.send(helper.getMimeMessage());
+        emailNotifier.newLink(term, alias, link.getLinkId());
 
         return link.getLinkId();
     }

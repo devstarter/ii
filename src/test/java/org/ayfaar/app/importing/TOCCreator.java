@@ -1,6 +1,6 @@
 package org.ayfaar.app.importing;
 
-import org.ayfaar.app.synchronization.TOCSync;
+import org.ayfaar.app.synchronization.mediawiki.TOCSync;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 

@@ -17,4 +17,6 @@ public interface LinkDao extends BasicCrudDao<Link> {
     Link getForAbbreviationOrAliasOrCode(String uri);
 
     List<Link> getRelatedWithQuote(String uri);
+
+    List<Link> getByUris(String uri1, String uri2);
 }

@@ -1,4 +1,4 @@
-package org.ayfaar.app.synchronization;
+package org.ayfaar.app.synchronization.mediawiki;
 
 import org.ayfaar.app.controllers.ItemController;
 import org.ayfaar.app.dao.CategoryDao;
@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 import static java.lang.String.format;
 import static org.ayfaar.app.model.Category.PARAGRAPH_NAME;
 import static org.ayfaar.app.model.Category.PARAGRAPH_SIGN;
-import static org.ayfaar.app.synchronization.SyncUtils.getArticleName;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
@@ -30,7 +29,7 @@ public class CategorySync extends EntitySynchronizer<Category> {
         if (!category.isParagraph()) {
             throw new RuntimeException("Should be paragraph");
         }
-        String articleName = getArticleName(Category.class, category.getUri());
+        String articleName = SyncUtils.getArticleName(Category.class, category.getUri());
 //        mediaWikiBotHelper.isSyncNeeded(articleName);
         validateTitle(articleName);
 
@@ -46,7 +45,7 @@ public class CategorySync extends EntitySynchronizer<Category> {
             }
             do {
                 itemSync.scheduleSync(currentItem);
-                String itemId = getArticleName(Item.class, currentItem.getUri());
+                String itemId = SyncUtils.getArticleName(Item.class, currentItem.getUri());
                 sb.append(format("[[%s|%s]]. {{:%s}}<br/><br/>\n",
                         itemId,
                         itemNumber,
@@ -58,8 +57,8 @@ public class CategorySync extends EntitySynchronizer<Category> {
             if (category.getNext() != null) {
 //                String next = getValueFromUri(Category.class, category.getNext());
                 Category next = categoryDao.get(category.getNext());
-                sb.append(format("[[%s|Следующий %s %s]]\n",
-                        getArticleName(Category.class, next.getUri()),
+                sb.append(String.format("[[%s|Следующий %s %s]]\n",
+                        SyncUtils.getArticleName(Category.class, next.getUri()),
                         next.getName().replace(PARAGRAPH_NAME, PARAGRAPH_SIGN),
                         next.getDescription()));
             }
@@ -71,8 +70,8 @@ public class CategorySync extends EntitySynchronizer<Category> {
 
         if (category.getParent() != null) {
             Category parent = categoryDao.get(category.getParent());
-            sb.append(format("\n[[%s|%s. %s]]",
-                    getArticleName(Category.class, parent.getUri()),
+            sb.append(String.format("\n[[%s|%s. %s]]",
+                    SyncUtils.getArticleName(Category.class, parent.getUri()),
                     getValueFromUri(Category.class, parent.getUri()),
                     parent.getDescription()));
         }

@@ -1,4 +1,4 @@
-package org.ayfaar.app.synchronization;
+package org.ayfaar.app.synchronization.mediawiki;
 
 import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;

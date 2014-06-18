@@ -1,4 +1,4 @@
-package org.ayfaar.app.synchronization;
+package org.ayfaar.app.synchronization.mediawiki;
 
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.CommonDao;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import static java.lang.String.format;
 import static org.ayfaar.app.model.Category.PARAGRAPH_NAME;
 import static org.ayfaar.app.model.Category.PARAGRAPH_SIGN;
-import static org.ayfaar.app.synchronization.SyncUtils.getArticleName;
 
 @Component
 public class ItemSync extends EntitySynchronizer<Item> {
@@ -31,16 +30,16 @@ public class ItemSync extends EntitySynchronizer<Item> {
         if (item.getNext() != null || paragraph != null) {
             content += "\n<noinclude>\n";
             if (item.getNext() != null) {
-                content += format("[[%s|Следующий пункт]] ", getArticleName(Item.class, item.getNext()));
+                content += String.format("[[%s|Следующий пункт]] ", SyncUtils.getArticleName(Item.class, item.getNext()));
             }
             if (paragraph != null) {
-                String pName = getArticleName(Category.class, paragraph);
+                String pName = SyncUtils.getArticleName(Category.class, paragraph);
                 content += format("[[%s|%s]]", pName, pName.replace(PARAGRAPH_NAME+":", PARAGRAPH_SIGN));
             }
             content += "\n</noinclude>";
         }
 
-        mediaWikiBotHelper.saveArticle(getArticleName(Item.class, item.getUri()), content);
+        mediaWikiBotHelper.saveArticle(SyncUtils.getArticleName(Item.class, item.getUri()), content);
     }
 
 

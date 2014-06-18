@@ -1,4 +1,4 @@
-package org.ayfaar.app.synchronization;
+package org.ayfaar.app.synchronization.mediawiki;
 
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;

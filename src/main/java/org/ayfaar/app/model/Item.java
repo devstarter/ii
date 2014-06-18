@@ -32,6 +32,10 @@ public class Item extends UID {
     public Item() {
     }
 
+    public static boolean isItemNumber(String s) {
+        return s.matches("^\\d\\d?\\.\\d{4}\\d?$");
+    }
+
     public String getNumber() {
         return number;
     }
