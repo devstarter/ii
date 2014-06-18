@@ -8,6 +8,6 @@ public class BotTest {
     public void test() throws Exception {
         EvernoteBot bot = new EvernoteBot();
         bot.init();
-        bot.getPotentialLinks();
+        bot.getExportNotes();
     }
 }

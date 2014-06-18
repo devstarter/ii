@@ -31,17 +31,21 @@ public class EvernoteBot {
     private static final String AUTH_TOKEN = "S=s2:U=23b8d:E=14e070668bd:C=146af553cc3:P=1cd:A=en-devtoken:V=2:H=45afea3eecc7db1ed47916383b5a6827";
     private static final String NOTEBOOK_NAME = "Интерактивная ИИ (автоматический импорт)";
     private static final String QUOTE_TAG_NAME = "цитата";
+    private static final String LINK_TAG_NAME = "связь";
     public static final String LINK_EXIST_TAG_NAME = "ссылка существует";
     public static final String TERM_NOT_EXIST_TAG_NAME = "термин несуществует";
     private static final String ALLOWED_TAG_NAME = "проверенно";
     public static final String ITEM_NOT_EXIST_TAG_NAME = "пункт не найден";
     public static final String QUOTE_ALTERED_TAG_NAME = "цитата изменена";
-    public static final String UNDEFINED_TAG_TAG_NAME = "метка не определена";
+//    public static final String UNDEFINED_TAG_TAG_NAME = "метка не определена";
+    public static final String LACK_OF_TERMS_TAG_NAME = "недостаток терминов";
+    public static final String NO_TERMS_TAG_NAME = "нет терминов";
 
-    private static final List<String> CONFLICT_TAGS = Arrays.asList(
-            LINK_EXIST_TAG_NAME, TERM_NOT_EXIST_TAG_NAME, ITEM_NOT_EXIST_TAG_NAME, QUOTE_ALTERED_TAG_NAME, UNDEFINED_TAG_TAG_NAME);
+    private static final List<String> ERROR_TAGS = Arrays.asList(
+            LINK_EXIST_TAG_NAME, TERM_NOT_EXIST_TAG_NAME, ITEM_NOT_EXIST_TAG_NAME, QUOTE_ALTERED_TAG_NAME,
+            LACK_OF_TERMS_TAG_NAME, NO_TERMS_TAG_NAME);
     private static final List<String> SERVICE_TAGS = Arrays.asList(
-            QUOTE_TAG_NAME, ALLOWED_TAG_NAME);
+            QUOTE_TAG_NAME, LINK_TAG_NAME, ALLOWED_TAG_NAME);
 
 
     private UserStoreClient userStore;
@@ -67,8 +71,8 @@ public class EvernoteBot {
         noteStore = factory.createNoteStoreClient();
     }
 
-    public List<QuoteLink> getPotentialLinks() throws Exception {
-        List<QuoteLink> links = new ArrayList<QuoteLink>();
+    public List<ExportNote> getExportNotes() throws Exception {
+        List<ExportNote> exportNotes = new ArrayList<ExportNote>();
 
         Map<String, String> tagsMap = new HashMap<String, String>();
 
@@ -102,31 +106,59 @@ public class EvernoteBot {
                     link.setAllowed(tags.contains(ALLOWED_TAG_NAME));
                     boolean conflictedLink = false;
                     for (String tag : tags) {
-                        if (CONFLICT_TAGS.contains(tag) && !link.getAllowed()) {
+                        if (ERROR_TAGS.contains(tag) && !link.getAllowed()) {
                             conflictedLink = true;
                             break;
-                        } else if (SERVICE_TAGS.contains(tag) || CONFLICT_TAGS.contains(tag)) {
+                        } else if (SERVICE_TAGS.contains(tag) || ERROR_TAGS.contains(tag)) {
                             // skip
                         } else if (Item.isItemNumber(tag)) {
                             link.setItem(tag);
-                        } else if (link.getTerm() == null) {
-                            link.setTerm(tag);
                         } else {
-                            setTag(note.getGuid(), UNDEFINED_TAG_TAG_NAME);
-                            conflictedLink = true;
-                            break;
+                            link.getTerms().add(tag);
                         }
                     }
                     if (conflictedLink) continue; // skip link on conflicted
-                    CharSequence text = new HtmlCleaner().clean(noteStore.getNoteContent(note.getGuid())).getText();
-                    text = StringEscapeUtils.unescapeHtml4(text.toString());
-                    link.setQuote(text.toString());
+                    if (link.getTerms().size() == 0) {
+                        setTag(note.getGuid(), NO_TERMS_TAG_NAME);
+                        continue;
+                    }
+
+                    String text = noteStore.getNoteContent(note.getGuid());
+                    if (text != null && !text.isEmpty()) {
+                        text = new HtmlCleaner().clean(text).getText().toString();
+                        text = StringEscapeUtils.unescapeHtml4(text);
+                        link.setQuote(text);
+                    }
                     link.setGuid(note.getGuid());
-                    links.add(link);
+                    exportNotes.add(link);
+                } else if (tags.contains(LINK_TAG_NAME)) {
+                    RelatedTerms related = new RelatedTerms();
+                    related.setAllowed(tags.contains(ALLOWED_TAG_NAME));
+                    related.setType(null);
+                    related.setGuid(note.getGuid());
+
+                    boolean conflictedLink = false;
+                    for (String tag : tags) {
+                        if (ERROR_TAGS.contains(tag) && !related.getAllowed()) {
+                            conflictedLink = true;
+                            break;
+                        } else if (!SERVICE_TAGS.contains(tag) && !ERROR_TAGS.contains(tag)) {
+                            related.getTerms().add(tag);
+                        }
+                    }
+                    if (conflictedLink) continue; // skip link on conflicted
+
+                    related.getTerms().addAll(Arrays.asList(note.getTitle().split("  ")));
+                    if (related.getTerms().size() == 0) {
+                        setTag(note.getGuid(), NO_TERMS_TAG_NAME);
+                        continue;
+                    }
+                    exportNotes.add(related);
                 }
+
             }
         }
-        return links;
+        return exportNotes;
     }
 
     public void removeNote(String guid) throws EDAMUserException, EDAMSystemException, TException, EDAMNotFoundException {
@@ -142,8 +174,14 @@ public class EvernoteBot {
     @Data
     public class QuoteLink extends ExportNote {
         private String item;
-        private String term;
+        private Set<String> terms = new HashSet<String>();
         private String quote;
+    }
+
+    @Data
+    public class RelatedTerms extends ExportNote {
+        private Byte type;
+        private List<String> terms = new ArrayList<String>();
     }
 
     @Data

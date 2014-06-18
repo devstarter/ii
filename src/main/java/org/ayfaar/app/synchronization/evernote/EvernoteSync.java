@@ -1,5 +1,9 @@
 package org.ayfaar.app.synchronization.evernote;
 
+import com.evernote.edam.error.EDAMNotFoundException;
+import com.evernote.edam.error.EDAMSystemException;
+import com.evernote.edam.error.EDAMUserException;
+import com.evernote.thrift.TException;
 import org.ayfaar.app.controllers.TermController;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
@@ -14,7 +18,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.ayfaar.app.utils.UriGenerator.generate;
@@ -34,43 +37,92 @@ public class EvernoteSync {
     @Model
     public void sync() throws Exception {
         bot.init();
-        List<Link> synced = new ArrayList<Link>();
-        List<EvernoteBot.QuoteLink> potentialLinks = bot.getPotentialLinks();
+        List<EvernoteBot.ExportNote> exportNotes = bot.getExportNotes();
 
-        for (EvernoteBot.QuoteLink potentialLink : potentialLinks) {
-            String itemUri = generate(Item.class, potentialLink.getItem());
-            String termUri = generate(Term.class, potentialLink.getTerm());
+        for (EvernoteBot.ExportNote exportNote : exportNotes) {
+            if (exportNote.getGuid() == null || exportNote.getGuid().isEmpty()) {
+                throw new RuntimeException("No GUID");
+            }
+            if (exportNote instanceof EvernoteBot.QuoteLink) {
+                syncQuoteLink((EvernoteBot.QuoteLink) exportNote);
+            }
+            if (exportNote instanceof EvernoteBot.RelatedTerms) {
+                syncRelatedTerms((EvernoteBot.RelatedTerms) exportNote);
+            }
+        }
+    }
+
+    private void syncRelatedTerms(EvernoteBot.RelatedTerms relatedTerms) throws Exception {
+        if (relatedTerms.getTerms().size() < 2) {
+            bot.setTag(relatedTerms.getGuid(), EvernoteBot.LACK_OF_TERMS_TAG_NAME);
+            return;
+        }
+        String mainTermName = relatedTerms.getTerms().get(0);
+        relatedTerms.getTerms().remove(0);
+        String mainTermUri = generate(Term.class, mainTermName);
+
+        Term mainTerm = commonDao.get(Term.class, mainTermUri);
+        if (mainTerm == null) {
+            if (!relatedTerms.getAllowed()) {
+                bot.setTag(relatedTerms.getGuid(), EvernoteBot.TERM_NOT_EXIST_TAG_NAME);
+                return;
+            }
+            mainTerm = termController.add(mainTermName);
+        }
+
+        for (String termName : relatedTerms.getTerms()) {
+            String termUri = generate(Term.class, termName);
+            Term term = commonDao.get(Term.class, termUri);
+            if (term == null) {
+                if (!relatedTerms.getAllowed()) {
+                    bot.setTag(relatedTerms.getGuid(), EvernoteBot.TERM_NOT_EXIST_TAG_NAME);
+                    return;
+                }
+                term = termController.add(termName);
+            }
+            Link link = linkDao.save(new Link(mainTerm, term, relatedTerms.getType()));
+
+            emailNotifier.newLink(mainTermName, termName, link.getLinkId());
+        }
+        bot.removeNote(relatedTerms.getGuid());
+    }
+
+    private void syncQuoteLink(EvernoteBot.QuoteLink potentialLink) throws EDAMUserException, EDAMSystemException, EDAMNotFoundException, TException {
+        String itemUri = generate(Item.class, potentialLink.getItem());
+
+        for (String termName : potentialLink.getTerms()) {
+            String termUri = generate(Term.class, termName);
 
             List<Link> existingLists = linkDao.getByUris(itemUri, termUri);
 
             if (existingLists.size() > 0 && !potentialLink.getAllowed()) {
                 bot.setTag(potentialLink.getGuid(), EvernoteBot.LINK_EXIST_TAG_NAME);
-                continue;
+                return;
             }
 
             Term term = commonDao.get(Term.class, termUri);
             if (term == null) {
                 if (!potentialLink.getAllowed()) {
                     bot.setTag(potentialLink.getGuid(), EvernoteBot.TERM_NOT_EXIST_TAG_NAME);
-                    continue;
+                    return;
                 }
-                term = termController.add(potentialLink.getTerm());
+                term = termController.add(termName);
             }
             Item item = commonDao.get(Item.class, itemUri);
             if (item == null) {
                 bot.setTag(potentialLink.getGuid(), EvernoteBot.ITEM_NOT_EXIST_TAG_NAME);
-                continue;
+                return;
             }
             if (!item.getContent().contains(potentialLink.getQuote())) {
                 bot.setTag(potentialLink.getGuid(), EvernoteBot.QUOTE_ALTERED_TAG_NAME);
-                continue;
+                return;
             }
 
             Link link = linkDao.save(new Link(term, item, potentialLink.getQuote()));
-            synced.add(link);
-            emailNotifier.newQuoteLink(potentialLink.getTerm(), potentialLink.getItem(),
+
+            emailNotifier.newQuoteLink(termName, potentialLink.getItem(),
                     potentialLink.getQuote(), link.getLinkId());
-            bot.removeNote(potentialLink.getGuid());
         }
+        bot.removeNote(potentialLink.getGuid());
     }
 }
