@@ -85,6 +85,8 @@ public class EvernoteBot {
             List<Note> notes = noteList.getNotes();
 
             for (Note note : notes) {
+                if (note.getTagGuids() == null) continue;
+
                 List<String> tags = new ArrayList<String>();
                 for (String tagGuid : note.getTagGuids()) {
                     String tagName = tagsMap.get(tagGuid);
