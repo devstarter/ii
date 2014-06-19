@@ -127,7 +127,8 @@ public class EvernoteBot {
                     if (text != null && !text.isEmpty()) {
                         text = new HtmlCleaner().clean(text).getText().toString();
                         text = StringEscapeUtils.unescapeHtml4(text);
-                        link.setQuote(text);
+                        text = text.trim();
+                        link.setQuote(text.isEmpty() ? null : text);
                     }
                     link.setGuid(note.getGuid());
                     exportNotes.add(link);
