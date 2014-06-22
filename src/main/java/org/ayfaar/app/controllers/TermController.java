@@ -84,18 +84,12 @@ public class TermController {
 
         UID code = null;
         List<Link> links = linkDao.getAllLinks(term.getUri());
-        if (alias != null) {
-            links.addAll(linkDao.getAllLinks(alias.getUri()));
-        }
         for (Link link : links) {
             UID source = link.getUid1().getUri().equals(term.getUri())
                     ? link.getUid2()
                     : link.getUid1();
             if (link.getQuote() != null || source instanceof Item) {
-                ModelMap map = new ModelMap();
-                map.put("quote", link.getQuote() != null ? link.getQuote() : ((Item) source).getContent());
-                map.put("uri", source.getUri());
-                quotes.add(map);
+                quotes.add(getQuote(link, source));
             } else if (ABBREVIATION.equals(link.getType()) || ALIAS.equals(link.getType())) {
                 aliases.add(source);
             } else if (CODE.equals(link.getType())) {
@@ -104,28 +98,52 @@ public class TermController {
                 related.add(source);
             }
         }
+
+        // Нужно также включить цитаты всех синонимов и сокращений и кода
+        Set<UID> aliasesQuoteSources = new HashSet<UID>(aliases);
+        if (code != null) {
+            aliasesQuoteSources.add(code);
+        }
+        for (UID uid : aliasesQuoteSources) {
+            List<Link> aliasLinksWithQuote = linkDao.getAllLinks(uid.getUri());
+            for (Link link : aliasLinksWithQuote) {
+                UID source = link.getUid1().getUri().equals(term.getUri())
+                        ? link.getUid2()
+                        : link.getUid1();
+                if (link.getQuote() != null || source instanceof Item) {
+                    quotes.add(getQuote(link, source));
+                }
+            }
+        }
         sort(quotes, new Comparator<ModelMap>() {
             @Override
             public int compare(ModelMap o1, ModelMap o2) {
                 return ((String) o1.get("uri")).compareTo((String) o2.get("uri"));
             }
         });
+
         modelMap.put("code", code);
         modelMap.put("quotes", quotes);
-        modelMap.put("related", convertToPlainObjects(related, new ValueObjectUtils.Modifier<UID>() {
-            @Override
-            public void modify(UID entity, ModelMap map) {
-                map.remove("content");
-            }
-        }));
-        modelMap.put("aliases", convertToPlainObjects(aliases, new ValueObjectUtils.Modifier<UID>() {
-            @Override
-            public void modify(UID entity, ModelMap map) {
-                map.remove("content");
-            }
-        }));
+        modelMap.put("related", toPlainObjectWithoutContent(related));
+        modelMap.put("aliases", toPlainObjectWithoutContent(aliases));
 
         return modelMap;
+    }
+
+    private Object toPlainObjectWithoutContent(Set<UID> related) {
+        return convertToPlainObjects(related, new ValueObjectUtils.Modifier<UID>() {
+            @Override
+            public void modify(UID entity, ModelMap map) {
+                map.remove("content");
+            }
+        });
+    }
+
+    private ModelMap getQuote(Link link, UID source) {
+        ModelMap map = new ModelMap();
+        map.put("quote", link.getQuote() != null ? link.getQuote() : ((Item) source).getContent());
+        map.put("uri", source.getUri());
+        return map;
     }
 
     @RequestMapping("related")
