@@ -112,6 +112,11 @@ public class TermController {
                         : link.getUid1();
                 if (link.getQuote() != null || source instanceof Item) {
                     quotes.add(getQuote(link, source));
+                } else if (ABBREVIATION.equals(link.getType()) || ALIAS.equals(link.getType()) || CODE.equals(link.getType())) {
+                    // Синонимы синонимов :) по идее их не должно быть, но если вдруг...
+                    aliases.add(source);
+                } else {
+                    related.add(source);
                 }
             }
         }
