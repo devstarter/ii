@@ -107,7 +107,7 @@ public class TermController {
         for (UID uid : aliasesQuoteSources) {
             List<Link> aliasLinksWithQuote = linkDao.getAllLinks(uid.getUri());
             for (Link link : aliasLinksWithQuote) {
-                UID source = link.getUid1().getUri().equals(term.getUri())
+                UID source = link.getUid1().getUri().equals(uid.getUri())
                         ? link.getUid2()
                         : link.getUid1();
                 if (link.getQuote() != null || source instanceof Item) {
