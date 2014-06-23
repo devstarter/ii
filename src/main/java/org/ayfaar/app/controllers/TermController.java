@@ -114,7 +114,10 @@ public class TermController {
                     quotes.add(getQuote(link, source));
                 } else if (ABBREVIATION.equals(link.getType()) || ALIAS.equals(link.getType()) || CODE.equals(link.getType())) {
                     // Синонимы синонимов :) по идее их не должно быть, но если вдруг...
-                    aliases.add(source);
+                    // как минимум один есть и этот наш основной термин
+                    if (!source.getUri().equals(term.getUri())) {
+                        aliases.add(source);
+                    }
                 } else {
                     related.add(source);
                 }
