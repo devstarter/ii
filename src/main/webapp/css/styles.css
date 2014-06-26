@@ -1,12 +1,28 @@
-html,body{
-    font-family: 'PT Serif';
-    font-size: 20px;
-    margin: 30px auto;
-    max-width: 600px;
-    color: #022c8c;
-    padding: 5px;
+header {
+    background-color: #f5f7f8;
+    border-bottom: 1px solid #e2e4e7;
+    /*text-align: right;*/
 }
 
+html,body{
+    /*font-family: 'PT Serif';*/
+    font-family: serif;
+    font-size: 20px;
+    color: #022c8c;
+    margin: 0;
+    /*padding: 5px;*/
+}
+#content, header>div {
+    margin: 0 auto;
+    max-width: 650px;
+}
+header>div {
+    /*text-align: right;*/
+    padding-top: 5px;
+}
+#content {
+    margin-top: 10px;
+}
 blockquote{  background:url(../images/quote_left.png) no-repeat left .4em; margin-bottom:30px; -webkit-margin-start: 0;}
 blockquote > * {padding-left:26px;}
 blockquote p{ padding-left:26px;}

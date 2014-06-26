@@ -56,6 +56,9 @@ function setHash(newHash) {
 //        ga('send', 'event', 'navigation', newHash);
 //    }
 }
+if (!window.location.hash) {
+    setHash("main");
+};
 
 $(document).ajaxStart(function() {
     if (NProgress) NProgress.start();
@@ -100,6 +103,7 @@ var router = new kendo.Router();
 
 router.route("item::item", itemRoute);
 function itemRoute(item) {
+    $("header").show();
     ga('send', 'pageview', "item/"+item);
     switchTo("item", function() {
         ii.item.load(item);
@@ -115,7 +119,7 @@ function switchTo(id, callback){
         ensure({ html: id+".html", js: "js/"+id+".js", parent: id+"-container"}, function () {
             $("#content").append(container);
             container.show();
-            callback();
+            if (callback) callback();
         });
     } else {
         if (!container.is(":visible")) {
@@ -123,10 +127,11 @@ function switchTo(id, callback){
         }
         $("#content").append(container);
         container.show();
-        callback();
+        if (callback) callback();
     }
 }
 function savePrevContent(){
+    if (!$("#content").children().length) return;
     var prevContent = $("#content").children();
     $("body").append(prevContent);
     $("#content").empty();
@@ -136,6 +141,7 @@ function savePrevContent(){
 
 router.route("term::term", termRoute);
 function termRoute(term) {
+    $("header").show();
     term = term.replaceAll("+", " ");
     ga('send', 'pageview', "term/"+term);
     switchTo("term", function() {
@@ -145,35 +151,52 @@ function termRoute(term) {
 router.route("search::query", searchRoute);
 router.route("?:query", searchRoute);
 function searchRoute(query) {
+    $("header").show();
     query = query.replaceAll("+", " ");
     ga('send', 'pageview', "search/"+query);
     switchTo("search", function() {
         ii.search.load(query);
     });
 }
-router.route("main", function() {
-    ga('send', 'pageview', "main");
-    location.reload();
-});
 router.route("a/:id", function(id) {
+    $("header").show();
     ga('send', 'pageview', "article/"+id);
     switchTo("article", function() {
         ii.article.load(id);
     });
 });
 router.route("s/:id", function(id) {
+    $("header").show();
     ga('send', 'pageview', "song/"+id);
     switchTo("song", function() {
         ii.song.load(id);
     });
 });
 router.route("about", function() {
+    $("header").show();
     ga('send', 'pageview', "about");
-    ensure({ html: "about.html", parent: "content"});
+    switchTo("about");
 });
-router.route("main_panel", function() {
-    ga('send', 'pageview', "main_panel");
-    ensure({ html: "main_panel.html", parent: "content"});
+router.route("main", function() {
+    $("header").hide();
+    ga('send', 'pageview', "main");
+    switchTo("main", function(){
+        $("#search-input").kendoAutoComplete({
+            minLength: 3,
+            dataSource: {
+                serverFiltering: true,
+                serverPaging: true,
+                pageSize: 20,
+                transport: {
+                    read: "/api/term/autocomplete"
+                }
+            },
+            select: function(e) {
+                var dataItem = this.dataItem(e.item.index());
+                setHash(dataItem);
+            }
+        });
+    })
 });
 router.route(":hash", function(hash) {
     if (isItemNumber(hash)) {
@@ -192,7 +215,33 @@ $(document).ready(function() {
 			}
 			else obj.style.display = "none";
 		}
-	} 
-		
+	}
+
+    var header = $("header");
+
+
+
+    var box = header.find(".search-box");
+    box.kendoAutoComplete({
+        minLength: 3,
+        dataSource: {
+            serverFiltering: true,
+            serverPaging: true,
+            pageSize: 20,
+            transport: {
+                read: "/api/term/autocomplete"
+            }
+        },
+        select: function(e) {
+            var dataItem = this.dataItem(e.item.index());
+            setHash(dataItem);
+        }
+    });
+    box.keypress(function (e) {
+        if (e.which == 13) {
+            setHash("?"+box.val());
+        }
+    });
+
     router.start();
 });

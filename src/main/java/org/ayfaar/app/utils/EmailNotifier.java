@@ -21,7 +21,7 @@ public class EmailNotifier {
             helper.setFrom(FROM);
             helper.setTo(TO);
             helper.setSubject("Создана связь (" + termName + " + " + itemNumber + ")");
-            helper.setText(quote + "\nlink id: " + linkId + "\nhttp://ii.ayfaar.org/#"
+            helper.setText(quote + "\nlink id: " + linkId + " " + getRemoveLink(linkId) + "\nhttp://ii.ayfaar.org/#"
                     + termName.replace(" ", "+"));
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -47,6 +47,6 @@ public class EmailNotifier {
     }
 
     private String getRemoveLink(Integer linkId) {
-        return "<a href=\"http://ii.ayfaar.org/api/link/remove/" + linkId + "\">удалить</a>";
+        return "<a href=\"http://ii.ayfaar.org/api/link/remove/" + linkId + "\">удалить ссылку</a>";
     }
 }

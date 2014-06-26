@@ -1,9 +1,9 @@
 <div id="search">
-    <input class="k-input prompt" type="text"
+    <!--input class="k-input prompt" type="text"
            data-bind="value: query"
             data-role="autocomplete"
             data-source="{serverFiltering: true, serverPaging: true, pageSize: 20, transport: {read: '/api/term/autocomplete'}}"/>
-    <button class="search-button" data-bind="click: search">Искать</button>
+    <button class="search-button" data-bind="click: search">Искать</button-->
     <div class="block loading" data-bind="visible: loadingTerms">Загрузка терминов...</div>
     <div data-bind="visible: exactMatchTerm" class="exact-match">
         Найден термин <button data-bind="text: exactMatchTerm.name, click: navigateToExactTerm"></button>
