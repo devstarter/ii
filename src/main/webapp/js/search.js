@@ -34,6 +34,25 @@
                 },
                 loadNextPage: function(e) {
                     searchInContent();
+                },
+                rateUp: function(e) {
+                    $.get(searchApiUrl+"rate/+", {uri: e.data.uri, query: viewModel.query}, rateComplete);
+                },
+                rateDown: function(e) {
+                    $.get(searchApiUrl+"rate/-", {uri: e.data.uri, query: viewModel.query}, rateComplete);
+                },
+                getContent: function(e) {
+                    $.get(searchApiUrl+"get-content", {uri: e.data.uri}, function(r) {
+                        if (r) {
+                            for(var i in viewModel.contents) {
+                                var quote = viewModel.contents[i];
+                                if (quote.uri == e.data.uri) {
+                                    quote.set("quote", r);
+                                    break
+                                }
+                            }
+                        }
+                    })
                 }
             });
             kendo.bind($('#search'), viewModel);
@@ -74,5 +93,8 @@
         if (viewModel.contents.length == 0) {
             viewModel.set("loadingContents", true);
         }
+    }
+    function rateComplete() {
+        alert("Ваш голос учтён, благодарим за помощь! :)")
     }
 })(jQuery);

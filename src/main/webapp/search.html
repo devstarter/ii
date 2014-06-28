@@ -28,9 +28,15 @@
             <script type="text/kendo-x-tmpl" id="search-content-template">
                 <blockquote>
                     <div>#=data.quote#</div>
-                    <cite>&mdash; <a data-bind="text: getLabel, click: navigate"></a></cite>
+                    <cite>&mdash; <a data-bind="text: getLabel, click: navigate"></a>
+                        <span>
+                            <i data-bind="click: rateUp" class="icon-thumbs-up" title="Цитата соответствует запросу"></i>
+                            <i data-bind="click: rateDown" class="icon-thumbs-up-2" title="Цитата безполезна"></i>
+                        </span>
+                    </cite>
                 </blockquote>
             </script>
+            <!--<i data-bind="click: getContent" class="icon-expand" title="Показать полный текст"></i>-->
             <button class="grey" data-bind="visible: showLoadMore, click: loadNextPage, text: loadNextPageLabel"></button>
         </div>
     </div>

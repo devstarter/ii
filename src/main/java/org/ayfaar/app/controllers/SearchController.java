@@ -1,15 +1,18 @@
 package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.*;
+import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.Content;
+import org.ayfaar.app.utils.EmailNotifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,6 +37,7 @@ public class SearchController {
     @Autowired LinkDao linkDao;
     @Autowired CommonDao commonDao;
     @Autowired TermMorphDao termMorphDao;
+    @Autowired EmailNotifier notifier;
 
     private Map<String, List<ModelMap>> searchInContentCatch = new HashMap<String, List<ModelMap>>();
 
@@ -53,6 +57,7 @@ public class SearchController {
     @ResponseBody
     private List<ModelMap> searchInContent(@RequestParam String query,
                                            @RequestParam(required = false, defaultValue = "0") Integer page) {
+        final Integer pageSize = 20;
         query = query.toLowerCase();
         query = query.trim();
         String catchKey = query+"#$%^&"+page;
@@ -61,66 +66,71 @@ public class SearchController {
             return catchedResult;
         }
 
+        List<Content> items;
         List<ModelMap> modelMaps = new ArrayList<ModelMap>();
 
-        AliasesMap.Proxy proxy = aliasesMap.get(query);
-
-        Term term = null;
-        if (proxy != null) {
-            term = proxy.getTerm();
+        if (query.indexOf("!") == 0) {
+            // поиск только введённого запроса
+            query = query.replaceFirst("!", "");
+            items = commonDao.findInAllContent(query, page*pageSize, pageSize);
         } else {
-            for (Map.Entry<String, AliasesMap.Proxy> entry : aliasesMap.entrySet()) {
-                if (entry.getKey().toLowerCase().equals(query)) {
-                    term = entry.getValue().getTerm();
-                    break;
+
+            AliasesMap.Proxy proxy = aliasesMap.get(query);
+
+            Term term = null;
+            if (proxy != null) {
+                term = proxy.getTerm();
+            } else {
+                for (Map.Entry<String, AliasesMap.Proxy> entry : aliasesMap.entrySet()) {
+                    if (entry.getKey().toLowerCase().equals(query)) {
+                        term = entry.getValue().getTerm();
+                        break;
+                    }
                 }
             }
-        }
 
-        List<String> aliasesList = new ArrayList<String>();
+            List<String> aliasesList = new ArrayList<String>();
 
-        if (term != null) {
-            Term primeTerm = (Term) linkDao.getPrimeForAlias(term.getUri());
-            if (primeTerm == null) {
-                primeTerm = term;
-            }
-            List<Link> links = linkDao.getAliases(primeTerm.getUri());
-            for (Link link : links) {
-                Term aliasTerm = (Term) link.getUid2();
-                aliasesList.add(aliasTerm.getName());
-                for (TermMorph morph : termMorphDao.getList("termUri", aliasTerm.getUri())) {
+            if (term != null) {
+                Term primeTerm = (Term) linkDao.getPrimeForAlias(term.getUri());
+                if (primeTerm == null) {
+                    primeTerm = term;
+                }
+                List<Link> links = linkDao.getAliases(primeTerm.getUri());
+                for (Link link : links) {
+                    Term aliasTerm = (Term) link.getUid2();
+                    aliasesList.add(aliasTerm.getName());
+                    for (TermMorph morph : termMorphDao.getList("termUri", aliasTerm.getUri())) {
+                        aliasesList.add(morph.getName());
+                    }
+                }
+                for (TermMorph morph : termMorphDao.getList("termUri", primeTerm.getUri())) {
                     aliasesList.add(morph.getName());
                 }
             }
-            for (TermMorph morph : termMorphDao.getList("termUri", primeTerm.getUri())) {
-                aliasesList.add(morph.getName());
+
+
+            // get all cases of the word
+            // test case
+            aliasesList.addAll(termMorphDao.getAllMorphs(query));
+
+            if (!aliasesList.isEmpty()) {
+                String newQuery = "";
+                for (String alias : aliasesList) {
+                    newQuery += (alias.toLowerCase() + "|");
+                }
+                newQuery = newQuery.substring(0, newQuery.length() - 1);
+                query = newQuery;
+            }
+
+            query = query.replaceAll("\\*", "[" + w + "]*");
+
+            if (aliasesList.size() > 0) {
+                items = commonDao.findInAllContent(aliasesList, page * pageSize, pageSize);
+            } else {
+                items = commonDao.findInAllContent(query, page * pageSize, pageSize);
             }
         }
-
-
-        // get all cases of the word
-        // test case
-        aliasesList.addAll(termMorphDao.getAllMorphs(query));
-
-        if(!aliasesList.isEmpty()){
-            String newQuery = "";
-            for (String alias : aliasesList){
-                newQuery += (alias.toLowerCase() + "|");
-            }
-            newQuery = newQuery.substring(0, newQuery.length() - 1);
-            query = newQuery;
-        }
-
-        query = query.replaceAll("\\*", "["+ w +"]*");
-
-        final Integer pageSize = 20;
-        List<Content> items;
-        if (aliasesList.size() > 0) {
-            items = commonDao.findInAllContent(aliasesList, page*pageSize, pageSize);
-        } else {
-            items = commonDao.findInAllContent(query, page*pageSize, pageSize);
-        }
-
         // [^\.\?!]* - star is greedy, so pattern will find the last match to make first group as long as possible
         Pattern pattern = Pattern.compile("([^\\.\\?!]*)\\b(" + query + ")\\b([^\\.\\?!]*)([\\.\\?!]*)",
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
@@ -193,5 +203,22 @@ public class SearchController {
         modelMap.put("exactMatchTerm", exactMatchTerm);
 
         return modelMap;
+    }
+
+    @RequestMapping("rate/{kind}")
+    public void rate(@PathVariable String kind, @RequestParam String uri, @RequestParam String query) {
+//        if (kind.equals("+")) {
+            notifier.rate(kind, query, uri);
+//        }
+    }
+
+    @RequestMapping("get-content")
+    @ResponseBody
+    public String getContent(@RequestParam String uri) {
+        Item item = itemDao.get(uri);
+        if (item != null) {
+            return item.getContent();
+        }
+        return null;
     }
 }

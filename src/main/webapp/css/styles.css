@@ -1,9 +1,24 @@
+blockquote>cite>span {
+    display: none;
+}
+blockquote:hover>cite>span {
+    display: inline;
+}
 header {
     background-color: #f5f7f8;
     border-bottom: 1px solid #e2e4e7;
     /*text-align: right;*/
 }
 
+.alias:hover {
+    text-decoration: underline;
+}
+.icon-thumbs-up-2 {
+    color: #d2d2d2;
+}
+.icon-thumbs-up {
+    color: #0239b4;
+}
 html,body{
     /*font-family: 'PT Serif';*/
     font-family: serif;

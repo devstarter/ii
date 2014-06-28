@@ -49,4 +49,18 @@ public class EmailNotifier {
     private String getRemoveLink(Integer linkId) {
         return "<a href=\"http://ii.ayfaar.org/api/link/remove/" + linkId + "\">удалить ссылку</a>";
     }
+
+    public void rate(String kind, String query, String uri) {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+        try {
+            helper.setFrom(FROM);
+            helper.setTo(TO);
+            helper.setSubject("Рейтинг "+kind+" (" + query + " + " + uri + ")");
+            helper.setText("");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        mailSender.send(helper.getMimeMessage());
+    }
 }
