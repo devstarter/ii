@@ -113,7 +113,7 @@ public class EvernoteSync {
                 bot.setTag(potentialLink.getGuid(), EvernoteBot.ITEM_NOT_EXIST_TAG_NAME);
                 return;
             }
-            if (!item.getContent().contains(potentialLink.getQuote())) {
+            if (potentialLink.getQuote() != null && !item.getContent().contains(potentialLink.getQuote())) {
                 bot.setTag(potentialLink.getGuid(), EvernoteBot.QUOTE_ALTERED_TAG_NAME);
                 return;
             }
