@@ -30,6 +30,7 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
 
     @PostConstruct
     private void load() {
+        clear();
         allTerms = termDao.getAll();
         allTermMorphs = commonDao.getAll(TermMorph.class);
 

@@ -42,7 +42,7 @@
                     $.get(searchApiUrl+"rate/-", {uri: e.data.uri, query: viewModel.query}, rateComplete);
                 },
                 getContent: function(e) {
-                    $.get(searchApiUrl+"get-content", {uri: e.data.uri}, function(r) {
+                    /*$.get(searchApiUrl+"get-content", {uri: e.data.uri}, function(r) {
                         if (r) {
                             for(var i in viewModel.contents) {
                                 var quote = viewModel.contents[i];
@@ -52,7 +52,7 @@
                                 }
                             }
                         }
-                    })
+                    })*/
                 }
             });
             kendo.bind($('#search'), viewModel);
@@ -84,7 +84,11 @@
             pageCounter++;
             viewModel.set("loadingContents", false);
             viewModel.set("contents", viewModel.contents.toJSON().concat(r));
-            viewModel.set("noResult", viewModel.contents.length == 0);
+            if (viewModel.contents.length == 0) {
+                // no result
+                viewModel.set("noResult", viewModel.contents.length == 0);
+                if (ga) ga('send', 'event', 'search', 'not-found', {query: viewModel.query});
+            }
             viewModel.set("showLoadMore", r.length > 0);
             if (!r.length) {
                 pageCounter = 0;

@@ -203,7 +203,7 @@ public class TermController {
             term.setDescription(description);
             termDao.save(term);
         }
-        aliasesMap.reload();
+//        aliasesMap.reload();
         return term;
     }
 
@@ -267,5 +267,11 @@ public class TermController {
     @RequestMapping("remove/{name}")
     public void remove(@PathVariable String name) {
         termDao.remove(termDao.getByName(name).getUri());
+    }
+
+
+    @RequestMapping("reload-aliases-map")
+    public void reloadAliasesMap() {
+        aliasesMap.reload();
     }
 }
