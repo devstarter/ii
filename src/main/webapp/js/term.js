@@ -49,6 +49,9 @@
                     /*$.get(termApiUrl+"related", {uri: r.uri}, function(a) {
                         viewModel.set("related", a)
                     })*/
+                    if (ga && !r.description && !r.shortDescription && !r.quotes.length) {
+                        ga('send', 'event', 'no-data', term);
+                    }
                 },
                 error: function(e) {
                     viewModel.set("name", term);

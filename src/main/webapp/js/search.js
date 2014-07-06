@@ -87,7 +87,7 @@
             if (viewModel.contents.length == 0) {
                 // no result
                 viewModel.set("noResult", viewModel.contents.length == 0);
-                if (ga) ga('send', 'event', 'search', 'not-found', {query: viewModel.query});
+                if (ga) ga('send', 'event', 'not-found', viewModel.query);
             }
             viewModel.set("showLoadMore", r.length > 0);
             if (!r.length) {
