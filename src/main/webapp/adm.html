@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="libs/jquery/jquery-1.9.1.js"></script>
+    <script src="libs/kendo/js/kendo.web.min.js"></script>
+    <link href="libs/kendo/styles/kendo.common.min.css" rel="stylesheet" type="text/css" />
+    <link href="libs/kendo/styles/kendo.blueopal.min.css" rel="stylesheet" type="text/css" />
+    <script>
+        var addQuoteContainer, addAliasContainer, addTermContainer, linkTypeDDL;
+
+        $(document).ready(function() {
+			$.ajaxSetup({
+				error: function (e, status, error) {
+					alert("Ошибка!");
+				}
+			});
+            addQuoteContainer = $(".add-quote");
+            addAliasContainer = $(".add-alias");
+            addTermContainer = $(".add-term");
+
+            $(".term").kendoAutoComplete({
+                minLength: 3,
+                dataSource: {
+                    serverFiltering: true,
+                    serverPaging: true,
+                    pageSize: 20,
+                    transport: {
+                        read: "/api/term/autocomplete"
+                    }
+                }
+            });
+            $(".category").kendoAutoComplete({
+                minLength: 3,
+                dataSource: {
+                    serverFiltering: true,
+                    serverPaging: true,
+                    pageSize: 20,
+                    transport: {
+                        read: "/api/category/autocomplete"
+                    }
+                }
+            });
+            linkTypeDDL = addAliasContainer.find(".type").kendoDropDownList({
+                dataTextField: "label",
+                dataValueField: "value",
+                dataSource: [
+                    {value: null, label: "Равнозначная"},
+                    {value: 1, label: "Синоним"},
+                    {value: 2, label: "Аббравиатура (сокращение)"},
+                    {value: 4, label: "Космический Код понятия"},
+                    {value: 0, label: "Морфологический синоним"}
+                ]
+            }).data("kendoDropDownList");
+        });
+
+        function sendAddQuote() {
+            $.post("/api/link/addQuote", {
+                term: addQuoteContainer.find("input.term")[0].value,
+                item: addQuoteContainer.find("input.item")[0].value,
+                quote: addQuoteContainer.find(".quote")[0].value
+            }, function(r) {
+                if (r) {
+                    alert("Есть!");
+                } else {
+                    alert("Ссылка не создана!");
+                }
+                addQuoteContainer.find(".term")[0].value = "";
+            });
+        }
+        function resetAddQuote() {
+            addQuoteContainer.find(".term")[0].value = "";
+            addQuoteContainer.find(".item")[0].value = "";
+            addQuoteContainer.find(".quote")[0].value = "";
+        }
+
+        function sendAddAlias() {
+            $.post("/api/link/addAlias", {
+                term1: addAliasContainer.find("input.term1")[0].value,
+                term2: addAliasContainer.find("input.term2")[0].value,
+                type: linkTypeDDL.value()
+            }, function(r) {
+                if (r) {
+                    alert("Есть!");
+                } else {
+                    alert("Ссылка не создана!");
+                }
+                addAliasContainer.find("input.term2")[0].value = "";
+            });
+        }
+        function resetAddAlias() {
+            addAliasContainer.find("input.term1")[0].value = "";
+            addAliasContainer.find("input.term2")[0].value = "";
+            linkTypeDDL.value(null)
+        }
+
+        function sendAddCategory() {
+            var container = $(".add-category");
+            $.post("/api/category/add", {
+                category: container.find("input.main")[0].value,
+                parent: container.find("input.parent")[0].value,
+                from: container.find(".from")[0].value,
+                to: container.find(".to")[0].value
+            }, function(r) {
+                if (r) {
+                    alert("Есть!");
+                } else {
+                    alert("Категория не создана!");
+                }
+            });
+        }
+        function sendAddTerm() {
+            $.post("/api/term/add", {
+                name: addTermContainer.find("input.term").val(),
+                shortDescription: addTermContainer.find(".short").val(),
+                description: addTermContainer.find(".long").val()
+            }, function(r) {
+                if (r) {
+                    alert("Есть!");
+                } else {
+                    alert("Термин не создан!");
+                }
+                addTermContainer.find("input.term").val("");
+                addTermContainer.find(".short").val("");
+                addTermContainer.find(".long").val("");
+            });
+        }
+
+    </script>
+    <style type="text/css">
+        .panel {
+            border: 1px solid #0099cc;
+            width: 320px;
+            padding: 10px;
+            margin: 10px;
+            padding-top: 0px;
+            border-radius: 3px;
+            float: left;
+        }
+        .quote {
+            margin: 2px;
+            width: 308px;
+            height: 150px;
+        }
+        .controls {
+            padding-top: 20px;
+        }
+        .term {
+            width: 250px
+        }
+        .item {
+            width: 50px
+        }
+        .type {
+            width: 250px;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel add-quote">
+        <h3>Связать термин с пунктом</h3>
+        <input placeholder="Термин" class="term"/>
+        <input placeholder="Пункт" class="item"/>
+        <br/>
+        <textarea placeholder="Цитата (не обязательно)" class="quote k-input"></textarea>
+        <div class="controls">
+            <button onclick="sendAddQuote()" class="k-button">Добавить цитату</button>
+            <button onclick="resetAddQuote()" class="k-button">Обнулить</button>
+        </div>
+    </div>
+    <div class="panel add-alias">
+        <h3>Связать термин с термином</h3>
+        <input placeholder="Термин1" class="term term1"/>
+        <br/>
+        <input placeholder="Термин2" class="term term2"/>
+        <br/>
+        <label for="werwesds">Тип связи</label>
+        <br/>
+        <input id="werwesds" class="type"/>
+        <div class="controls">
+            <button onclick="sendAddAlias()" class="k-button">Добавить связь</button>
+            <button onclick="resetAddAlias()" class="k-button">Обнулить</button>
+        </div>
+    </div>
+    <div class="panel add-term">
+        <h3>Добавить термин</h3>
+        <input placeholder="Термин" class="term"/>
+        <br/>
+        <textarea placeholder="Короткое описание" class="short k-input"></textarea>
+        <br/>
+        <textarea placeholder="Описание" class="long k-input"></textarea>
+        <div class="controls">
+            <button onclick="sendAddTerm()" class="k-button">Добавить термин</button>
+        </div>
+    </div>
+</body>
+</html>

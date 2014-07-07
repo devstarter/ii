@@ -1,0 +1,83 @@
+<div id="search">
+    <!--input class="k-input prompt" type="text"
+           data-bind="value: query"
+            data-role="autocomplete"
+            data-source="{serverFiltering: true, serverPaging: true, pageSize: 20, transport: {read: '/api/term/autocomplete'}}"/>
+    <button class="search-button" data-bind="click: search">Искать</button-->
+    <div class="block loading" data-bind="visible: loadingTerms">Загрузка терминов...</div>
+    <div data-bind="visible: exactMatchTerm" class="exact-match">
+        Найден термин <button data-bind="text: exactMatchTerm.name, click: navigateToExactTerm"></button>
+    </div>
+    <div data-bind="visible: terms.length">
+        <h3>В названиях терминов</h3>
+        <div data-bind="source: terms" data-template="search-terms-template"></div>
+        <script type="text/kendo-x-tmpl" id="search-terms-template">
+            <button class="grey" data-bind="text: name, click: navigate"></button>
+        </script>
+    </div>
+    <div class="block loading" data-bind="visible: loadingContents">Загрузка результатов поиска по содержимому...</div>
+    <div data-bind="invisible: loadingContents">
+        <div data-bind="visible: noResult">
+            <strong>Ничего не найдено.</strong> Побробуйте со звёздочкой после корня слова для учёта всех вариантов
+            окончания слова. Например "лийллусцивный" - "лийллусцивн*" (будут учтены "лийллусцивн<u>о</u>", "лийллусцивн<u>ые</u>",
+            "лийллусцивн<u>ость</u>" и т. д.
+        </div>
+        <div data-bind="visible: contents.length">
+            <h3>В содержимом</h3>
+            <div data-bind="source: contents" data-template="search-content-template"></div>
+            <script type="text/kendo-x-tmpl" id="search-content-template">
+                <blockquote>
+                    <div>#=data.quote#</div>
+                    <cite>&mdash; <a data-bind="text: getLabel, click: navigate"></a>
+                        <span>
+                            <i data-bind="click: rateUp" class="icon-thumbs-up" title="Цитата соответствует запросу"></i>
+                            <i data-bind="click: rateDown" class="icon-thumbs-up-2" title="Цитата безполезна"></i>
+                        </span>
+                    </cite>
+                </blockquote>
+            </script>
+            <!--<i data-bind="click: getContent" class="icon-expand" title="Показать полный текст"></i>-->
+            <button class="grey" data-bind="visible: showLoadMore, click: loadNextPage, text: loadNextPageLabel"></button>
+        </div>
+    </div>
+    <style type="text/css">
+        button {
+            color: #ffffff;
+        }
+        button.grey {
+            color: #3A3A3A;
+        }
+        .exact-match {
+            padding: 10px;
+            margin-top: 10px;
+            background: lemonchiffon;
+            border-width: 2px;
+            border-color: gold;
+            border-style: solid;
+        }
+        #search .k-autocomplete {
+            padding: 0;
+        }
+        #search .search-button {
+            color: #ffffff;
+            font-size: 100%;
+        }
+        /*#search .divider {
+            clear: both;
+        }
+        #search .number {
+            float: left;
+        }*/
+        /*#search .contentResultBlock {
+            cursor: pointer;
+            *//*padding-bottom: 20px;*//*
+            text-align: justify;
+        }*/
+        /*#search .contentResultBlock div {
+            display: inline;
+        }*/
+        #search .prompt {
+            width: 400px;
+        }
+    </style>
+</div>

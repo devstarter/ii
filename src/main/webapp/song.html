@@ -1,0 +1,27 @@
+﻿<div id="song">
+    <div class="block loading" data-bind="visible: loading">Загрузка...</div>
+	<div class="block" data-bind="invisible: loading">
+		<button class="grey" title="Предыдущая" data-bind=" visible: prev, click: navigatePrev">←</button>
+		<span style="color: grey">Песня</span>
+		<button class="grey" title="Следующая" data-bind="visible: next, click: navigateNext">→</button>
+		<div class="song_name"><h3 data-bind="html: name"></h3></div>
+		<div class="song_info"><h5 data-bind="html: info"></h5></div>
+        <p class="content" data-bind="html: content"></p>
+		<button class="grey" data-bind="visible: next, click: navigateNext">Следующая →</button>
+	</div>
+</div>
+
+<style type="text/css">
+    #song .block {max-width: 600px;}
+	#song .content {text-align: justify;}
+	.tabs1 span{font-style:italic;}
+	.tabs2 span{font-style:italic; color:#0098E3;}
+	.spaces1 span{margin-left: 25px;}
+	.spaces2 span{margin-left: 50px;}
+	.spaces3 span{margin-left: 75px;}
+	.spaces4 span{margin-left: 100px;}
+	.spaces5 span{margin-left: 125px;}
+	.refrainBlock, .repeatBlock {margin-top: 15px; margin-bottom: 15px;}
+	.song_name span{}
+	.song_info span{}
+</style>

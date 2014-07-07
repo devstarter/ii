@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/mvc
+                           http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <context:component-scan base-package="org.ayfaar.app.spring.converter"/>
+
+    <mvc:annotation-driven />
+    <!--<cache:annotation-driven />-->
+
+    <mvc:interceptors>
+        <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+            <property name="paramName" value="lang"/>
+        </bean>
+    </mvc:interceptors>
+
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver"/>
+
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="order" value="1"/>
+        <property name="mediaTypes">
+            <map>
+                <entry key="json" value="application/json"/>
+            </map>
+        </property>
+        <property name="defaultContentType" value="#{T(org.springframework.http.MediaType).APPLICATION_JSON}"/>
+        <property name="defaultViews">
+            <list>
+                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--<bean class="org.ayfaar.app.spring.ModelViewSupportFactoryBean"/>-->
+
+    <!--<bean id="annotationMethodHandlerExceptionResolver"-->
+          <!--class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver">-->
+        <!--<property name="order" value="0"/>-->
+    <!--</bean>-->
+    <bean id="restExceptionResolver" class="org.ayfaar.app.spring.handler.RestExceptionHandler">
+        <property name="order" value="100"/>
+        <property name="messageConverters" ref="messageConverters"/>
+        <property name="errorResolver">
+            <bean class="org.ayfaar.app.spring.handler.DefaultRestErrorResolver"/>
+        </property>
+    </bean>
+
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters" ref="messageConverters"/>
+    </bean>
+
+    <bean id="messageConverters" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+                    <property name="objectMapper" ref="jacksonObjectMapper" />
+                </bean>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="webTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+        <property name="prefix" value="/WEB-INF/templates/" />
+        <property name="templateMode" value="HTML5" />
+        <property name="characterEncoding" value="UTF-8" />
+        <property name="order" value="1" />
+    </bean>
+
+    <bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+        <property name="templateResolvers">
+            <set>
+                <ref bean="webTemplateResolver" />
+            </set>
+        </property>
+    </bean>
+
+    <bean class="org.springframework.mail.javamail.JavaMailSenderImpl"/>
+
+    <!--<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+        <property name="caches">
+            <set>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="items"/>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="terms"/>
+            </set>
+        </property>
+    </bean>-->
+</beans>

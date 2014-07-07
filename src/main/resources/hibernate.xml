@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <bean id="dataSourceTarget" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${database.driver}"/>
+        <property name="url" value="jdbc:mysql://${OPENSHIFT_MYSQL_DB_HOST}:${OPENSHIFT_MYSQL_DB_PORT}/${OPENSHIFT_APP_NAME}?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"/>
+        <property name="username" value="${OPENSHIFT_MYSQL_DB_USERNAME}"/>
+        <property name="password" value="${OPENSHIFT_MYSQL_DB_PASSWORD}"/>
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+        <property name="targetDataSource" ref="dataSourceTarget"/>
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan" value="org.ayfaar"/>
+        <property name="namingStrategy" ref="namingStrategy"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">${database.dialect}</prop>
+                <prop key="hibernate.show_sql">${database.show_sql}</prop>
+                <prop key="hibernate.format_sql">${database.format_sql}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${database.hibernate_hbm2ddl_auto}</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="namingStrategy" class="org.hibernate.cfg.ImprovedNamingStrategy"/>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+    <tx:annotation-driven/>
+</beans>
