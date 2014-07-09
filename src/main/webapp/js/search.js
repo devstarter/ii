@@ -6,7 +6,7 @@
                 return;
             }
             currentQuery = query;
-
+            pageCounter = 0;
             document.title = "Поиск "+query;
             query = query.replace("+", " ").trim();
             if (isItemNumber(query)) {
