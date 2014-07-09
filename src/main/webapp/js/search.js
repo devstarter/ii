@@ -1,4 +1,4 @@
-﻿(function ($, undefined) {
+﻿﻿(function ($, undefined) {
     var searchApiUrl = ii.apiUrl + "search/", viewModel, pageCounter = 0, currentQuery;
     ii.search = {
         load: function(query) {
@@ -6,7 +6,7 @@
                 return;
             }
             currentQuery = query;
-
+            pageCounter = 0;
             document.title = "Поиск "+query;
             query = query.replace("+", " ").trim();
             if (isItemNumber(query)) {

@@ -8,6 +8,12 @@
           <element id="module-output" name="ii-app" />
         </element>
         <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: org.apache.lucene.morphology:russian:1.0" />
+          <element id="library" level="project" name="Maven: org.apache.lucene.morphology:morph:1.0" />
+          <element id="library" level="project" name="Maven: org.apache.lucene:lucene-core:3.0.0" />
+          <element id="library" level="project" name="Maven: net.sourceforge.htmlcleaner:htmlcleaner:2.8" />
+          <element id="library" level="project" name="Maven: org.jdom:jdom2:2.0.5" />
+          <element id="library" level="project" name="Maven: com.evernote:evernote-api:1.25.1" />
           <element id="library" level="project" name="Maven: net.sf.opencsv:opencsv:2.0" />
           <element id="library" level="project" name="Maven: net.sourceforge:jwbf:2.0.0" />
           <element id="library" level="project" name="Maven: org.jdom:jdom:1.1" />

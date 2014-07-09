@@ -6,31 +6,20 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="281c9952-386e-466b-a99e-b1dbbf2de84f" name="Default" comment="sync">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/CategorySyncTest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/SyncStatus.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/SyncUtils.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/TocSyncTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/AbstractHibernateDAO.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/AbstractHibernateDAO.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/utils/AliasesMap.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/utils/AliasesMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/BasicCrudDao.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/BasicCrudDao.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Category.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Category.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/CategoryDao.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/CategoryDao.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/CategoryDaoImpl.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/CategoryDaoImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/CategorySync.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/CategorySync.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/CommonDaoImpl.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/CommonDaoImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/EntitySynchronizer.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/EntitySynchronizer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/FullSync.java" afterPath="$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/FullSync.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/ItemSync.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/ItemSync.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/MediaWikiBotHelper.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/MediaWikiBotHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/TOCSync.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/TOCSync.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/TermDao.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/TermDao.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/TermDaoImpl.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/TermDaoImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/TermSync.java" afterPath="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/TermSync.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/TermSyncTest.java" afterPath="$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/TermSyncTest.java" />
+    <list default="true" id="281c9952-386e-466b-a99e-b1dbbf2de84f" name="Default" comment="+">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/evernote/enlogo.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/css/icons/sprites.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/evernote/EDAMDemo.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/css/icons/index.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/css/icons/sprites.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/css/icons/sprites.svg" />
+      <change type="DELETED" beforePath="D:\projects\ayfaar\ii-app\src\test\test.iml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/database.properties" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/database.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/js/search.js" afterPath="$PROJECT_DIR$/src/main/webapp/js/search.js" />
     </list>
     <list id="28745168-f362-4203-88ea-4c3392dc61b1" name="ignore" comment="ignore">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dump.sql" afterPath="$PROJECT_DIR$/dump.sql" />
+      <change type="DELETED" beforePath="D:\projects\ayfaar\ii-app\dump.sql" afterPath="" />
     </list>
     <ignored path="ayfaar.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -85,8 +74,8 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
-    <ui_properties converted="true" />
     <breakpoint_rules converted="true" />
+    <ui_properties converted="true" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
@@ -94,111 +83,104 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="FullSync.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/FullSync.java">
+      <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/webapp/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="744" max-vertical-offset="1275">
-              <caret line="67" column="77" selection-start-line="67" selection-start-column="77" selection-end-line="67" selection-end-column="77" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="969" max-vertical-offset="1258">
+              <caret line="57" column="0" selection-start-line="57" selection-start-column="4" selection-end-line="65" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="term.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/webapp/js/term.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="488" max-vertical-offset="1190">
+              <caret line="48" column="103" selection-start-line="48" selection-start-column="77" selection-end-line="48" selection-end-column="77" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="term.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/webapp/term.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="1224">
+              <caret line="14" column="33" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="38" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TermController.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/TermController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="4658" max-vertical-offset="4811">
+              <caret line="274" column="22" selection-start-line="274" selection-start-column="22" selection-end-line="274" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="search.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/webapp/js/search.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="17" max-vertical-offset="1853">
+              <caret line="12" column="97" selection-start-line="12" selection-start-column="42" selection-end-line="12" selection-end-column="42" />
               <folding>
-                <element signature="e#1989#1990#0" expanded="true" />
-                <element signature="e#2021#2022#0" expanded="true" />
+                <marker date="1404908107153" expanded="true" signature="261:2675" placeholder="{...}" />
+                <marker date="1404908107153" expanded="true" signature="287:2672" placeholder="{...}" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TermDao.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/TermDao.java">
+      <file leaf-file-name="database.properties" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/database.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="289">
-              <caret line="11" column="23" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
+            <state vertical-scroll-proportion="0.2004717" vertical-offset="0" max-vertical-offset="424">
+              <caret line="5" column="80" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TermDaoImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/TermDaoImpl.java">
+      <file leaf-file-name="SearchController.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/SearchController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="629">
-              <caret line="32" column="12" selection-start-line="32" selection-start-column="12" selection-end-line="32" selection-end-column="12" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="2771" max-vertical-offset="3910">
+              <caret line="163" column="115" selection-start-line="163" selection-start-column="34" selection-end-line="163" selection-end-column="34" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Restrictions.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-core/4.2.5.Final/hibernate-core-4.2.5.Final-sources.jar!/org/hibernate/criterion/Restrictions.java">
+      <file leaf-file-name="UID.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/UID.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1927" max-vertical-offset="6868">
-              <caret line="147" column="28" selection-start-line="147" selection-start-column="16" selection-end-line="147" selection-end-column="28" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595">
+              <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TOCSync.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/TOCSync.java">
+      <file leaf-file-name="start.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/webapp/js/start.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="880" max-vertical-offset="2006">
-              <caret line="96" column="51" selection-start-line="96" selection-start-column="51" selection-end-line="96" selection-end-column="51" />
-              <folding>
-                <element signature="imports" expanded="false" />
-                <element signature="e#1416#1426#0" expanded="true" />
-                <element signature="e#4168#4178#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TocSyncTest.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/TocSyncTest.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="391">
-              <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="935" max-vertical-offset="4284">
+              <caret line="55" column="53" selection-start-line="55" selection-start-column="10" selection-end-line="55" selection-end-column="53" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TermSync.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/TermSync.java">
+      <file leaf-file-name="AliasesMap.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/utils/AliasesMap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.56675065" vertical-offset="1611" max-vertical-offset="2210">
-              <caret line="108" column="41" selection-start-line="108" selection-start-column="41" selection-end-line="108" selection-end-column="41" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="method#markTerms#0;class#TermSync#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="StringBuilder.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://C:/Program Files/Java/jdk1.7.0/src.zip!/java/lang/StringBuilder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="3591" max-vertical-offset="6800">
-              <caret line="249" column="19" selection-start-line="249" selection-start-column="19" selection-end-line="249" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AbstractStringBuilder.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://C:/Program Files/Java/jdk1.7.0/src.zip!/java/lang/AbstractStringBuilder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1619" max-vertical-offset="23103">
-              <caret line="139" column="16" selection-start-line="139" selection-start-column="16" selection-end-line="139" selection-end-column="16" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Link.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Link.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1972">
-              <caret line="10" column="30" selection-start-line="10" selection-start-column="30" selection-end-line="10" selection-end-column="30" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="2125" max-vertical-offset="2686">
+              <caret line="125" column="6" selection-start-line="125" selection-start-column="5" selection-end-line="125" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -218,57 +200,57 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/main/text/paragraphs/Параграфы, БДК, Том 10.csv" />
-        <option value="$PROJECT_DIR$/src/test/java/org/ayfaar/app/importing/SpringConfiguration.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/EntitySyncronizer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/utils/UriGenerator.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/MediaWikiBotProvider.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/test/java/org/ayfaar/app/importing/ItemsImporter.java" />
-        <option value="$PROJECT_DIR$/src/test/java/org/ayfaar/app/importing/CategoryExporterTest.java" />
-        <option value="$PROJECT_DIR$/src/test/java/org/ayfaar/app/importing/TOCCreator.java" />
-        <option value="$PROJECT_DIR$/src/main/text/paragraphs/Параграфы, БДК, Том 10,14.utf.csv" />
-        <option value="$PROJECT_DIR$/src/test/java/org/ayfaar/app/importing/CategoryImporter.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/Commons.java" />
-        <option value="$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/DumpSyncTest.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/Synchronizer.java" />
-        <option value="$PROJECT_DIR$/src/main/webapp/adm.html" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/TermController.java" />
-        <option value="$PROJECT_DIR$/src/main/webapp/term.html" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Article.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Item.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Link.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Revision.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Term.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/UID.java" />
-        <option value="$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/ItemSyncTest.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/LinkDaoImpl.java" />
-        <option value="$PROJECT_DIR$/src/main/webapp/index.html" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/LinkController.java" />
-        <option value="$PROJECT_DIR$/src/main/webapp/js/search.js" />
-        <option value="$PROJECT_DIR$/src/main/webapp/search.html" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/utils/AliasesMap.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/MediaWikiUtils.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Category.java" />
-        <option value="$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/CategorySyncTest.java" />
-        <option value="$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/TermSyncTest.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/AbstractHibernateDAO.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/EntitySynchronizer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/CommonDaoImpl.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/SyncStatus.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/SyncUtils.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/MediaWikiBotHelper.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/CategoryDao.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/CategoryDaoImpl.java" />
-        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/database.properties" />
         <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/ItemSync.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/CategorySync.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/TOCSync.java" />
         <option value="$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/TocSyncTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/TermDaoImpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/TermDao.java" />
         <option value="$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/FullSync.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/TermSync.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/TOCSync.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Term.java" />
+        <option value="$PROJECT_DIR$/src/main/webapp/about.html" />
+        <option value="$PROJECT_DIR$/src/test/java/org/ayfaar/app/importing/ItemsImporter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/CommonDaoImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/webapp/js/item.js" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/ArticleController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/mediawiki/EvernotBot.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/evernote/EvernotBot.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/evernote/EDAMDemo.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Item.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/evernote/BotTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/LinkDao.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/LinkDaoImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/LinkController.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/test/java/MorthTest.java" />
+        <option value="$PROJECT_DIR$/src/test/java/MorpthTest.java" />
+        <option value="$PROJECT_DIR$/src/test/java/MorphTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/evernote/EvernoteBot.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/logging.properties" />
+        <option value="$PROJECT_DIR$/src/main/webapp/libs/kendo/src/js/kendo.core.js" />
+        <option value="$PROJECT_DIR$/src/main/webapp/libs/kendo/kendo.custom.min.js" />
+        <option value="$PROJECT_DIR$/src/main/webapp/item.html" />
+        <option value="$PROJECT_DIR$/src/main/webapp/libs/kendo/closure-compiler.cfg" />
+        <option value="$PROJECT_DIR$/src/main/webapp/main.html" />
+        <option value="$PROJECT_DIR$/src/main/webapp/js/start.js" />
+        <option value="$PROJECT_DIR$/src/main/webapp/term.html" />
+        <option value="$PROJECT_DIR$/src/main/webapp/css/icons/sprites.css" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/utils/EmailNotifier.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/utils/UriGenerator.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/SearchController.java" />
+        <option value="$PROJECT_DIR$/src/main/webapp/search.html" />
+        <option value="$PROJECT_DIR$/src/main/webapp/css/icons/style.css" />
+        <option value="$PROJECT_DIR$/src/main/webapp/css/styles.css" />
+        <option value="$PROJECT_DIR$/src/main/webapp/adm.html" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/evernote/EvernoteSync.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/TermController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/utils/AliasesMap.java" />
+        <option value="$PROJECT_DIR$/src/main/webapp/index.html" />
+        <option value="$PROJECT_DIR$/src/main/webapp/js/search.js" />
+        <option value="$PROJECT_DIR$/src/main/webapp/js/term.js" />
+        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/database.properties" />
       </list>
     </option>
   </component>
@@ -298,10 +280,10 @@
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="65" />
-    <option name="y" value="1" />
-    <option name="width" value="1300" />
-    <option name="height" value="766" />
+    <option name="x" value="56" />
+    <option name="y" value="-8" />
+    <option name="width" value="1318" />
+    <option name="height" value="784" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -332,7 +314,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -368,24 +349,6 @@
               <option name="myItemId" value="test" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ii-app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ii-app" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="java" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
@@ -413,55 +376,7 @@
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="synchronization" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ii-app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ii-app" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ii-app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ii-app" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
+              <option name="myItemId" value="evernote" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -483,11 +398,7 @@
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
+              <option name="myItemId" value="webapp" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -509,15 +420,11 @@
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
+              <option name="myItemId" value="webapp" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="synchronization" />
+              <option name="myItemId" value="WEB-INF" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -539,20 +446,65 @@
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
+              <option name="myItemId" value="webapp" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
+              <option name="myItemId" value="css" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ii-app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ii-app" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="model" />
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webapp" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="css" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="icons" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ii-app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ii-app" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -566,7 +518,7 @@
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
-    <property name="last_opened_file_path" value="$PROJECTS$/ayfaar/jwbf/pom.xml" />
+    <property name="last_opened_file_path" value="$PROJECTS$/perevozki/server" />
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="full.screen.before.presentation.mode" value="true" />
     <property name="OverrideImplement.combined" value="true" />
@@ -579,7 +531,7 @@
     <property name="SearchEverywhereHistory" value="" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.includeInheritedMembers" value="false" />
-    <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/java/org/ayfaar/app" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization" />
     <property name="dynamic.classpath" value="false" />
     <property name="FullScreen" value="false" />
     <property name="LombokPluginEnabledInProject" value="true" />
@@ -600,6 +552,7 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="750" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
+    <property name="SearchEverywhereHistoryKey" value="start.js&#9;FILE&#9;file://D:/projects/ayfaar/ii-app/src/main/webapp/js/start.js&#10;sea&#9;FILE&#9;file://D:/projects/ayfaar/ii-app/src/main/webapp/search.html&#10;term&#9;FILE&#9;file://D:/projects/ayfaar/ii-app/src/main/webapp/term.html" />
   </component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.RecentsKey">
@@ -635,95 +588,25 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.FullSync.terms">
-    <configuration default="false" name="FullSync.push" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Tomcat Server.ii-app">
+    <configuration default="false" name="ItemsImporter" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="org.ayfaar.app.synchronization.*" />
+          <option name="PATTERN" value="org.ayfaar.app.importing.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="ii-app" />
+      <option name="MAIN_CLASS_NAME" value="org.ayfaar.app.importing.ItemsImporter" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="org.ayfaar.app.synchronization" />
-      <option name="MAIN_CLASS_NAME" value="org.ayfaar.app.synchronization.FullSync" />
-      <option name="METHOD_NAME" value="push" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <ConfigurationWrapper RunnerId="Debug" />
-      <method />
-    </configuration>
-    <configuration default="false" name="FullSync.items" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="org.ayfaar.app.synchronization.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
       <module name="ii-app" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="org.ayfaar.app.synchronization" />
-      <option name="MAIN_CLASS_NAME" value="org.ayfaar.app.synchronization.FullSync" />
-      <option name="METHOD_NAME" value="items" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
       <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <ConfigurationWrapper RunnerId="Debug" />
-      <method />
-    </configuration>
-    <configuration default="false" name="FullSync.dump2" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="org.ayfaar.app.synchronization.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <module name="ii-app" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="org.ayfaar.app.synchronization" />
-      <option name="MAIN_CLASS_NAME" value="org.ayfaar.app.synchronization.FullSync" />
-      <option name="METHOD_NAME" value="dump2" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="" />
         <option name="TRANSPORT" value="0" />
@@ -764,20 +647,73 @@
       <ConfigurationWrapper RunnerId="Debug" />
       <method />
     </configuration>
-    <configuration default="false" name="TocSyncTest.testSynchronize" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration default="false" name="EDAMDemo" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="org.ayfaar.app.synchronization.*" />
+          <option name="PATTERN" value="com.evernote.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="com.evernote.EDAMDemo" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="ii-app" />
+      <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <ConfigurationWrapper RunnerId="Debug" />
+      <method />
+    </configuration>
+    <configuration default="false" name="BotTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.evernote.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
       <module name="ii-app" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="org.ayfaar.app.synchronization" />
-      <option name="MAIN_CLASS_NAME" value="org.ayfaar.app.synchronization.TocSyncTest" />
-      <option name="METHOD_NAME" value="testSynchronize" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="com.evernote" />
+      <option name="MAIN_CLASS_NAME" value="com.evernote.BotTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <ConfigurationWrapper RunnerId="Debug" />
+      <method />
+    </configuration>
+    <configuration default="false" name="MorphTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="ii-app" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="MorphTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -818,9 +754,6 @@
       <option name="SHMEM_ADDRESS" value="javadebug" />
       <option name="HOST" value="localhost" />
       <option name="PORT" value="5005" />
-      <method />
-    </configuration>
-    <configuration default="true" type="PhpLocalRunConfigurationType" factoryName="PHP Console">
       <method />
     </configuration>
     <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
@@ -876,9 +809,6 @@
       <envs />
       <properties />
       <listeners />
-      <method />
-    </configuration>
-    <configuration default="true" type="PhpUnitRemoteRunConfigurationType" factoryName="PHPUnit on Server">
       <method />
     </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
@@ -952,10 +882,6 @@
       <method />
     </configuration>
     <configuration default="true" type="cloudfoundry-deploy" factoryName="CloudFoundry Deployment">
-      <method />
-    </configuration>
-    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
-      <TestRunner />
       <method />
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
@@ -1048,6 +974,7 @@
       <method />
     </configuration>
     <configuration default="false" name="ii-app" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 7" ALTERNATIVE_JRE_ENABLED="false" ALTERNATIVE_JRE_PATH="">
+      <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8081/" />
       <option name="COMMON_VM_ARGUMENTS" value="-Dfile.encoding=UTF-8" />
       <option name="UPDATING_POLICY" value="restart-server" />
       <deployment>
@@ -1152,19 +1079,19 @@
     </configuration>
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Tomcat Server.ii-app" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.FullSync.push" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.FullSync.items" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.FullSync.dump2" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.FullSync.terms" />
-      <item index="5" class="java.lang.String" itemvalue="JUnit.TocSyncTest.testSynchronize" />
+      <item index="1" class="java.lang.String" itemvalue="Application.ItemsImporter" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.FullSync.terms" />
+      <item index="3" class="java.lang.String" itemvalue="Application.EDAMDemo" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.BotTest" />
+      <item index="5" class="java.lang.String" itemvalue="JUnit.MorphTest" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="JUnit.FullSync.terms" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.TocSyncTest.testSynchronize" />
-        <item index="2" class="java.lang.String" itemvalue="JUnit.FullSync.dump2" />
-        <item index="3" class="java.lang.String" itemvalue="JUnit.FullSync.items" />
-        <item index="4" class="java.lang.String" itemvalue="JUnit.FullSync.push" />
+        <item index="0" class="java.lang.String" itemvalue="JUnit.MorphTest" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.BotTest" />
+        <item index="2" class="java.lang.String" itemvalue="Application.EDAMDemo" />
+        <item index="3" class="java.lang.String" itemvalue="Application.ItemsImporter" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.FullSync.terms" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -1268,7 +1195,38 @@
       <workItem from="1399037607385" duration="1946000" />
       <workItem from="1399212650841" duration="1384000" />
       <workItem from="1399215498813" duration="677000" />
-      <workItem from="1399715142675" duration="32603000" />
+      <workItem from="1399715142675" duration="33761000" />
+      <workItem from="1399904849647" duration="622000" />
+      <workItem from="1400518324136" duration="279000" />
+      <workItem from="1400532253857" duration="4191000" />
+      <workItem from="1400539459847" duration="4152000" />
+      <workItem from="1401043795001" duration="18987000" />
+      <workItem from="1401358031025" duration="1263000" />
+      <workItem from="1401359643114" duration="3951000" />
+      <workItem from="1401620344989" duration="8937000" />
+      <workItem from="1401800108935" duration="668000" />
+      <workItem from="1402062867920" duration="1603000" />
+      <workItem from="1402168898877" duration="6810000" />
+      <workItem from="1402306488536" duration="1565000" />
+      <workItem from="1402379845236" duration="1042000" />
+      <workItem from="1402381045464" duration="1451000" />
+      <workItem from="1402568214075" duration="5303000" />
+      <workItem from="1402692333607" duration="157000" />
+      <workItem from="1402737092876" duration="16854000" />
+      <workItem from="1403099265943" duration="8034000" />
+      <workItem from="1403123178467" duration="7959000" />
+      <workItem from="1403450542098" duration="3015000" />
+      <workItem from="1403511251753" duration="1342000" />
+      <workItem from="1403537541039" duration="2278000" />
+      <workItem from="1403779725526" duration="1043000" />
+      <workItem from="1403802369578" duration="18849000" />
+      <workItem from="1403961259500" duration="6919000" />
+      <workItem from="1404206315119" duration="198000" />
+      <workItem from="1404365816997" duration="3051000" />
+      <workItem from="1404452346199" duration="2775000" />
+      <workItem from="1404459931782" duration="1596000" />
+      <workItem from="1404673688014" duration="3089000" />
+      <workItem from="1404902954578" duration="1274000" />
     </task>
     <task id="LOCAL-00001" summary="se&#10;">
       <created>1390181903371</created>
@@ -1498,18 +1456,178 @@
       <created>1399716574896</created>
       <updated>1399716574896</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="sync">
+      <created>1399758672153</created>
+      <updated>1399758672153</updated>
+    </task>
+    <task id="LOCAL-00059" summary="optimization">
+      <created>1401048250937</created>
+      <updated>1401048250937</updated>
+    </task>
+    <task id="LOCAL-00060" summary="search+">
+      <created>1401212876428</created>
+      <updated>1401212876428</updated>
+    </task>
+    <task id="LOCAL-00061" summary="+">
+      <created>1401361010580</created>
+      <updated>1401361010580</updated>
+    </task>
+    <task id="LOCAL-00062" summary="+">
+      <created>1401386492708</created>
+      <updated>1401386492708</updated>
+    </task>
+    <task id="LOCAL-00063" summary="fix search query">
+      <created>1401620897407</created>
+      <updated>1401620897407</updated>
+    </task>
+    <task id="LOCAL-00064" summary="remove term">
+      <created>1401622697135</created>
+      <updated>1401622697135</updated>
+    </task>
+    <task id="LOCAL-00065" summary="quotes">
+      <created>1401624854278</created>
+      <updated>1401624854278</updated>
+    </task>
+    <task id="LOCAL-00066" summary="fix">
+      <created>1401625566295</created>
+      <updated>1401625566296</updated>
+    </task>
+    <task id="LOCAL-00067" summary="fix">
+      <created>1401626287917</created>
+      <updated>1401626287917</updated>
+    </task>
+    <task id="LOCAL-00068" summary="fix">
+      <created>1401628094715</created>
+      <updated>1401628094715</updated>
+    </task>
+    <task id="LOCAL-00069" summary="fix">
+      <created>1401628377909</created>
+      <updated>1401628377909</updated>
+    </task>
+    <task id="LOCAL-00070" summary="fix">
+      <created>1401629294588</created>
+      <updated>1401629294588</updated>
+    </task>
+    <task id="LOCAL-00071" summary="+">
+      <created>1401731333806</created>
+      <updated>1401731333806</updated>
+    </task>
+    <task id="LOCAL-00072" summary="+">
+      <created>1402213568410</created>
+      <updated>1402213568411</updated>
+    </task>
+    <task id="LOCAL-00073" summary="+">
+      <created>1402213649955</created>
+      <updated>1402213649956</updated>
+    </task>
+    <task id="LOCAL-00074" summary="+">
+      <created>1402214716486</created>
+      <updated>1402214716486</updated>
+    </task>
+    <task id="LOCAL-00075" summary="+">
+      <created>1402215104390</created>
+      <updated>1402215104391</updated>
+    </task>
+    <task id="LOCAL-00076" summary="+">
+      <created>1402217139198</created>
+      <updated>1402217139198</updated>
+    </task>
+    <task id="LOCAL-00077" summary="+">
+      <created>1402380835887</created>
+      <updated>1402380835887</updated>
+    </task>
+    <task id="LOCAL-00078" summary="+">
+      <created>1402381386100</created>
+      <updated>1402381386101</updated>
+    </task>
+    <task id="LOCAL-00079" summary="+">
+      <created>1402381940129</created>
+      <updated>1402381940129</updated>
+    </task>
+    <task id="LOCAL-00080" summary="+">
+      <created>1402608566264</created>
+      <updated>1402608566265</updated>
+    </task>
+    <task id="LOCAL-00081" summary="+">
+      <created>1402665351757</created>
+      <updated>1402665351757</updated>
+    </task>
+    <task id="LOCAL-00082" summary="+">
+      <created>1402738390407</created>
+      <updated>1402738390407</updated>
+    </task>
+    <task id="LOCAL-00083" summary="+">
+      <created>1403105393168</created>
+      <updated>1403105393168</updated>
+    </task>
+    <task id="LOCAL-00084" summary="+">
+      <created>1403108552631</created>
+      <updated>1403108552631</updated>
+    </task>
+    <task id="LOCAL-00085" summary="+">
+      <created>1403129742698</created>
+      <updated>1403129742698</updated>
+    </task>
+    <task id="LOCAL-00086" summary="+">
+      <created>1403165457176</created>
+      <updated>1403165457176</updated>
+    </task>
+    <task id="LOCAL-00087" summary="+">
+      <created>1403451588520</created>
+      <updated>1403451588520</updated>
+    </task>
+    <task id="LOCAL-00088" summary="+">
+      <created>1403452095823</created>
+      <updated>1403452095823</updated>
+    </task>
+    <task id="LOCAL-00089" summary="+">
+      <created>1403453169556</created>
+      <updated>1403453169556</updated>
+    </task>
+    <task id="LOCAL-00090" summary="+">
+      <created>1403511367871</created>
+      <updated>1403511367872</updated>
+    </task>
+    <task id="LOCAL-00091" summary="+">
+      <created>1403817433839</created>
+      <updated>1403817433839</updated>
+    </task>
+    <task id="LOCAL-00092" summary="+">
+      <created>1403817668440</created>
+      <updated>1403817668441</updated>
+    </task>
+    <task id="LOCAL-00093" summary="+">
+      <created>1403969658338</created>
+      <updated>1403969658338</updated>
+    </task>
+    <task id="LOCAL-00094" summary="+">
+      <created>1404365909982</created>
+      <updated>1404365909982</updated>
+    </task>
+    <task id="LOCAL-00095" summary="+">
+      <created>1404373928967</created>
+      <updated>1404373928967</updated>
+    </task>
+    <task id="LOCAL-00096" summary="+">
+      <created>1404454017551</created>
+      <updated>1404454017551</updated>
+    </task>
+    <task id="LOCAL-00097" summary="+">
+      <created>1404674217646</created>
+      <updated>1404674217646</updated>
+    </task>
+    <option name="localTasksCounter" value="98" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="540595000" />
+    <option name="totallyTimeSpent" value="681010000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="1" width="1300" height="766" extended-state="6" />
+    <frame x="56" y="-8" width="1318" height="784" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32797858" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32478634" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1521,35 +1639,35 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38259667" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32797858" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2686916" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26036867" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32478634" sideWeight="0.4995197" order="15" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3233618" sideWeight="0.4995197" order="15" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35380116" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34502923" sideWeight="0.4990366" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30341882" sideWeight="0.4990366" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32748538" sideWeight="0.49952245" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32621083" sideWeight="0.49952245" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962963" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32869694" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35185185" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
@@ -1567,8 +1685,8 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
@@ -1590,13 +1708,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="tuning" />
-    <MESSAGE value="img" />
-    <MESSAGE value="vocabulary and articles" />
-    <MESSAGE value="fix vocabula" />
-    <MESSAGE value="fix PA bug" />
-    <MESSAGE value="quotes" />
-    <MESSAGE value="search" />
     <MESSAGE value="search with aliases" />
     <MESSAGE value="add link" />
     <MESSAGE value="add aliases" />
@@ -1615,12 +1726,33 @@
     <MESSAGE value="i" />
     <MESSAGE value="fix search" />
     <MESSAGE value="sync" />
-    <option name="LAST_COMMIT_MESSAGE" value="sync" />
+    <MESSAGE value="optimization" />
+    <MESSAGE value="search+" />
+    <MESSAGE value="fix search query" />
+    <MESSAGE value="remove term" />
+    <MESSAGE value="quotes" />
+    <MESSAGE value="fix" />
+    <MESSAGE value="+" />
+    <option name="LAST_COMMIT_MESSAGE" value="+" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="45" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/SearchController.java</url>
+          <line>71</line>
+          <properties />
+          <option name="timeStamp" value="135" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/SearchController.java</url>
+          <line>130</line>
+          <properties />
+          <option name="timeStamp" value="136" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="137" />
     </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
@@ -1628,445 +1760,364 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/UID.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Link.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="731">
-          <caret line="12" column="41" selection-start-line="12" selection-start-column="41" selection-end-line="12" selection-end-column="41" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="1972">
+          <caret line="10" column="29" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/SearchController.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/3.2.5.RELEASE/spring-context-3.2.5.RELEASE-sources.jar!/org/springframework/scheduling/support/ScheduledMethodRunnable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="459" max-vertical-offset="3077">
-          <caret line="27" column="13" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="565" max-vertical-offset="986">
+          <caret line="66" column="0" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/org/ayfaar/app/importing/VocabularyImporter.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-web/3.2.5.RELEASE/spring-web-3.2.5.RELEASE-sources.jar!/org/springframework/web/method/support/InvocableHandlerMethod.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1088" max-vertical-offset="1717">
-          <caret line="64" column="47" selection-start-line="64" selection-start-column="47" selection-end-line="64" selection-end-column="47" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="3005" max-vertical-offset="3961">
+          <caret line="218" column="0" selection-start-line="218" selection-start-column="0" selection-end-line="218" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/evernote/evernote-api/1.25.1/evernote-api-1.25.1-sources.jar!/com/evernote/clients/NoteStoreClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="4816" max-vertical-offset="10557">
+          <caret line="412" column="16" selection-start-line="412" selection-start-column="16" selection-end-line="412" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/LinkController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="57" max-vertical-offset="1241">
+          <caret line="79" column="8" selection-start-line="79" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/LinkDao.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="425">
+          <caret line="18" column="15" selection-start-line="18" selection-start-column="15" selection-end-line="18" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/logging.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="119">
+          <caret line="1" column="52" selection-start-line="1" selection-start-column="52" selection-end-line="1" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="191" max-vertical-offset="918">
+          <caret line="42" column="62" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/applicationContext.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="651">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="527">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0/src.zip!/java/util/LinkedHashMap.java">
+    <entry file="file://$PROJECT_DIR$/src/main/resources/spring-basic.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="4407" max-vertical-offset="7922">
-          <caret line="295" column="13" selection-start-line="295" selection-start-column="13" selection-end-line="295" selection-end-column="13" />
+        <state vertical-scroll-proportion="-25.16" vertical-offset="0" max-vertical-offset="1734">
+          <caret line="37" column="100" selection-start-line="37" selection-start-column="19" selection-end-line="37" selection-end-column="19" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/js/search.js">
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/libs/jquery/jquery-1.9.1.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="1224">
-          <caret line="32" column="35" selection-start-line="32" selection-start-column="35" selection-end-line="32" selection-end-column="35" />
-          <folding />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="163251">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/js/auxiliary.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="421">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/libs/ensure.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="9010">
+          <caret line="9" column="60" selection-start-line="9" selection-start-column="60" selection-end-line="9" selection-end-column="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/libs/kendo/js/kendo.data.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.082125604" vertical-offset="0" max-vertical-offset="414">
+          <caret line="9" column="222" selection-start-line="8" selection-start-column="0" selection-end-line="9" selection-end-column="222" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/libs/kendo/js/kendo.binder.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="119">
+          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="14332" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/libs/kendo/js/kendo.autocomplete.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="119">
+          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="5636" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/libs/kendo/js/kendo.list.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238">
+          <caret line="7" column="2" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/libs/kendo/js/kendo.core.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="136">
+          <caret line="9" column="3078" selection-start-line="8" selection-start-column="0" selection-end-line="9" selection-end-column="3078" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/libs/kendo/kendo.custom.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3196" max-vertical-offset="3655">
+          <caret line="209" column="16" selection-start-line="209" selection-start-column="16" selection-end-line="209" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/libs/kendo/closure-compiler.cfg">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.9824562" vertical-offset="0" max-vertical-offset="272">
+          <caret line="10" column="60" selection-start-line="0" selection-start-column="0" selection-end-line="10" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/item.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-14.384615" vertical-offset="0" max-vertical-offset="544">
+          <caret line="22" column="4" selection-start-line="22" selection-start-column="4" selection-end-line="22" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/article.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="651">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/main.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="714" max-vertical-offset="1326">
+          <caret line="70" column="59" selection-start-line="70" selection-start-column="58" selection-end-line="70" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/js/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="651">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/CommonDao.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="816">
+          <caret line="41" column="18" selection-start-line="41" selection-start-column="18" selection-end-line="41" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/CommonDaoImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2067" max-vertical-offset="3553">
+          <caret line="164" column="0" selection-start-line="164" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-aop/3.2.5.RELEASE/spring-aop-3.2.5.RELEASE-sources.jar!/org/springframework/aop/support/AopUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="4413" max-vertical-offset="4947">
+          <caret line="316" column="0" selection-start-line="316" selection-start-column="0" selection-end-line="316" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/libs/noty/jquery.noty.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="8823">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/utils/EmailNotifier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="403" max-vertical-offset="1122">
+          <caret line="60" column="28" selection-start-line="60" selection-start-column="28" selection-end-line="60" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.7.0/jre/lib/rt.jar!/sun/reflect/ReflectionFactory.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.20432693" vertical-offset="0" max-vertical-offset="1088">
+          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/utils/UriGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="200" max-vertical-offset="629">
+          <caret line="40" column="11" selection-start-line="40" selection-start-column="1" selection-end-line="40" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/libs/noty/themes/default.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2754">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/search.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4722222" vertical-offset="0" max-vertical-offset="1054">
-          <caret line="17" column="72" selection-start-line="17" selection-start-column="72" selection-end-line="17" selection-end-column="72" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="307" max-vertical-offset="1496">
+          <caret line="33" column="66" selection-start-line="33" selection-start-column="66" selection-end-line="33" selection-end-column="82" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/LinkController.java">
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/css/icons/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.67895544" vertical-offset="0" max-vertical-offset="1343">
-          <caret line="44" column="83" selection-start-line="44" selection-start-column="20" selection-end-line="44" selection-end-column="20" />
-          <folding />
+        <state vertical-scroll-proportion="0.0" vertical-offset="370" max-vertical-offset="986">
+          <caret line="38" column="40" selection-start-line="38" selection-start-column="40" selection-end-line="38" selection-end-column="40" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/js/start.js">
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/css/styles.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="604" max-vertical-offset="3332">
-          <caret line="48" column="87" selection-start-line="48" selection-start-column="9" selection-end-line="48" selection-end-column="9" />
-          <folding />
+        <state vertical-scroll-proportion="0.0" vertical-offset="187" max-vertical-offset="9911">
+          <caret line="26" column="62" selection-start-line="26" selection-start-column="14" selection-end-line="26" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/index.html">
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/adm.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-9.807693" vertical-offset="663" max-vertical-offset="2159">
-          <caret line="54" column="27" selection-start-line="54" selection-start-column="27" selection-end-line="54" selection-end-column="27" />
-          <folding />
+        <state vertical-scroll-proportion="0.0" vertical-offset="340" max-vertical-offset="3451">
+          <caret line="20" column="72" selection-start-line="20" selection-start-column="46" selection-end-line="20" selection-end-column="46" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0/src.zip!/java/lang/String.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/evernote/EvernoteSync.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="23554" max-vertical-offset="50711">
-          <caret line="1461" column="19" selection-start-line="1461" selection-start-column="19" selection-end-line="1461" selection-end-column="19" />
-          <folding />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1477" max-vertical-offset="1938">
+          <caret line="115" column="52" selection-start-line="115" selection-start-column="52" selection-end-line="115" selection-end-column="52" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0/src.zip!/java/util/regex/Matcher.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/evernote/EvernoteBot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="14284" max-vertical-offset="20587">
-          <caret line="898" column="18" selection-start-line="898" selection-start-column="18" selection-end-line="898" selection-end-column="18" />
-          <folding />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2104" max-vertical-offset="2975">
+          <caret line="171" column="74" selection-start-line="171" selection-start-column="35" selection-end-line="171" selection-end-column="35" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/3.2.5.RELEASE/spring-context-3.2.5.RELEASE-sources.jar!/org/springframework/context/annotation/Lazy.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/LinkDaoImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="99" max-vertical-offset="850">
-          <caret line="54" column="18" selection-start-line="54" selection-start-column="18" selection-end-line="54" selection-end-column="18" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="695" max-vertical-offset="1564">
+          <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/TermController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2415" max-vertical-offset="3026">
-          <caret line="185" column="61" selection-start-line="185" selection-start-column="15" selection-end-line="185" selection-end-column="61" />
-          <folding>
-            <element signature="e#6982#6983#0" expanded="true" />
-            <element signature="e#7051#7052#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.0" vertical-offset="3627" max-vertical-offset="4029">
+          <caret line="274" column="22" selection-start-line="274" selection-start-column="22" selection-end-line="274" selection-end-column="22" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/utils/AliasesMap.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="269" max-vertical-offset="2108">
-          <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1328" max-vertical-offset="2125">
+          <caret line="125" column="6" selection-start-line="125" selection-start-column="5" selection-end-line="125" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="969" max-vertical-offset="1258">
+          <caret line="57" column="0" selection-start-line="57" selection-start-column="4" selection-end-line="65" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/js/start.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="935" max-vertical-offset="4284">
+          <caret line="55" column="53" selection-start-line="55" selection-start-column="10" selection-end-line="55" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/term.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="1224">
+          <caret line="14" column="33" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/js/term.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="488" max-vertical-offset="1190">
+          <caret line="48" column="103" selection-start-line="48" selection-start-column="77" selection-end-line="48" selection-end-column="77" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/controllers/SearchController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2001" max-vertical-offset="3468">
+          <caret line="163" column="115" selection-start-line="163" selection-start-column="34" selection-end-line="163" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/UID.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="595">
+          <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/js/search.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="17" max-vertical-offset="1853">
+          <caret line="12" column="97" selection-start-line="12" selection-start-column="42" selection-end-line="12" selection-end-column="42" />
           <folding>
-            <element signature="e#2572#2573#0" expanded="true" />
-            <element signature="e#2622#2623#0" expanded="true" />
+            <marker date="1404908107153" expanded="true" signature="261:2675" placeholder="{...}" />
+            <marker date="1404908107153" expanded="true" signature="287:2672" placeholder="{...}" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/LinkDaoImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="31" max-vertical-offset="1207">
-          <caret line="21" column="22" selection-start-line="21" selection-start-column="22" selection-end-line="21" selection-end-column="22" />
-          <folding>
-            <element signature="e#1403#1404#0" expanded="true" />
-            <element signature="e#1456#1457#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/LinkDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.19274376" vertical-offset="0" max-vertical-offset="441">
-          <caret line="8" column="15" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0/src.zip!/java/util/Map.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="5369" max-vertical-offset="7837">
-          <caret line="347" column="25" selection-start-line="347" selection-start-column="25" selection-end-line="347" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/ItemSyncTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="4" max-vertical-offset="357">
-          <caret line="20" column="24" selection-start-line="20" selection-start-column="24" selection-end-line="20" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0/src.zip!/java/util/ListIterator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2621" max-vertical-offset="3026">
-          <caret line="193" column="9" selection-start-line="193" selection-start-column="9" selection-end-line="193" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0/src.zip!/java/util/ArrayDeque.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="13634">
-          <caret line="184" column="11" selection-start-line="184" selection-start-column="11" selection-end-line="184" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0/src.zip!/java/util/Queue.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2568" max-vertical-offset="3247">
-          <caret line="198" column="6" selection-start-line="198" selection-start-column="6" selection-end-line="198" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/utils/UriGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="544">
-          <caret line="31" column="25" selection-start-line="31" selection-start-column="25" selection-end-line="31" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/org/ayfaar/app/importing/CategoryExporterTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="833">
-          <caret line="25" column="74" selection-start-line="25" selection-start-column="54" selection-end-line="25" selection-end-column="74" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/CategorySyncTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="391">
-          <caret line="21" column="38" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
-          <folding>
-            <element signature="e#708#709#0" expanded="false" />
-            <element signature="e#795#796#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/TermSyncTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
-          <caret line="31" column="35" selection-start-line="31" selection-start-column="35" selection-end-line="31" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/BasicCrudDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="901">
-          <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/AbstractHibernateDAO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1588" max-vertical-offset="5049">
-          <caret line="161" column="10" selection-start-line="161" selection-start-column="10" selection-end-line="161" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/CommonDaoImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="483" max-vertical-offset="3434">
-          <caret line="73" column="42" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
-          <folding>
-            <marker date="1399758669405" expanded="true" signature="-1:-1" placeholder="(missingValu..." />
-            <marker date="1399758669405" expanded="true" signature="-1:-1" placeholder="SELECT uri, ..itemmissingValue..." />
-            <marker date="1399758669405" expanded="true" signature="-1:-1" placeholder="SELECT uri, ..articlemissingValue..." />
-            <marker date="1399758669405" expanded="true" signature="-1:-1" placeholder="SELECT uri, ..itemmissingValue..." />
-            <marker date="1399758669405" expanded="true" signature="-1:-1" placeholder="SELECT uri, ..articlemissingValue..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/CommonDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="211" max-vertical-offset="816">
-          <caret line="29" column="16" selection-start-line="29" selection-start-column="16" selection-end-line="29" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/SyncStatus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="21" max-vertical-offset="425">
-          <caret line="14" column="59" selection-start-line="14" selection-start-column="59" selection-end-line="14" selection-end-column="59" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/SyncUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="74" max-vertical-offset="1020">
-          <caret line="13" column="15" selection-start-line="13" selection-start-column="15" selection-end-line="13" selection-end-column="15" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/MediaWikiBotHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="459" max-vertical-offset="1020">
-          <caret line="56" column="50" selection-start-line="56" selection-start-column="9" selection-end-line="56" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Category.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4651163" vertical-offset="177" max-vertical-offset="1241">
-          <caret line="26" column="22" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/EntitySynchronizer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="16" max-vertical-offset="425">
-          <caret line="14" column="16" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
-          <folding>
-            <element signature="e#563#585#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/CategoryDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="289">
-          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/database.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="187">
-          <caret line="2" column="23" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="23" />
+        <state vertical-scroll-proportion="0.2004717" vertical-offset="0" max-vertical-offset="424">
+          <caret line="5" column="80" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/ItemSync.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="245" max-vertical-offset="782">
-          <caret line="33" column="33" selection-start-line="33" selection-start-column="33" selection-end-line="33" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/CategoryDaoImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="527">
-          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0/src.zip!/java/net/SocketInputStream.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33333334" vertical-offset="942" max-vertical-offset="4063">
-          <caret line="93" column="23" selection-start-line="93" selection-start-column="23" selection-end-line="93" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/CategorySync.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="607" max-vertical-offset="1785">
-          <caret line="49" column="55" selection-start-line="49" selection-start-column="55" selection-end-line="49" selection-end-column="55" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/TOCSync.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="880" max-vertical-offset="2006">
-          <caret line="96" column="51" selection-start-line="96" selection-start-column="51" selection-end-line="96" selection-end-column="51" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#1416#1426#0" expanded="true" />
-            <element signature="e#4168#4178#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/TocSyncTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="391">
-          <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/model/Link.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1972">
-          <caret line="10" column="30" selection-start-line="10" selection-start-column="30" selection-end-line="10" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-core/4.2.5.Final/hibernate-core-4.2.5.Final-sources.jar!/org/hibernate/criterion/Restrictions.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1927" max-vertical-offset="6868">
-          <caret line="147" column="28" selection-start-line="147" selection-start-column="16" selection-end-line="147" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/TermDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="289">
-          <caret line="11" column="23" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/dao/impl/TermDaoImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="629">
-          <caret line="32" column="12" selection-start-line="32" selection-start-column="12" selection-end-line="32" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/org/ayfaar/app/synchronization/FullSync.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="744" max-vertical-offset="1275">
-          <caret line="67" column="77" selection-start-line="67" selection-start-column="77" selection-end-line="67" selection-end-column="77" />
-          <folding>
-            <element signature="e#1989#1990#0" expanded="true" />
-            <element signature="e#2021#2022#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0/src.zip!/java/lang/StringBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3591" max-vertical-offset="6800">
-          <caret line="249" column="19" selection-start-line="249" selection-start-column="19" selection-end-line="249" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0/src.zip!/java/lang/AbstractStringBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1619" max-vertical-offset="23103">
-          <caret line="139" column="16" selection-start-line="139" selection-start-column="16" selection-end-line="139" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/ayfaar/app/synchronization/TermSync.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.56675065" vertical-offset="1611" max-vertical-offset="2210">
-          <caret line="108" column="41" selection-start-line="108" selection-start-column="41" selection-end-line="108" selection-end-column="41" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#markTerms#0;class#TermSync#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2125,7 +2176,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>Spring|ii-app</last-edited>
+          <last-edited>Web|ii-app</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
