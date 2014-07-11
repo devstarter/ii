@@ -54,3 +54,4 @@
 2. Запускаем эту конфигурацию
 
 Подробнее в видео https://www.youtube.com/watch?v=mbwN4eaES78
+
