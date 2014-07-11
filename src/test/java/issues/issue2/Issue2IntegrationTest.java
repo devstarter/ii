@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 public class Issue2IntegrationTest extends IntegrationTest {
 
     @Value("#{T(org.apache.commons.io.FileUtils).readFileToString(" +
-            "T(org.springframework.util.ResourceUtils).getFile('classpath:issues/issue2/expected-item-3.0089.txt')" +
+            "T(org.springframework.util.ResourceUtils).getFile('classpath:issues/issue2/clean-item-3.0089.txt')" +
             ")}")
     String itemExpectedContent;
 
