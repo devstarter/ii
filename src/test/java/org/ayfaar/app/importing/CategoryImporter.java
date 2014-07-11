@@ -2,6 +2,7 @@ package org.ayfaar.app.importing;
 
 import au.com.bytecode.opencsv.CSVReader;
 import lombok.extern.slf4j.Slf4j;
+import org.ayfaar.app.SpringTestConfiguration;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Category;
@@ -27,7 +28,7 @@ public class CategoryImporter {
 
     @Test
     public void categoryImport() throws IOException {
-        ctx = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+        ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
         commonDao = ctx.getBean(CommonDao.class);
         itemDao = ctx.getBean(ItemDao.class);
 

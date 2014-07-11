@@ -1,6 +1,7 @@
 package org.ayfaar.app.importing;
 
 import org.apache.commons.io.FileUtils;
+import org.ayfaar.app.SpringTestConfiguration;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -24,7 +25,7 @@ public class ItemsImporter {
     public static void main(String[] args) throws Docx4JException, IOException {
         currentItem = null;
 
-        ctx = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+        ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
         itemDao = ctx.getBean(ItemDao.class);
 
         for(String line: FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\Том 15.txt"))) {
