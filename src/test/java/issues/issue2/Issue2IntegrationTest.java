@@ -24,4 +24,5 @@ public class Issue2IntegrationTest extends IntegrationTest {
         assertEquals(itemExpectedContent, item.getContent());
     }
 
+    // Ещё нужен тест на то, что больше ни в одном item нет слова Глава
 }
