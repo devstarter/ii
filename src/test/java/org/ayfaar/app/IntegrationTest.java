@@ -7,7 +7,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringTestConfiguration.class)
 public class IntegrationTest {
-    /*@Autowired ItemDao itemDao;
+    /*@Autowired
+    ItemDao itemDao;
 
     @Test
     public void integrationTest() {
