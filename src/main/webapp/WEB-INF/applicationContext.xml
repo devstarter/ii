@@ -13,7 +13,7 @@
                            http://www.springframework.org/schema/mvc
                            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <context:property-placeholder location="/WEB-INF/*.properties" />
+    <context:property-placeholder location="/WEB-INF/classes/*.properties" />
 
     <context:annotation-config/>
 
