@@ -14,7 +14,7 @@ public class Issue2UnitTest {
     public void test1() throws IOException {
         String valueWithBug = IOUtils.toString(Issue2UnitTest.class.getResourceAsStream("clean-item-3.0089.txt"));
         String expectedValue = IOUtils.toString(Issue2UnitTest.class.getResourceAsStream("dirty-item-3.0089.txt"));
-        String actualValue = ItemsCleaner.clean(valueWithBug);
+        String actualValue = ItemsCleaner.cleanChapters(valueWithBug);
         assertEquals(expectedValue, actualValue);
     }
 
