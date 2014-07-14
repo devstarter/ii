@@ -38,11 +38,6 @@ public class ItemController {
             item = new Item(number);
         }
         item.setContent(content);
-
-        //////////////////////
-        System.out.println("!!!!Item controller content!!!! " + content);
-        ////////////////////
-
         itemDao.save(item);
         return item;
     }

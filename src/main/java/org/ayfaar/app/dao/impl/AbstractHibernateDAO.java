@@ -148,14 +148,6 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
             property = aProperty+"."+aliases[aliases.length-1];
         }
 
-       /* Item item = (Item) criteria.add(eq(property, o))
-                .uniqueResult();
-
-        System.out.println("number " + item.getNumber());
-        System.out.println("uri " + item.getUri());
-        System.out.println("next " + item.getNext());
-        System.out.println("content " + item.getContent());*/
-
         return (E) criteria.add(eq(property, o))
                 .uniqueResult();
     }
