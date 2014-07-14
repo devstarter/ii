@@ -27,6 +27,7 @@
 Устанавливаем:
 
 1.	GIT http://msysgit.github.io
+2.	Добавляем git.exe в [переменную окружения Path](http://clip2net.com/s/iuLWXk) и перезагружаем windows
 2.	IntelliJ IDEA http://www.jetbrains.com/idea/download/ Ultimate Edition
 3.	Java version 1.7 https://www.java.com/en/download
 4.	Java SE Development Kit 7 http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
