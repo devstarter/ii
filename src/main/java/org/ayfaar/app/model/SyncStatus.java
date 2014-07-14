@@ -19,4 +19,6 @@ public class SyncStatus {
     private String articleContent;
     private Boolean synchronised;
     private Date syncDate;
+
+
 }

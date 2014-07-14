@@ -11,14 +11,32 @@ import javax.servlet.ServletContext;
 @EnableTransactionManagement
 @ComponentScan(basePackages = "org.ayfaar.app"/*, excludeFilters = @ComponentScan.Filter(
         type = FilterType.ASSIGNABLE_TYPE, value = Synchronizer.class)*/)
-@PropertySource({
+/*@PropertySource({
         "file:D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\webapp\\WEB-INF\\database.properties",
         "file:D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\webapp\\WEB-INF\\debug.properties"
-})
-@ImportResource({
+})*/
+/*@ImportResource({
         "file:D:\\projects\\ayfaar\\ii-app\\src\\main\\resources\\hibernate.xml",
         "file:D:\\projects\\ayfaar\\ii-app\\src\\main\\resources\\spring-basic.xml"
+})*/
+/*@PropertySource({
+        "file:d:\\WEB\\MyProjects\\II\\src\\main\\webapp\\WEB-INF\\database.properties",
+        "file:D:\\WEB\\MyProjects\\II\\src\\main\\webapp\\WEB-INF\\debug.properties"
 })
+@ImportResource({
+        "file:D:\\WEB\\MyProjects\\II\\src\\main\\resources\\hibernate.xml",
+        "file:D:\\WEB\\MyProjects\\II\\src\\main\\resources\\spring-basic.xml"
+})*/
+
+@PropertySource({
+        "classpath:database.properties",
+        "classpath:debug.properties"
+})
+@ImportResource({
+        "classpath:hibernate.xml",
+        "classpath:spring-basic.xml"
+})
+
 @EnableAspectJAutoProxy
 public class SpringConfiguration {
     @Bean // for @PropertySource work
