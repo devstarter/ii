@@ -1,5 +1,6 @@
 package org.ayfaar.app.importing;
 
+import org.ayfaar.app.SpringTestConfiguration;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.synchronization.mediawiki.CategorySync;
@@ -13,7 +14,7 @@ public class CategoryExporterTest {
     private static ApplicationContext ctx;
 
     public static void main(String[] args) throws Exception {
-        ctx = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+        ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
 
         CommonDao commonDao = ctx.getBean(CommonDao.class);
 

@@ -1,7 +1,7 @@
 package org.ayfaar.app.synchronization;
 
+import org.ayfaar.app.SpringTestConfiguration;
 import org.ayfaar.app.dao.TermDao;
-import org.ayfaar.app.importing.SpringConfiguration;
 import org.ayfaar.app.synchronization.mediawiki.ItemSync;
 import org.ayfaar.app.synchronization.mediawiki.MediaWikiBotHelper;
 import org.ayfaar.app.synchronization.mediawiki.SyncUtils;
@@ -13,7 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = SpringConfiguration.class)
+@ContextConfiguration(classes = SpringTestConfiguration.class)
 public class TermSyncTest {
 
     @Autowired

@@ -1,4 +1,4 @@
-package org.ayfaar.app.importing;
+package org.ayfaar.app;
 
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -9,18 +9,17 @@ import javax.servlet.ServletContext;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackages = "org.ayfaar.app"/*, excludeFilters = @ComponentScan.Filter(
-        type = FilterType.ASSIGNABLE_TYPE, value = Synchronizer.class)*/)
+@ComponentScan(basePackages = "org.ayfaar.app")
 @PropertySource({
-        "file:D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\webapp\\WEB-INF\\database.properties",
-        "file:D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\webapp\\WEB-INF\\debug.properties"
+        "classpath:database.properties",
+        "classpath:debug.properties"
 })
 @ImportResource({
-        "file:D:\\projects\\ayfaar\\ii-app\\src\\main\\resources\\hibernate.xml",
-        "file:D:\\projects\\ayfaar\\ii-app\\src\\main\\resources\\spring-basic.xml"
+        "classpath:hibernate.xml",
+        "classpath:spring-basic.xml"
 })
 @EnableAspectJAutoProxy
-public class SpringConfiguration {
+public class SpringTestConfiguration {
     @Bean // for @PropertySource work
     public PropertySourcesPlaceholderConfigurer pspc(){
         return new PropertySourcesPlaceholderConfigurer();

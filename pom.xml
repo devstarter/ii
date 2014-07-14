@@ -391,4 +391,12 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>/</targetPath>
+            </resource>
+        </resources>
+    </build>
 </project>

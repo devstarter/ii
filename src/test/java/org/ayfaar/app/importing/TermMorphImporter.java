@@ -1,5 +1,6 @@
 package org.ayfaar.app.importing;
 
+import org.ayfaar.app.SpringTestConfiguration;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
@@ -13,7 +14,7 @@ public class TermMorphImporter {
     private static ApplicationContext ctx;
 
     public static void main(String[] args) {
-        ctx = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+        ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
 
         LinkDao linkDao = ctx.getBean(LinkDao.class);
         CommonDao commonDao = ctx.getBean(CommonDao.class);

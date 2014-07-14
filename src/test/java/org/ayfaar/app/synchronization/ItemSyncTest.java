@@ -1,7 +1,7 @@
 package org.ayfaar.app.synchronization;
 
+import org.ayfaar.app.SpringTestConfiguration;
 import org.ayfaar.app.dao.ItemDao;
-import org.ayfaar.app.importing.SpringConfiguration;
 import org.ayfaar.app.synchronization.mediawiki.ItemSync;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = SpringConfiguration.class)
+@ContextConfiguration(classes = SpringTestConfiguration.class)
 public class ItemSyncTest {
 
     @Autowired

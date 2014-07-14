@@ -18,10 +18,11 @@ public class UriGenerator implements IdentifierGenerator {
     @Override
     public Serializable generate(SessionImplementor session, Object object) throws HibernateException {
         Uri annotation = object.getClass().getAnnotation(Uri.class);
-        String uri = annotation.nameSpace();
+        String nameSpace = annotation.nameSpace();
+        String uri = null;
         try {
             Object property = PropertyUtils.getProperty(object, annotation.field());
-            uri = uri + property;
+            uri = nameSpace + property;
         } catch (Exception e) {
             e.printStackTrace();
         }
