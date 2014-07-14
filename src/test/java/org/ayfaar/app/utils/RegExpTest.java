@@ -1,3 +1,5 @@
+package org.ayfaar.app.utils;
+
 import org.junit.Assert;
 import org.junit.Test;
 

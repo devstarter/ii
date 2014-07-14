@@ -2,7 +2,7 @@
 <web-app id="WebApp_ID" version="2.4"
          xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-    <display-name>Prototype</display-name>
+    <display-name>II App</display-name>
     <mime-mapping>
         <extension>html</extension>
         <mime-type>text/html;charset=utf-8</mime-type>
@@ -25,6 +25,16 @@
         <url-pattern>/uploading/*</url-pattern>
         <url-pattern>/images/*</url-pattern>
         <url-pattern>*.html</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>addAccessControlAllowOriginFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>addAccessControlAllowOriginFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
     </filter-mapping>
 
     <servlet>
