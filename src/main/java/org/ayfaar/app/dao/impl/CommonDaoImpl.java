@@ -200,6 +200,7 @@ public class CommonDaoImpl implements CommonDao {
         for (Object[] o : list) {
             contents.add(new Content((String) o[0], (String) o[1], (String) o[2]));
         }
+
         return contents;
     }
 
