@@ -1,7 +1,6 @@
 package issues.issue2;
 
 import org.apache.commons.io.IOUtils;
-<<<<<<< HEAD
 import org.ayfaar.app.utils.ItemsCleaner;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,21 +8,6 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
-=======
-import org.ayfaar.app.dao.ItemDao;
-import org.ayfaar.app.model.Item;
-import org.ayfaar.app.utils.ItemsCleaner;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-
-import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
->>>>>>> 7f23c6e7e979eb5673a20ed474e7add63584dbbe
 
 public class Issue2UnitTest {
     private String valueWithBug;
@@ -44,7 +28,6 @@ public class Issue2UnitTest {
     @Test
     public void cleanValueNotNullTest() throws IOException {
         String actualValue = ItemsCleaner.clean(valueWithBug);
-<<<<<<< HEAD
         assertNotNull(actualValue);
     }
 
@@ -60,11 +43,4 @@ public class Issue2UnitTest {
         int actualLength = ItemsCleaner.clean(valueWithBug).length();
         assertEquals(expectedValue.length(), actualLength);
     }
-=======
-        assertNotNull(expectedValue, actualValue);
-    }
-
-    // todo: проверить на null, пустую строку
-    // todo: придумать ещё варианты тестов :)
->>>>>>> 7f23c6e7e979eb5673a20ed474e7add63584dbbe
 }

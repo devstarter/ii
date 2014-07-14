@@ -38,11 +38,6 @@ public class ItemController {
             item = new Item(number);
         }
         item.setContent(content);
-
-        //////////////////////
-        System.out.println("!!!!Item controller content!!!! " + content);
-        ////////////////////
-
         itemDao.save(item);
         return item;
     }
@@ -62,7 +57,6 @@ public class ItemController {
             nextMap.put("number", next.getNumber());
             modelMap.put("next", nextMap);
         }
-
 
         Item prev = itemDao.getByNumber(getPrev(item.getNumber()));
         if (prev != null) {
