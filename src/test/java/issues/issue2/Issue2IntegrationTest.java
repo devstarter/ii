@@ -9,10 +9,10 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class Issue2IntegrationTest extends IntegrationTest {
 
@@ -43,7 +43,7 @@ public class Issue2IntegrationTest extends IntegrationTest {
         List<Item> items = itemDao.getAll();
 
         for(Item item : items) {
-            assertFalse(isContain(item.getContent(), wrongValue));
+            assertFalse("Item "+item.getNumber()+" has "+wrongValue, isContain(item.getContent(), wrongValue));
         }
     }
 
@@ -53,7 +53,7 @@ public class Issue2IntegrationTest extends IntegrationTest {
         List<Item> items = itemDao.getAll();
 
         for(Item item : items) {
-            assertFalse(isContain(item.getContent(), wrongValue));
+            assertFalse("Item "+item.getNumber()+" has "+wrongValue, isContain(item.getContent(), wrongValue));
         }
     }
 
