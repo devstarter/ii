@@ -329,7 +329,6 @@
             <artifactId>cglib</artifactId>
             <version>2.2</version>
         </dependency>
-
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
@@ -391,12 +390,4 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <targetPath>/</targetPath>
-            </resource>
-        </resources>
-    </build>
 </project>

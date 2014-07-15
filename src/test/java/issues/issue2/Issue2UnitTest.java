@@ -20,7 +20,7 @@ public class Issue2UnitTest {
     }
 
     @Test
-    public void test1() throws IOException {
+    public void equalityItemContent() throws IOException {
         String actualValue = ItemsCleaner.clean(valueWithBug);
         assertEquals(expectedValue, actualValue);
     }
