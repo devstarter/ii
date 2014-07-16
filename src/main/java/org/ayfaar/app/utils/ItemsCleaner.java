@@ -1,10 +1,5 @@
 package org.ayfaar.app.utils;
 
-import org.ayfaar.app.dao.ItemDao;
-import org.ayfaar.app.model.Item;
-
-import java.util.List;
-
 /**
  * Очистка пунктов от сносок, названий Глав и Разделов
  *
@@ -12,22 +7,39 @@ import java.util.List;
  * issue3 https://github.com/devstarter/ii/issues/3
  */
 public class ItemsCleaner {
-    public static String clean(String value) {
-        String[] str = value.split("\n");
 
-        if(value.length() == 0) {
+    public static String clean(String value) {
+        String newContext = "";
+
+        if(value == null || value.length() == 0) {
             return null;
         }
-        return str[0].trim();
+
+        newContext = cleanChapter(value);
+        newContext = cleanSection(newContext);
+        //System.out.println(newContext);
+        return newContext;
     }
 
-    // fixme: Предлагаю перенести весь этот метод в интеграционный тест, так как работа с базой данных выходит за
-    // рамки ответственности этого класса. Я предлагаю что бы этот клас занмался только обработкой текста пунктов.
-    public static void cleanDB(ItemDao dao) {
-        List<Item> items = dao.getAll();
-        for(Item item : items) {
-            item.setContent(clean(item.getContent()));
-            dao.save(item);
+    private static String cleanChapter(String value) {
+        String[] str = value.split("\nГлава");
+        return cleaner(str);
+    }
+
+    private static String cleanSection(String value) {
+        String[] str = value.split("\nРаздел|РАЗДЕЛ");
+        return cleaner(str);
+    }
+
+    private static String cleaner(String[] content) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if(content.length > 1) {
+            for(int i = 0; i < content.length - 1; i++) {
+                stringBuilder.append(content[i]);
+            }
+            return stringBuilder.toString().trim();
+        } else {
+            return content[0].trim();
         }
     }
 }

@@ -1,10 +1,10 @@
 package issues.issue2;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ItemsCleaner;
+import org.hibernate.criterion.MatchMode;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class Issue2IntegrationTest extends IntegrationTest {
 
@@ -34,23 +34,45 @@ public class Issue2IntegrationTest extends IntegrationTest {
     //clean DB of extra chapters and sections
     @Test
     @Ignore
-    public void cleanAllDB() {
-        ItemsCleaner.cleanDB(itemDao);
+    public void cleanDBFromChaptersAndSections() {
+        cleanDB(itemDao);
     }
 
     @Test
     public void isNotContainChapter() {
-        String wrongValue = "Глава";
-        // Здесь можно воспользоваться методом itemDao.getLike(..) чтобы не загружать все пункты,
-        // а отфильтроваит их на этапе выборки из базы данных - экономия памяти
-        List<Item> items = itemDao.getAll();
+        String wrongValue = "\nГлава";
 
-        for(Item item : items) {
-            assertFalse("Item "+item.getNumber()+" has "+wrongValue, isContain(item.getContent(), wrongValue));
-        }
+        List<Item> items = itemDao.getLike("content", wrongValue, MatchMode.ANYWHERE);
+        assertTrue("Items contain " + items.size() + " elements ",  items.isEmpty());
     }
 
     @Test
+     public void isNotContainSection1() {
+        String wrongValue = "\nРаздел";
+
+        List<Item> items = itemDao.getLike("content", wrongValue, MatchMode.ANYWHERE);
+        assertTrue("Items contain " + items.size() + " elements ",  items.isEmpty());
+    }
+
+    @Test
+    public void isNotContainSection2() {
+        String wrongValue = "РАЗДЕЛ\n";
+
+        List<Item> items = itemDao.getLike("content", wrongValue, MatchMode.ANYWHERE);
+        assertTrue("Items contain " + items.size() + " elements ",  items.isEmpty());
+    }
+
+    private void cleanDB(ItemDao dao) {
+        List<Item> items = dao.getAll();
+        for(Item item : items) {
+            item.setContent(ItemsCleaner.clean(item.getContent()));
+            dao.save(item);
+        }
+    }
+
+
+
+    /*@Test
     public void isNotContainSection() {
         String wrongValue = "РАЗДЕЛ";
         // аналогично
@@ -59,13 +81,13 @@ public class Issue2IntegrationTest extends IntegrationTest {
         for(Item item : items) {
             assertFalse("Item "+item.getNumber()+" has "+wrongValue, isContainIgnoreCase(item.getContent(), wrongValue));
         }
-    }
+    }*/
 
-    public boolean isContain(String itemContext, String value) {
+    /*private boolean isContain(String itemContext, String value) {
         return itemContext.contains(value);
-    }
-    public boolean isContainIgnoreCase(String itemContext, String value) {
-        // todo: implement it
-        throw new NotImplementedException();
-    }
+    }*/
+
+    /*private boolean isContainIgnoreCase(String itemContext, String value) {
+        return itemContext.toLowerCase().contains(value.toLowerCase());
+    }*/
 }

@@ -16,6 +16,10 @@ public class Issue2UnitTest {
     private String dirtyItem3_1052;
     private String cleanItem3_1185;
     private String dirtyItem3_1185;
+    private String cleanItem1_0418;
+    private String dirtyItem1_0418;
+    private String cleanItem10_10298;
+    private String dirtyItem10_10298;
 
     @Before
     public void init() throws IOException {
@@ -25,6 +29,10 @@ public class Issue2UnitTest {
         dirtyItem3_1052 = getFile("dirty-item-3.1052.txt");
         cleanItem3_1185 = getFile("clean-item-3.1185.txt");
         dirtyItem3_1185 = getFile("dirty-item-3.1185.txt");
+        cleanItem1_0418 = getFile("clean-item-1.0418.txt");
+        dirtyItem1_0418 = getFile("dirty-item-1.0418.txt");
+        cleanItem10_10298 = getFile("clean-item-10.10298.txt");
+        dirtyItem10_10298 = getFile("dirty-item-10.10298.txt");
     }
 
     private String getFile(String fileName) throws IOException {
@@ -50,6 +58,18 @@ public class Issue2UnitTest {
     }
 
     @Test
+    public void equalityItem1_0418Content() throws IOException {
+        String actualValue = ItemsCleaner.clean(dirtyItem1_0418);
+        assertEquals(cleanItem1_0418, actualValue);
+    }
+
+    @Test
+    public void equalityItem10_10298Content() throws IOException {
+        String actualValue = ItemsCleaner.clean(dirtyItem10_10298);
+        assertEquals(cleanItem10_10298, actualValue);
+    }
+
+    @Test
     public void cleanValueNotNullTest() throws IOException {
         String actualValue = ItemsCleaner.clean(valueWithBug);
         assertNotNull(actualValue);
@@ -63,8 +83,7 @@ public class Issue2UnitTest {
 
     @Test
     public void emptyString() throws IOException {
-        valueWithBug = IOUtils.toString(Issue2UnitTest.class.getResourceAsStream("empty-item-3.0089.txt"));
-        //? зачем тебе пустой файл ведь можно просто передать пустую строку ""
+        valueWithBug = "";
         String actualValue = ItemsCleaner.clean(valueWithBug);
         assertNull(actualValue);
     }
