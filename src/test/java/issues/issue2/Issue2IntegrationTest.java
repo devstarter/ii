@@ -31,7 +31,10 @@ public class Issue2IntegrationTest extends IntegrationTest {
     }
 
 
-    //clean DB of extra chapters and sections
+    /**
+     * Метод для единоразовой очистки базы данных
+     * clean DB of extra chapters and sections
+     */
     @Test
     @Ignore
     public void cleanDBFromChaptersAndSections() {
@@ -69,25 +72,4 @@ public class Issue2IntegrationTest extends IntegrationTest {
             dao.save(item);
         }
     }
-
-
-
-    /*@Test
-    public void isNotContainSection() {
-        String wrongValue = "РАЗДЕЛ";
-        // аналогично
-        List<Item> items = itemDao.getAll();
-
-        for(Item item : items) {
-            assertFalse("Item "+item.getNumber()+" has "+wrongValue, isContainIgnoreCase(item.getContent(), wrongValue));
-        }
-    }*/
-
-    /*private boolean isContain(String itemContext, String value) {
-        return itemContext.contains(value);
-    }*/
-
-    /*private boolean isContainIgnoreCase(String itemContext, String value) {
-        return itemContext.toLowerCase().contains(value.toLowerCase());
-    }*/
 }

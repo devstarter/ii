@@ -85,9 +85,12 @@ public class Issue2UnitTest {
     public void emptyString() throws IOException {
         valueWithBug = "";
         String actualValue = ItemsCleaner.clean(valueWithBug);
-        assertNull(actualValue);
+        assertTrue(actualValue.isEmpty());
     }
 
+    /*
+    Зачем этот тест. ты ведь уже проверил на равенство результата в equalityItemContent?
+     */
     @Test
     public void equalityStringLength() {
         int actualLength = ItemsCleaner.clean(valueWithBug).length();
