@@ -1,5 +1,6 @@
 package issues.issue2;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
@@ -40,6 +41,8 @@ public class Issue2IntegrationTest extends IntegrationTest {
     @Test
     public void isNotContainChapter() {
         String wrongValue = "Глава";
+        // Здесь можно воспользоваться методом itemDao.getLike(..) чтобы не загружать все пункты,
+        // а отфильтроваит их на этапе выборки из базы данных - экономия памяти
         List<Item> items = itemDao.getAll();
 
         for(Item item : items) {
@@ -50,14 +53,19 @@ public class Issue2IntegrationTest extends IntegrationTest {
     @Test
     public void isNotContainSection() {
         String wrongValue = "РАЗДЕЛ";
+        // аналогично
         List<Item> items = itemDao.getAll();
 
         for(Item item : items) {
-            assertFalse("Item "+item.getNumber()+" has "+wrongValue, isContain(item.getContent(), wrongValue));
+            assertFalse("Item "+item.getNumber()+" has "+wrongValue, isContainIgnoreCase(item.getContent(), wrongValue));
         }
     }
 
     public boolean isContain(String itemContext, String value) {
         return itemContext.contains(value);
+    }
+    public boolean isContainIgnoreCase(String itemContext, String value) {
+        // todo: implement it
+        throw new NotImplementedException();
     }
 }

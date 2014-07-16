@@ -56,8 +56,15 @@ public class Issue2UnitTest {
     }
 
     @Test
+    public void cleanNullValueTest() throws IOException {
+        String actualValue = ItemsCleaner.clean(null);
+        assertNull(actualValue);
+    }
+
+    @Test
     public void emptyString() throws IOException {
         valueWithBug = IOUtils.toString(Issue2UnitTest.class.getResourceAsStream("empty-item-3.0089.txt"));
+        //? зачем тебе пустой файл ведь можно просто передать пустую строку ""
         String actualValue = ItemsCleaner.clean(valueWithBug);
         assertNull(actualValue);
     }
