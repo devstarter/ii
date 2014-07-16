@@ -1,6 +1,7 @@
 package issues.issue2;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.utils.ItemsCleaner;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,6 +68,11 @@ public class Issue2UnitTest {
     public void equalityItem10_10298Content() throws IOException {
         String actualValue = ItemsCleaner.clean(dirtyItem10_10865);
         assertEquals(cleanItem10_10865, actualValue);
+    }
+
+    @Test
+    public void equalityItem15_17444Content() throws IOException {
+        throw new NotImplementedException();
     }
 
     @Test

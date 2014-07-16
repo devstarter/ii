@@ -5,7 +5,6 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ItemsCleaner;
 import org.hibernate.criterion.MatchMode;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +35,7 @@ public class Issue2IntegrationTest extends IntegrationTest {
      * clean DB of extra chapters and sections
      */
     @Test
-    @Ignore
+//    @Ignore
     public void cleanDBFromChaptersAndSections() {
         cleanDB(itemDao);
     }
@@ -68,8 +67,11 @@ public class Issue2IntegrationTest extends IntegrationTest {
     private void cleanDB(ItemDao dao) {
         List<Item> items = dao.getAll();
         for(Item item : items) {
-            item.setContent(ItemsCleaner.clean(item.getContent()));
-            dao.save(item);
+            String clean = ItemsCleaner.clean(item.getContent());
+            if (!clean.equals(item.getContent())) {
+                item.setContent(clean);
+                dao.save(item);
+            }
         }
     }
 }
