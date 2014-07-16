@@ -17,7 +17,6 @@ public class ItemsCleaner {
 
         newContext = cleanChapter(value);
         newContext = cleanSection(newContext);
-        //System.out.println(newContext);
         return newContext;
     }
 
