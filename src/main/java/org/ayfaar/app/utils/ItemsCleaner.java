@@ -1,5 +1,6 @@
 package org.ayfaar.app.utils;
 
+
 /**
  * Очистка пунктов от сносок, названий Глав и Разделов
  *
@@ -11,12 +12,13 @@ public class ItemsCleaner {
     public static String clean(String value) {
         String newContext = "";
 
-        if(value == null || value.length() == 0) {
+        if(value == null) {
             return null;
         }
 
         newContext = cleanChapter(value);
         newContext = cleanSection(newContext);
+        newContext = cleanSectionByRomanLetters(newContext);
         return newContext;
     }
 
@@ -30,11 +32,23 @@ public class ItemsCleaner {
         return cleaner(str);
     }
 
+    private static String cleanSectionByRomanLetters(String value) {
+        String[] str = value.split("[A-Z]+");
+        return cleaner(str);
+    }
+
     private static String cleaner(String[] content) {
         StringBuilder stringBuilder = new StringBuilder();
+        String lastPartOfContent = content[content.length-1];
+        String needSave = "ВОПРОС";
+
         if(content.length > 1) {
             for(int i = 0; i < content.length - 1; i++) {
                 stringBuilder.append(content[i]);
+            }
+            if(lastPartOfContent.contains(needSave)) {
+                String questionPart = lastPartOfContent.substring(lastPartOfContent.indexOf(needSave), lastPartOfContent.length());
+                stringBuilder.append(questionPart);
             }
             return stringBuilder.toString().trim();
         } else {

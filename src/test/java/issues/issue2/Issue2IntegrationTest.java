@@ -5,6 +5,7 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ItemsCleaner;
 import org.hibernate.criterion.MatchMode;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +36,7 @@ public class Issue2IntegrationTest extends IntegrationTest {
      * clean DB of extra chapters and sections
      */
     @Test
-//    @Ignore
+    @Ignore
     public void cleanDBFromChaptersAndSections() {
         cleanDB(itemDao);
     }

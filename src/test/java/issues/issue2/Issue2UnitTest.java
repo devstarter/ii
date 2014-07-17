@@ -1,7 +1,6 @@
 package issues.issue2;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.utils.ItemsCleaner;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +20,8 @@ public class Issue2UnitTest {
     private String dirtyItem1_0418;
     private String cleanItem10_10865;
     private String dirtyItem10_10865;
+    private String cleanItem15_17444;
+    private String dirtyItem15_17444;
 
     @Before
     public void init() throws IOException {
@@ -34,6 +35,8 @@ public class Issue2UnitTest {
         dirtyItem1_0418 = getFile("dirty-item-1.0418.txt");
         cleanItem10_10865 = getFile("clean-item-10.10865.txt");
         dirtyItem10_10865 = getFile("dirty-item-10.10865.txt");
+        cleanItem15_17444 = getFile("clean-item-15.17444.txt");
+        dirtyItem15_17444 = getFile("dirty-item-15.17444.txt");
     }
 
     private String getFile(String fileName) throws IOException {
@@ -72,7 +75,8 @@ public class Issue2UnitTest {
 
     @Test
     public void equalityItem15_17444Content() throws IOException {
-        throw new NotImplementedException();
+        String actualValue = ItemsCleaner.clean(dirtyItem15_17444);
+        assertEquals(cleanItem15_17444, actualValue);
     }
 
     @Test
@@ -92,14 +96,5 @@ public class Issue2UnitTest {
         valueWithBug = "";
         String actualValue = ItemsCleaner.clean(valueWithBug);
         assertTrue(actualValue.isEmpty());
-    }
-
-    /*
-    Зачем этот тест. ты ведь уже проверил на равенство результата в equalityItemContent?
-     */
-    @Test
-    public void equalityStringLength() {
-        int actualLength = ItemsCleaner.clean(valueWithBug).length();
-        assertEquals(expectedValue.length(), actualLength);
     }
 }
