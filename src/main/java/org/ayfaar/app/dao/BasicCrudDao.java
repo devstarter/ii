@@ -16,7 +16,6 @@ public interface BasicCrudDao<E> {
     @Nullable E get(String property, @NotNull Object o);
     @Nullable List<E> getList(String property, @NotNull Object o);
 
-    @Nullable
     List<E> getLike(String property, @NotNull String value, MatchMode matchMode);
 
     void remove(@NotNull Serializable id);
