@@ -38,10 +38,11 @@ public class Issue13IntegrationTest extends IntegrationTest {
 
     @Test
     /**
-     * проверяем что все вопросы во всех абзацах находятся в начале, то есть перенесены из предыдущих абзацев
+     * проверяем что все вопросы во всех абзацах находятся в начале,
+     * то есть нет вопросов, перед которыми бы был символ перевода каретки (новая строка)
      */
     public void allQuestions() {
-        List<Item> items = itemDao.getLike("content", ItemsHelper.QUESTION, MatchMode.START);
+        List<Item> items = itemDao.getLike("content", "\n"+ItemsHelper.QUESTION, MatchMode.ANYWHERE);
         assertTrue(items.isEmpty());
     }
 
