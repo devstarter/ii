@@ -1,0 +1,66 @@
+<div id="term">
+    <div class="block loading" data-bind="visible: loading">Загрузка...</div>
+    <span class="current-term-title" data-bind="text: name"></span>
+    <div data-bind="invisible: loading">
+        <div data-bind="visible: found">
+            <span class="info" data-bind="visible: from">
+                Перенапраленно с: <span data-bind="text: from.name"></span>
+            </span>
+            <span class="info" data-bind="visible: code">Код понятия:
+                <span data-bind="text: code.name"></span>
+            </span>
+            <span class="info" data-bind="visible: aliases.length">Синонимы и сокращения:
+                <span data-bind="source: aliases" data-template="aliases-template"></span>
+                <script type="text/kendo-x-tmpl" id="aliases-template">
+                    <span class="alias" data-bind="text: getLabel"></span>
+                </script>
+            </span>
+
+
+            <p data-bind="text: shortDescription" class="shortDescription"></p>
+            <p data-bind="text: description"></p>
+            <!--<span class="info" data-bind="invisible: description">Нет короткого определения</span>-->
+            <div data-bind="source: quotes" data-template="quotes-template"></div>
+            <script type="text/kendo-x-tmpl" id="quotes-template">
+                <blockquote>
+                    <div>#=data.quote#</div>
+                    <cite>&mdash; <a data-bind="text: getLabel, click: navigate"></a></cite>
+                </blockquote>
+            </script>
+            <span class="header" data-bind="visible: related.length">Также связан с</span>
+            <div data-bind="source: related" data-template="related-template"></div>
+
+            <script type="text/kendo-x-tmpl" id="related-template">
+                <button class="grey" data-bind="text: getLabel, click: navigate"></button>
+            </script>
+        </div>
+        <div data-bind="invisible: found">
+            <span class="header">Термин не найден, воспользуйтесь пожалуйста поиском</span>
+        </div>
+        <a href="#" data-bind="click: search">Поиск по содержимому...</a>
+    </div>
+</div>
+<style type="text/css">
+    #term .current-term-title {
+        font-size: 2em;
+    }
+    #term .info {
+        color: grey;
+        font-style: italic;
+        display: block;
+    }
+    #term .header {
+        display: block;
+        font-size: 1.2em;
+        padding-top: 20px;
+        color: gray;
+    }
+
+    #term .description {
+        width: 100%;
+        height: 50px;
+    }
+    #term .shortDescription {
+        font-size: 130%
+    }
+</style>

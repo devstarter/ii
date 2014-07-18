@@ -1,0 +1,73 @@
+<div id="main">
+    <style type="text/css">
+        #main .main_about,  #main .main_start{
+            background-color: rgb(184, 225, 243);
+            padding: 5px;
+            padding-right: 20px;
+            border: solid 1px teal;
+            text-align: center;
+        }
+        #main .main_about:hover, #main .main_start:hover {
+            background-color: rgb(102, 185, 232);
+        }
+        #main .main_about span,  #main .main_start span{
+            color: grey;
+            font-size: 1.5em;
+        }
+        #main a{
+            text-decoration: none;
+        }
+        #main h1 {
+            text-align: center;
+            font-size: 180%;
+            color: rgb(7, 131, 199);
+        }
+        #main .header {
+            margin: 0 auto 30px auto;
+            width: 150px;
+            height: 145px;
+        }
+        #main .k-autocomplete {
+            padding: 0;
+        }
+        .footer {
+            margin: 30px auto;
+            text-align: center;
+            /*width: 420px;*/
+            /*margin-left: 100px;*/
+        }
+        .search-input {
+            width: 100%;
+        }
+        .search-button {
+            color: #ffffff;
+        }
+    </style>
+    <div class="header">
+        <img src="images/logo.png" alt="iissiidiology logo">
+    </div>
+    <h1>Интерактивная Ииссиидиология</h1>
+    <div style="margin-top:40px;">
+        Поиск пунктов, терминов, словосочетаний в материалах:
+        <table style="width: 100%">
+            <tr>
+                <td style="width: 100%">
+                    <input class="k-input search-input" id="search-input" type="text"
+                           onkeypress="if (event.keyCode == 13) {location.href='#?'+document.getElementById('search-input').value}">
+                </td>
+                <td>
+                    <a class="button search-button" onclick="location.href='#?' + document.getElementById('search-input').value">Найти</a>
+                </td>
+            </tr>
+        </table>
+        Примеры поиска: <a href="#?птиц*">птиц*</a>, <a href="#?НАСМ">НАСМ</a>, <a href="#?10.10176">10.10176</a>
+    </div>
+    <div class="footer">
+        <a class="button grey" href="https://www.youtube.com/watch?v=6oZJHu1dEnQ" target="_blank">
+            <img src="https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/video-16.png"/>
+            Видео гид</a>
+        <a class="button grey" href="#1.0001">Начать чтение</a>
+        <!--<a class="button grey" href="#main_panel">Материалы</a>-->
+        <a class="button grey" href="#about">О проекте</a>
+    </div>
+</div>
