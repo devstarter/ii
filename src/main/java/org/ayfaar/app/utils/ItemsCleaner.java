@@ -18,7 +18,6 @@ public class ItemsCleaner {
 
         newContext = cleanChapter(value);
         newContext = cleanSection(newContext);
-        newContext = cleanSectionByRomanLetters(newContext);
         return newContext;
     }
 
@@ -28,12 +27,7 @@ public class ItemsCleaner {
     }
 
     private static String cleanSection(String value) {
-        String[] str = value.split("\nРаздел|РАЗДЕЛ");
-        return cleaner(str);
-    }
-
-    private static String cleanSectionByRomanLetters(String value) {
-        String[] str = value.split("[A-Z]+");
+        String[] str = value.split("\nРаздел|(([XVI]+\\s+)?РАЗДЕЛ)");
         return cleaner(str);
     }
 
@@ -47,7 +41,7 @@ public class ItemsCleaner {
                 stringBuilder.append(content[i]);
             }
             if(lastPartOfContent.contains(needSave)) {
-                String questionPart = lastPartOfContent.substring(lastPartOfContent.indexOf(needSave), lastPartOfContent.length());
+                String questionPart = lastPartOfContent.substring(lastPartOfContent.indexOf(needSave));
                 stringBuilder.append(questionPart);
             }
             return stringBuilder.toString().trim();

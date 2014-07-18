@@ -5,7 +5,6 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ItemsCleaner;
 import org.hibernate.criterion.MatchMode;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,16 +30,6 @@ public class Issue2IntegrationTest extends IntegrationTest {
     }
 
 
-    /**
-     * Метод для единоразовой очистки базы данных
-     * clean DB of extra chapters and sections
-     */
-    @Test
-    @Ignore
-    public void cleanDBFromChaptersAndSections() {
-        cleanDB(itemDao);
-    }
-
     @Test
     public void isNotContainChapter() {
         String wrongValue = "\nГлава";
@@ -63,6 +52,15 @@ public class Issue2IntegrationTest extends IntegrationTest {
 
         List<Item> items = itemDao.getLike("content", wrongValue, MatchMode.ANYWHERE);
         assertTrue("Items contain " + items.size() + " elements ",  items.isEmpty());
+    }
+
+    /**
+     * Метод для единоразовой очистки базы данных
+     * clean DB of extra chapters and sections
+     */
+//    @Test
+    public void cleanDBFromChaptersAndSections() {
+        cleanDB(itemDao);
     }
 
     private void cleanDB(ItemDao dao) {
