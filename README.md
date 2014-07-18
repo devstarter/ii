@@ -56,3 +56,4 @@
 
 Подробнее в видео https://www.youtube.com/watch?v=mbwN4eaES78
 
+[![Презетация](http://img.youtube.com/vi/__ibkaMRHZI/0.jpg)](http://youtu.be/__ibkaMRHZI)
