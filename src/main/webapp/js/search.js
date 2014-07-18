@@ -1,4 +1,4 @@
-﻿(function ($, undefined) {
+﻿﻿(function ($, undefined) {
     var searchApiUrl = ii.apiUrl + "search/", viewModel, pageCounter = 0, currentQuery;
     ii.search = {
         load: function(query) {
