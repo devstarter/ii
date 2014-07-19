@@ -46,7 +46,7 @@ public class Issue19IntegrationTest extends IntegrationTest {
      */
     @Test
     public void test2() {
-        String query = "ccc";
+        String query = "ссс";
         List<Suggestion> suggestions = searchController.suggestions(query);
         assertEquals("АИЙС-ССС", suggestions.get(5).toString());
         assertEquals("Амициссимное ССС-Состояние", suggestions.get(6).toString());
