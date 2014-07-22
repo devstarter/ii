@@ -159,7 +159,6 @@ public class SearchController {
         List<Term> allTerms = aliasesMap.getAllTerms();
         List<String> matches = new ArrayList<String>();
         Term exactMatchTerm = null;
-
         Pattern pattern = null;
         if (isCosmicCode(query)) {
             String regexp = "";
