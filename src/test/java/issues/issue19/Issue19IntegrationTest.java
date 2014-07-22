@@ -2,7 +2,6 @@ package issues.issue19;
 
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.controllers.SearchController2;
-import org.ayfaar.app.controllers.search.Suggestion;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -17,16 +16,16 @@ public class Issue19IntegrationTest extends IntegrationTest {
     @Test
     public void test1() {
         String query = "гал";
-        List<Suggestion> suggestions = searchController.suggestions(query);
+        List<String> suggestions = searchController.suggestions(query);
         assertEquals(7, suggestions.size());
         // тест последовательности
-        assertTrue(suggestions.get(0).toString().toLowerCase().indexOf(query) == 0); // Галактическая Сущность
-        assertTrue(suggestions.get(1).toString().toLowerCase().indexOf(query) == 0); // Галактическая Странник
-        assertTrue(suggestions.get(2).toString().toLowerCase().indexOf(query) == 0); // Галактический УЛУУГУМА-Дезинтеграционный Луч АИЙ-ЙЯ
-        assertTrue(suggestions.get(3).toString().toLowerCase().indexOf(query) > 0); // Звёздно-Галактическая Форма
-        assertTrue(suggestions.get(4).toString().toLowerCase().indexOf(query) > 0); // Вселенский Межгалактический Диапазон
-        assertTrue(suggestions.get(5).toString().toLowerCase().indexOf(query) > 0); // Межгалактические Комплекс-Планы
-        assertTrue(suggestions.get(6).toString().toLowerCase().indexOf(query) > 0); // Межгалактический Астральный Комплекс-План
+        assertTrue(suggestions.get(0).toLowerCase().indexOf(query) == 0); // Галактическая Сущность
+        assertTrue(suggestions.get(1).toLowerCase().indexOf(query) == 0); // Галактическая Странник
+        assertTrue(suggestions.get(2).toLowerCase().indexOf(query) == 0); // Галактический УЛУУГУМА-Дезинтеграционный Луч АИЙ-ЙЯ
+        assertTrue(suggestions.get(3).toLowerCase().indexOf(query) > 0); // Звёздно-Галактическая Форма
+        assertTrue(suggestions.get(4).toLowerCase().indexOf(query) > 0); // Вселенский Межгалактический Диапазон
+        assertTrue(suggestions.get(5).toLowerCase().indexOf(query) > 0); // Межгалактические Комплекс-Планы
+        assertTrue(suggestions.get(6).toLowerCase().indexOf(query) > 0); // Межгалактический Астральный Комплекс-План
     }
 
     /**
@@ -47,8 +46,8 @@ public class Issue19IntegrationTest extends IntegrationTest {
     @Test
     public void test2() {
         String query = "ссс";
-        List<Suggestion> suggestions = searchController.suggestions(query);
-        assertEquals("АИЙС-ССС", suggestions.get(5).toString());
-        assertEquals("Амициссимное ССС-Состояние", suggestions.get(6).toString());
+        List<String> suggestions = searchController.suggestions(query);
+        assertEquals("АИЙС-ССС", suggestions.get(5));
+        assertEquals("Амициссимное ССС-Состояние", suggestions.get(6));
     }
 }
