@@ -2,7 +2,7 @@
 ============================
 [ii.ayfaar.org](http://ii.ayfaar.org)
 
-Ключевые слова: OOP, Java, J2SE, Hibernate, Spring (IoC, MVC), JUnit JavaScript, HTML5, CSS3, KendoUI, AngularJS, MySQL, Maven, git, TDD, CI, IntelliJ IDEA
+Ключевые слова: OOP, Java, J2SE, Hibernate, Spring (IoC, MVC), JUnit, JavaScript, HTML5, CSS3, KendoUI, AngularJS, MySQL, Maven, git, TDD, CI, IntelliJ IDEA
 
 Мой скайп: iu3116
 
