@@ -2,6 +2,10 @@
 ============================
 [ii.ayfaar.org](http://ii.ayfaar.org)
 
+Ключевые слова: Java, J2SE, Hibernate, Spring, JavaScript, HTML5, CSS3, KendoUI, AngularJS, MySQL, Maven, git, TDD, CI, IntelliJ IDEA
+
+Мой скайп: iu3116
+
 Цели проекта
 ------------
 Основная цель - представление информацци, поиск, структурирование, простраивание взаимосвязей между понятиями [ииссиидиологии](http://ru.science.wikia.com/wiki/%D0%98%D0%B8%D1%81%D1%81%D0%B8%D0%B8%D0%B4%D0%B8%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D1%8F)
