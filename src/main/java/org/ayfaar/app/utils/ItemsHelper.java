@@ -84,6 +84,13 @@ public class ItemsHelper {
      * @return конкатенированный вариант
      */
     public static String addQuestion(String question, String text) {
-        throw new NotImplementedException("Issue13");
+
+        String result = new StringBuilder()
+                .append(question)
+                .append("\n")
+                .append(text).toString();
+
+        return result;
+
     }
 }
