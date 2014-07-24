@@ -44,7 +44,6 @@ public class ItemController {
 
     @RequestMapping("{number}")
     @Model
-//    @Cacheable("items")
     public ModelMap get(@PathVariable String number) {
         Item item = itemDao.getByNumber(number);
         notNull(item, "Item not found");
