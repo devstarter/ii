@@ -61,7 +61,19 @@ public class ItemsHelper {
      * @return массив 1 элемент это текст без вопроса, 2 - это вопрос со словом ВОПРОС.
      */
     public static String[] removeQuestion(String text) {
-        throw new NotImplementedException("Issue13");
+
+        String[] resultOfRemoveQuestion = new String[2];
+        int indexOfQuestion = text.lastIndexOf(QUESTION);
+
+        if (-1 == indexOfQuestion){
+            resultOfRemoveQuestion[0] = text;
+        }
+        else {
+            resultOfRemoveQuestion[0] = text.substring(0,indexOfQuestion-1);
+            resultOfRemoveQuestion[1] = text.substring(indexOfQuestion);
+        }
+
+        return  resultOfRemoveQuestion;
     }
 
     /**
