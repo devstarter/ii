@@ -1,12 +1,16 @@
 package org.ayfaar.app.utils;
 
 
+import org.apache.commons.lang.NotImplementedException;
+
 /**
  * Очистка пунктов от сносок, названий Глав и Разделов
  *
  * https://github.com/devstarter/ii/issues?milestone=2
  */
-public class ItemsCleaner {
+public class ItemsHelper {
+
+    public static final String QUESTION = "ВОПРОС.";
 
     public static String clean(String value) {
         String newContext = "";
@@ -47,5 +51,27 @@ public class ItemsCleaner {
         } else {
             return content[0].trim();
         }
+    }
+
+    /**
+     * Этот метод разделяет текст и вопрос
+     *
+     * @param text текст абзаца с вопросом
+     *
+     * @return массив 1 элемент это текст без вопроса, 2 - это вопрос со словом ВОПРОС.
+     */
+    public static String[] removeQuestion(String text) {
+        throw new NotImplementedException("Issue13");
+    }
+
+    /**
+     * Конкатенирует вопрос и ответ
+     *
+     * @param question
+     * @param text
+     * @return конкатенированный вариант
+     */
+    public static String addQuestion(String question, String text) {
+        throw new NotImplementedException("Issue13");
     }
 }
