@@ -1,69 +1,35 @@
 package org.ayfaar.app.controllers;
 
-import org.ayfaar.app.controllers.search.Suggestion;
-import org.ayfaar.app.dao.TermDao;
-import org.ayfaar.app.model.Term;
-import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.services.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-// todo: сделать его контроллером
-// todo: указать url: v2/search
+import static java.lang.Math.min;
+import static java.util.Arrays.asList;
+
 @Controller
 @RequestMapping("v2/search")
 public class SearchController2 {
-    @Autowired
-    private TermDao termDao;
-    @Autowired
-    AliasesMap aliasesMap;
+    @Autowired SearchService searchService;
 
-    private int suggestionsCount = 7;
+    public static final int MAX_SUGGESTIONS = 7;
 
+    public List<String> suggestions(String q) {
+        Queue<String> queriesQueue = new LinkedList<String>(asList(
+                "^"+q,
+                "[\\s\\-]" + q,
+                q
+        ));
 
-    public List<Suggestion> suggestions(String q) {
-        String query1 = q + "%";
-        String query2 = "[%" + " " + q + "%]|[" + "%-" + q + "%";
-        String query4 = "%" + q + "%";
+        List<String> suggestions = new ArrayList<String>();
 
-        List<Term> terms = getTerms(q, query1);
-        List<Term> termsFromDB;
-        if(terms.size() < suggestionsCount) {
-            termsFromDB = getTerms(q, query2);
-            terms = addSuggestions(terms, termsFromDB);
-            if(terms.size() < suggestionsCount) {
-                termsFromDB.clear();
-                termsFromDB = getTerms(q, query4);
-                terms = addSuggestions(terms, termsFromDB);
-            }
-        }
-
-        List<Suggestion> suggestions = new ArrayList<Suggestion>();
-        for(Term t : terms) {
-            Suggestion suggestion = new Suggestion();
-            suggestion.setLabel(t.getName());
-            suggestions.add(suggestion);
+        while (suggestions.size() < MAX_SUGGESTIONS && queriesQueue.peek() != null) {
+            List<String> founded = searchService.getTerms(queriesQueue.poll(), suggestions);
+            suggestions.addAll(founded.subList(0, min(MAX_SUGGESTIONS - suggestions.size(), founded.size())));
         }
         return suggestions;
-    }
-
-    private List<Term> getTerms(String q, String query) {
-        List<Term> terms = termDao.getLike("name", query);
-        return terms;
-    }
-
-    private List<Term> addSuggestions(List<Term> terms, List<Term> termsFromDB) {
-        int index = 0;
-        while(terms.size() < suggestionsCount && (index < termsFromDB.size())) {
-            Term term = termsFromDB.get(index);
-            if(!terms.contains(term)) {
-                terms.add(term);
-            }
-            index++;
-        }
-        return terms;
     }
 }
