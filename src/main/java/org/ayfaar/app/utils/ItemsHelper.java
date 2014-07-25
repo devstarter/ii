@@ -98,7 +98,7 @@ public class ItemsHelper {
 
         // to check if one of arguments is null
 
-        if (question == null && text == null){
+        if (question == null || text == null){
             return null;
         }
 
