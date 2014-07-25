@@ -14,6 +14,13 @@ import java.util.regex.Pattern;
 public class SearchService {
     @Autowired AliasesMap aliasesMap;
 
+    /**
+     * Ведение вторым параметром suggestions делает этот метод очень специфичным. У меня была идея сдалать
+     * этот метод универсальным для случаев когда нам нужно получить список терминов по фильтру.
+     * Но возможно получение по фильтру это тоже весьма специфическая задача...
+     *
+     * todo: По этому предлагаю перенести этот метод в SearchController2, и удалить вообще этот класс
+     */
     public List<String> getTerms(String query, List<String> suggestions) {
         List<String> terms = new ArrayList<String>();
         Pattern pattern = Pattern.compile(query);
