@@ -80,8 +80,8 @@ public class ItemsHelper {
         }
         else {
             if (indexOfQuestion == 0){
-                resultOfRemoveQuestion[0] = text;
-                resultOfRemoveQuestion[1] = "";
+                resultOfRemoveQuestion[1] = text;
+                resultOfRemoveQuestion[0] = "";
             }
             else {
                 // to check if text doesn't have anything to split
