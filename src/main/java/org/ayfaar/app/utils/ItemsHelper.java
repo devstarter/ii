@@ -62,6 +62,16 @@ public class ItemsHelper {
      */
     public static String[] removeQuestion(String text) {
 
+        if (null == text) {
+            return null;
+        }
+
+        if (text.isEmpty()){
+            String[] result = new String[1];
+            result[0] = "";
+            return result;
+        }
+
         String[] resultOfRemoveQuestion = new String[2];
         int indexOfQuestion = text.lastIndexOf(QUESTION);
 
@@ -69,7 +79,7 @@ public class ItemsHelper {
             resultOfRemoveQuestion[0] = text;
         }
         else {
-            resultOfRemoveQuestion[0] = text.substring(0,indexOfQuestion-1);
+            resultOfRemoveQuestion[0] = text.substring(0,indexOfQuestion-1).split("\\r")[0];
             resultOfRemoveQuestion[1] = text.substring(indexOfQuestion);
         }
 
@@ -85,8 +95,19 @@ public class ItemsHelper {
      */
     public static String addQuestion(String question, String text) {
 
+        // to check if one of arguments is null
+
+        if (question == null & text == null){
+            return null;
+        }
+
+        if (question.isEmpty() & text.isEmpty()){
+            return new String();
+        }
+
         String result = new StringBuilder()
                 .append(question)
+                .append("\r")
                 .append("\n")
                 .append(text).toString();
 

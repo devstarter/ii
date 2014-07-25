@@ -35,7 +35,7 @@ public class Issue13UnitTest {
         assertEquals(cleanItem15_17819, parts[0]);
 
         assertTrue(parts[1].indexOf(ItemsHelper.QUESTION) == 0);
-        assertEquals(question15_17819, parts[0]);
+        assertEquals(question15_17819, parts[1]);
     }
 
     @Test
