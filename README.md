@@ -2,6 +2,10 @@
 ============================
 [ii.ayfaar.org](http://ii.ayfaar.org)
 
+Ключевые слова: OOP, [SOLID](http://ru.wikipedia.org/wiki/SOLID_(%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%BD%D0%BE-%D0%BE%D1%80%D0%B8%D0%B5%D0%BD%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%BD%D0%BE%D0%B5_%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5)) Java, J2SE, Hibernate, Spring (IoC, MVC), JUnit, JavaScript, HTML5, CSS3, KendoUI, AngularJS, MySQL, Maven, git, TDD, CI, IntelliJ IDEA
+
+Мой скайп: iu3116
+
 Цели проекта
 ------------
 Основная цель - представление информацци, поиск, структурирование, простраивание взаимосвязей между понятиями [ииссиидиологии](http://ru.science.wikia.com/wiki/%D0%98%D0%B8%D1%81%D1%81%D0%B8%D0%B8%D0%B4%D0%B8%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D1%8F)
@@ -27,11 +31,12 @@
 Устанавливаем:
 
 1.	GIT http://msysgit.github.io
-2.	IntelliJ IDEA http://www.jetbrains.com/idea/download/ Ultimate Edition
-3.	Java version 1.7 https://www.java.com/en/download
-4.	Java SE Development Kit 7 http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
-5.	Apache Tomcat http://tomcat.apache.org/download-70.cgi
-6.	MySQL [wiki/База данных](https://github.com/devstarter/ii/wiki/%D0%91%D0%B0%D0%B7%D0%B0-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85)
+2.	Добавляем git.exe в [переменную окружения Path](http://clip2net.com/s/iuLWXk) и перезагружаем windows
+3.	[IntelliJ IDEA](http://www.jetbrains.com/idea/download/) Ultimate Edition
+4.	[Java version 1.7](https://www.java.com/en/download)
+5.	[Java SE Development Kit 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
+6.	[Apache Tomcat](http://tomcat.apache.org/download-70.cgi) или [XAMPP](https://www.apachefriends.org/index.html)
+7.	[MySQL](http://dev.mysql.com/downloads/mysql/) или [XAMPP](https://www.apachefriends.org/index.html) [wiki/База данных](https://github.com/devstarter/ii/wiki/%D0%91%D0%B0%D0%B7%D0%B0-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85)
 
 Окрываем проект:
 
@@ -54,3 +59,5 @@
 2. Запускаем эту конфигурацию
 
 Подробнее в видео https://www.youtube.com/watch?v=mbwN4eaES78
+
+[![Презетация](http://img.youtube.com/vi/__ibkaMRHZI/0.jpg)](http://youtu.be/__ibkaMRHZI)
