@@ -52,23 +52,19 @@ public class Issue13IntegrationTest extends IntegrationTest {
     @Before
     public void fixQuestionDB() {
         List<Item> items = itemDao.getAll();
-        // must rewrite loop which works from the end to the start
-        for (int i = 0; i < items.size()-1; i++) {
-            Item item = items.get(i);
-            System.out.println(i);
-            if (i == 1748 || i == 1728){
-                System.out.println(item.getContent());
+        for (int i = items.size() - 1; i > 0; i--) {
+            String currentContent = items.get(i).getContent();
+            String nextContent = items.get(i-1).getContent();
+            if (nextContent.contains(ItemsHelper.QUESTION)){
+                String[] questionAndText = ItemsHelper.removeQuestion(nextContent);
+                currentContent = ItemsHelper.addQuestion(questionAndText[0],questionAndText[1]);
+                items.get(i).setContent(currentContent);
+                itemDao.save(items.get(i));
+                items.get(i-1).setContent(questionAndText[1]);
+                itemDao.save(items.get(i-1));
             }
-            if (item.getContent().contains(ItemsHelper.QUESTION)) {
-                String[] removeQuestion = ItemsHelper.removeQuestion(item.getContent());
-                Item nextItem = items.get(i+1);
-                String[] nextRemoveQuestion = ItemsHelper.removeQuestion(nextItem.getContent());
-                String addQuestion = ItemsHelper.addQuestion(removeQuestion[1], nextRemoveQuestion[0]);
-                item.setContent(removeQuestion[0]);
-                itemDao.save(item);
-                nextItem.setContent(addQuestion);
-                itemDao.save(nextItem);
-            }
+
+
         }
 
     }
