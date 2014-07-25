@@ -1,6 +1,11 @@
 package org.ayfaar.app.utils;
 
 
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Очистка пунктов от сносок, названий Глав и Разделов
  *
@@ -16,9 +21,22 @@ public class ItemsCleaner {
             return null;
         }
 
-        newContext = cleanChapter(value);
+       /* newContext = cleanChapter(value);
         newContext = cleanSection(newContext);
-        return newContext;
+        return newContext;*/
+
+
+        List<String> notContain = new ArrayList<String>();
+        notContain.add("*");
+        notContain.add("†");
+        notContain.add("‡");
+        notContain.add("§");
+
+        for (int i = 0; i < notContain.size(); i++) {
+            value = StringUtils.replace(value, notContain.get(i), "");
+        }
+
+        return value;
     }
 
     private static String cleanChapter(String value) {
