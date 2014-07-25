@@ -21,11 +21,14 @@ public class ItemsCleaner {
             return null;
         }
 
-       /* newContext = cleanChapter(value);
+        //этот код должен остаться !!! чтобы прошли issue11 тесты
+        newContext = cleanChapter(value);
         newContext = cleanSection(newContext);
-        return newContext;*/
+        newContext = cleanFootnotes(newContext);
+        return newContext;
+    }
 
-
+    private static String cleanFootnotes(String value) {
         List<String> notContain = new ArrayList<String>();
         notContain.add("*");
         notContain.add("†");
@@ -35,7 +38,6 @@ public class ItemsCleaner {
         for (int i = 0; i < notContain.size(); i++) {
             value = StringUtils.replace(value, notContain.get(i), "");
         }
-
         return value;
     }
 
