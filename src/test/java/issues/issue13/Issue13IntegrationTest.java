@@ -47,10 +47,13 @@ public class Issue13IntegrationTest extends IntegrationTest {
         assertTrue(items.isEmpty());
     }
 
-    //todo: написать метод изменеия базы данных, пример: issues.issue2.Issue2IntegrationTest.fixQuestionDB()
 
+    //fixme: этот метод должен быть запущен единожды, а не перед каждым запуском.
+    // Ведь тесты то запускаются на специальном сервере после каждого комита..
+    // представь что будет если кажддый тест будет выполнять подобные долгие операции при каждом запуске...
     @Before
     public void fixQuestionDB() {
+        //fixme: загружать можно не все пункты, а только те в которых есть вопрос, а затем по next получать айди следующего пункта
         List<Item> items = itemDao.getAll();
 //        for (Item item : items) {
 //            if (item.getContent().contains(ItemsHelper.QUESTION) && (item.getContent().lastIndexOf(ItemsHelper.QUESTION) != 0)) {
