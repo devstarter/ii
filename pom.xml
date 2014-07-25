@@ -36,11 +36,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.lucene.morphology</groupId>
-            <artifactId>russian</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>net.sourceforge.htmlcleaner</groupId>
             <artifactId>htmlcleaner</artifactId>
             <version>2.8</version>
@@ -368,30 +363,6 @@
             </build>
         </profile>
     </profiles>
-    <repositories>
-        <repository>
-            <id>eap</id>
-            <url>http://maven.repository.redhat.com/techpreview/all</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>eap</id>
-            <url>http://maven.repository.redhat.com/techpreview/all</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
     <build>
         <plugins>
             <plugin>

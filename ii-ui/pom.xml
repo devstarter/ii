@@ -11,7 +11,7 @@
     </parent>
     
     <artifactId>ii-ui</artifactId>
-    <packaging>war</packaging>
+    <packaging>pom</packaging>
 
     <name>Ayfaar II UI</name>
 </project>

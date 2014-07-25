@@ -20,6 +20,7 @@
             <groupId>org.ayfaar</groupId>
             <artifactId>ii-core</artifactId>
             <version>${parent.version}</version>
+            <classifier>classes</classifier>
         </dependency>
     </dependencies>
 </project>
