@@ -34,7 +34,7 @@ public class Issue13IntegrationTest extends IntegrationTest {
      */
     public void testItem15_17820() throws IOException {
         Item item = itemDao.getByNumber("15.17820");
-        //assertEquals(getFile("item-15.17820-with-question.txt"), item.getContent());
+        assertEquals(getFile("item-15.17820-with-question.txt"), item.getContent());
     }
 
     @Test
@@ -44,7 +44,7 @@ public class Issue13IntegrationTest extends IntegrationTest {
      */
     public void allQuestions() {
         List<Item> items = itemDao.getLike("content", "\n"+ItemsHelper.QUESTION, MatchMode.ANYWHERE);
-        //assertTrue(items.isEmpty());
+        assertTrue(items.isEmpty());
     }
 
     //todo: написать метод изменеия базы данных, пример: issues.issue2.Issue2IntegrationTest.fixQuestionDB()
@@ -52,19 +52,19 @@ public class Issue13IntegrationTest extends IntegrationTest {
     @Before
     public void fixQuestionDB() {
         List<Item> items = itemDao.getAll();
-//        for (Item item : items) {
-//            if (item.getContent().contains(ItemsHelper.QUESTION) && (item.getContent().lastIndexOf(ItemsHelper.QUESTION) != 0)) {
-//                String[] questionAndText = ItemsHelper.removeQuestion(item.getContent());
-//                item.setContent(questionAndText[0]);
-//                itemDao.save(item);
-////                if (item.getNext() != null) {
-////                    Item nextItem = itemDao.getByNumber(item.getNext());
-////                    nextItem.setContent(ItemsHelper.addQuestion(questionAndText[0], nextItem.getContent()));
-////                    itemDao.save(nextItem);
-////                }
-//            }
-//
-//        }
+        for (Item item : items) {
+            if (item.getContent().contains(ItemsHelper.QUESTION) && (item.getContent().lastIndexOf(ItemsHelper.QUESTION) != 0)) {
+                String[] questionAndText = ItemsHelper.removeQuestion(item.getContent());
+                item.setContent(questionAndText[0]);
+                itemDao.save(item);
+                if (item.getNext() != null) {
+                    Item nextItem = itemDao.getByNumber(item.getNext());
+                    nextItem.setContent(ItemsHelper.addQuestion(questionAndText[0], nextItem.getContent()));
+                    itemDao.save(nextItem);
+                }
+            }
+
+        }
 
 
 //        for (int i = items.size() - 1; i > 0; i--) {
