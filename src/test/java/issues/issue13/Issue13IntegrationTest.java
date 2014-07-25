@@ -25,7 +25,7 @@ public class Issue13IntegrationTest extends IntegrationTest {
      */
     public void testItem15_17819() throws IOException {
         Item item = itemDao.getByNumber("15.17819");
-        //assertEquals(getFile("clean-item-15.17819.txt"), item.getContent());
+        assertEquals(getFile("clean-item-15.17819.txt"), item.getContent());
     }
 
     @Test
@@ -49,15 +49,15 @@ public class Issue13IntegrationTest extends IntegrationTest {
 
     //todo: написать метод изменеия базы данных, пример: issues.issue2.Issue2IntegrationTest.fixQuestionDB()
 
-    @Before
-    public void fixQuestionDB() {
+    //@Before
+    private void fixQuestionDB() {
         List<Item> items = itemDao.getAll();
         for (int i = items.size() - 1; i > 0; i--) {
             String currentContent = items.get(i).getContent();
             String nextContent = items.get(i-1).getContent();
-            if (nextContent.contains(ItemsHelper.QUESTION)){
+            if (nextContent.contains(ItemsHelper.QUESTION) && nextContent.lastIndexOf(ItemsHelper.QUESTION) != 0){
                 String[] questionAndText = ItemsHelper.removeQuestion(nextContent);
-                currentContent = ItemsHelper.addQuestion(questionAndText[0],questionAndText[1]);
+                currentContent = ItemsHelper.addQuestion(questionAndText[0],currentContent);
                 items.get(i).setContent(currentContent);
                 itemDao.save(items.get(i));
                 items.get(i-1).setContent(questionAndText[1]);
