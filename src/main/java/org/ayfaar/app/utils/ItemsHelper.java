@@ -79,6 +79,7 @@ public class ItemsHelper {
             resultOfRemoveQuestion[0] = text;
         }
         else {
+            // to check if text doesn't have anything to split
             resultOfRemoveQuestion[0] = text.substring(0,indexOfQuestion-1).split("\\r")[0];
             resultOfRemoveQuestion[1] = text.substring(indexOfQuestion);
         }
@@ -97,7 +98,7 @@ public class ItemsHelper {
 
         // to check if one of arguments is null
 
-        if (question == null & text == null){
+        if (question == null && text == null){
             return null;
         }
 
