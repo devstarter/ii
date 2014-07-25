@@ -1,8 +1,6 @@
 package org.ayfaar.app.utils;
 
 
-import org.apache.commons.lang.NotImplementedException;
-
 /**
  * Очистка пунктов от сносок, названий Глав и Разделов
  *
@@ -67,9 +65,10 @@ public class ItemsHelper {
         }
 
         if (text.isEmpty()){
-            String[] result = new String[1];
+            /*String[] result = new String[1];
             result[0] = "";
-            return result;
+            return result;*/
+            return new String[]{""};
         }
 
         String[] resultOfRemoveQuestion = new String[2];
@@ -105,23 +104,17 @@ public class ItemsHelper {
      */
     public static String addQuestion(String question, String text) {
 
-        // to check if one of arguments is null
-
         if (question == null || text == null){
             return null;
         }
 
+        //fixme: & и && это две большие разници
         if (question.isEmpty() & text.isEmpty()){
-            return new String();
+            return "";
+//            return new String();
         }
 
-        String result = new StringBuilder()
-                .append(question)
-                .append("\r")
-                .append("\n")
-                .append(text).toString();
-
-        return result;
-
+        // так ведь намногоо читабельней, и по сути тоже самое
+        return question + "\r\n" + text;
     }
 }
