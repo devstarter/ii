@@ -17,11 +17,9 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static net.sf.cglib.core.CollectionUtils.transform;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-/**
- * о анотациях http://stackoverflow.com/q/20270391/975169
- */
+
 @RunWith(MockitoJUnitRunner.class)
 public class Issue19UnitTest {
     @Mock AliasesMap aliasesMap;
@@ -36,7 +34,7 @@ public class Issue19UnitTest {
     public void testSequence() {
         String q = "a";
         List<String> fakeTerms = asList("a", "1 a", "bterfd", "b-aaaa", "aa", "242a424");
-        //noinspection unchecked
+
         Mockito.when(aliasesMap.getAllTerms()).thenReturn(transform(fakeTerms, new Transformer() {
             @Override
             public Object transform(Object value) {
@@ -54,5 +52,22 @@ public class Issue19UnitTest {
         assertEquals("242a424", suggestions.get(4));
     }
 
-    // todo: проверить на максимальное количество
+
+    @Test
+    public void testMaxSize() {
+        String q = "гал";
+        List<String> fakeTerms = asList("Галактическая Сущность", "Галактическая Странник", "Галактический УЛУУГУМА-Дезинтеграционный Луч АИЙ-ЙЯ",
+                                        "Звёздно-Галактическая Форма", "Вселенский Межгалактический Диапазон", "Межгалактический",
+                                        "Межгалактические Комплекс-Планы", "Межгалактический Астральный Комплекс-План", "Галактика");
+
+        Mockito.when(aliasesMap.getAllTerms()).thenReturn(transform(fakeTerms, new Transformer() {
+            @Override
+            public Object transform(Object value) {
+                return new Term((String) value);
+            }
+        }));
+
+        List<String> suggestions = controller.suggestions(q);
+        assertTrue(suggestions.size() <= 7);
+    }
 }

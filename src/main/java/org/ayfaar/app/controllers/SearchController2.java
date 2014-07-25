@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
@@ -18,12 +15,11 @@ import static java.util.Arrays.asList;
 public class SearchController2 {
     @Autowired SearchService searchService;
 
-    // лучше сделать финальным чтобы случайно не изменить в коде
     public static final int MAX_SUGGESTIONS = 7;
 
     public List<String> suggestions(String q) {
         Queue<String> queriesQueue = new LinkedList<String>(asList(
-                "$"+q,
+                "^"+q,
                 "[\\s\\-]" + q,
                 q
         ));
@@ -31,10 +27,9 @@ public class SearchController2 {
         List<String> suggestions = new ArrayList<String>();
 
         while (suggestions.size() < MAX_SUGGESTIONS && queriesQueue.peek() != null) {
-            List<String> founded = searchService.getTerms(queriesQueue.poll());
-            suggestions.addAll(founded.subList(0, min(MAX_SUGGESTIONS, founded.size())));
+            List<String> founded = searchService.getTerms(queriesQueue.poll(), suggestions);
+            suggestions.addAll(founded.subList(0, min(MAX_SUGGESTIONS - suggestions.size(), founded.size())));
         }
-
         return suggestions;
     }
 }

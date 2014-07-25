@@ -31,11 +31,23 @@ public class Issue19IntegrationTest extends IntegrationTest {
     /**
      * тест на последовательность, то есть упоминания в начале слова, но в середине фразы или следующие после "-"
      * имеют втоорой приоритет
+     * Для проверки:
+     SELECT  `name` FROM `ii`.`term` WHERE `name` LIKE 'ссс%'
+     UNION
+     SELECT  `name` FROM `ii`.`term` WHERE `name` LIKE '% ссс%' or `name` LIKE '%-ссс%'
+     UNION
+     SELECT  `name` FROM `ii`.`term` WHERE `name` LIKE '%ссс%'
+
+     Но юнионом делать не стоит так как это перегружает базу. Нам нужно только 7 результатов и если они все в начале
+     фразы то не нужно делать все следующине запросы, юнион сначале сделает выборку по всем запросом а затем применит
+     лимит ко всему результату. Пока значений в базе данных мало то это не столь важно, но со временем нагрузка
+     повысится, лучше сразу сделать правильно
      */
     @Test
     public void test2() {
         String query = "ссс";
         List<String> suggestions = searchController.suggestions(query);
+        assertEquals(7, suggestions.size());
         assertEquals("АИЙС-ССС", suggestions.get(5));
         assertEquals("Амициссимное ССС-Состояние", suggestions.get(6));
     }
