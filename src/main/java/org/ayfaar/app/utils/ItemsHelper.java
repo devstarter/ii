@@ -85,7 +85,9 @@ public class ItemsHelper {
             }
             else {
                 // to check if text doesn't have anything to split
-                resultOfRemoveQuestion[0] = text.substring(0, indexOfQuestion - 1).split("\n|\r")[0].trim();
+                resultOfRemoveQuestion[0] = text.substring(0, indexOfQuestion - 1)
+                        .replaceAll("\\r\\n|\\r|\\n", "")
+                        .trim();
                 resultOfRemoveQuestion[1] = text.substring(indexOfQuestion);
             }
 
