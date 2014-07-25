@@ -17,7 +17,6 @@ public class Issue11UnitTest extends UnitTest {
 
     @Before
     public void init() throws IOException {
-        // todo: создать эти файлы в /src/test/resources/issues/issue11
         cleanItem11_13017 = getFile("clean-item-11.13017.txt");
         dirtyItem11_13017 = getFile("dirty-item-11.13017.txt");
     }
