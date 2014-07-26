@@ -15,7 +15,8 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static net.sf.cglib.core.CollectionUtils.transform;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -63,6 +64,6 @@ public class Issue19UnitTest {
         }));
 
         List<String> suggestions = controller.suggestions(q);
-        assertTrue(suggestions.size() <= 7);
+        assertTrue(suggestions.size() <= SearchController2.MAX_SUGGESTIONS);
     }
 }
