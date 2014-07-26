@@ -1,4 +1,4 @@
-package org.ayfaar.app.controllers;
+package org.ayfaar.ii.controllers;
 
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.utils.AliasesMap;
