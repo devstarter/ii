@@ -36,5 +36,4 @@ public class TermDaoImpl extends AbstractHibernateDAO<Term> implements TermDao {
                 .add(Restrictions.gt(field, value))
                 .list();
     }
-
 }
