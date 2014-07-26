@@ -4,8 +4,7 @@ package org.ayfaar.app.utils;
 /**
  * Очистка пунктов от сносок, названий Глав и Разделов
  *
- * issue2 https://github.com/devstarter/ii/issues/2
- * issue3 https://github.com/devstarter/ii/issues/3
+ * https://github.com/devstarter/ii/issues?milestone=2
  */
 public class ItemsCleaner {
 
