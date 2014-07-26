@@ -3,14 +3,12 @@ package issues.issue19;
 import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.controllers.SearchController2;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.services.SearchService;
 import org.ayfaar.app.utils.AliasesMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
@@ -23,9 +21,6 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class Issue19UnitTest {
     @Mock AliasesMap aliasesMap;
-
-    @InjectMocks @Spy
-    SearchService searchService = new SearchService();
 
     @InjectMocks
     SearchController2 controller = new SearchController2();
