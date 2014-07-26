@@ -11,7 +11,7 @@ public abstract class UID {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "UriGenerator")
-    @GenericGenerator(name = "UriGenerator", strategy = "org.ayfaar.app.utils.UriGenerator")
+    @GenericGenerator(name = "UriGenerator", strategy = "org.ayfaar.ii.utils.UriGenerator")
     private String uri;
 
     @Override

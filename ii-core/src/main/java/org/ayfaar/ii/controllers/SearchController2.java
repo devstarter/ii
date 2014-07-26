@@ -1,7 +1,7 @@
 package org.ayfaar.ii.controllers;
 
-import org.ayfaar.app.model.Term;
-import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.ii.model.Term;
+import org.ayfaar.ii.utils.AliasesMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

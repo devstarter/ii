@@ -39,7 +39,7 @@
         </property>
     </bean>
 
-    <!--<bean class="org.ayfaar.app.spring.ModelViewSupportFactoryBean"/>-->
+    <!--<bean class="org.ayfaar.ii.spring.ModelViewSupportFactoryBean"/>-->
 
     <!--<bean id="annotationMethodHandlerExceptionResolver"-->
           <!--class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver">-->
