@@ -4,9 +4,14 @@ import org.ayfaar.app.model.Term;
 import org.ayfaar.app.utils.AliasesMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,7 +25,9 @@ public class SearchController2 {
 
     public static final int MAX_SUGGESTIONS = 7;
 
-    public List<String> suggestions(String q) {
+    @RequestMapping("suggestions/{q}")
+    @ResponseBody
+    public List<String> suggestions(@PathVariable String q) {
         Queue<String> queriesQueue = new LinkedList<String>(asList(
                 "^"+q,
                 "[\\s\\-]" + q,
