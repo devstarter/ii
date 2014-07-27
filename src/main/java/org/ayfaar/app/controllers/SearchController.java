@@ -1,10 +1,7 @@
 package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.*;
-import org.ayfaar.app.model.Item;
-import org.ayfaar.app.model.Link;
-import org.ayfaar.app.model.Term;
-import org.ayfaar.app.model.TermMorph;
+import org.ayfaar.app.model.*;
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.Content;
@@ -39,7 +36,8 @@ public class SearchController {
     @Autowired TermMorphDao termMorphDao;
     @Autowired EmailNotifier notifier;
 
-    private Map<String, List<ModelMap>> searchInContentCatch = new HashMap<String, List<ModelMap>>();
+    //private Map<String, List<ModelMap>> searchInContentCatch = new HashMap<String, List<ModelMap>>();
+    private Map<String, List<ContentSearchResult>> searchInContentCatch = new HashMap<String, List<ContentSearchResult>>();
 
     /*public Object search(String query) {
         ModelMap modelMap = new ModelMap();
@@ -55,19 +53,27 @@ public class SearchController {
     @RequestMapping("content")
     @Model
     @ResponseBody
-    private List<ModelMap> searchInContent(@RequestParam String query,
+    /*private List<ModelMap> searchInContent(@RequestParam String query,
+                                           @RequestParam(required = false, defaultValue = "0") Integer page) {*/
+    public List<ContentSearchResult> searchInContent(@RequestParam String query,
                                            @RequestParam(required = false, defaultValue = "0") Integer page) {
         final Integer pageSize = 20;
         query = query.toLowerCase();
         query = query.trim();
         String catchKey = query+"#$%^&"+page;
-        List<ModelMap> catchedResult = searchInContentCatch.get(catchKey);
+        /*List<ModelMap> catchedResult = searchInContentCatch.get(catchKey);
+        if (catchedResult != null) {
+            return catchedResult;
+        }*/
+        List<ContentSearchResult> catchedResult = searchInContentCatch.get(catchKey);
         if (catchedResult != null) {
             return catchedResult;
         }
 
+
         List<Content> items;
-        List<ModelMap> modelMaps = new ArrayList<ModelMap>();
+        //List<ModelMap> modelMaps = new ArrayList<ModelMap>();
+        List<ContentSearchResult> contentSearchResults = new ArrayList<ContentSearchResult>();
 
         if (query.indexOf("!") == 0) {
             // поиск только введённого запроса
@@ -136,19 +142,30 @@ public class SearchController {
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 
         for (Content item : items) {
-            ModelMap map = new ModelMap();
+            /*ModelMap map = new ModelMap();
             map.put("uri", item.getUri());
-            map.put("name", item.getName());
+            map.put("name", item.getName());*/
+
+            ContentSearchResult contentSearchResult = new ContentSearchResult();
+            contentSearchResult.setUri(item.getUri());
+            contentSearchResult.setName(item.getName());
+
+
             Matcher matcher = pattern.matcher(item.getContent());
             if (matcher.find()) {
                 // (?iu) - insensitive, unicode, \b - a word boundary, $1 - first group
                 String quote = matcher.group().replaceAll("(?iu)\\b(" + query + ")\\b", "<strong>$1</strong>");
-                map.put("quote", quote.trim());
-                modelMaps.add(map);
+                //map.put("quote", quote.trim());
+                //modelMaps.add(map);
+                contentSearchResult.setQoute(quote.trim());
+                contentSearchResults.add(contentSearchResult);
             }
         }
-        searchInContentCatch.put(catchKey, modelMaps);
-        return modelMaps;
+        //searchInContentCatch.put(catchKey, modelMaps);
+        //return modelMaps;
+
+        searchInContentCatch.put(catchKey,contentSearchResults);
+        return contentSearchResults;
     }
 
     @RequestMapping("term")
