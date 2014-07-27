@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.sound.midi.Soundbank;
 import java.io.IOException;
 import java.util.List;
 
@@ -54,36 +55,43 @@ public class Issue13IntegrationTest extends IntegrationTest {
     @Before
     public void fixQuestionDB() {
         //fixme: загружать можно не все пункты, а только те в которых есть вопрос, а затем по next получать айди следующего пункта
+
+
+
+
         List<Item> items = itemDao.getAll();
-//        for (Item item : items) {
-//            if (item.getContent().contains(ItemsHelper.QUESTION) && (item.getContent().lastIndexOf(ItemsHelper.QUESTION) != 0)) {
-//                String[] questionAndText = ItemsHelper.removeQuestion(item.getContent());
-//                item.setContent(questionAndText[0]);
-//                itemDao.save(item);
-//                if (item.getNext() != null) {
-//                    Item nextItem = itemDao.getByNumber(item.getNext());
-//                    nextItem.setContent(ItemsHelper.addQuestion(questionAndText[0], nextItem.getContent()));
-//                    itemDao.save(nextItem);
-//                }
-//            }
-//
-//        }
+        for (Item item : items) {
+            if (item.getContent().contains(ItemsHelper.QUESTION)
+                    && (item.getContent().lastIndexOf(ItemsHelper.QUESTION) != 0)) {
 
+                String[] questionAndText = ItemsHelper.removeQuestion(item.getContent());
+                item.setContent(questionAndText[0]);
+                itemDao.save(item);
 
-        for (int i = items.size() - 1; i > 0; i--) {
-            String currentContent = items.get(i).getContent();
-            String nextContent = items.get(i-1).getContent();
-            if (nextContent.contains(ItemsHelper.QUESTION) && (nextContent.lastIndexOf(ItemsHelper.QUESTION) != 0)){
-                String[] questionAndText = ItemsHelper.removeQuestion(nextContent);
-                currentContent = ItemsHelper.addQuestion(questionAndText[1],currentContent);
-                items.get(i).setContent(currentContent);
-                itemDao.save(items.get(i));
-                items.get(i-1).setContent(questionAndText[0]);
-                itemDao.save(items.get(i-1));
+                if (item.getNext() != null) {
+                    Item nextItem = itemDao.get(item.getNext());
+                    nextItem.setContent(ItemsHelper.addQuestion(questionAndText[1], nextItem.getContent()));
+                    itemDao.save(nextItem);
+                }
             }
 
-
         }
+
+
+//        for (int i = items.size() - 1; i > 0; i--) {
+//            String currentContent = items.get(i).getContent();
+//            String nextContent = items.get(i-1).getContent();
+//            if (nextContent.contains(ItemsHelper.QUESTION) && (nextContent.lastIndexOf(ItemsHelper.QUESTION) != 0)){
+//                String[] questionAndText = ItemsHelper.removeQuestion(nextContent);
+//                currentContent = ItemsHelper.addQuestion(questionAndText[1],currentContent);
+//                items.get(i).setContent(currentContent);
+//                itemDao.save(items.get(i));
+//                items.get(i-1).setContent(questionAndText[0]);
+//                itemDao.save(items.get(i-1));
+//            }
+//
+//
+//        }
 
     }
 }

@@ -65,7 +65,7 @@ public class ItemsHelper {
         }
 
         if (text.isEmpty()){
-            return new String[]{""};
+            return new String[]{"",""};
         }
 
         String[] resultOfRemoveQuestion = new String[2];
