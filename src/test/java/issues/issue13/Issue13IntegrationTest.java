@@ -18,8 +18,6 @@ import static org.junit.Assert.assertTrue;
 
 public class Issue13IntegrationTest extends IntegrationTest {
 
-    private boolean run = false;
-
     @Autowired ItemDao itemDao;
 
     @Test
@@ -48,26 +46,5 @@ public class Issue13IntegrationTest extends IntegrationTest {
     public void allQuestions() {
         List<Item> items = itemDao.getLike("content", "\n"+ItemsHelper.QUESTION, MatchMode.ANYWHERE);
         assertTrue(items.isEmpty());
-    }
-
-    @Before
-    public void fixQuestionDB() {
-
-        if (!run) {
-            List<Item> items = itemDao.getLike("content", "\n" + ItemsHelper.QUESTION, MatchMode.ANYWHERE);
-
-            for (Item item : items) {
-                String[] questionAndText = ItemsHelper.removeQuestion(item.getContent());
-                item.setContent(questionAndText[0]);
-                itemDao.save(item);
-
-                if (item.getNext() != null) {
-                    Item nextItem = itemDao.get(item.getNext());
-                    nextItem.setContent(ItemsHelper.addQuestion(questionAndText[1], nextItem.getContent()));
-                    itemDao.save(nextItem);
-                }
-            }
-            run = true;
-        }
     }
 }
