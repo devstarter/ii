@@ -1,7 +1,7 @@
 package issues.issue19;
 
 import net.sf.cglib.core.Transformer;
-import org.ayfaar.app.controllers.SearchController2;
+import org.ayfaar.app.controllers.SuggestionsController;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.utils.AliasesMap;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class Issue19UnitTest {
     @Mock AliasesMap aliasesMap;
 
     @InjectMocks
-    SearchController2 controller = new SearchController2();
+    SuggestionsController controller = new SuggestionsController();
 
     @Test
     public void testSequence() {
@@ -64,6 +64,6 @@ public class Issue19UnitTest {
         }));
 
         List<String> suggestions = controller.suggestions(q);
-        assertTrue(suggestions.size() <= SearchController2.MAX_SUGGESTIONS);
+        assertTrue(suggestions.size() <= SuggestionsController.MAX_SUGGESTIONS);
     }
 }

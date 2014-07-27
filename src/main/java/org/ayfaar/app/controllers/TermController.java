@@ -33,7 +33,8 @@ public class TermController {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
     @Autowired AliasesMap aliasesMap;
-    @Autowired SearchController2 searchController2;
+    @Autowired
+    SuggestionsController searchController2;
 
     /*@RequestMapping("import")
     @Model

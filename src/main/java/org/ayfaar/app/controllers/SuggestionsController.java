@@ -19,13 +19,13 @@ import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 
 @Controller
-@RequestMapping("v2/search")
-public class SearchController2 {
+@RequestMapping("v2/suggestions")
+public class SuggestionsController {
     @Autowired AliasesMap aliasesMap;
 
     public static final int MAX_SUGGESTIONS = 7;
 
-    @RequestMapping("suggestions/{q}")
+    @RequestMapping("{q}")
     @ResponseBody
     public List<String> suggestions(@PathVariable String q) {
         Queue<String> queriesQueue = new LinkedList<String>(asList(
@@ -37,13 +37,13 @@ public class SearchController2 {
         List<String> suggestions = new ArrayList<String>();
 
         while (suggestions.size() < MAX_SUGGESTIONS && queriesQueue.peek() != null) {
-            List<String> founded = getTerms(queriesQueue.poll(), suggestions);
+            List<String> founded = getSuggestedTerms(queriesQueue.poll(), suggestions);
             suggestions.addAll(founded.subList(0, min(MAX_SUGGESTIONS - suggestions.size(), founded.size())));
         }
         return suggestions;
     }
 
-    public List<String> getTerms(String query, List<String> suggestions) {
+    public List<String> getSuggestedTerms(String query, List<String> suggestions) {
         List<String> terms = new ArrayList<String>();
         Pattern pattern = Pattern.compile(query);
 
