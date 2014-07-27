@@ -3,9 +3,7 @@ package issues.issue2;
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.utils.ItemsHelper;
 import org.hibernate.criterion.MatchMode;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,22 +51,5 @@ public class Issue2IntegrationTest extends IntegrationTest {
 
         List<Item> items = itemDao.getLike("content", wrongValue, MatchMode.ANYWHERE);
         assertTrue("Items contain " + items.size() + " elements ",  items.isEmpty());
-    }
-
-    /**
-     * Метод для единоразовой очистки базы данных
-     * clean DB of extra chapters and sections
-     */
-//    @Test
-    @Before
-    public void cleanDB() {
-        List<Item> items = itemDao.getAll();
-        for(Item item : items) {
-            String clean = ItemsHelper.clean(item.getContent());
-            if (!clean.equals(item.getContent())) {
-                item.setContent(clean);
-                itemDao.save(item);
-            }
-        }
     }
 }
