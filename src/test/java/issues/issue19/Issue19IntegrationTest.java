@@ -1,7 +1,11 @@
 package issues.issue19;
 
 import org.ayfaar.app.IntegrationTest;
+<<<<<<< HEAD
 import org.ayfaar.app.controllers.SearchController2;
+=======
+import org.ayfaar.app.controllers.SuggestionsController;
+>>>>>>> 32b62b3b57d6f9c0f29e5c1ee9810481c3f7a14b
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -11,7 +15,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class Issue19IntegrationTest extends IntegrationTest {
+<<<<<<< HEAD
     @Inject SearchController2 searchController;
+=======
+    @Inject
+    SuggestionsController searchController;
+>>>>>>> 32b62b3b57d6f9c0f29e5c1ee9810481c3f7a14b
 
     @Test
     public void test1() {

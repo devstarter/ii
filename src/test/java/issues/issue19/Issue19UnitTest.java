@@ -1,7 +1,11 @@
 package issues.issue19;
 
 import net.sf.cglib.core.Transformer;
+<<<<<<< HEAD
 import org.ayfaar.app.controllers.SearchController2;
+=======
+import org.ayfaar.app.controllers.SuggestionsController;
+>>>>>>> 32b62b3b57d6f9c0f29e5c1ee9810481c3f7a14b
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.utils.AliasesMap;
 import org.junit.Test;
@@ -24,7 +28,11 @@ public class Issue19UnitTest {
     @Mock AliasesMap aliasesMap;
 
     @InjectMocks
+<<<<<<< HEAD
     SearchController2 controller = new SearchController2();
+=======
+    SuggestionsController controller = new SuggestionsController();
+>>>>>>> 32b62b3b57d6f9c0f29e5c1ee9810481c3f7a14b
 
     @Test
     public void testSequence() {
@@ -64,6 +72,10 @@ public class Issue19UnitTest {
         }));
 
         List<String> suggestions = controller.suggestions(q);
+<<<<<<< HEAD
         assertTrue(suggestions.size() <= SearchController2.MAX_SUGGESTIONS);
+=======
+        assertTrue(suggestions.size() <= SuggestionsController.MAX_SUGGESTIONS);
+>>>>>>> 32b62b3b57d6f9c0f29e5c1ee9810481c3f7a14b
     }
 }
