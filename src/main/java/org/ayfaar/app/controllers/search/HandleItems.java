@@ -1,8 +1,6 @@
 package org.ayfaar.app.controllers.search;
 
-import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.model.Item;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -11,8 +9,6 @@ import java.util.List;
 //Обработка найденных пунктов
 @Component
 public class HandleItems {
-    @Autowired
-    private NewSearchController controller;
 
     public List<Quote> createQuotes(List<Item> foundedItems, List<String> allPossibleSearchQueries) {
         throw new NotImplementedException();

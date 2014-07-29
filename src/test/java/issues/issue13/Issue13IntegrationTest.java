@@ -3,7 +3,6 @@ package issues.issue13;
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.utils.ItemsHelper;
 import org.hibernate.criterion.MatchMode;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.List;
 
+import static org.ayfaar.app.utils.ItemsHelper.QUESTION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -42,9 +42,8 @@ public class Issue13IntegrationTest extends IntegrationTest {
      * то есть нет вопросов, перед которыми бы был символ перевода каретки (новая строка)
      */
     public void allQuestions() {
-        List<Item> items = itemDao.getLike("content", "\n"+ItemsHelper.QUESTION, MatchMode.ANYWHERE);
-        items.addAll(itemDao.getLike("content","\n" + "  "+ItemsHelper.QUESTION, MatchMode.ANYWHERE));
-        items.addAll(itemDao.getLike("content","\n" + "   "+ItemsHelper.QUESTION, MatchMode.ANYWHERE));
+        List<Item> items = itemDao.getLike("content", "\n"+ QUESTION, MatchMode.ANYWHERE);
+        items.addAll(itemDao.getByRegexp("content", "^.+"+QUESTION));
         assertTrue(items.isEmpty());
     }
 }
