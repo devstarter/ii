@@ -1,21 +1,32 @@
 package org.ayfaar.app.controllers;
 
-import lombok.Data;
 import org.apache.commons.lang.NotImplementedException;
+import org.ayfaar.app.controllers.search.Quote;
+import org.ayfaar.app.controllers.search.SearchFilter;
+import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.controllers.search.HandleItems;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 //todo пометить как контролер и зделать доступнім по адресу "v2/search"
 public class NewSearchController {
+    @Autowired
+    private HandleItems handleItems;
+
     /**
      * Поиск будет производить только по содержимому Item
      * todo сделать этот метод доступным через веб
      *
      * @param pageNumber номер страницы
      */
+    private List<Item> foundItems = new ArrayList<Item>();
+    private List<String> allPossibleSearchQueries = new ArrayList<String>();
+
+
     public SearchResultPage search(String query, Integer pageNumber, SearchFilter filter) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         query = prepareQuery(query);
@@ -39,12 +50,12 @@ public class NewSearchController {
             List<Term> allSearchTerms = getAllAliases(term);
 
             // 3.2. Получить все падежи по всем терминам
-            List<String> allPossibleSearchQueries = getAllMorphs(allSearchTerms);
+            allPossibleSearchQueries = getAllMorphs(allSearchTerms);
             // 4. Произвести поиск по списку синонимов слов
-            List<Item> foundItems = searchInDb(query, allPossibleSearchQueries, pageNumber, filter);
+            foundItems = searchInDb(query, allPossibleSearchQueries, pageNumber, filter);
         } else {
             // 4. Поиск фразы (не термин)
-            List<Item> foundItems = searchInDb(query, null, pageNumber, filter);
+            foundItems = searchInDb(query, null, pageNumber, filter);
         }
 
         page.setHasMore(false);
@@ -53,7 +64,9 @@ public class NewSearchController {
         // пройтись по всем пунктам и вырезать предложением, в котором встречаеться поисковая фраза или фразы
         // Если до или после найденной фразы слов больше чем 10, то обрезать всё до (или после) 10 слова и поставить "..."
         // Обозначить поисковую фразу или фразы тегами <strong></strong>
-        page.setQuotes(Collections.<Quote>emptyList());
+
+        List<Quote> quotes = handleItems.createQuotes(foundItems, allPossibleSearchQueries);
+        page.setQuotes(quotes);
 
         // 6. Вернуть результат
         return page;
@@ -94,23 +107,5 @@ public class NewSearchController {
 
     private String prepareQuery(String query) {
         throw new NotImplementedException();
-    }
-
-    @Data
-    public class SearchResultPage {
-        private List<Quote> quotes;
-        private boolean hasMore;
-    }
-
-    @Data
-    public class SearchFilter {
-        private String fromItem;
-        private String toItem;
-    }
-
-    @Data
-    private class Quote {
-        private String uri; // уникальный идентификатор источника
-        private String quote;
     }
 }

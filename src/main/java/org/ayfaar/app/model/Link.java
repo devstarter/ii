@@ -30,13 +30,6 @@ public class Link {
      * Ссылка на группу к которой относиться понятие. Первым указываеться понятие
      * вторым группа
      */
-//    public static final Byte GROUP = ;
-//    public static final Byte START = 4;
-//    public static final Byte END = 5;
-//    public static final byte DIRECTION = 2;
-//    public static final byte PRIORITY = 3;
-//    public static final byte MORPHEME_WEIGHT = -1;
-//    public static final byte ABBREVIATION_WEIGHT = 1;
 
     @Id
     @GeneratedValue
