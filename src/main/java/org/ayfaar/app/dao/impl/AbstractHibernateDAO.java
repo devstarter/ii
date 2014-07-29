@@ -12,6 +12,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.type.StringType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,6 +164,13 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
     public List<E> getLike(String property, @NotNull String value, MatchMode matchMode) {
         return criteria()
                 .add(like(property, value, matchMode))
+                .list();
+    }
+
+    @Override
+    public List<E> getByRegexp(String property, String regexp) {
+        return criteria()
+                .add(regexp(property, regexp))
                 .list();
     }
 
@@ -345,5 +353,9 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         }
 
         return reattachedParent;
+    }
+
+    public static Criterion regexp(String propertyName, String value) {
+        return Restrictions.sqlRestriction(propertyName+" REGEXP ?", value, new StringType());
     }
 }
