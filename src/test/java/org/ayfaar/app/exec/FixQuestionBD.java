@@ -1,4 +1,4 @@
-package org.ayfaar.app.importing;
+package org.ayfaar.app.exec;
 
 import org.ayfaar.app.SpringTestConfiguration;
 import org.ayfaar.app.dao.ItemDao;
@@ -12,13 +12,10 @@ import java.util.List;
 
 public class FixQuestionBD {
 
-    private static ApplicationContext ctx;
-    private static ItemDao itemDao;
-
     public static void main(String[] args) {
 
-        ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
-        itemDao = ctx.getBean(ItemDao.class);
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
+        ItemDao itemDao = ctx.getBean(ItemDao.class);
 
         List<Item> items = itemDao.getLike("content", "\n" + ItemsHelper.QUESTION, MatchMode.ANYWHERE);
 

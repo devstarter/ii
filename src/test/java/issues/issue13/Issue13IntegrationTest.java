@@ -5,11 +5,9 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ItemsHelper;
 import org.hibernate.criterion.MatchMode;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.sound.midi.Soundbank;
 import java.io.IOException;
 import java.util.List;
 
@@ -45,6 +43,7 @@ public class Issue13IntegrationTest extends IntegrationTest {
      */
     public void allQuestions() {
         List<Item> items = itemDao.getLike("content", "\n"+ItemsHelper.QUESTION, MatchMode.ANYWHERE);
+        items.addAll(itemDao.getLike("content", "  "+ItemsHelper.QUESTION, MatchMode.ANYWHERE));
         assertTrue(items.isEmpty());
     }
 }
