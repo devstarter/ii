@@ -24,6 +24,7 @@ public class NewSearchController {
      * @param pageNumber номер страницы
      */
     private List<Item> foundItems = new ArrayList<Item>();
+    private List<String> allPossibleSearchQueries = new ArrayList<String>();
 
 
     public SearchResultPage search(String query, Integer pageNumber, SearchFilter filter) {
@@ -49,7 +50,7 @@ public class NewSearchController {
             List<Term> allSearchTerms = getAllAliases(term);
 
             // 3.2. Получить все падежи по всем терминам
-            List<String> allPossibleSearchQueries = getAllMorphs(allSearchTerms);
+            allPossibleSearchQueries = getAllMorphs(allSearchTerms);
             // 4. Произвести поиск по списку синонимов слов
             foundItems = searchInDb(query, allPossibleSearchQueries, pageNumber, filter);
         } else {
@@ -64,10 +65,7 @@ public class NewSearchController {
         // Если до или после найденной фразы слов больше чем 10, то обрезать всё до (или после) 10 слова и поставить "..."
         // Обозначить поисковую фразу или фразы тегами <strong></strong>
 
-        handleItems.setFoundedItems(foundItems);
-        handleItems.setRequiredPhrase(query);
-
-        List<Quote> quotes = handleItems.createQuotes(foundItems);
+        List<Quote> quotes = handleItems.createQuotes(foundItems, allPossibleSearchQueries);
         page.setQuotes(quotes);
         //page.setQuotes(Collections.<Quote>emptyList());
 
