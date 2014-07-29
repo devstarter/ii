@@ -1,32 +1,26 @@
 package issues.issue_search;
 
-import org.ayfaar.app.IntegrationTest;
-import org.ayfaar.app.controllers.NewSearchController;
-import org.ayfaar.app.utils.search.HandleItems;
-import org.ayfaar.app.controllers.NewSearchController.Quote;
+import org.ayfaar.app.controllers.search.HandleItems;
+
+import org.ayfaar.app.controllers.search.Quote;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class UnitTestHandleItems extends IntegrationTest{
+public class UnitTestHandleItems {
+
     private HandleItems handleItems;
+
     private int sentenceMaxWords = 21;
     private List<Quote> quotes;
     private String phrase;
 
-    private NewSearchController controller;
-
     @Before
     public void init() {
-        controller = new NewSearchController();
         quotes = new ArrayList<Quote>();
         String content1 = "Взять хотя бы то, что все ныне принятые Представления о мерностных свойствах Пространства-Времени" +
                 " весьма, весьма ограничены и очень далеки от более истинного Понимания Природы подобных явлений.";
@@ -41,11 +35,11 @@ public class UnitTestHandleItems extends IntegrationTest{
                 "вашему субъективному Восприятию Форм и событий сразу во всём множестве «точек» их разнокачественного" +
                 " проявления в Пространстве-Времени.";
 
-        NewSearchController.Quote quote1 = controller.new Quote();
-        NewSearchController.Quote quote2 = controller.new Quote();
-        NewSearchController.Quote quote3 = controller.new Quote();
-        NewSearchController.Quote quote4 = controller.new Quote();
-        NewSearchController.Quote quote5 = controller.new Quote();
+        Quote quote1 = new Quote();
+        Quote quote2 = new Quote();
+        Quote quote3 = new Quote();
+        Quote quote4 = new Quote();
+        Quote quote5 = new Quote();
         quote1.setQuote(content1);
         quote2.setQuote(content2);
         quote3.setQuote(content3);
@@ -71,7 +65,7 @@ public class UnitTestHandleItems extends IntegrationTest{
         String expected = "...бы то, что все ныне принятые Представления о мерностных свойствах Пространства-Времени" +
                 " весьма, весьма ограничены и очень далеки от более истинного Понимания...";
         Quote quote = handleItems.changeSentenceWithRequiredPhrase(quotes).get(0);
-        System.out.println("quote " + quote.getQuote());
+
         assertTrue(quote.getQuote().split(" ").length <= sentenceMaxWords);
         assertEquals(expected, quote.getQuote());
     }

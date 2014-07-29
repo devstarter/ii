@@ -1,19 +1,18 @@
 package org.ayfaar.app.controllers;
 
-import lombok.Data;
 import org.apache.commons.lang.NotImplementedException;
+import org.ayfaar.app.controllers.search.Quote;
+import org.ayfaar.app.controllers.search.SearchFilter;
+import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.utils.search.HandleItems;
+import org.ayfaar.app.controllers.search.HandleItems;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 //todo пометить как контролер и зделать доступнім по адресу "v2/search"
-@Controller
 public class NewSearchController {
     /**
      * Поиск будет производить только по содержимому Item
@@ -109,23 +108,5 @@ public class NewSearchController {
 
     private String prepareQuery(String query) {
         throw new NotImplementedException();
-    }
-
-    @Data
-    public class SearchResultPage {
-        private List<Quote> quotes;
-        private boolean hasMore;
-    }
-
-    @Data
-    public class SearchFilter {
-        private String fromItem;
-        private String toItem;
-    }
-
-    @Data
-    public class Quote {
-        private String uri; // уникальный идентификатор источника
-        private String quote;
     }
 }
