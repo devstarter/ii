@@ -1,5 +1,6 @@
 package issues.issue_search;
 
+import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.utils.search.HandleItems;
 import org.ayfaar.app.controllers.NewSearchController.Quote;
@@ -8,24 +9,24 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UnitTestHandleItems {
+public class UnitTestHandleItems extends IntegrationTest{
     private HandleItems handleItems;
     private int sentenceMaxWords = 21;
     private List<Quote> quotes;
     private String phrase;
 
-    @InjectMocks
     private NewSearchController controller;
 
     @Before
     public void init() {
-        //controller = new NewSearchController();
+        controller = new NewSearchController();
         quotes = new ArrayList<Quote>();
         String content1 = "Взять хотя бы то, что все ныне принятые Представления о мерностных свойствах Пространства-Времени" +
                 " весьма, весьма ограничены и очень далеки от более истинного Понимания Природы подобных явлений.";
@@ -58,8 +59,6 @@ public class UnitTestHandleItems {
 
         phrase = "время";
         handleItems = new HandleItems();
-        /*handleItems.setRequiredPhrase(phrase);
-        handleItems.setFoundedItems(new ArrayList<Item>());*/
     }
 
     @Test
@@ -72,7 +71,7 @@ public class UnitTestHandleItems {
         String expected = "...бы то, что все ныне принятые Представления о мерностных свойствах Пространства-Времени" +
                 " весьма, весьма ограничены и очень далеки от более истинного Понимания...";
         Quote quote = handleItems.changeSentenceWithRequiredPhrase(quotes).get(0);
-        System.out.println(quote.getQuote());
+        System.out.println("quote " + quote.getQuote());
         assertTrue(quote.getQuote().split(" ").length <= sentenceMaxWords);
         assertEquals(expected, quote.getQuote());
     }
