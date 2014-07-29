@@ -17,8 +17,7 @@ public class Term extends UID {
     private String shortDescription;
     @Column(columnDefinition = "TEXT")
     private String description;
-//    private String mode; //падеж
-//    private Boolean multipleMode;
+
 
     public Term(String name) {
         this.name = name;
@@ -37,11 +36,6 @@ public class Term extends UID {
         this.shortDescription = shortDescription;
     }
 
-    /*public Term(String name, String mode, boolean multipleMode) {
-        this.name = name;
-        this.mode = mode;
-        this.multipleMode = multipleMode;
-    }*/
 
     public String getName() {
         return name;

@@ -67,7 +67,6 @@ public class NewSearchController {
 
         List<Quote> quotes = handleItems.createQuotes(foundItems, allPossibleSearchQueries);
         page.setQuotes(quotes);
-        //page.setQuotes(Collections.<Quote>emptyList());
 
         // 6. Вернуть результат
         return page;
