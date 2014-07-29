@@ -4,7 +4,10 @@ import lombok.Data;
 import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.utils.search.HandleItems;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,6 +19,10 @@ public class NewSearchController {
      *
      * @param pageNumber номер страницы
      */
+    private HandleItems handleItems;
+    private List<Item> foundItems = new ArrayList<Item>();
+
+
     public SearchResultPage search(String query, Integer pageNumber, SearchFilter filter) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         query = prepareQuery(query);
@@ -41,10 +48,10 @@ public class NewSearchController {
             // 3.2. Получить все падежи по всем терминам
             List<String> allPossibleSearchQueries = getAllMorphs(allSearchTerms);
             // 4. Произвести поиск по списку синонимов слов
-            List<Item> foundItems = searchInDb(query, allPossibleSearchQueries, pageNumber, filter);
+            foundItems = searchInDb(query, allPossibleSearchQueries, pageNumber, filter);
         } else {
             // 4. Поиск фразы (не термин)
-            List<Item> foundItems = searchInDb(query, null, pageNumber, filter);
+            foundItems = searchInDb(query, null, pageNumber, filter);
         }
 
         page.setHasMore(false);
@@ -53,7 +60,18 @@ public class NewSearchController {
         // пройтись по всем пунктам и вырезать предложением, в котором встречаеться поисковая фраза или фразы
         // Если до или после найденной фразы слов больше чем 10, то обрезать всё до (или после) 10 слова и поставить "..."
         // Обозначить поисковую фразу или фразы тегами <strong></strong>
-        page.setQuotes(Collections.<Quote>emptyList());
+
+        handleItems = new HandleItems(foundItems, query);
+        List<Quote> quotes = handleItems.createQuotes(foundItems);
+        quotes = handleItems.changeSentenceWithRequiredPhrase(quotes);
+
+        for(int i = 0; i < quotes.size(); i++) {
+            Quote quote = new Quote();
+            quote.setQuote(handleItems.decorateRequiredPhrase(quotes.get(i).getQuote()));
+            quotes.set(i, quote);
+        }
+        page.setQuotes(quotes);
+        //page.setQuotes(Collections.<Quote>emptyList());
 
         // 6. Вернуть результат
         return page;
@@ -109,7 +127,7 @@ public class NewSearchController {
     }
 
     @Data
-    private class Quote {
+    public class Quote {
         private String uri; // уникальный идентификатор источника
         private String quote;
     }
