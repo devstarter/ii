@@ -1,7 +1,9 @@
 package issues.issue_search;
 
+import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.search.HandleItems;
+import org.ayfaar.app.controllers.NewSearchController.Quote;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,12 +15,14 @@ import static org.junit.Assert.*;
 public class UnitTestHandleItems {
     private HandleItems handleItems;
     private int sentenceMaxWords = 21;
-    private List<String> contents;
+    private List<Quote> quotes;
     private String phrase;
+    private NewSearchController controller;
 
     @Before
     public void init() {
-        contents = new ArrayList<String>();
+        controller = new NewSearchController();
+        quotes = new ArrayList<Quote>();
         String content1 = "Взять хотя бы то, что все ныне принятые Представления о мерностных свойствах Пространства-Времени" +
                 " весьма, весьма ограничены и очень далеки от более истинного Понимания Природы подобных явлений.";
         String content2 = "Наука последнего тысячелетия использовала два метода познания - теоретический и экспериментальный," +
@@ -32,29 +36,39 @@ public class UnitTestHandleItems {
                 "вашему субъективному Восприятию Форм и событий сразу во всём множестве «точек» их разнокачественного" +
                 " проявления в Пространстве-Времени.";
 
-        contents.add(content1);
-        contents.add(content2);
-        contents.add(content3);
-        contents.add(content4);
-        contents.add(content5);
+        NewSearchController.Quote quote1 = controller.new Quote();
+        NewSearchController.Quote quote2 = controller.new Quote();
+        NewSearchController.Quote quote3 = controller.new Quote();
+        NewSearchController.Quote quote4 = controller.new Quote();
+        NewSearchController.Quote quote5 = controller.new Quote();
+        quote1.setQuote(content1);
+        quote2.setQuote(content2);
+        quote3.setQuote(content3);
+        quote4.setQuote(content4);
+        quote5.setQuote(content5);
+        quotes.add(quote1);
+        quotes.add(quote2);
+        quotes.add(quote3);
+        quotes.add(quote4);
+        quotes.add(quote5);
 
         phrase = "время";
         handleItems = new HandleItems(new ArrayList<Item>(), phrase);
     }
 
     @Test
-    public void testGetSentenceWithRequiredPhraseSize() {
-        assertTrue(handleItems.getSentenceWithRequiredPhrase(contents, phrase).size() == 3);
+    public void testChangeSentenceWithRequiredPhraseSize() {
+        assertTrue(handleItems.changeSentenceWithRequiredPhrase(quotes).size() == 3);
     }
 
     @Test
-    public void testEqualityGetSentenceWithRequiredPhrase() {
+    public void testEqualityChangeSentenceWithRequiredPhrase() {
         String expected = "...бы то, что все ныне принятые Представления о мерностных свойствах Пространства-Времени" +
                 " весьма, весьма ограничены и очень далеки от более истинного Понимания...";
-        String content = handleItems.getSentenceWithRequiredPhrase(contents, phrase).get(0);
+        Quote quote = handleItems.changeSentenceWithRequiredPhrase(quotes).get(0);
 
-        assertTrue(content.split(" ").length <= sentenceMaxWords);
-        assertEquals(expected, content);
+        assertTrue(quote.getQuote().split(" ").length <= sentenceMaxWords);
+        assertEquals(expected, quote.getQuote());
     }
 
     @Test
@@ -64,6 +78,6 @@ public class UnitTestHandleItems {
         String expected = "...бы то, что все ныне принятые Представления о мерностных свойствах Пространства-<strong>Времени</strong>"
                 + " весьма, весьма ограничены и очень далеки от более истинного Понимания...";
 
-        assertEquals(expected, handleItems.decorateRequiredPhrase(sentence, phrase));
+        assertEquals(expected, handleItems.decorateRequiredPhrase(sentence));
     }
 }
