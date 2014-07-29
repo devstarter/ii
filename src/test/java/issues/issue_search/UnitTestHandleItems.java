@@ -1,5 +1,6 @@
 package issues.issue_search;
 
+import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.search.HandleItems;
@@ -53,7 +54,9 @@ public class UnitTestHandleItems {
         quotes.add(quote5);
 
         phrase = "время";
-        handleItems = new HandleItems(new ArrayList<Item>(), phrase);
+        handleItems = new HandleItems();
+        handleItems.setRequiredPhrase(phrase);
+        handleItems.setFoundedItems(new ArrayList<Item>());
     }
 
     @Test

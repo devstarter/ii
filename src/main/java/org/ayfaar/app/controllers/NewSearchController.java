@@ -6,20 +6,23 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.utils.search.HandleItems;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 //todo пометить как контролер и зделать доступнім по адресу "v2/search"
+@Controller
 public class NewSearchController {
+    @Autowired
+    private HandleItems handleItems;
+
     /**
      * Поиск будет производить только по содержимому Item
      * todo сделать этот метод доступным через веб
      *
      * @param pageNumber номер страницы
      */
-    private HandleItems handleItems;
     private List<Item> foundItems = new ArrayList<Item>();
 
 
@@ -61,15 +64,10 @@ public class NewSearchController {
         // Если до или после найденной фразы слов больше чем 10, то обрезать всё до (или после) 10 слова и поставить "..."
         // Обозначить поисковую фразу или фразы тегами <strong></strong>
 
-        handleItems = new HandleItems(foundItems, query);
-        List<Quote> quotes = handleItems.createQuotes(foundItems);
-        quotes = handleItems.changeSentenceWithRequiredPhrase(quotes);
+        handleItems.setFoundedItems(foundItems);
+        handleItems.setRequiredPhrase(query);
 
-        for(int i = 0; i < quotes.size(); i++) {
-            Quote quote = new Quote();
-            quote.setQuote(handleItems.decorateRequiredPhrase(quotes.get(i).getQuote()));
-            quotes.set(i, quote);
-        }
+        List<Quote> quotes = handleItems.createQuotes(foundItems);
         page.setQuotes(quotes);
         //page.setQuotes(Collections.<Quote>emptyList());
 

@@ -87,6 +87,7 @@
     <bean class="org.springframework.mail.javamail.JavaMailSenderImpl"/>
 
     <bean id="addAccessControlAllowOriginFilter" class="org.ayfaar.app.utils.servlet.AddAccessControlAllowOriginFilter"/>
+    <bean id="handleItems" class="org.ayfaar.app.utils.search.HandleItems" />
 
     <!--<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
         <property name="caches">

@@ -1,2 +1,31 @@
-<a ui-sref="term({name:'ННААССММ'})">ННААССММ</a>
-<a ui-sref="item({number: 1.23423})">1.2344</a>
+<div class="home">
+    <div class="header">
+        <img src="images/logo.png" alt="Ииссиидиология">
+    </div>
+    <h1>Интерактивная Ииссиидиология</h1>
+    <div>
+        Поиск пунктов, терминов, словосочетаний в материалах:
+        <table class="full-width">
+            <tr>
+                <td class="full-width">
+                    <live-search fetch-data="searchCallback"
+                                 fetch-delay="777"
+                                 selected="suggestionSelected"
+                                 ng-model="query"
+                                 class="form-control full-width"></live-search>
+                </td>
+                <td>
+                    <button class="btn btn-primary" ng-click="search()">Искать</button>
+                </td>
+            </tr>
+        </table>
+        Примеры поиска: <a href="#?птиц*">птиц*</a>, <a href="#?НАСМ">НАСМ</a>, <a href="#?10.10176">10.10176</a>
+    </div>
+    <div class="footer">
+        <a class="btn" href="https://www.youtube.com/watch?v=6oZJHu1dEnQ" target="_blank">
+            <img src="https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/video-16.png"/>
+            Видео гид</a>
+        <a class="btn" href="#1.0001">Начать чтение</a>
+        <a class="btn" href="#about">О проекте</a>
+    </div>
+</div>
