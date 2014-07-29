@@ -24,7 +24,16 @@ public class HandleItems {
     public List<Quote> changeSentenceWithRequiredPhrase(List<Quote> quotes) {
         // пройтись по всем пунктам и вырезать предложением, в котором встречаеться поисковая фраза или фразы
         // Если до или после найденной фразы слов больше чем 10, то обрезать всё до (или после) 10 слова и поставить "..."
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
+        List<Quote> list = new ArrayList<Quote>();
+        //NewSearchController controller1 = new NewSearchController();
+        Quote quote = controller.new Quote();
+        quote.setQuote("dlfjgldhfgldhfgld ldkjfg dfgdg");
+
+        list.add(quote);
+        list.add(quote);
+        list.add(quote);
+        return list;
     }
 
     public String decorateRequiredPhrase(String sentence) {
