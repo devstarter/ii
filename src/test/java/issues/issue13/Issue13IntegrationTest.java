@@ -43,7 +43,8 @@ public class Issue13IntegrationTest extends IntegrationTest {
      */
     public void allQuestions() {
         List<Item> items = itemDao.getLike("content", "\n"+ItemsHelper.QUESTION, MatchMode.ANYWHERE);
-        items.addAll(itemDao.getLike("content", "  "+ItemsHelper.QUESTION, MatchMode.ANYWHERE));
+        items.addAll(itemDao.getLike("content","\n" + "  "+ItemsHelper.QUESTION, MatchMode.ANYWHERE));
+        items.addAll(itemDao.getLike("content","\n" + "   "+ItemsHelper.QUESTION, MatchMode.ANYWHERE));
         assertTrue(items.isEmpty());
     }
 }

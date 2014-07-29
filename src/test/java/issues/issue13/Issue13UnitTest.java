@@ -59,7 +59,7 @@ public class Issue13UnitTest {
     @Test
     public void emptyString() throws IOException {
         String[] parts = ItemsHelper.removeQuestion("");
-        assertEquals(1, parts.length);
+        assertEquals(2, parts.length);
         assertTrue(parts[0].isEmpty());
 
         String result = ItemsHelper.addQuestion("", "");

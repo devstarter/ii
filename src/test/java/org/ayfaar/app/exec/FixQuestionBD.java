@@ -17,7 +17,7 @@ public class FixQuestionBD {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
         ItemDao itemDao = ctx.getBean(ItemDao.class);
 
-        List<Item> items = itemDao.getLike("content", "\n" + ItemsHelper.QUESTION, MatchMode.ANYWHERE);
+        List<Item> items = itemDao.getByRegexp("content","^.+ВОПРОС\\.");
 
         for (Item item : items) {
             String[] questionAndText = ItemsHelper.removeQuestion(item.getContent());
