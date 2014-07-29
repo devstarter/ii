@@ -33,6 +33,8 @@ public class TermController {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
     @Autowired AliasesMap aliasesMap;
+    @Autowired
+    SuggestionsController searchController2;
 
     /*@RequestMapping("import")
     @Model
@@ -256,12 +258,7 @@ public class TermController {
     @RequestMapping("autocomplete")
     @ResponseBody
     public List<String> autoComplete(@RequestParam("filter[filters][0][value]") String filter) {
-        List<Term> terms = termDao.getLike("name", /*"%" +*/ filter + "%");
-        List<String> names = new ArrayList<String>();
-        for (Term term : terms) {
-            names.add(term.getName());
-        }
-        return names;
+        return searchController2.suggestions(filter);
     }
 
     @RequestMapping("remove/{name}")
