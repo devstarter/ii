@@ -182,7 +182,7 @@ router.route("main", function() {
     ga('send', 'pageview', "main");
     switchTo("main", function(){
         $("#search-input").kendoAutoComplete({
-            minLength: 3,
+            minLength: 2,
             dataSource: {
                 serverFiltering: true,
                 serverPaging: true,
