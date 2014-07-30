@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 import static org.junit.Assert.assertEquals;
 
 public class SearchQuotesHelperUnitTest extends AbstractTest {
@@ -20,7 +21,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     public SearchQuotesHelperUnitTest() throws IOException {
         Item item_1_0846 = new Item("1.0846", getFile("item-1.0846.txt"));
         Item item_1_0131 = new Item("1.0131", getFile("item-1.0131.txt"));
-        items = asList(item_1_0131, item_1_0846);
+        items = unmodifiableList(asList(item_1_0131, item_1_0846));
     }
 
     @Before
