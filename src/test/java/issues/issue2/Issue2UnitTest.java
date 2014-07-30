@@ -1,6 +1,6 @@
 package issues.issue2;
 
-import org.apache.commons.io.IOUtils;
+import org.ayfaar.app.AbstractTest;
 import org.ayfaar.app.utils.ItemsCleaner;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class Issue2UnitTest {
+public class Issue2UnitTest extends AbstractTest {
     private String valueWithBug;
     private String expectedValue;
     private String cleanItem3_1052;
@@ -37,10 +37,6 @@ public class Issue2UnitTest {
         dirtyItem10_10865 = getFile("dirty-item-10.10865.txt");
         cleanItem15_17444 = getFile("clean-item-15.17444.txt");
         dirtyItem15_17444 = getFile("dirty-item-15.17444.txt");
-    }
-
-    private String getFile(String fileName) throws IOException {
-        return IOUtils.toString(Issue2UnitTest.class.getResourceAsStream(fileName));
     }
 
     @Test

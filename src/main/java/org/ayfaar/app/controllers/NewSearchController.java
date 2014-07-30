@@ -3,10 +3,11 @@ package org.ayfaar.app.controllers;
 import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchFilter;
+import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
+import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.controllers.search.HandleItems;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -14,19 +15,21 @@ import java.util.List;
 
 //todo пометить как контролер и зделать доступнім по адресу "v2/search"
 public class NewSearchController {
+    @Autowired
+    private SearchQuotesHelper handleItems;
+
+    @Autowired
+    private SearchDao searchDao;
+
+    private List<String> allPossibleSearchQueries = new ArrayList<String>();
+
+
     /**
      * Поиск будет производить только по содержимому Item
      * todo сделать этот метод доступным через веб
      *
      * @param pageNumber номер страницы
      */
-    @Autowired
-    private HandleItems handleItems;
-
-    private List<Item> foundItems = new ArrayList<Item>();
-    private List<String> allPossibleSearchQueries = new ArrayList<String>();
-
-
     public SearchResultPage search(String query, Integer pageNumber, SearchFilter filter) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         query = prepareQuery(query);
@@ -46,6 +49,8 @@ public class NewSearchController {
         }
 
         // 3.1. Если да, Получить все синониме термина
+        List<Item> foundItems;
+
         if (term != null) {
             List<Term> allSearchTerms = getAllAliases(term);
 
@@ -61,13 +66,8 @@ public class NewSearchController {
         page.setHasMore(false);
 
         // 5. Обработка найденных пунктов
-        // пройтись по всем пунктам и вырезать предложением, в котором встречаеться поисковая фраза или фразы
-        // Если до или после найденной фразы слов больше чем 10, то обрезать всё до (или после) 10 слова и поставить "..."
-        // Обозначить поисковую фразу или фразы тегами <strong></strong>
-
         List<Quote> quotes = handleItems.createQuotes(foundItems, allPossibleSearchQueries);
         page.setQuotes(quotes);
-        //page.setQuotes(Collections.<Quote>emptyList());
 
         // 6. Вернуть результат
         return page;
@@ -77,6 +77,15 @@ public class NewSearchController {
         // 4.1. Результат должен быть отсортирован:
         // а. В первую очередь должны быть точные совпадения
         // б. Сначала самые ранние пункты
+
+        if(words == null) {
+            searchDao.getByRegexp()
+        }
+        else {
+            for(String s : words) {
+                searchDao.getByRegexp("item", ^s);
+            }
+        }
 
         // 4.2. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
         throw new NotImplementedException();

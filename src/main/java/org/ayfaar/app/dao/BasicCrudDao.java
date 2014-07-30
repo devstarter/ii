@@ -18,6 +18,8 @@ public interface BasicCrudDao<E> {
 
     List<E> getLike(String property, @NotNull String value, MatchMode matchMode);
 
+    List<E> getByRegexp(String property, String regexp);
+
     void remove(@NotNull Serializable id);
 
     @NotNull
