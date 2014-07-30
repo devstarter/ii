@@ -8,7 +8,7 @@ import java.util.List;
 
 //5.Обработка найденных пунктов
 @Component
-public class HandleItems {
+public class SearchQuotesHelper {
 
     public static final int MAX_WORDS_ON_BOUNDARIES = 30;
 

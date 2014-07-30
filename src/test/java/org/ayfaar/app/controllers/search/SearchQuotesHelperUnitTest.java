@@ -1,6 +1,6 @@
-package issues.issue_search;
+package org.ayfaar.app.controllers.search;
 
-import org.ayfaar.app.controllers.search.HandleItems;
+import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.model.Item;
 import org.junit.Before;
@@ -12,15 +12,15 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class UnitTestHandleItems {
+public class SearchQuotesHelperUnitTest {
 
-    private HandleItems handleItems;
+    private SearchQuotesHelper handleItems;
     private List<Item> items;
     private List<String> phrases;
 
     @Before
     public void init() {
-        handleItems = new HandleItems();
+        handleItems = new SearchQuotesHelper();
         items = new ArrayList<Item>();
         phrases = new ArrayList<String>();
 
