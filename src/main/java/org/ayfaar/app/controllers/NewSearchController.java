@@ -5,13 +5,8 @@ import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchFilter;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
-import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
-<<<<<<< HEAD
-import org.springframework.beans.factory.annotation.Autowired;
-=======
->>>>>>> a4c6b87691dcd67420e5e63febef4e9cc07d586a
 
 import javax.inject.Inject;
 import java.util.List;
@@ -20,21 +15,11 @@ import static java.util.Arrays.asList;
 
 //todo пометить как контролер и зделать доступнім по адресу "v2/search"
 public class NewSearchController {
-<<<<<<< HEAD
-    @Autowired
-    private SearchQuotesHelper handleItems;
-
-    @Autowired
-    private SearchDao searchDao;
-
-    private List<String> allPossibleSearchQueries = new ArrayList<String>();
-=======
     public static final int PAGE_SIZE = 20;
     @Inject
     private SearchQuotesHelper handleItems;
 
     private List<String> searchQueries;
->>>>>>> a4c6b87691dcd67420e5e63febef4e9cc07d586a
 
 
     /**
@@ -63,14 +48,8 @@ public class NewSearchController {
 
         // 3.1. Если да, Получить все синониме термина
         List<Item> foundItems;
-<<<<<<< HEAD
-
-        if (term != null) {
-            List<Term> allSearchTerms = getAllAliases(term);
-=======
         // указывает сколько результатов поиска нужно пропустиьб, то есть когда ищем следующую страницу
         int skipResults = pageNumber*PAGE_SIZE;
->>>>>>> a4c6b87691dcd67420e5e63febef4e9cc07d586a
 
         if (term != null) {
             // 3.2. Получить все падежи по всем терминам
@@ -91,11 +70,7 @@ public class NewSearchController {
         page.setHasMore(false);
 
         // 5. Обработка найденных пунктов
-<<<<<<< HEAD
-        List<Quote> quotes = handleItems.createQuotes(foundItems, allPossibleSearchQueries);
-=======
         List<Quote> quotes = handleItems.createQuotes(foundItems, searchQueries);
->>>>>>> a4c6b87691dcd67420e5e63febef4e9cc07d586a
         page.setQuotes(quotes);
 
         // 6. Вернуть результат
@@ -106,24 +81,11 @@ public class NewSearchController {
         return searchInDb(asList(query), skipResults, maxResults, filter);
     }
 
-<<<<<<< HEAD
-        if(words == null) {
-            searchDao.getByRegexp()
-        }
-        else {
-            for(String s : words) {
-                searchDao.getByRegexp("item", ^s);
-            }
-        }
-
-        // 4.2. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
-=======
     private List<Item> searchInDb(List<String> words, int skipResults, int maxResults, SearchFilter filter) {
         // 4.1. Результат должен быть отсортирован:
         // Сначала самые ранние пункты
         // 4.2. Если filter заполнен то нужно учесть стартовый и конечный  абзаци
         // 4.3. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
->>>>>>> a4c6b87691dcd67420e5e63febef4e9cc07d586a
         throw new NotImplementedException();
     }
 

@@ -3,27 +3,19 @@ package org.ayfaar.app.controllers.search;
 import org.ayfaar.app.AbstractTest;
 import org.ayfaar.app.model.Item;
 import org.junit.Before;
-<<<<<<< HEAD
-=======
 import org.junit.Ignore;
->>>>>>> a4c6b87691dcd67420e5e63febef4e9cc07d586a
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-<<<<<<< HEAD
-import static org.junit.Assert.assertEquals;
-
-=======
 import static java.util.Collections.unmodifiableList;
 import static org.junit.Assert.assertEquals;
 
 @Ignore
 // todo уберите эту анатацию (@Ignore), она здесь для того чтобв в ветке мастер этот тест не запускался,
 // так как он валится, то есть ваша задача зделать так чтобы он успешно выполнялся
->>>>>>> a4c6b87691dcd67420e5e63febef4e9cc07d586a
 public class SearchQuotesHelperUnitTest extends AbstractTest {
 
     private final List<Item> items;
@@ -33,11 +25,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     public SearchQuotesHelperUnitTest() throws IOException {
         Item item_1_0846 = new Item("1.0846", getFile("item-1.0846.txt"));
         Item item_1_0131 = new Item("1.0131", getFile("item-1.0131.txt"));
-<<<<<<< HEAD
-        items = asList(item_1_0131, item_1_0846);
-=======
         items = unmodifiableList(asList(item_1_0131, item_1_0846));
->>>>>>> a4c6b87691dcd67420e5e63febef4e9cc07d586a
     }
 
     @Before
