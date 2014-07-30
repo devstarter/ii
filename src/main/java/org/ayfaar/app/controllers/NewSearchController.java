@@ -1,9 +1,9 @@
 package org.ayfaar.app.controllers;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.ayfaar.app.controllers.search.HandleItems;
 import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchFilter;
+import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
@@ -15,7 +15,7 @@ import java.util.List;
 //todo пометить как контролер и зделать доступнім по адресу "v2/search"
 public class NewSearchController {
     @Autowired
-    private HandleItems handleItems;
+    private SearchQuotesHelper handleItems;
 
     private List<String> allPossibleSearchQueries = new ArrayList<String>();
 
