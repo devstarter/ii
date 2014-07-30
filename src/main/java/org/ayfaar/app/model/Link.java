@@ -16,20 +16,10 @@ public class Link {
     public static final Byte ABBREVIATION = 2;
 
     /**
-     * Ссылка на словарную статью
-     */
-    public static final Byte DEFINITION = 3;
-
-    /**
      * Ссылка на код понятия
      * Первый понятие, воторой код
      */
     public static final Byte CODE = 4;
-
-    /**
-     * Ссылка на группу к которой относиться понятие. Первым указываеться понятие
-     * вторым группа
-     */
 
     @Id
     @GeneratedValue

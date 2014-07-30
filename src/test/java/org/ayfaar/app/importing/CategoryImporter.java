@@ -7,8 +7,6 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -20,7 +18,6 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 @Slf4j
-@Ignore
 public class CategoryImporter {
 
     CommonDao commonDao;
@@ -28,7 +25,7 @@ public class CategoryImporter {
     private ApplicationContext ctx;
     private HashMap<String, Category> categoriesMap;
 
-    @Test
+//    @Test
     public void categoryImport() throws IOException {
         ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
         commonDao = ctx.getBean(CommonDao.class);
