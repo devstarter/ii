@@ -15,6 +15,7 @@ import static java.util.Arrays.asList;
 
 //todo пометить как контролер и зделать доступнім по адресу "v2/search"
 public class NewSearchController {
+    public static final int PAGE_SIZE = 20;
     @Inject
     private SearchQuotesHelper handleItems;
 
@@ -47,21 +48,23 @@ public class NewSearchController {
 
         // 3.1. Если да, Получить все синониме термина
         List<Item> foundItems;
+        // указывает сколько результатов поиска нужно пропустиьб, то есть когда ищем следующую страницу
+        int skipResults = pageNumber*PAGE_SIZE;
 
         if (term != null) {
             // 3.2. Получить все падежи по всем терминам
             searchQueries = getAllMorphs(term);
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
-            foundItems = searchInDb(searchQueries, pageNumber, filter);
+            foundItems = searchInDb(searchQueries, skipResults, PAGE_SIZE, filter);
             // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
             List<Term> aliases = getAllAliases(term);
             List<String> aliasesSearchQueries = getAllMorphs(aliases);
-            foundItems.addAll(searchInDb(searchQueries, pageNumber - foundItems.size(), filter));
+            foundItems.addAll(searchInDb(searchQueries, skipResults, PAGE_SIZE - foundItems.size(), filter));
             searchQueries.addAll(aliasesSearchQueries);
         } else {
             // 4. Поиск фразы (не термин)
-            foundItems = searchInDb(query, null, pageNumber, filter);
+            foundItems = searchInDb(query, skipResults, PAGE_SIZE, filter);
         }
 
         page.setHasMore(false);
@@ -74,11 +77,11 @@ public class NewSearchController {
         return page;
     }
 
-    private List<Item> searchInDb(String query, Object o, Integer maxResults, SearchFilter filter) {
-        return searchInDb(asList(query), maxResults, filter);
+    private List<Item> searchInDb(String query, int skipResults, int maxResults, SearchFilter filter) {
+        return searchInDb(asList(query), skipResults, maxResults, filter);
     }
 
-    private List<Item> searchInDb(List<String> words, Integer maxResults, SearchFilter filter) {
+    private List<Item> searchInDb(List<String> words, int skipResults, int maxResults, SearchFilter filter) {
         // 4.1. Результат должен быть отсортирован:
         // Сначала самые ранние пункты
         // 4.2. Если filter заполнен то нужно учесть стартовый и конечный  абзаци
