@@ -44,10 +44,6 @@ public class Issue13IntegrationTest extends IntegrationTest {
     public void allQuestions() {
         List<Item> items = itemDao.getLike("content", "\n"+ QUESTION, MatchMode.ANYWHERE);
         items.addAll(itemDao.getByRegexp("content", "^.+"+QUESTION));
-        System.out.println(items.size());
-        for (Item item : items) {
-            System.out.println(item.getNumber());
-        };
         assertTrue(items.isEmpty());
     }
 }

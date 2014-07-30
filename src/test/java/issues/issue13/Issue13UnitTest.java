@@ -21,11 +21,6 @@ public class Issue13UnitTest {
     private String dirtyItem13_15325;
     private String question13_15325;
 
-    // иногда встречаются пробелы после новых строк и перед поросом (\n\n       ВОПРОС.)
-    // todo добавить тест для 14.16819 пункта
-    // содержание пункта для теста с вопросом (itemWithoutQuestion14.16819.txt) можно получить в базе данных
-    // SQL: select content from item where number = "14.16819"
-
     @Before
     public void init() throws IOException {
         cleanItem15_17819 = getFile("clean-item-15.17819.txt");
