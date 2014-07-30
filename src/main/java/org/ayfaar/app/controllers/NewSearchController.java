@@ -1,12 +1,12 @@
 package org.ayfaar.app.controllers;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.ayfaar.app.controllers.search.HandleItems;
 import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchFilter;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.controllers.search.HandleItems;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -17,16 +17,15 @@ public class NewSearchController {
     @Autowired
     private HandleItems handleItems;
 
+    private List<String> allPossibleSearchQueries = new ArrayList<String>();
+
+
     /**
      * Поиск будет производить только по содержимому Item
      * todo сделать этот метод доступным через веб
      *
      * @param pageNumber номер страницы
      */
-    private List<Item> foundItems = new ArrayList<Item>();
-    private List<String> allPossibleSearchQueries = new ArrayList<String>();
-
-
     public SearchResultPage search(String query, Integer pageNumber, SearchFilter filter) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         query = prepareQuery(query);
@@ -46,6 +45,8 @@ public class NewSearchController {
         }
 
         // 3.1. Если да, Получить все синониме термина
+        List<Item> foundItems;
+
         if (term != null) {
             List<Term> allSearchTerms = getAllAliases(term);
 
@@ -61,10 +62,6 @@ public class NewSearchController {
         page.setHasMore(false);
 
         // 5. Обработка найденных пунктов
-        // пройтись по всем пунктам и вырезать предложением, в котором встречаеться поисковая фраза или фразы
-        // Если до или после найденной фразы слов больше чем 10, то обрезать всё до (или после) 10 слова и поставить "..."
-        // Обозначить поисковую фразу или фразы тегами <strong></strong>
-
         List<Quote> quotes = handleItems.createQuotes(foundItems, allPossibleSearchQueries);
         page.setQuotes(quotes);
 
