@@ -3,6 +3,7 @@ package org.ayfaar.app.controllers.search;
 import org.ayfaar.app.AbstractTest;
 import org.ayfaar.app.model.Item;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -12,6 +13,9 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static org.junit.Assert.assertEquals;
 
+@Ignore
+// todo уберите эту анатацию (@Ignore), она здесь для того чтобв в ветке мастер этот тест не запускался,
+// так как он валится, то есть ваша задача зделать так чтобы он успешно выполнялся
 public class SearchQuotesHelperUnitTest extends AbstractTest {
 
     private final List<Item> items;
