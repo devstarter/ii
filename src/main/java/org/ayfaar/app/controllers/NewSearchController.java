@@ -7,17 +7,18 @@ import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
+import javax.inject.Inject;
 import java.util.List;
+
+import static java.util.Arrays.asList;
 
 //todo пометить как контролер и зделать доступнім по адресу "v2/search"
 public class NewSearchController {
-    @Autowired
+    @Inject
     private SearchQuotesHelper handleItems;
 
-    private List<String> allPossibleSearchQueries = new ArrayList<String>();
+    private List<String> searchQueries;
 
 
     /**
@@ -48,12 +49,16 @@ public class NewSearchController {
         List<Item> foundItems;
 
         if (term != null) {
-            List<Term> allSearchTerms = getAllAliases(term);
-
             // 3.2. Получить все падежи по всем терминам
-            allPossibleSearchQueries = getAllMorphs(allSearchTerms);
-            // 4. Произвести поиск по списку синонимов слов
-            foundItems = searchInDb(query, allPossibleSearchQueries, pageNumber, filter);
+            searchQueries = getAllMorphs(term);
+            // 4. Произвести поиск
+            // 4.1. Сначала поискать совпадение термина в различных падежах
+            foundItems = searchInDb(searchQueries, pageNumber, filter);
+            // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
+            List<Term> aliases = getAllAliases(term);
+            List<String> aliasesSearchQueries = getAllMorphs(aliases);
+            foundItems.addAll(searchInDb(searchQueries, pageNumber - foundItems.size(), filter));
+            searchQueries.addAll(aliasesSearchQueries);
         } else {
             // 4. Поиск фразы (не термин)
             foundItems = searchInDb(query, null, pageNumber, filter);
@@ -62,22 +67,28 @@ public class NewSearchController {
         page.setHasMore(false);
 
         // 5. Обработка найденных пунктов
-        List<Quote> quotes = handleItems.createQuotes(foundItems, allPossibleSearchQueries);
+        List<Quote> quotes = handleItems.createQuotes(foundItems, searchQueries);
         page.setQuotes(quotes);
 
         // 6. Вернуть результат
         return page;
     }
 
-    private List<Item> searchInDb(String query, List<String> words, Integer page, SearchFilter filter) {
-        // 4.1. Результат должен быть отсортирован:
-        // а. В первую очередь должны быть точные совпадения
-        // б. Сначала самые ранние пункты
+    private List<Item> searchInDb(String query, Object o, Integer maxResults, SearchFilter filter) {
+        return searchInDb(asList(query), maxResults, filter);
+    }
 
-        // 4.2. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
+    private List<Item> searchInDb(List<String> words, Integer maxResults, SearchFilter filter) {
+        // 4.1. Результат должен быть отсортирован:
+        // Сначала самые ранние пункты
+        // 4.2. Если filter заполнен то нужно учесть стартовый и конечный  абзаци
+        // 4.3. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
         throw new NotImplementedException();
     }
 
+    private List<String> getAllMorphs(Term term) {
+        return getAllMorphs(asList(term));
+    }
     private List<String> getAllMorphs(List<Term> terms) {
         throw new NotImplementedException();
     }
