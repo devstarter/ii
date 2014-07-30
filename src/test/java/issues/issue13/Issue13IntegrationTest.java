@@ -4,7 +4,6 @@ import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.hibernate.criterion.MatchMode;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,13 +28,14 @@ public class Issue13IntegrationTest extends IntegrationTest {
     }
 
     @Test
-    @Ignore // need for testing on unix server, has some problems with comparing new lines
     /**
      * Удостоверяемся что в базе данных в 15.17820 абзаце есть вопрос, перенесённый из 15.17819
      */
     public void testItem15_17820() throws IOException {
         Item item = itemDao.getByNumber("15.17820");
-        assertEquals(getFile("item-15.17820-with-question.txt"), item.getContent());
+        assertTrue(item.getContent().contains(QUESTION));
+        // comment due to testing fail on unix server, has some problems with comparing new lines
+        //assertEquals(getFile("item-15.17820-with-question.txt"), item.getContent());
     }
 
     @Test
