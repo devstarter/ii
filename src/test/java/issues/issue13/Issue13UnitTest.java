@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.ayfaar.app.utils.StringUtils.removeAllNewLines;
 import static org.junit.Assert.*;
 
 public class Issue13UnitTest extends AbstractTest {
@@ -13,8 +14,8 @@ public class Issue13UnitTest extends AbstractTest {
     private final String cleanItem15_17819;
     private final String dirtyItem15_17819;
     private final String question15_17819;
-    private final String itemWithQuestion15_17819;
-    private final String itemWithoutQuestion15_17819;
+    private final String itemWithQuestion15_17820;
+    private final String itemWithoutQuestion15_17820;
 
     private final String cleanItem13_15325;
     private final String dirtyItem13_15325;
@@ -26,8 +27,8 @@ public class Issue13UnitTest extends AbstractTest {
         cleanItem15_17819 = getFile("clean-item-15.17819.txt");
         dirtyItem15_17819 = getFile("dirty-item-15.17819.txt");
         question15_17819 = getFile("item-15.17820-question.txt");
-        itemWithQuestion15_17819 = getFile("item-15.17820-with-question.txt");
-        itemWithoutQuestion15_17819 = getFile("item-15.17820-without-question.txt");
+        itemWithQuestion15_17820 = getFile("item-15.17820-with-question.txt");
+        itemWithoutQuestion15_17820 = getFile("item-15.17820-without-question.txt");
 
         dirtyItem13_15325 = getFile("dirty-item-13.15325.txt");
         cleanItem13_15325 = getFile("clean-item-13.15325.txt");
@@ -57,8 +58,9 @@ public class Issue13UnitTest extends AbstractTest {
 
     @Test
     public void addQuestionTest() throws IOException {
-        String result = ItemsHelper.addQuestion(question15_17819, itemWithoutQuestion15_17819);
-        assertEquals(itemWithQuestion15_17819, result);
+        String result = ItemsHelper.addQuestion(question15_17819, itemWithoutQuestion15_17820);
+        // need removeAllNewLines for testing on unix server, has some problems with comparing new lines
+        assertEquals(removeAllNewLines(itemWithQuestion15_17820), removeAllNewLines(result));
     }
 
 
