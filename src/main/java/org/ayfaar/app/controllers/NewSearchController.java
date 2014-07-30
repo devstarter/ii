@@ -119,4 +119,8 @@ public class NewSearchController {
     private String prepareQuery(String query) {
         throw new NotImplementedException();
     }
+
+    public String createRegexp(List<String> words) {
+        throw new NotImplementedException();
+    }
 }

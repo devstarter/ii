@@ -17,6 +17,7 @@ public class Category extends UID {
     public static final String PARAGRAPH_NAME = "Параграф";
     public static final String TOM_NAME = "Том";
     public static final String PARAGRAPH_SIGN = "§";
+
     @Column(unique = true)
     private String name;
     @Column(columnDefinition = "TEXT")

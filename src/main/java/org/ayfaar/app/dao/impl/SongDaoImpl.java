@@ -28,6 +28,7 @@ public class SongDaoImpl extends AbstractHibernateDAO<Song> implements SongDao {
     }
 
     @Override
+    @Deprecated
     public Song getSongHtml(Integer songId){
         String songHtml="";
         Song song = getById(songId);
