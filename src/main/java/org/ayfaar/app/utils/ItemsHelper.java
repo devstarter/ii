@@ -68,8 +68,8 @@ public class ItemsHelper {
             return new String[]{"",""};
         }
 
-        String fixQuestion = QUESTION.replaceAll(".",":");
-        text.replaceAll(fixQuestion, QUESTION);
+        String fixQuestion = QUESTION.replace(".",":");
+        text = text.replace(fixQuestion, QUESTION);
 
         String[] resultOfRemoveQuestion = new String[2];
         int indexOfQuestion = text.lastIndexOf(QUESTION);

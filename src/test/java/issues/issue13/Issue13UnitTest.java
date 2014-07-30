@@ -17,6 +17,10 @@ public class Issue13UnitTest {
     private String itemWithQuestion15_17819;
     private String itemWithoutQuestion15_17819;
 
+    private String cleanItem13_15325;
+    private String dirtyItem13_15325;
+    private String question13_15325;
+
     // иногда встречаются пробелы после новых строк и перед поросом (\n\n       ВОПРОС.)
     // todo добавить тест для 14.16819 пункта
     // содержание пункта для теста с вопросом (itemWithoutQuestion14.16819.txt) можно получить в базе данных
@@ -29,6 +33,10 @@ public class Issue13UnitTest {
         question15_17819 = getFile("item-15.17820-question.txt");
         itemWithQuestion15_17819 = getFile("item-15.17820-with-question.txt");
         itemWithoutQuestion15_17819 = getFile("item-15.17820-without-question.txt");
+
+        dirtyItem13_15325 = getFile("dirty-item-13.15325.txt");
+        cleanItem13_15325 = getFile("clean-item-13.15325.txt");
+        question13_15325 = getFile("item-13.15325-question.txt");
     }
 
     @Test
@@ -41,6 +49,18 @@ public class Issue13UnitTest {
 
         assertTrue(parts[1].indexOf(ItemsHelper.QUESTION) == 0);
         assertEquals(question15_17819, parts[1]);
+
+
+        parts = ItemsHelper.removeQuestion(dirtyItem13_15325);
+
+        assertEquals(2, parts.length);
+        assertTrue(!parts[0].contains(ItemsHelper.QUESTION));
+        assertEquals(cleanItem13_15325, parts[0]);
+
+        assertTrue(parts[1].indexOf(ItemsHelper.QUESTION) == 0);
+        assertEquals(question13_15325, parts[1]);
+
+
     }
 
     @Test
