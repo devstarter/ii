@@ -1,7 +1,7 @@
 package issues.issue2;
 
 import org.ayfaar.app.AbstractTest;
-import org.ayfaar.app.utils.ItemsCleaner;
+import org.ayfaar.app.utils.ItemsHelper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,56 +41,56 @@ public class Issue2UnitTest extends AbstractTest {
 
     @Test
     public void equalityItemContent() throws IOException {
-        String actualValue = ItemsCleaner.clean(valueWithBug);
+        String actualValue = ItemsHelper.clean(valueWithBug);
         assertEquals(expectedValue, actualValue);
     }
 
     @Test
     public void equalityItem3_1052Content() throws IOException {
-        String actualValue = ItemsCleaner.clean(dirtyItem3_1052);
+        String actualValue = ItemsHelper.clean(dirtyItem3_1052);
         assertEquals(cleanItem3_1052, actualValue);
     }
 
     @Test
     public void equalityItem3_1185Content() throws IOException {
-        String actualValue = ItemsCleaner.clean(dirtyItem3_1185);
+        String actualValue = ItemsHelper.clean(dirtyItem3_1185);
         assertEquals(cleanItem3_1185, actualValue);
     }
 
     @Test
     public void equalityItem1_0418Content() throws IOException {
-        String actualValue = ItemsCleaner.clean(dirtyItem1_0418);
+        String actualValue = ItemsHelper.clean(dirtyItem1_0418);
         assertEquals(cleanItem1_0418, actualValue);
     }
 
     @Test
     public void equalityItem10_10298Content() throws IOException {
-        String actualValue = ItemsCleaner.clean(dirtyItem10_10865);
+        String actualValue = ItemsHelper.clean(dirtyItem10_10865);
         assertEquals(cleanItem10_10865, actualValue);
     }
 
     @Test
     public void equalityItem15_17444Content() throws IOException {
-        String actualValue = ItemsCleaner.clean(dirtyItem15_17444);
+        String actualValue = ItemsHelper.clean(dirtyItem15_17444);
         assertEquals(cleanItem15_17444, actualValue);
     }
 
     @Test
     public void cleanValueNotNullTest() throws IOException {
-        String actualValue = ItemsCleaner.clean(valueWithBug);
+        String actualValue = ItemsHelper.clean(valueWithBug);
         assertNotNull(actualValue);
     }
 
     @Test
     public void cleanNullValueTest() throws IOException {
-        String actualValue = ItemsCleaner.clean(null);
+        String actualValue = ItemsHelper.clean(null);
         assertNull(actualValue);
     }
 
     @Test
     public void emptyString() throws IOException {
         valueWithBug = "";
-        String actualValue = ItemsCleaner.clean(valueWithBug);
+        String actualValue = ItemsHelper.clean(valueWithBug);
         assertTrue(actualValue.isEmpty());
     }
 }
