@@ -33,7 +33,6 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
         clear();
         allTerms = termDao.getAll();
         allTermMorphs = commonDao.getAll(TermMorph.class);
-
         proxyMap = new HashMap<String, Proxy>();
         Map<String, Proxy> tmpMap = new HashMap<String, Proxy>();
 
