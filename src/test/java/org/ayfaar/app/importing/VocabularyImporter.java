@@ -89,7 +89,7 @@ public class VocabularyImporter {
         articleDao.save(currentArticle);
 
         Term term = getTerm(currentArticle.getName());
-        Link link = new Link(term, currentArticle, Link.DEFINITION);
+        Link link = new Link(term, currentArticle);
         linkDao.save(link);
     }
 }
