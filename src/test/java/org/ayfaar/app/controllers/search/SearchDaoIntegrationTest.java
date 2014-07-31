@@ -22,13 +22,14 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
     private SearchDao searchDao;
 
     @Inject
-    private NewSearchController controller;
+    private NewSearchController controller; //fixme зачем он тебе здесь?
 
     private List<Item> items;
     private List<String> queries;
 
     @Before
     public void init() throws IOException {
+        // fixme зачем тебе айтемы из файлов? ты же можешь их вытянуть из базы данных
         Item item_1_0003 = new Item("1.0003", getFile("item-1.0003.txt"));
         Item item_1_0008 = new Item("1.0008", getFile("item-1.0008.txt"));
         Item item_1_0075 = new Item("1.0075", getFile("item-1.0075.txt"));
@@ -42,9 +43,16 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
     @Test
     public void testGetByRegexp() {
         //String regexp = "(Время)|(Времени)|(Временем)|(Временах)|(Временами)|(время)|(времени)|(временем)|(временах)|(временами)";
+
         String regexp = searchDao.createRegexp(queries);
+
+        //todo проверить на верность генерации регекспа, можно вынести в отдельный тест, но не обязательно
+
         List<Item> actual = searchDao.getByRegexp("content", regexp);
 
+        //todo протестируй время выполнения запроса
+
+        // сравнивать можно просто по номерам абзацев. не обязательно хранить объект весь Item
         assertEquals(items.get(0).getNumber(), actual.get(0).getNumber());
         assertEquals(items.get(1).getNumber(), actual.get(1).getNumber());
         assertEquals(items.get(2).getNumber(), actual.get(30).getNumber());

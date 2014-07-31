@@ -39,6 +39,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
                 .list();
     }
 
+
     public String createRegexp(List<String> words) {
         throw new NotImplementedException();
     }
