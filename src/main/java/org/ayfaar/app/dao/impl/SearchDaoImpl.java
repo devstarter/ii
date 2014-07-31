@@ -26,6 +26,9 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         // Сначала самые ранние пункты
         // 4.2. Если filter заполнен то нужно учесть стартовый и конечный  абзаци
         // 4.3. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
+
+        getByRegexp("content", createRegexp(words));
+
         throw new NotImplementedException();
     }
 
@@ -34,5 +37,9 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         return criteria()
                 .add(regexp(property, regexp)).addOrder(Order.asc("number"))
                 .list();
+    }
+
+    public String createRegexp(List<String> words) {
+        throw new NotImplementedException();
     }
 }

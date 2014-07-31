@@ -113,7 +113,4 @@ public class NewSearchController {
         throw new NotImplementedException();
     }
 
-    public String createRegexp(List<String> words) {
-        throw new NotImplementedException();
-    }
 }
