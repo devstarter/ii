@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 //5.Обработка найденных пунктов
 @Component
@@ -39,7 +38,19 @@ public class SearchQuotesHelper {
         return result;
     }
 
-    private List<String> dividedIntoSentence(String content){
+    List<String> dividedIntoSentence(String content){
+        throw new NotImplementedException();
+    }
+
+    boolean containSearchQueries(String sentence, List<String> allSearchQueries){
+        throw new NotImplementedException();
+    }
+
+    String addStrongTeg(String sentences, List<String> allSearchQueries){
+        throw new NotImplementedException();
+    }
+
+    String cutOffWord(String sentences,List<String> allSearchQueries){
         throw new NotImplementedException();
     }
 
@@ -61,23 +72,11 @@ public class SearchQuotesHelper {
         quote.setUri(item.getUri());
         return quote;
     }
-    private boolean containSearchQueries(String sentence, List<String> allSearchQueries){
-        throw new NotImplementedException();
-    }
 
     private String getDecorateQuote(String sentences,List<String> allSearchQueries){
         // 2.2.1 Обрезаем слова до или после найденной фразы если их больше чем (MAX_WORDS_ON_BOUNDARIES)
         String result = cutOffWord(sentences,allSearchQueries);
         // 2.2.2 Обральяем ключевые фразы тегами <strong></strong>
-        return addStrong(result,allSearchQueries);
+        return addStrongTeg(result, allSearchQueries);
     }
-
-    private String addStrong(String sentences,List<String> allSearchQueries){
-        throw new NotImplementedException();
-    }
-
-    private String cutOffWord(String sentences,List<String> allSearchQueries){
-        throw new NotImplementedException();
-    }
-
 }
