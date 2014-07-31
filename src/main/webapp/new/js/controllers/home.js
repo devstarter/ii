@@ -1,6 +1,6 @@
 function HomeController($scope, $api, $log, $state) {
     $scope.searchCallback = function() {
-        return $api.get("search/suggestions/"+$scope.query)
+        return $api.get("v2/search/suggestions/"+$scope.query)
     };
     $scope.suggestionSelected = function(suggestion) {
         $state.go("term", {name: suggestion});
