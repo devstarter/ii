@@ -5,6 +5,7 @@ import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchFilter;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
+import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,9 @@ public class NewSearchController {
     public static final int PAGE_SIZE = 20;
     @Inject
     private SearchQuotesHelper handleItems;
+
+    @Inject
+    private SearchDao searchDao;
 
     private List<String> searchQueries;
 
@@ -57,15 +61,15 @@ public class NewSearchController {
             searchQueries = getAllMorphs(term);
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
-            foundItems = searchInDb(searchQueries, skipResults, PAGE_SIZE, filter);
+            foundItems = searchDao.searchInDb(searchQueries, skipResults, PAGE_SIZE, filter);
             // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
             List<Term> aliases = getAllAliases(term);
             List<String> aliasesSearchQueries = getAllMorphs(aliases);
-            foundItems.addAll(searchInDb(searchQueries, skipResults, PAGE_SIZE - foundItems.size(), filter));
+            foundItems.addAll(searchDao.searchInDb(searchQueries, skipResults, PAGE_SIZE - foundItems.size(), filter));
             searchQueries.addAll(aliasesSearchQueries);
         } else {
             // 4. Поиск фразы (не термин)
-            foundItems = searchInDb(query, skipResults, PAGE_SIZE, filter);
+            foundItems = searchDao.searchInDb(query, skipResults, PAGE_SIZE, filter);
         }
 
         page.setHasMore(false);
@@ -76,18 +80,6 @@ public class NewSearchController {
 
         // 6. Вернуть результат
         return page;
-    }
-
-    private List<Item> searchInDb(String query, int skipResults, int maxResults, SearchFilter filter) {
-        return searchInDb(asList(query), skipResults, maxResults, filter);
-    }
-
-    private List<Item> searchInDb(List<String> words, int skipResults, int maxResults, SearchFilter filter) {
-        // 4.1. Результат должен быть отсортирован:
-        // Сначала самые ранние пункты
-        // 4.2. Если filter заполнен то нужно учесть стартовый и конечный  абзаци
-        // 4.3. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
-        throw new NotImplementedException();
     }
 
     private List<String> getAllMorphs(Term term) {
