@@ -40,7 +40,7 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
 
 
     @Test
-    public void test() {
+    public void testGetByRegexp() {
         //String regexp = "(Время)|(Времени)|(Временем)|(Временах)|(Временами)|(время)|(времени)|(временем)|(временах)|(временами)";
         String regexp = controller.createRegexp(queries);
         List<Item> actual = searchDao.getByRegexp("content", regexp);
@@ -50,5 +50,11 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         assertEquals(items.get(2).getNumber(), actual.get(30).getNumber());
         assertEquals(items.get(3).getNumber(), actual.get(53).getNumber());
         assertEquals(items.get(4).getNumber(), actual.get(283).getNumber());
+
+        assertEquals(items.get(0).getContent(), actual.get(0).getContent());
+        assertEquals(items.get(1).getContent(), actual.get(1).getContent());
+        assertEquals(items.get(2).getContent(), actual.get(30).getContent());
+        assertEquals(items.get(3).getContent(), actual.get(53).getContent());
+        assertEquals(items.get(4).getContent(), actual.get(283).getContent());
     }
 }

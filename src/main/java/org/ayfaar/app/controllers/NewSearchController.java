@@ -7,6 +7,7 @@ import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
+import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
 import java.util.List;
