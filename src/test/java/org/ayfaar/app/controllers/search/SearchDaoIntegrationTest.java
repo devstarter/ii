@@ -55,7 +55,7 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         assertEquals(expected, searchDao.createRegexp(queries));
     }
 
-    @Test(timeout = 2000)
+    @Test(timeout = 10000)
     public void testTimeForGettingRequiredItems() {
         List<Item> actual = searchDao.getByRegexp("content", regexp);
     }
