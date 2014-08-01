@@ -1,8 +1,8 @@
 Интерактивная Ииссиидиология
 ============================
-[ii.ayfaar.org](http://ii.ayfaar.org)
+[презетация](http://youtu.be/__ibkaMRHZI), [ii.ayfaar.org](http://ii.ayfaar.org)
 
-Ключевые слова: OOP, [SOLID](http://ru.wikipedia.org/wiki/SOLID_(%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%BD%D0%BE-%D0%BE%D1%80%D0%B8%D0%B5%D0%BD%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%BD%D0%BE%D0%B5_%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5)) Java, J2SE, Hibernate, Spring (IoC, MVC), JUnit, JavaScript, HTML5, CSS3, KendoUI, AngularJS, MySQL, Maven, git, TDD, CI, IntelliJ IDEA
+Ключевые слова: OOP, [SOLID](http://ru.wikipedia.org/wiki/SOLID_(%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%BD%D0%BE-%D0%BE%D1%80%D0%B8%D0%B5%D0%BD%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%BD%D0%BE%D0%B5_%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5)) Java, J2SE, Hibernate, Spring (IoC, MVC), JUnit, JavaScript, HTML5, CSS3, [KendoUI](www.kendoui.com), [AngularJS](https://angularjs.org), MySQL, Maven, git, TDD, CI, IntelliJ IDEA
 
 Мой скайп: iu3116
 
@@ -15,13 +15,15 @@
 О проекте
 ---------
 
-Это [single-page application](http://en.wikipedia.org/wiki/Single-page_application). Со стороны сервера Java SE, Spring, Hibernate. На клиенте JavaScript, HTML5, CSS3, визуальные компоненты и биндинг - [KendoUI](www.kendoui.com)
+Это [single-page application](http://en.wikipedia.org/wiki/Single-page_application). Со стороны сервера Java SE, Spring, Hibernate. На клиенте JavaScript, HTML5, CSS3, визуальные компоненты и биндинг - [KendoUI](www.kendoui.com) и [AngularJS](https://angularjs.org)
 
-Основная задача проекта сформировать связки *термин-описание* из сплошного текста хранящегося по абзацам в базе данных. Плюс поиск по всему содержимому - [SearchController](https://github.com/enginer/ii/blob/master/src/main/java/org/ayfaar/app/controllers/SearchController.java).
+Основная задача проекта сформировать связки *термин-описание* из сплошного текста хранящегося по абзацам в базе данных. Плюс поиск по всему содержимому.
 
 Реализован експорт связок *термин-описание* в [mediawiki](http://www.mediawiki.org) (движок википедии) и импорт из [evernote](https://www.evernote.com). 
 
 Проект бесплатно хостится на [OpenShift](https://www.openshift.com/) (Open Hybrid Cloud Application Platform by Red Hat)
+
+[Видео презентация: Структура проекта](https://www.youtube.com/watch?v=Q7GfXEzswcQ&list=UUx7OZ2t2mEiaW6kem5lfl9w)
 
 С чего начать (Java)
 ====================
@@ -32,11 +34,12 @@
 
 1.	GIT http://msysgit.github.io
 2.	Добавляем git.exe в [переменную окружения Path](http://clip2net.com/s/iuLWXk) и перезагружаем windows
-3.	[IntelliJ IDEA](http://www.jetbrains.com/idea/download/) Ultimate Edition
-4.	[Java version 1.7](https://www.java.com/en/download)
-5.	[Java SE Development Kit 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
-6.	[Apache Tomcat](http://tomcat.apache.org/download-70.cgi) или [XAMPP](https://www.apachefriends.org/index.html)
+3.	Выполняем тестовую задачу [Тренировка работы с git](https://github.com/devstarter/ii/issues/4)
+4.	[IntelliJ IDEA](http://www.jetbrains.com/idea/download/)
+5.	[Java version 1.7](https://www.java.com/en/download)
+6.	[Java SE Development Kit 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
 7.	[MySQL](http://dev.mysql.com/downloads/mysql/) или [XAMPP](https://www.apachefriends.org/index.html) [wiki/База данных](https://github.com/devstarter/ii/wiki/%D0%91%D0%B0%D0%B7%D0%B0-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85)
+8.	Не обязательно, [Apache Tomcat](http://tomcat.apache.org/download-70.cgi) или [XAMPP](https://www.apachefriends.org/index.html)
 
 Окрываем проект:
 
@@ -53,7 +56,7 @@
 2. Качаем [последний дамп данных](https://github.com/devstarter/ii/tree/master/db)
 3. Импортируем дамп
 
-Запускаем проект:
+Запускаем проект (не обязательно):
 
 1. Добавляем Run Configuration для Tomcat в IDEA
 2. Запускаем эту конфигурацию
