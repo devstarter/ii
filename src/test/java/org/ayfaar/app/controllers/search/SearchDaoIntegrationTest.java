@@ -8,55 +8,47 @@ import org.junit.Test;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class SearchDaoIntegrationTest extends IntegrationTest{
     @Inject
     private SearchDao searchDao;
 
-    private List<String> expectedNumbers;
     private List<String> queries;
-    private String regexp;
+    private final String expectedRegexp = "времён|времена|временам|временами|временах|временем|времени|время";
 
     @Before
     public void init() throws IOException {
-        expectedNumbers = new ArrayList<String>();
-        expectedNumbers.add("1.0003");
-        expectedNumbers.add("1.0008");
-        expectedNumbers.add("1.0075");
-        expectedNumbers.add("1.0131");
-        expectedNumbers.add("1.0846");
-
+        // fixme сделать не изменяемым списком, что бы случайно не изменить в тестах
         queries = asList("время", "Времени", "Временем", "Временах", "Временами");
 
-        regexp = searchDao.createRegexp(queries);
+        // не верно проверять результатом работы не стабильной функции, лучше просто текстом (expectedRegexp)
+        //regexp = searchDao.createRegexp(queries);
     }
 
 
     @Test
     public void testGetByRegexp() {
-        List<Item> actual = searchDao.getByRegexp("content", regexp);
+        List<Item> actual = searchDao.getByRegexp("content", expectedRegexp);
 
-        // сравнивать можно просто по номерам абзацев. не обязательно хранить объект весь Item
-        assertEquals(expectedNumbers.get(0), actual.get(0).getNumber());
-        assertEquals(expectedNumbers.get(1), actual.get(1).getNumber());
-        assertEquals(expectedNumbers.get(2), actual.get(30).getNumber());
-        assertEquals(expectedNumbers.get(3), actual.get(53).getNumber());
-        assertEquals(expectedNumbers.get(4), actual.get(283).getNumber());
+        // так ведь наглядней...
+        assertEquals("1.0003", actual.get(0).getNumber());
+        assertEquals("1.0008", actual.get(1).getNumber());
+        assertEquals("1.0075", actual.get(30).getNumber());
+        assertEquals("1.0131", actual.get(53).getNumber());
+        assertEquals("1.0846", actual.get(283).getNumber());
     }
 
     @Test
     public void testCreateRegexp() {
-        String expected = "времён|времена|временам|временами|временах|временем|времени|время";
-        assertEquals(expected, searchDao.createRegexp(queries));
+        assertEquals(expectedRegexp, searchDao.createRegexp(queries));
     }
 
     @Test(timeout = 10000)
     public void testTimeForGettingRequiredItems() {
-        List<Item> actual = searchDao.getByRegexp("content", regexp);
+        searchDao.getByRegexp("content", expectedRegexp);
     }
 }
