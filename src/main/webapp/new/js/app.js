@@ -33,8 +33,17 @@ angular.module('app', ['ui.router', 'live-search'])
 //                }
             })
     })
+    .factory("analytics", function(){
+        return {
+            registerEmptyTerm: function(termName) {
+                if (ga) {
+                    ga('send', 'event', 'no-data', termName);
+                }
+            }
+        }
+    })
     .factory("$api", function($rootScope, $state, $http, errorService, $q){
-        var apiUrl = "http://ii.ayfaar.org/api/v2/";
+        var apiUrl = "http://ii.ayfaar.org/api/";
 //        var apiUrl = "http://localhost:8081/";
         return {
             post: function(url, data) {
