@@ -36,6 +36,11 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         regexp = searchDao.createRegexp(queries);
     }
 
+    @Test
+    public void testCreateRegexp() {
+        String expected = "времён|времена|временам|временами|временах|временем|времени|время";
+        assertEquals(expected, searchDao.createRegexp(queries));
+    }
 
     @Test
     public void testGetByRegexp() {
@@ -49,13 +54,7 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         assertEquals(expectedNumbers.get(4), actual.get(283).getNumber());
     }
 
-    @Test
-    public void testCreateRegexp() {
-        String expected = "времён|времена|временам|временами|временах|временем|времени|время";
-        assertEquals(expected, searchDao.createRegexp(queries));
-    }
-
-    @Test(timeout = 2000)
+    @Test(timeout = 10000)
     public void testTimeForGettingRequiredItems() {
         List<Item> actual = searchDao.getByRegexp("content", regexp);
     }
