@@ -12,16 +12,17 @@ public abstract class AbstractTest {
         return IOUtils.toString(this.getClass().getResourceAsStream(fileName));
     }
 
-    private <T> boolean isListEquals(List<T> expected, List<T> actual){
+    private static <T> boolean isListEqualsIgnoreOrder(List<T> expected, List<T> actual){
         if(expected == null || actual == null) {
             return (expected == actual);
         }
 
         if(expected.size() == actual.size()){
-            for(int i = 0; i < expected.size();i++)
-                if(!actual.contains(expected.get(i)))
+            for (T item : expected) {
+                if (!actual.contains(item)) {
                     return false;
-
+                }
+            }
             return true;
         } else {
             return false;
@@ -29,24 +30,24 @@ public abstract class AbstractTest {
     }
 
 
-    public <T> void assertListEquals(String message, List<T> expected, List<T> actual){
-        if(!isListEquals(expected,actual)){
+    public static <T> void assertListEqualsIgnoreOrder(String message, List<T> expected, List<T> actual){
+        if(!isListEqualsIgnoreOrder(expected, actual)){
             fail(message);
         }
     }
 
-    public <T> void assertListNotEquals(String message, List<T> expected, List<T> actual){
-        if(isListEquals(expected,actual)){
+    public static <T> void assertListNotEqualsIgnoreOrder(String message, List<T> expected, List<T> actual){
+        if(isListEqualsIgnoreOrder(expected, actual)){
             fail(message);
         }
     }
 
-    public <T> void assertListEquals(List<T> expected, List<T> actual){
-        assertListEquals(null,expected,actual);
+    public static <T> void assertListEqualsIgnoreOrder(List<T> expected, List<T> actual){
+        assertListEqualsIgnoreOrder(null, expected, actual);
     }
 
-    public <T> void assertListNotEquals(List<T> expected, List<T> actual){
-        assertListNotEquals(null, expected, actual);
+    public static <T> void assertListNotEqualsIgnoreOrder(List<T> expected, List<T> actual){
+        assertListNotEqualsIgnoreOrder(null, expected, actual);
     }
 
 }

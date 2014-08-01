@@ -1,7 +1,5 @@
 package org.ayfaar.app.controllers.search;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import org.ayfaar.app.AbstractTest;
 import org.ayfaar.app.model.Item;
 import org.junit.Before;
@@ -16,7 +14,6 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @Ignore
 // todo уберите эту анатацию (@Ignore), она здесь для того чтобв в ветке мастер этот тест не запускался,
@@ -70,8 +67,8 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
         List<String> sentenceList_1_0131 = handleItems.dividedIntoSentence(items.get(0).getContent());
         List<String> sentenceList_1_0846 = handleItems.dividedIntoSentence(items.get(1).getContent());
 
-        assertListEquals(expectedSentence0131,sentenceList_1_0131);
-        assertListEquals(expectedSentence0846,sentenceList_1_0846);
+        assertListEqualsIgnoreOrder(expectedSentence0131, sentenceList_1_0131);
+        assertListEqualsIgnoreOrder(expectedSentence0846, sentenceList_1_0846);
      }
 
     @Test

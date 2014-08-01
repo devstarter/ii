@@ -13,7 +13,7 @@ import static java.util.Arrays.asList;
 public class TestAbstractTest extends AbstractTest {
 
     @Test
-    public void testAssertListEquals(){
+    public void testAssertListEqualsIgnoreOrder(){
 
         class ThreeValue{
             public boolean result;
@@ -50,9 +50,9 @@ public class TestAbstractTest extends AbstractTest {
 
         for (ThreeValue tree:testList){
             if(tree.result){
-                assertListEquals(tree.toString(),tree.expected,tree.actual);
+                assertListEqualsIgnoreOrder(tree.toString(), tree.expected, tree.actual);
             }else{
-                assertListNotEquals(tree.toString(),tree.expected,tree.actual);
+                assertListNotEqualsIgnoreOrder(tree.toString(), tree.expected, tree.actual);
             }
         }
     }
