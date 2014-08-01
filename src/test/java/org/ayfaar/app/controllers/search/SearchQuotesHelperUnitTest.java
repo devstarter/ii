@@ -1,7 +1,5 @@
 package org.ayfaar.app.controllers.search;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import org.ayfaar.app.AbstractTest;
 import org.ayfaar.app.model.Item;
 import org.junit.Before;
@@ -24,6 +22,8 @@ import static org.junit.Assert.assertTrue;
 public class SearchQuotesHelperUnitTest extends AbstractTest {
 
     private final List<Item> items;
+    private final Item item_1_0846;
+    private final Item item_1_0131;
     private SearchQuotesHelper handleItems;
     private List<String> queries;
 
@@ -33,6 +33,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
             return;
         }
 
+        //fixme: порядок элементов массива может быть разный
         assertEquals(expected.size(),actual.size());
         if(expected.size() == actual.size()){
             for(int i = 0; i < actual.size();i++)
@@ -41,8 +42,8 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     }
 
     public SearchQuotesHelperUnitTest() throws IOException {
-        Item item_1_0846 = new Item("1.0846", getFile("item-1.0846.txt"));
-        Item item_1_0131 = new Item("1.0131", getFile("item-1.0131.txt"));
+        item_1_0846 = new Item("1.0846", getFile("item-1.0846.txt"));
+        item_1_0131 = new Item("1.0131", getFile("item-1.0131.txt"));
         items = unmodifiableList(asList(item_1_0131, item_1_0846));
     }
 
@@ -79,8 +80,10 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     public void testDividedIntoSentence() throws IOException {
         List<String> expectedSentence0131 = asList(getFile("item-1.0131_bySentence.txt").split("\n"));
         List<String> expectedSentence0846 = asList(getFile("item-1.0846_bySentence.txt").split("\n"));
+        // todo добавить пункт 3.1180, там есть "..Плазме!), чем..", то есть знак окончания предложения внутри скобок
 
-        List<String> sentenceList_1_0131 = handleItems.dividedIntoSentence(items.get(0).getContent());
+        List<String> sentenceList_1_0131 = handleItems.dividedIntoSentence(item_1_0131.getContent());
+        //fixme для однозначности теста лучше сравнивать с конкретным айтемом чем получать его из списка, в предыдущей строке пример исправления
         List<String> sentenceList_1_0846 = handleItems.dividedIntoSentence(items.get(1).getContent());
 
         assertListEquals(expectedSentence0131,sentenceList_1_0131);
@@ -133,7 +136,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
                 "Понимания Природы подобных явлений.";
 
         String actualQuote1 = handleItems.cutOffWord(baseQuote1,queries);
-        String actualQuote2 = handleItems.cutOffWord(expectedQuote2,queries);
+        String actualQuote2 = handleItems.cutOffWord(expectedQuote2, queries);
 
         assertEquals(expectedQuote1,actualQuote1);
         assertEquals(expectedQuote2,actualQuote2);
