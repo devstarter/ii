@@ -1,5 +1,7 @@
 package org.ayfaar.app.controllers.search;
 
+import org.apache.commons.lang.NotImplementedException;
+
 import org.ayfaar.app.AbstractTest;
 import org.ayfaar.app.model.Item;
 import org.junit.Before;
@@ -22,55 +24,18 @@ import static org.junit.Assert.assertTrue;
 public class SearchQuotesHelperUnitTest extends AbstractTest {
 
     private final List<Item> items;
-    private final Item item_1_0846;
-    private final Item item_1_0131;
     private SearchQuotesHelper handleItems;
     private List<String> queries;
 
-    private <T> void assertListEquals(List<T> expected, List<T> actual){
-        if(expected == null || actual == null) {
-            assertEquals(expected,actual);
-            return;
-        }
-
-        //fixme: порядок элементов массива может быть разный
-        assertEquals(expected.size(),actual.size());
-        if(expected.size() == actual.size()){
-            for(int i = 0; i < actual.size();i++)
-                assertTrue(expected.contains(actual.get(i)));
-        }
-    }
-
-    @Test
-    public void testAssertListEquals(){
-        List<String> lstNull = null;
-        List<String> lst1 = asList("1","2","3","4","5");
-        List<String> lst2 = asList("1","2","5","4","3");
-        List<String> lst3 = asList("5","4","3","2","1");
-        List<String> lst4 = asList("5","4","3","2");
-        List<String> lst5 = asList("5","4","3","2","6");
-
-        assertListEquals(lstNull,lstNull);
-        assertListEquals(lst1,lst2);
-        assertListEquals(lst1,lst3);
-
-        // все что ниже должно упасть
-        assertListEquals(lstNull,lst1);
-        assertListEquals(lst1,lstNull);
-        assertListEquals(lst1,lst4);
-        assertListEquals(lst1,lst5);
-    }
-
     public SearchQuotesHelperUnitTest() throws IOException {
-        item_1_0846 = new Item("1.0846", getFile("item-1.0846.txt"));
-        item_1_0131 = new Item("1.0131", getFile("item-1.0131.txt"));
+        Item item_1_0846 = new Item("1.0846", getFile("item-1.0846.txt"));
+        Item item_1_0131 = new Item("1.0131", getFile("item-1.0131.txt"));
         items = unmodifiableList(asList(item_1_0131, item_1_0846));
     }
 
     @Before
     public void init() throws IOException {
         handleItems = new SearchQuotesHelper();
-        //fixme зделать queries неизменяемым, чтобы предотвратить случайное изменение в тестах
         queries = asList("время", "Времени", "Временем", "Временах", "Временами"); // и тп...
     }
 
@@ -101,10 +66,8 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     public void testDividedIntoSentence() throws IOException {
         List<String> expectedSentence0131 = asList(getFile("item-1.0131_bySentence.txt").split("\n"));
         List<String> expectedSentence0846 = asList(getFile("item-1.0846_bySentence.txt").split("\n"));
-        // todo добавить пункт 3.1180, там есть "..Плазме!), чем..", то есть знак окончания предложения внутри скобок
 
-        List<String> sentenceList_1_0131 = handleItems.dividedIntoSentence(item_1_0131.getContent());
-        //fixme для однозначности теста лучше сравнивать с конкретным айтемом чем получать его из списка, в предыдущей строке пример исправления
+        List<String> sentenceList_1_0131 = handleItems.dividedIntoSentence(items.get(0).getContent());
         List<String> sentenceList_1_0846 = handleItems.dividedIntoSentence(items.get(1).getContent());
 
         assertListEquals(expectedSentence0131,sentenceList_1_0131);
@@ -157,7 +120,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
                 "Понимания Природы подобных явлений.";
 
         String actualQuote1 = handleItems.cutOffWord(baseQuote1,queries);
-        String actualQuote2 = handleItems.cutOffWord(expectedQuote2, queries);
+        String actualQuote2 = handleItems.cutOffWord(expectedQuote2,queries);
 
         assertEquals(expectedQuote1,actualQuote1);
         assertEquals(expectedQuote2,actualQuote2);
