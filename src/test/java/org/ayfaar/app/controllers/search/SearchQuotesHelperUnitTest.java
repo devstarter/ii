@@ -27,39 +27,6 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     private SearchQuotesHelper handleItems;
     private List<String> queries;
 
-    private <T> void assertListEquals(List<T> expected, List<T> actual){
-        if(expected == null || actual == null) {
-            assertEquals(expected,actual);
-            return;
-        }
-
-        assertEquals(expected.size(),actual.size());
-        if(expected.size() == actual.size()){
-            for(int i = 0; i < actual.size();i++)
-                assertTrue(expected.contains(actual.get(i)));
-        }
-    }
-
-    @Test
-    public void testAssertListEquals(){
-        List<String> lstNull = null;
-        List<String> lst1 = asList("1","2","3","4","5");
-        List<String> lst2 = asList("1","2","5","4","3");
-        List<String> lst3 = asList("5","4","3","2","1");
-        List<String> lst4 = asList("5","4","3","2");
-        List<String> lst5 = asList("5","4","3","2","6");
-
-        assertListEquals(lstNull,lstNull);
-        assertListEquals(lst1,lst2);
-        assertListEquals(lst1,lst3);
-
-        // все что ниже должно упасть
-        assertListEquals(lstNull,lst1);
-        assertListEquals(lst1,lstNull);
-        assertListEquals(lst1,lst4);
-        assertListEquals(lst1,lst5);
-    }
-
     public SearchQuotesHelperUnitTest() throws IOException {
         Item item_1_0846 = new Item("1.0846", getFile("item-1.0846.txt"));
         Item item_1_0131 = new Item("1.0131", getFile("item-1.0131.txt"));
