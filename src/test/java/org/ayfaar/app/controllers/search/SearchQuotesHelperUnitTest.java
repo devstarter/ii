@@ -50,6 +50,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     @Before
     public void init() throws IOException {
         handleItems = new SearchQuotesHelper();
+        //fixme зделать queries неизменяемым, чтобы предотвратить случайное изменение в тестах
         queries = asList("время", "Времени", "Временем", "Временах", "Временами"); // и тп...
     }
 
