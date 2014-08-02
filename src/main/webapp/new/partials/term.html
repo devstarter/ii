@@ -15,10 +15,10 @@
         <!--<span class="info" data-bind="invisible: description">Нет короткого определения</span>-->
         <blockquote ng-repeat="quote in quotes">
             <div>{{quote.quote}}</div>
-            <cite>&mdash; <a ng-click="navigate">{{quote.uri}}</a></cite>
+            <cite>&mdash; <entity ng-model="quote"/></cite>
         </blockquote>
         <span ng-show="related.length">Также связан с</span>
-        <button ng-repeat="link in related" class="related-btn btn btn-default">{{link.name}}</button>
+        <entity ng-model="link" ng-repeat="link in related" class="related-btn btn btn-default"/>
     </div>
     <span ng-hide="found" class="header">Термин не найден, воспользуйтесь пожалуйста поиском</span>
     <a href="#" data-bind="click: search">Поиск по содержимому...</a>
@@ -49,7 +49,7 @@
         margin: 0 5px;
     }
     .highlight {
-        font-weight: bold;
+        /*font-weight: bold;*/
         background-color: #eee;
         padding: 2px 15px;
         margin: 30px 0;

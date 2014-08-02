@@ -31,7 +31,7 @@ angular.module('app', ['ui.router', 'live-search'])
 //                onEnter: function($location, $stateParams, $log){
 //                    $log.info($stateParams)
 //                }
-            })
+            });
     })
     .factory("analytics", function(){
         return {
@@ -149,6 +149,68 @@ angular.module('app', ['ui.router', 'live-search'])
                 });*/
             }
         };
+    })
+    .factory('entityService', function(){
+        var service = {
+            getName: function (entity) {
+                switch (service.getType(entity)) {
+                    case 'term':
+                        return entity.uri.replace("ии:термин:", "");
+                    case 'item':
+                        return entity.uri.replace("ии:пункт:", "");
+                }
+            },
+            getType: function(entity) {
+                if (entity.uri.indexOf("ии:термин:") === 0) {
+                    return 'term'
+                }
+                if (entity.uri.indexOf("ии:пункт:") === 0) {
+                    return 'item'
+                }
+            }
+        };
+        return service;
+    })
+    .directive('entity', function($state, entityService) {
+        return {
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            template: '<a href></a>',
+            compile : function(element, attr, linker) {
+                return function ($scope, $element, $attr) {
+                    var entity = $scope[$attr.ngModel];
+//                    var uiSref = "term({name:'"+name+"'})";
+//                    $attr.$set('uiSref', uiSref);
+                    $element.append(entityService.getName(entity));
+                    $element.bind('click', function() {
+                        $state.go(entity)
+                    })
+                }
+            }
+             /*link: function(scope, element, attrs) {
+                var entity = scope[attrs.ngModel];
+                var name = entity.uri.replace("ии:термин:", "");
+                var uiSref = "term({name:'"+name+"'})";
+                attrs.$set('uiSref', uiSref);
+                element.removeAttr('ng-transclude');
+                element.append(name);
+                $compile(element)(scope);
+            }*/
+        };
+    })
+    .run(function($state, entityService){
+        var defStateGo = $state.go;
+        $state.go = function(to, params, options) {
+            if (to.hasOwnProperty('uri')) {
+                var uri = to.uri;
+                if (entityService.getType(to) == "term") {
+                    defStateGo.bind($state)("term", {name: entityService.getName(to)})
+                }
+            } else {
+                defStateGo.bind($state)(to, params, options)
+            }
+        }
     });
 
 Array.prototype.append = function(array){
