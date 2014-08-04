@@ -14,7 +14,6 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
-import static org.junit.Assert.assertEquals;
 
 public class SearchDaoIntegrationTest extends IntegrationTest{
     @Inject
@@ -33,10 +32,10 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         List<Item> items = new ArrayList<Item>();
 
         long start = System.currentTimeMillis();
-        items = searchDao.findInItems(queries);
+        items = searchDao.findInItems(queries, 20);
         long end = System.currentTimeMillis();
 
-        System.out.println("delta = " + (end - start));
+        System.out.println("searchDao.findInItems delta = " + (end - start));
     }
 
     @Test(/*timeout = 10000*/)
@@ -44,10 +43,10 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         List<Item> items = new ArrayList<Item>();
 
         long start = System.currentTimeMillis();
-        items = searchDao.findInItems2(queries);
+        items = searchDao.findInItems2(queries, 20);
         long end = System.currentTimeMillis();
 
-        System.out.println("delta = " + (end - start));
+        System.out.println("findInItems2 delta = " + (end - start));
     }
 
     @Test(/*timeout = 10000*/)
@@ -55,10 +54,10 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         String expectedRegexp = "времён|времена|временам|временами|временах|временем|времени|время|Времён|Времена|Временам|Временами|Временах|Временем|Времени|Время";
 
         long start = System.currentTimeMillis();
-        List<Item> items = searchDao.getByRegexp("content", expectedRegexp);
+        List<Item> items = searchDao.getByRegexp("content", expectedRegexp, 20);
         long end = System.currentTimeMillis();
 
-        System.out.println("delta = " + (end - start));
+        System.out.println("getByRegexp delta = " + (end - start));
     }
 
     @Test(/*timeout = 10000*/)
@@ -66,7 +65,7 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         List<Item> items = new ArrayList<Item>();
         long start = System.currentTimeMillis();
         for(String query : queries) {
-            items.addAll(searchDao.getLike("content", query, MatchMode.ANYWHERE));
+            items.addAll(searchDao.getLike("content", query, MatchMode.ANYWHERE, 20));
         }
 
         Set<Item> set = new HashSet<Item>(items);
@@ -74,7 +73,7 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         searchDao.sort(newItems);
         long end = System.currentTimeMillis();
 
-        System.out.println("delta = " + (end - start));
+        System.out.println("testTimeForGetLike delta = " + (end - start));
     }
 
 

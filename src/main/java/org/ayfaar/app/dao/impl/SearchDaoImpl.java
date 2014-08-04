@@ -59,7 +59,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
     }
 
     @Override
-    public List<Item> findInItems(List<String> aliases) {
+    public List<Item> findInItems(List<String> aliases, int limit) {
         String where = " WHERE ";
 
         for (String alias : aliases) {
@@ -94,7 +94,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
     }
 
     @Override
-    public List<Item> findInItems2(List<String> aliases) {
+    public List<Item> findInItems2(List<String> aliases, int limit) {
         String where = " WHERE ";
 
         for (String alias : aliases) {
