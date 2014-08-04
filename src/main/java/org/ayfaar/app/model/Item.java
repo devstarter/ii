@@ -12,7 +12,7 @@ import java.util.Comparator;
 @PrimaryKeyJoinColumn(name="uri")
 //@Audited
 @Uri(nameSpace = "ии:пункт:", field = "number")
-public class Item extends UID implements /*Comparator<Item>,*/ Comparable<Item>{
+public class Item extends UID implements Comparable<Item>{
 
     @Column(unique = true)
     private String number;
@@ -69,15 +69,6 @@ public class Item extends UID implements /*Comparator<Item>,*/ Comparable<Item>{
     public void setWiki(String wiki) {
         this.wiki = wiki;
     }
-
-
-   /* @Override
-    public int compare(Item item, Item item2) {
-        double itemNumber1 = Double.parseDouble(item.getNumber());
-        double itemNumber2 = Double.parseDouble(item2.getNumber());
-
-        return (itemNumber1 == itemNumber2) ? 0 : (itemNumber1 > itemNumber2) ? 1 : -1;
-    }*/
 
     @Override
     public int compareTo(Item that) {
