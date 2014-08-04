@@ -4,19 +4,15 @@ import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.controllers.search.SearchFilter;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.utils.Content;
-import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.ayfaar.app.utils.RegExpUtils.W;
 import static org.hibernate.criterion.Restrictions.like;
 
 @Repository
@@ -47,6 +43,8 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
     @Override
     public List<Item> getLike(String property, @NotNull String value, MatchMode matchMode) {
         return criteria()
+                // .ignoreCase() нет смысла использовать так как mysql итак не зависит от регистра
+                // то есть нет необходимости оверайдить гктЛайк метод
                 .add(like(property, value.toLowerCase(), matchMode).ignoreCase())
                 .list();
     }
@@ -66,6 +64,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
 
         for (String alias : aliases) {
             for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}) {
+                // а зачем тебе здесь SQL, чего не используешь getLike ?
                 where += " content like '% " + alias + endChar + "%' OR" +
                         " content like '%-" + alias + endChar + "%' OR" +
                         " content like '%(" + alias + endChar + "%' OR" +
@@ -78,6 +77,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         where = where.substring(0, where.length() - 2);
 
         String itemQuery = "SELECT number, content FROM item"+ where;
+        // можно заменить на List<Item> list = sessionFactory.getCurrentSession().createSQLQuery(itemQuery).addEntity(Item.class).list();
         List<Object[]> list = sessionFactory.getCurrentSession().createSQLQuery(itemQuery).list();
         //System.out.println("list = " + list.size());
 
