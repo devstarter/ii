@@ -1,16 +1,18 @@
 package org.ayfaar.app.model;
 
+import org.apache.lucene.search.FieldCache;
 import org.ayfaar.app.annotations.Uri;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
+import java.util.Comparator;
 
 @Entity
 @PrimaryKeyJoinColumn(name="uri")
 //@Audited
 @Uri(nameSpace = "ии:пункт:", field = "number")
-public class Item extends UID {
+public class Item extends UID implements /*Comparator<Item>,*/ Comparable<Item>{
 
     @Column(unique = true)
     private String number;
@@ -66,5 +68,23 @@ public class Item extends UID {
 
     public void setWiki(String wiki) {
         this.wiki = wiki;
+    }
+
+
+   /* @Override
+    public int compare(Item item, Item item2) {
+        double itemNumber1 = Double.parseDouble(item.getNumber());
+        double itemNumber2 = Double.parseDouble(item2.getNumber());
+
+        return (itemNumber1 == itemNumber2) ? 0 : (itemNumber1 > itemNumber2) ? 1 : -1;
+    }*/
+
+    @Override
+    public int compareTo(Item that) {
+        double itemNumber1 = Double.parseDouble(this.getNumber());
+        double itemNumber2 = Double.parseDouble(that.getNumber());
+
+        return (itemNumber1 == itemNumber2) ? 0 : (itemNumber1 > itemNumber2) ? 1 : -1;
+
     }
 }
