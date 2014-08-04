@@ -4,12 +4,20 @@ import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.controllers.search.SearchFilter;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.Content;
+import org.hibernate.Query;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
+import static org.ayfaar.app.utils.RegExpUtils.W;
+import static org.hibernate.criterion.Restrictions.like;
 
 @Repository
 public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchDao {
@@ -27,20 +35,97 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         // 4.2. Если filter заполнен то нужно учесть стартовый и конечный  абзаци
         // 4.3. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
 
-        getByRegexp("content", createRegexp(words));
-
+        //getByRegexp("content", createRegexp(words));
+        /*for (String query : words) {
+            getLike("content", query, MatchMode.ANYWHERE);
+        }*/
+        //findInAllContent("времени");
         throw new NotImplementedException();
+    }
+
+
+    @Override
+    public List<Item> getLike(String property, @NotNull String value, MatchMode matchMode) {
+        return criteria()
+                .add(like(property, value.toLowerCase(), matchMode).ignoreCase())
+                .list();
+    }
+
+    /*public String createRegexp(List<String> words) {
+        throw new NotImplementedException();
+    }*/
+
+    public List<Item> sort(List<Item> items) {
+        Collections.sort(items);
+        return items;
+    }
+
+    @Override
+    public List<Item> findInItems(List<String> aliases) {
+        String where = " WHERE ";
+
+        for (String alias : aliases) {
+            for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}) {
+                where += " content like '% " + alias + endChar + "%' OR" +
+                        " content like '%-" + alias + endChar + "%' OR" +
+                        " content like '%(" + alias + endChar + "%' OR" +
+                        " content like '" + alias + endChar + "%' OR";
+
+            }
+            where += " content like '%«" + alias + "»%' OR" + " content like '%«" + alias + " %' OR";
+        }
+
+        where = where.substring(0, where.length() - 2);
+
+        String itemQuery = "SELECT number, content FROM item"+ where;
+        List<Object[]> list = sessionFactory.getCurrentSession().createSQLQuery(itemQuery).list();
+        //System.out.println("list = " + list.size());
+
+        List<Item> items = new ArrayList<Item>();
+        for (Object[] o : list) {
+            items.add(new Item((String) o[0], (String) o[1]));
+        }
+
+        items = sort(items);
+        /*for(Item i : items) {
+            System.out.println("dao item = " + i.getNumber());
+        }*/
+        return items;
+    }
+
+    @Override
+    public List<Item> findInItems2(List<String> aliases) {
+        String where = " WHERE ";
+
+        for (String alias : aliases) {
+            where += " content like '% " + alias + "%' OR" + " content like '%-" + alias + "%' OR";
+        }
+
+        where = where.substring(0, where.length() - 2);
+
+        String itemQuery = "SELECT number, content FROM item"+ where;
+        List<Object[]> list = sessionFactory.getCurrentSession().createSQLQuery(itemQuery).list();
+        //System.out.println("list = " + list.size());
+
+        List<Item> items = new ArrayList<Item>();
+        for (Object[] o : list) {
+            items.add(new Item((String) o[0], (String) o[1]));
+        }
+
+        items = sort(items);
+        /*for(Item i : items) {
+            System.out.println("dao item = " + i.getNumber());
+        }*/
+        return items;
     }
 
     @Override
     public List<Item> getByRegexp(String property, String regexp) {
-        return criteria()
-                .add(regexp(property, regexp)).addOrder(Order.asc("number"))
-                .list();
-    }
+        List<Item> items = criteria().add(regexp(property, regexp)).list();
 
-
-    public String createRegexp(List<String> words) {
-        throw new NotImplementedException();
+        items = sort(items);
+        return items;
     }
 }
+
+
