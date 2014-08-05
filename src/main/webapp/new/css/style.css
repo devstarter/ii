@@ -1,6 +1,10 @@
+body {
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Trebuchet MS', sans-serif;
+    color: #00006d;
+}
 
 div[ui-view] {
-    max-width: 777px;
+    max-width: 650px;
     margin: 0 auto;
 }
 

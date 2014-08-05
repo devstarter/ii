@@ -61,6 +61,8 @@ public interface BasicCrudDao<E> {
      */
     List<E> getLike(String property, @NotNull String value, MatchMode matchMode);
 
+    List<E> getLike(String property, @NotNull String value, MatchMode matchMode, int limit);
+
     /**
      * SQL: ...WHERE <property> REGEXP <regexp>
      *
@@ -73,6 +75,7 @@ public interface BasicCrudDao<E> {
      */
     @SuppressWarnings("JavadocReference")
     List<E> getByRegexp(String property, String regexp);
+    List<E> getByRegexp(String property, String regexp, int limit);
 
     /**
      * Remove entity from database by ID
