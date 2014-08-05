@@ -13,6 +13,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 import static java.util.Arrays.asList;
 
+@Ignore
 public class SEOViewFactoryTest {
 
     SEOViewFactory factory;
