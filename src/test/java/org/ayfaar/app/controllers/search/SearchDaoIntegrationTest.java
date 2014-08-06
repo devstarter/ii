@@ -1,113 +1,89 @@
 package org.ayfaar.app.controllers.search;
 
 import org.ayfaar.app.IntegrationTest;
+import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
-import org.hibernate.criterion.MatchMode;
 import org.junit.Test;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
+import static org.junit.Assert.*;
 
 public class SearchDaoIntegrationTest extends IntegrationTest{
     @Inject
     private SearchDao searchDao;
 
     private final List<String> queries;
-    private final String expectedRegexp = "времён|времена|временам|временами|временах|временем|времени|время";
-
+    private final int limit = 20;
 
     public SearchDaoIntegrationTest() {
         queries = unmodifiableList(asList("времён", "времена", "временам", "временами", "временах", "временем", "времени", "время"));
     }
 
-    @Test(/*timeout = 10000*/)
+    @Test(timeout = 10000)
     public void testTimeForMethodFindInItems() {
-        List<Item> items = new ArrayList<Item>();
-
+        int skip = NewSearchController.PAGE_SIZE * 0;
         long start = System.currentTimeMillis();
-        items = searchDao.findInItems(queries, 20);
+        searchDao.findInItems(queries, skip, limit);
         long end = System.currentTimeMillis();
-
         System.out.println("searchDao.findInItems delta = " + (end - start));
     }
 
-    @Test(/*timeout = 10000*/)
-    public void testTimeForMethodFindInItems2() {
-        List<Item> items = new ArrayList<Item>();
-
-        long start = System.currentTimeMillis();
-        items = searchDao.findInItems2(queries, 20);
-        long end = System.currentTimeMillis();
-
-        System.out.println("findInItems2 delta = " + (end - start));
-    }
-
-    @Test(/*timeout = 10000*/)
-    public void testTimeForRegexp() {
-        String expectedRegexp = "времён|времена|временам|временами|временах|временем|времени|время|Времён|Времена|Временам|Временами|Временах|Временем|Времени|Время";
-
-        long start = System.currentTimeMillis();
-        List<Item> items = searchDao.getByRegexp("content", expectedRegexp, 20);
-        long end = System.currentTimeMillis();
-
-        System.out.println("getByRegexp delta = " + (end - start));
-    }
-
-    @Test(/*timeout = 10000*/)
-    public void testTimeForGetLike() {
-        List<Item> items = new ArrayList<Item>();
-        long start = System.currentTimeMillis();
-        for(String query : queries) {
-            items.addAll(searchDao.getLike("content", query, MatchMode.ANYWHERE, 20));
-        }
-
-        Set<Item> set = new HashSet<Item>(items);
-        List<Item> newItems = new ArrayList<Item>(set);
-        searchDao.sort(newItems);
-        long end = System.currentTimeMillis();
-
-        System.out.println("testTimeForGetLike delta = " + (end - start));
-    }
-
-
-
-   /* @Test
-    public void testGetByRegexp() {
-        List<Item> actual = searchDao.getByRegexp("content", expectedRegexp);
+    @Test
+    public void testEqualityForMethodFindInItemsForFirstCall() {
+        int skip = NewSearchController.PAGE_SIZE * 0;
+        List<Item> actual = searchDao.findInItems(queries, skip, limit);
 
         assertEquals("1.0003", actual.get(0).getNumber());
         assertEquals("1.0008", actual.get(1).getNumber());
-        assertEquals("1.0075", actual.get(30).getNumber());
-        assertEquals("1.0131", actual.get(53).getNumber());
-        assertEquals("1.0846", actual.get(283).getNumber());
-    }*/
+        assertEquals("1.0010", actual.get(2).getNumber());
+        assertEquals("1.0013", actual.get(3).getNumber());
+        assertEquals("1.0014", actual.get(4).getNumber());
+        assertEquals("1.0018", actual.get(5).getNumber());
+        assertEquals("1.0020", actual.get(6).getNumber());
+        assertEquals("1.0022", actual.get(7).getNumber());
+        assertEquals("1.0025", actual.get(8).getNumber());
+        assertEquals("1.0028", actual.get(9).getNumber());
+        assertEquals("1.0029", actual.get(10).getNumber());
+        assertEquals("1.0030", actual.get(11).getNumber());
+        assertEquals("1.0031", actual.get(12).getNumber());
+        assertEquals("1.0038", actual.get(13).getNumber());
+        assertEquals("1.0039", actual.get(14).getNumber());
+        assertEquals("1.0041", actual.get(15).getNumber());
+        assertEquals("1.0043", actual.get(16).getNumber());
+        assertEquals("1.0047", actual.get(17).getNumber());
+        assertEquals("1.0048", actual.get(18).getNumber());
+        assertEquals("1.0050", actual.get(19).getNumber());
+    }
 
-    /*@Test
-    public void testCreateRegexp() {
-        //assertEquals(expectedRegexp, searchDao.createRegexp(queries));
-    }*/
+    @Test
+    public void testEqualityForMethodFindInItemsForTenthCall() {
+        int skip = NewSearchController.PAGE_SIZE * 10;
+        List<Item> actual = searchDao.findInItems(queries, skip, limit);
 
-    /*@Test(timeout = 10000)
-     public void testTimeForGettingRequiredItems() {
-        //searchDao.getByRegexp("content", expectedRegexp);
-        List<String> queries = Arrays.asList("времён", "времена", "временам",
-                "временами", "временах", "временем", "времени", "время");
-
-        List<Item> items = new ArrayList<Item>();
-        for(String s : queries) {
-            items.addAll(searchDao.getLike("content", s, MatchMode.ANYWHERE));
-        }
-        List<Item> list = searchDao.sort(items);
-        System.out.println("list = " + list.size());
-        for(Item i : list) {
-            System.out.println("item = " + i.getNumber());
-        }
-    }*/
+        assertEquals("1.0552", actual.get(0).getNumber());
+        assertEquals("1.0556", actual.get(1).getNumber());
+        assertEquals("1.0560", actual.get(2).getNumber());
+        assertEquals("1.0561", actual.get(3).getNumber());
+        assertEquals("1.0564", actual.get(4).getNumber());
+        assertEquals("1.0565", actual.get(5).getNumber());
+        assertEquals("1.0566", actual.get(6).getNumber());
+        assertEquals("1.0567", actual.get(7).getNumber());
+        assertEquals("1.0574", actual.get(8).getNumber());
+        assertEquals("1.0576", actual.get(9).getNumber());
+        assertEquals("1.0577", actual.get(10).getNumber());
+        assertEquals("1.0582", actual.get(11).getNumber());
+        assertEquals("1.0590", actual.get(12).getNumber());
+        assertEquals("1.0595", actual.get(13).getNumber());
+        assertEquals("1.0598", actual.get(14).getNumber());
+        assertEquals("1.0600", actual.get(15).getNumber());
+        assertEquals("1.0601", actual.get(16).getNumber());
+        assertEquals("1.0605", actual.get(17).getNumber());
+        assertEquals("1.0606", actual.get(18).getNumber());
+        assertEquals("1.0608", actual.get(19).getNumber());
+    }
 }

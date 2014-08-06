@@ -4,16 +4,16 @@ import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.controllers.search.SearchFilter;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
-import org.hibernate.criterion.MatchMode;
-import org.jetbrains.annotations.NotNull;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.*;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.hibernate.criterion.Restrictions.like;
+import static org.hibernate.criterion.Restrictions.or;
 
 @Repository
 public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchDao {
@@ -31,100 +31,33 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         // 4.2. Если filter заполнен то нужно учесть стартовый и конечный  абзаци
         // 4.3. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
 
-        //getByRegexp("content", createRegexp(words));
-        /*for (String query : words) {
-            getLike("content", query, MatchMode.ANYWHERE);
-        }*/
-        //findInAllContent("времени");
+        //findInItems(words, 0, 20);
+        //findInItems(words, 20, 20);
         throw new NotImplementedException();
     }
 
-
-    @Override
-    public List<Item> getLike(String property, @NotNull String value, MatchMode matchMode) {
-        return criteria()
-                // .ignoreCase() нет смысла использовать так как mysql итак не зависит от регистра
-                // то есть нет необходимости оверайдить гктЛайк метод
-                .add(like(property, value.toLowerCase(), matchMode).ignoreCase())
-                .list();
-    }
-
-    /*public String createRegexp(List<String> words) {
-        throw new NotImplementedException();
-    }*/
 
     public List<Item> sort(List<Item> items) {
         Collections.sort(items);
         return items;
     }
 
-    @Override
-    public List<Item> findInItems(List<String> aliases, int limit) {
-        String where = " WHERE ";
+    public List<Item> findInItems(List<String> aliases, int skip, int limit) {
+        Criteria criteria = criteria();
+        Disjunction disjunction = Restrictions.disjunction();
 
         for (String alias : aliases) {
-            for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}) {
-                // а зачем тебе здесь SQL, чего не используешь getLike ?
-                where += " content like '% " + alias + endChar + "%' OR" +
-                        " content like '%-" + alias + endChar + "%' OR" +
-                        " content like '%(" + alias + endChar + "%' OR" +
-                        " content like '" + alias + endChar + "%' OR";
-
+            for (char startChar : new char[]{'-', ' ', '(', '«'})  {
+                for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}) {
+                    disjunction.add(or(like("content", startChar + alias + endChar, MatchMode.ANYWHERE)));
+                }
             }
-            where += " content like '%«" + alias + "»%' OR" + " content like '%«" + alias + " %' OR";
+            for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}) {
+                disjunction.add(or(like("content", alias + endChar, MatchMode.ANYWHERE)));
+            }
         }
-
-        where = where.substring(0, where.length() - 2);
-
-        String itemQuery = "SELECT number, content FROM item"+ where;
-        // можно заменить на List<Item> list = sessionFactory.getCurrentSession().createSQLQuery(itemQuery).addEntity(Item.class).list();
-        List<Object[]> list = sessionFactory.getCurrentSession().createSQLQuery(itemQuery).list();
-        //System.out.println("list = " + list.size());
-
-        List<Item> items = new ArrayList<Item>();
-        for (Object[] o : list) {
-            items.add(new Item((String) o[0], (String) o[1]));
-        }
-
-        items = sort(items);
-        /*for(Item i : items) {
-            System.out.println("dao item = " + i.getNumber());
-        }*/
-        return items;
-    }
-
-    @Override
-    public List<Item> findInItems2(List<String> aliases, int limit) {
-        String where = " WHERE ";
-
-        for (String alias : aliases) {
-            where += " content like '% " + alias + "%' OR" + " content like '%-" + alias + "%' OR";
-        }
-
-        where = where.substring(0, where.length() - 2);
-
-        String itemQuery = "SELECT number, content FROM item"+ where;
-        List<Object[]> list = sessionFactory.getCurrentSession().createSQLQuery(itemQuery).list();
-        //System.out.println("list = " + list.size());
-
-        List<Item> items = new ArrayList<Item>();
-        for (Object[] o : list) {
-            items.add(new Item((String) o[0], (String) o[1]));
-        }
-
-        items = sort(items);
-        /*for(Item i : items) {
-            System.out.println("dao item = " + i.getNumber());
-        }*/
-        return items;
-    }
-
-    @Override
-    public List<Item> getByRegexp(String property, String regexp) {
-        List<Item> items = criteria().add(regexp(property, regexp)).list();
-
-        items = sort(items);
-        return items;
+        criteria.add(disjunction).setMaxResults(limit).setFirstResult(skip);
+        return sort(criteria.list());
     }
 }
 
