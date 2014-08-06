@@ -31,6 +31,7 @@ public class AbstractSEOViewThymeleafImplTest {
             put("param2","value2");
         }};
 
+        SEOViewThymeleafImplMock.setPREFIX("ii-seo\\src\\test\\java\\org\\ayfaar\\ii\\seo\\impl\\templates\\");
         SEOView view = new SEOViewThymeleafImplMock("testView");
         view.setViewParameters(viewParameters);
         String result = view.getHTML();
