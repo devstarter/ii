@@ -5,7 +5,9 @@ import org.ayfaar.app.controllers.search.SearchFilter;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -13,7 +15,6 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.hibernate.criterion.Restrictions.like;
-import static org.hibernate.criterion.Restrictions.or;
 
 @Repository
 public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchDao {
@@ -36,7 +37,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         throw new NotImplementedException();
     }
 
-
+    // зачем отдельный метод для сортировки?
     public List<Item> sort(List<Item> items) {
         Collections.sort(items);
         return items;
@@ -49,11 +50,13 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         for (String alias : aliases) {
             for (char startChar : new char[]{'-', ' ', '(', '«'})  {
                 for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}) {
-                    disjunction.add(or(like("content", startChar + alias + endChar, MatchMode.ANYWHERE)));
+                    // если уж используешь дизьюнкцию то нет необходимости в or
+                    disjunction.add(like("content", startChar + alias + endChar, MatchMode.ANYWHERE));
                 }
             }
-            for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}) {
-                disjunction.add(or(like("content", alias + endChar, MatchMode.ANYWHERE)));
+            // зачем второй цикл? напиши в коментариях, так как без углубления в логику не понятно
+            for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}/*дублирование списка знаков*/) {
+                disjunction.add(like("content", alias + endChar, MatchMode.ANYWHERE));
             }
         }
         criteria.add(disjunction).setMaxResults(limit).setFirstResult(skip);

@@ -11,14 +11,14 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class SearchDaoIntegrationTest extends IntegrationTest{
     @Inject
     private SearchDao searchDao;
 
     private final List<String> queries;
-    private final int limit = 20;
+    private final int pageSize = NewSearchController.PAGE_SIZE;
 
     public SearchDaoIntegrationTest() {
         queries = unmodifiableList(asList("времён", "времена", "временам", "временами", "временах", "временем", "времени", "время"));
@@ -26,18 +26,20 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
 
     @Test(timeout = 10000)
     public void testTimeForMethodFindInItems() {
-        int skip = NewSearchController.PAGE_SIZE * 0;
+        int skip = 0;
         long start = System.currentTimeMillis();
-        searchDao.findInItems(queries, skip, limit);
+        searchDao.findInItems(queries, skip, pageSize);
         long end = System.currentTimeMillis();
         System.out.println("searchDao.findInItems delta = " + (end - start));
     }
 
     @Test
     public void testEqualityForMethodFindInItemsForFirstCall() {
-        int skip = NewSearchController.PAGE_SIZE * 0;
-        List<Item> actual = searchDao.findInItems(queries, skip, limit);
+        int skip = 0;
+        List<Item> actual = searchDao.findInItems(queries, skip, pageSize);
 
+        assertEquals(20, actual.size());
+        // думаю тут можно выборочно прверить
         assertEquals("1.0003", actual.get(0).getNumber());
         assertEquals("1.0008", actual.get(1).getNumber());
         assertEquals("1.0010", actual.get(2).getNumber());
@@ -62,9 +64,10 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
 
     @Test
     public void testEqualityForMethodFindInItemsForTenthCall() {
-        int skip = NewSearchController.PAGE_SIZE * 10;
-        List<Item> actual = searchDao.findInItems(queries, skip, limit);
+        int skip = pageSize * 10;
+        List<Item> actual = searchDao.findInItems(queries, skip, pageSize);
 
+        // думаю тут можно выборочно прверить
         assertEquals("1.0552", actual.get(0).getNumber());
         assertEquals("1.0556", actual.get(1).getNumber());
         assertEquals("1.0560", actual.get(2).getNumber());
@@ -85,5 +88,18 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         assertEquals("1.0605", actual.get(17).getNumber());
         assertEquals("1.0606", actual.get(18).getNumber());
         assertEquals("1.0608", actual.get(19).getNumber());
+    }
+
+    @Test
+    public void testOneWorkSearch() {
+        List<Item> items = searchDao.findInItems(asList("апокликмия"), 0, pageSize);
+        assertEquals(2, items.size());
+        assertEquals("12.14021", items.get(0).getNumber());
+        assertEquals("12.14023", items.get(1).getNumber());
+    }
+
+    @Test
+    public void testFilter() {
+        // todo тестировать с фильтрацией начального пункта
     }
 }
