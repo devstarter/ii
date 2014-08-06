@@ -26,7 +26,7 @@ public abstract class AbstractSEOViewThymeleafImpl implements SEOView {
 
     @Override
     public void setViewParameters(Map<String, String> viewParameters) {
-        this.viewParameters = new HashMap<>(viewParameters);
+        this.viewParameters = new HashMap<String, String>(viewParameters);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class AbstractSEOViewThymeleafImplTest {
 
         @Override
         protected Map<String, ?> getParameters(Map<String, String> viewParameters) {
-            Map<String, String> parameters = new HashMap<>(viewParameters);
+            Map<String, String> parameters = new HashMap<String, String>(viewParameters);
             parameters.put("param3","value3");
             return parameters;
         }

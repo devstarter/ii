@@ -44,7 +44,7 @@ public class SEOViewFactoryTest {
 
         @Override
         public void setViewParameters(Map<String, String> viewParameters) {
-            this.viewParameters = new HashMap<>(viewParameters);
+            this.viewParameters = new HashMap<String, String>(viewParameters);
         }
 
         @Override
@@ -93,12 +93,12 @@ public class SEOViewFactoryTest {
             put("test1","test2");
         }};
 
-        assertFalse(factory.isCached("test",new HashMap<>(testMap)));
+        assertFalse(factory.isCached("test",new HashMap<String, String>(testMap)));
 
-        factory.cachingView("test",new HashMap<>(testMap),"hmtlsssss");
+        factory.cachingView("test",new HashMap<String, String>(testMap),"hmtlsssss");
 
-        assertFalse(factory.isCached("test1",new HashMap<>(testMap)));
-        assertTrue(factory.isCached("test", new HashMap<>(testMap)));
+        assertFalse(factory.isCached("test1",new HashMap<String, String>(testMap)));
+        assertTrue(factory.isCached("test", new HashMap<String, String>(testMap)));
     }
 
     @Test
