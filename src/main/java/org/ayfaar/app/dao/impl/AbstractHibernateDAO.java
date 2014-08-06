@@ -12,6 +12,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.type.StringType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,7 +131,7 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
 
     @Nullable
     @Override
-    public E get(String property, @NotNull Object o) {
+    public E get(String property, @NotNull Object value) {
         Criteria criteria = criteria();
         if (property.indexOf(".") > 0) {
             String[] aliases = property.split("\\.");
@@ -146,15 +147,15 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
             }
             property = aProperty+"."+aliases[aliases.length-1];
         }
-        return (E) criteria.add(eq(property, o))
+        return (E) criteria.add(eq(property, value))
                 .uniqueResult();
     }
 
     @Nullable
     @Override
-    public List<E> getList(String property, @NotNull Object o) {
+    public List<E> getList(String property, @NotNull Object value) {
         return criteria()
-                .add(eq(property, o))
+                .add(eq(property, value))
                 .list();
     }
 
@@ -163,6 +164,29 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
     public List<E> getLike(String property, @NotNull String value, MatchMode matchMode) {
         return criteria()
                 .add(like(property, value, matchMode))
+                .list();
+    }
+
+    @Override
+    public List<E> getLike(String property, @NotNull String value, MatchMode matchMode, int limit) {
+        return criteria()
+                .add(like(property, value, matchMode))
+                .setMaxResults(limit)
+                .list();
+    }
+
+    @Override
+    public List<E> getByRegexp(String property, String regexp) {
+        return criteria()
+                .add(regexp(property, regexp))
+                .list();
+    }
+
+    @Override
+    public List<E> getByRegexp(String property, String regexp, int limit) {
+        return criteria()
+                .add(regexp(property, regexp))
+                .setMaxResults(limit)
                 .list();
     }
 
@@ -345,5 +369,9 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         }
 
         return reattachedParent;
+    }
+
+    public static Criterion regexp(String propertyName, String value) {
+        return Restrictions.sqlRestriction(propertyName+" REGEXP ?", value, new StringType());
     }
 }

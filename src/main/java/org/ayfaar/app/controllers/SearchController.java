@@ -124,7 +124,6 @@ public class SearchController {
             }
 
             query = query.replaceAll("\\*", "[" + w + "]*");
-
             if (aliasesList.size() > 0) {
                 items = commonDao.findInAllContent(aliasesList, page * pageSize, pageSize);
             } else {
@@ -134,6 +133,7 @@ public class SearchController {
         // [^\.\?!]* - star is greedy, so pattern will find the last match to make first group as long as possible
         Pattern pattern = Pattern.compile("([^\\.\\?!]*)\\b(" + query + ")\\b([^\\.\\?!]*)([\\.\\?!]*)",
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+
 
         for (Content item : items) {
             ModelMap map = new ModelMap();

@@ -23,6 +23,8 @@ public class TermMorphDaoImpl extends AbstractHibernateDAO<TermMorph> implements
     }
 
     @Override
+    @Deprecated
+    // todo переделать этот метод
     public List<String> getAllMorphs(String termMorph) {
         List<String> result;
         String query, nominative;
