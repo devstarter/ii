@@ -1,7 +1,6 @@
 package org.ayfaar.app.dao.impl;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.ayfaar.app.controllers.search.SearchFilter;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
 import org.hibernate.Criteria;
@@ -10,6 +9,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,11 +22,11 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         super(Item.class);
     }
 
-    public List<Item> searchInDb(String query, int skipResults, int maxResults, SearchFilter filter) {
-        return searchInDb(asList(query), skipResults, maxResults, filter);
+    public List<Item> searchInDb(String query, int skipResults, int maxResults, String fromItemNumber) {
+        return searchInDb(asList(query), skipResults, maxResults, fromItemNumber);
     }
 
-    public List<Item> searchInDb(List<String> words, int skipResults, int maxResults, SearchFilter filter) {
+    public List<Item> searchInDb(List<String> words, int skipResults, int maxResults, String fromItemNumber) {
         // 4.1. Результат должен быть отсортирован:
         // Сначала самые ранние пункты
         // 4.2. Если filter заполнен то нужно учесть стартовый и конечный  абзаци
@@ -37,12 +37,6 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         throw new NotImplementedException();
     }
 
-    // зачем отдельный метод для сортировки?
-    public List<Item> sort(List<Item> items) {
-        Collections.sort(items);
-        return items;
-    }
-
     public List<Item> findInItems(List<String> aliases, int skip, int limit) {
         Criteria criteria = criteria();
         Disjunction disjunction = Restrictions.disjunction();
@@ -50,17 +44,19 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         for (String alias : aliases) {
             for (char startChar : new char[]{'-', ' ', '(', '«'})  {
                 for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}) {
-                    // если уж используешь дизьюнкцию то нет необходимости в or
                     disjunction.add(like("content", startChar + alias + endChar, MatchMode.ANYWHERE));
                 }
             }
-            // зачем второй цикл? напиши в коментариях, так как без углубления в логику не понятно
-            for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}/*дублирование списка знаков*/) {
+            //иногда фраза которую мы ищем стоит в самом начале пердложения и перед ней нет ни пробела, ни других знаков
+            for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}) {
                 disjunction.add(like("content", alias + endChar, MatchMode.ANYWHERE));
             }
         }
         criteria.add(disjunction).setMaxResults(limit).setFirstResult(skip);
-        return sort(criteria.list());
+
+        List<Item> sortedItems = new ArrayList<Item>(criteria.list());
+        Collections.sort(sortedItems);
+        return sortedItems;
     }
 }
 
