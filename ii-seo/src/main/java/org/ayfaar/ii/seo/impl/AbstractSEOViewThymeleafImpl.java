@@ -64,5 +64,6 @@ public abstract class AbstractSEOViewThymeleafImpl implements SEOView {
         return engine;
     }
 
+    // Тут наследники должны реализовать логику получения данных для подставления в шаблон
     protected abstract Map<String,?> getParameters(Map<String, String> viewParameters);
 }
