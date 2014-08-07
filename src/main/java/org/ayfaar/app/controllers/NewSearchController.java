@@ -2,7 +2,6 @@ package org.ayfaar.app.controllers;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.controllers.search.Quote;
-import org.ayfaar.app.controllers.search.SearchFilter;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.dao.SearchDao;

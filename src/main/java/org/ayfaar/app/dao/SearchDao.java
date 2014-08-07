@@ -8,4 +8,5 @@ public interface SearchDao extends BasicCrudDao<Item> {
     public List<Item> searchInDb(String query, int skipResults, int maxResults, String fromItemNumber);
     public List<Item> searchInDb(List<String> words, int skipResults, int maxResults, String fromItemNumber);
     public List<Item> findInItems(List<String> aliases, int skip, int limit);
+    public List<Item> testFilter(List<String> aliases, int skip, int limit, String filter);
 }

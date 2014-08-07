@@ -10,7 +10,7 @@ import java.util.List;
 public class Cache {
     private List<Quote> quotes;
 
-    public List<Quote> getCache(String query, Integer pageNumber, SearchFilter filter) {
+    public List<Quote> getCache(String query, Integer pageNumber, String filter) {
         int start = pageNumber * NewSearchController.PAGE_SIZE;
         int temp = start + NewSearchController.PAGE_SIZE;
         int end = temp < quotes.size() ? temp : quotes.size();

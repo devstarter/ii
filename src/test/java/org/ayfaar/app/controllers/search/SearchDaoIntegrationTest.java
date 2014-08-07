@@ -67,8 +67,21 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         assertEquals("12.14023", items.get(1).getNumber());
     }
 
+    /*@Test
+    public void testFindInItemsWithFilter() {
+        List<Item> actual = searchDao.findInItems(queries, 0, 4000, "3.1201");
+
+        for(Item i : actual) {
+            System.out.println(i.getNumber());
+        }
+    }*/
+
     @Test
     public void testFilter() {
-        // todo тестировать с фильтрацией начального пункта
+        List<Item> actual = searchDao.testFilter(queries, 0, 4000, "3.1201");
+
+        for(Item i : actual) {
+            System.out.println(i.getNumber());
+        }
     }
 }
