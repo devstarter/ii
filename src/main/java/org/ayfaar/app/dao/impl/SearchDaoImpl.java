@@ -12,9 +12,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.hibernate.criterion.Restrictions.between;
-import static org.hibernate.criterion.Restrictions.like;
 import static org.hibernate.criterion.Restrictions.ge;
+import static org.hibernate.criterion.Restrictions.like;
 
 @Repository
 public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchDao {
@@ -42,7 +41,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         Disjunction disjunction = Restrictions.disjunction();
 
         for (String alias : aliases) {
-            for (char startChar : new char[]{'-', ' ', '(', '«'})  {
+            for (char startChar : new char[]{'-', ' ', '(', '«'})  {//fixme почему бы сюда не добавить '' и тогда нужен второй цикл
                 for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}) {
                     disjunction.add(like("content", startChar + alias + endChar, MatchMode.ANYWHERE));
                 }
@@ -59,17 +58,20 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         return sortedItems;
     }
 
+    //fixme ну вроди всё верно, только ведь не нужно делать отдельный метод, просто добавь возможность фильтрации в findInItems
     public List<Item> testFilter(List<String> aliases, int skip, int limit, String filter) {
         Criteria criteria = criteria();
+        // зачем здесь дизьюнкция? ты же не используешь её
         Disjunction disjunction = Restrictions.disjunction();
 
 
         criteria.add(ge("number", filter)).addOrder(new Order("number", true) {
             @Override
             public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery) {
+                // хорошо реализовал
                 return "cast(number as decimal)";
             }
-        });;
+        });
         //criteria.add(between("number", filter, "15.17876"));
         criteria.add(disjunction).setMaxResults(limit).setFirstResult(skip);
         //criteria.addOrder(Order.asc("doubleNumber"));
@@ -79,7 +81,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
                 return "cast(number as decimal)";
             }
         });*/
-
+        // fixme зачем дополнительно сортируешь?
         List<Item> sortedItems = new ArrayList<Item>(criteria.list());
         Collections.sort(sortedItems);
         return sortedItems;

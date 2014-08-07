@@ -1,5 +1,7 @@
 package org.ayfaar.app.controllers.search;
 
+import net.sf.cglib.core.CollectionUtils;
+import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.dao.SearchDao;
@@ -12,6 +14,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SearchDaoIntegrationTest extends IntegrationTest{
     @Inject
@@ -83,5 +86,30 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         for(Item i : actual) {
             System.out.println(i.getNumber());
         }
+    }
+
+    @Test
+    /*
+    Тест на правильную последовательность пунктом, сначала должны быть пункты из самых ранних томов.
+    SQL:
+    SELECT  *
+    FROM `ii`.`item`
+    WHERE `content` LIKE '%ААИИГЛА-МАА%'
+    ORDER BY cast(number as decimal), `uri` ASC
+    LIMIT 20;
+    это без учёта разных знаком не по краям фразы, но по идее должно быть тоже самое
+     */
+    public void testOrder() {
+        final List<Item> items = searchDao.findInItems(asList("ААИИГЛА-МАА"), 0, pageSize);
+        @SuppressWarnings("unchecked")
+        List<String> numbers = CollectionUtils.transform(items, new Transformer() {
+            @Override
+            public Object transform(Object value) {
+                return ((Item) value).getNumber();
+            }
+        });
+        assertEquals(13, numbers.size());
+        assertEquals(1, numbers.indexOf("1.1024"));
+        assertTrue(numbers.indexOf("10.11809") > numbers.indexOf("3.0056"));
     }
 }
