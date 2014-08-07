@@ -6,6 +6,7 @@ import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -63,7 +64,7 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
     }
 
     @Test
-    public void testOneWorkSearch() {
+    public void testOneWordSearch() {
         List<Item> items = searchDao.findInItems(asList("апокликмия"), 0, pageSize);
         assertEquals(2, items.size());
         assertEquals("12.14021", items.get(0).getNumber());
@@ -89,13 +90,14 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
     }
 
     @Test
+    @Ignore
     /*
     Тест на правильную последовательность пунктом, сначала должны быть пункты из самых ранних томов.
     SQL:
     SELECT  *
     FROM `ii`.`item`
     WHERE `content` LIKE '%ААИИГЛА-МАА%'
-    ORDER BY cast(number as decimal), `uri` ASC
+    ORDER BY cast(number as decimal(10,6)) ASC
     LIMIT 20;
     это без учёта разных знаком не по краям фразы, но по идее должно быть тоже самое
      */
