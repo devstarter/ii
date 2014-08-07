@@ -1,4 +1,4 @@
-Интерактивная Ииссиидиология [![Build Status](https://drone.io/github.com/devstarter/ii/status.png)](https://drone.io/github.com/devstarter/ii/latest)
+Интерактивная Ииссиидиология
 ============================
 [презетация](http://youtu.be/__ibkaMRHZI), [ii.ayfaar.org](http://ii.ayfaar.org), [канал YouTube](https://www.youtube.com/channel/UCx7OZ2t2mEiaW6kem5lfl9w)
 
