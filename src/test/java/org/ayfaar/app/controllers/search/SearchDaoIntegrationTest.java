@@ -1,9 +1,12 @@
 package org.ayfaar.app.controllers.search;
 
+import net.sf.cglib.core.CollectionUtils;
+import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -12,6 +15,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SearchDaoIntegrationTest extends IntegrationTest{
     @Inject
@@ -39,25 +43,9 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         List<Item> actual = searchDao.findInItems(queries, skip, pageSize);
 
         assertEquals(20, actual.size());
-        // думаю тут можно выборочно прверить
         assertEquals("1.0003", actual.get(0).getNumber());
         assertEquals("1.0008", actual.get(1).getNumber());
-        assertEquals("1.0010", actual.get(2).getNumber());
-        assertEquals("1.0013", actual.get(3).getNumber());
-        assertEquals("1.0014", actual.get(4).getNumber());
-        assertEquals("1.0018", actual.get(5).getNumber());
-        assertEquals("1.0020", actual.get(6).getNumber());
-        assertEquals("1.0022", actual.get(7).getNumber());
-        assertEquals("1.0025", actual.get(8).getNumber());
         assertEquals("1.0028", actual.get(9).getNumber());
-        assertEquals("1.0029", actual.get(10).getNumber());
-        assertEquals("1.0030", actual.get(11).getNumber());
-        assertEquals("1.0031", actual.get(12).getNumber());
-        assertEquals("1.0038", actual.get(13).getNumber());
-        assertEquals("1.0039", actual.get(14).getNumber());
-        assertEquals("1.0041", actual.get(15).getNumber());
-        assertEquals("1.0043", actual.get(16).getNumber());
-        assertEquals("1.0047", actual.get(17).getNumber());
         assertEquals("1.0048", actual.get(18).getNumber());
         assertEquals("1.0050", actual.get(19).getNumber());
     }
@@ -67,39 +55,63 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         int skip = pageSize * 10;
         List<Item> actual = searchDao.findInItems(queries, skip, pageSize);
 
-        // думаю тут можно выборочно прверить
+        assertEquals(20, actual.size());
         assertEquals("1.0552", actual.get(0).getNumber());
         assertEquals("1.0556", actual.get(1).getNumber());
-        assertEquals("1.0560", actual.get(2).getNumber());
-        assertEquals("1.0561", actual.get(3).getNumber());
-        assertEquals("1.0564", actual.get(4).getNumber());
-        assertEquals("1.0565", actual.get(5).getNumber());
-        assertEquals("1.0566", actual.get(6).getNumber());
-        assertEquals("1.0567", actual.get(7).getNumber());
-        assertEquals("1.0574", actual.get(8).getNumber());
         assertEquals("1.0576", actual.get(9).getNumber());
-        assertEquals("1.0577", actual.get(10).getNumber());
-        assertEquals("1.0582", actual.get(11).getNumber());
-        assertEquals("1.0590", actual.get(12).getNumber());
-        assertEquals("1.0595", actual.get(13).getNumber());
-        assertEquals("1.0598", actual.get(14).getNumber());
-        assertEquals("1.0600", actual.get(15).getNumber());
-        assertEquals("1.0601", actual.get(16).getNumber());
-        assertEquals("1.0605", actual.get(17).getNumber());
         assertEquals("1.0606", actual.get(18).getNumber());
         assertEquals("1.0608", actual.get(19).getNumber());
     }
 
     @Test
-    public void testOneWorkSearch() {
+    public void testOneWordSearch() {
         List<Item> items = searchDao.findInItems(asList("апокликмия"), 0, pageSize);
         assertEquals(2, items.size());
         assertEquals("12.14021", items.get(0).getNumber());
         assertEquals("12.14023", items.get(1).getNumber());
     }
 
+    /*@Test
+    public void testFindInItemsWithFilter() {
+        List<Item> actual = searchDao.findInItems(queries, 0, 4000, "3.1201");
+
+        for(Item i : actual) {
+            System.out.println(i.getNumber());
+        }
+    }*/
+
     @Test
     public void testFilter() {
-        // todo тестировать с фильтрацией начального пункта
+        List<Item> actual = searchDao.testFilter(queries, 0, 4000, "3.1201");
+
+        for(Item i : actual) {
+            System.out.println(i.getNumber());
+        }
+    }
+
+    @Test
+    @Ignore
+    /*
+    Тест на правильную последовательность пунктом, сначала должны быть пункты из самых ранних томов.
+    SQL:
+    SELECT  *
+    FROM `ii`.`item`
+    WHERE `content` LIKE '%ААИИГЛА-МАА%'
+    ORDER BY cast(number as decimal(10,6)) ASC
+    LIMIT 20;
+    это без учёта разных знаком не по краям фразы, но по идее должно быть тоже самое
+     */
+    public void testOrder() {
+        final List<Item> items = searchDao.findInItems(asList("ААИИГЛА-МАА"), 0, pageSize);
+        @SuppressWarnings("unchecked")
+        List<String> numbers = CollectionUtils.transform(items, new Transformer() {
+            @Override
+            public Object transform(Object value) {
+                return ((Item) value).getNumber();
+            }
+        });
+        assertEquals(13, numbers.size());
+        assertEquals(1, numbers.indexOf("1.1024"));
+        assertTrue(numbers.indexOf("10.11809") > numbers.indexOf("3.0056"));
     }
 }

@@ -1,12 +1,10 @@
 package org.ayfaar.app.model;
 
-import org.apache.lucene.search.FieldCache;
 import org.ayfaar.app.annotations.Uri;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
-import java.util.Comparator;
 
 @Entity
 @PrimaryKeyJoinColumn(name="uri")

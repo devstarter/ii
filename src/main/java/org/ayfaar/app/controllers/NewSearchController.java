@@ -2,7 +2,6 @@ package org.ayfaar.app.controllers;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.controllers.search.Quote;
-import org.ayfaar.app.controllers.search.SearchFilter;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.dao.SearchDao;
@@ -33,13 +32,13 @@ public class NewSearchController {
      *
      * @param pageNumber номер страницы
      */
-    public SearchResultPage search(String query, Integer pageNumber, SearchFilter filter) {
+    public SearchResultPage search(String query, Integer pageNumber, String fromItemNumber) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         query = prepareQuery(query);
 
         // 2. Проверяем есть ли кеш, если да возвращаем его
-        if (hasCached(query, pageNumber, filter)) {
-            return getCache(query, pageNumber, filter);
+        if (hasCached(query, pageNumber, fromItemNumber)) {
+            return getCache(query, pageNumber, fromItemNumber);
         }
 
         SearchResultPage page = new SearchResultPage();
@@ -61,15 +60,15 @@ public class NewSearchController {
             searchQueries = getAllMorphs(term);
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
-            foundItems = searchDao.searchInDb(searchQueries, skipResults, PAGE_SIZE, filter);
+            foundItems = searchDao.searchInDb(searchQueries, skipResults, PAGE_SIZE, fromItemNumber);
             // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
             List<Term> aliases = getAllAliases(term);
             List<String> aliasesSearchQueries = getAllMorphs(aliases);
-            foundItems.addAll(searchDao.searchInDb(searchQueries, skipResults, PAGE_SIZE - foundItems.size(), filter));
+            foundItems.addAll(searchDao.searchInDb(searchQueries, skipResults, PAGE_SIZE - foundItems.size(), fromItemNumber));
             searchQueries.addAll(aliasesSearchQueries);
         } else {
             // 4. Поиск фразы (не термин)
-            foundItems = searchDao.searchInDb(query, skipResults, PAGE_SIZE, filter);
+            foundItems = searchDao.searchInDb(query, skipResults, PAGE_SIZE, fromItemNumber);
         }
 
         page.setHasMore(false);
@@ -101,11 +100,11 @@ public class NewSearchController {
         throw new NotImplementedException();
     }
 
-    private SearchResultPage getCache(String query, Integer page, SearchFilter filter) {
+    private SearchResultPage getCache(String query, Integer page, String fromItemNumber) {
         throw new NotImplementedException();
     }
 
-    private boolean hasCached(String query, Integer page, SearchFilter filter) {
+    private boolean hasCached(String query, Integer page, String fromItemNumber) {
         throw new NotImplementedException();
     }
 

@@ -1,46 +1,39 @@
 package org.ayfaar.app.dao.impl;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.ayfaar.app.controllers.search.SearchFilter;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.hibernate.criterion.Restrictions.ge;
 import static org.hibernate.criterion.Restrictions.like;
 
 @Repository
 public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchDao {
+
     public SearchDaoImpl() {
         super(Item.class);
     }
 
-    public List<Item> searchInDb(String query, int skipResults, int maxResults, SearchFilter filter) {
-        return searchInDb(asList(query), skipResults, maxResults, filter);
+    public List<Item> searchInDb(String query, int skipResults, int maxResults, String fromItemNumber) {
+        return searchInDb(asList(query), skipResults, maxResults, fromItemNumber);
     }
 
-    public List<Item> searchInDb(List<String> words, int skipResults, int maxResults, SearchFilter filter) {
+    public List<Item> searchInDb(List<String> words, int skipResults, int maxResults, String fromItemNumber) {
         // 4.1. Результат должен быть отсортирован:
         // Сначала самые ранние пункты
         // 4.2. Если filter заполнен то нужно учесть стартовый и конечный  абзаци
         // 4.3. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
 
-        //findInItems(words, 0, 20);
-        //findInItems(words, 20, 20);
-        throw new NotImplementedException();
-    }
 
-    // зачем отдельный метод для сортировки?
-    public List<Item> sort(List<Item> items) {
-        Collections.sort(items);
-        return items;
+        throw new NotImplementedException();
     }
 
     public List<Item> findInItems(List<String> aliases, int skip, int limit) {
@@ -48,19 +41,50 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         Disjunction disjunction = Restrictions.disjunction();
 
         for (String alias : aliases) {
-            for (char startChar : new char[]{'-', ' ', '(', '«'})  {
+            for (char startChar : new char[]{'-', ' ', '(', '«'})  {//fixme почему бы сюда не добавить '' и тогда нужен второй цикл
                 for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}) {
-                    // если уж используешь дизьюнкцию то нет необходимости в or
                     disjunction.add(like("content", startChar + alias + endChar, MatchMode.ANYWHERE));
                 }
             }
-            // зачем второй цикл? напиши в коментариях, так как без углубления в логику не понятно
-            for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}/*дублирование списка знаков*/) {
+            //иногда фраза которую мы ищем стоит в самом начале пердложения и перед ней нет ни пробела, ни других знаков
+            for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»'}) {
                 disjunction.add(like("content", alias + endChar, MatchMode.ANYWHERE));
             }
         }
         criteria.add(disjunction).setMaxResults(limit).setFirstResult(skip);
-        return sort(criteria.list());
+
+        List<Item> sortedItems = new ArrayList<Item>(criteria.list());
+        Collections.sort(sortedItems);
+        return sortedItems;
+    }
+
+    //fixme ну вроди всё верно, только ведь не нужно делать отдельный метод, просто добавь возможность фильтрации в findInItems
+    public List<Item> testFilter(List<String> aliases, int skip, int limit, String filter) {
+        Criteria criteria = criteria();
+        // зачем здесь дизьюнкция? ты же не используешь её
+        Disjunction disjunction = Restrictions.disjunction();
+
+
+        criteria.add(ge("number", filter)).addOrder(new Order("number", true) {
+            @Override
+            public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery) {
+                // хорошо реализовал
+                return "cast(number as decimal)";
+            }
+        });
+        //criteria.add(between("number", filter, "15.17876"));
+        criteria.add(disjunction).setMaxResults(limit).setFirstResult(skip);
+        //criteria.addOrder(Order.asc("doubleNumber"));
+        /*criteria.addOrder(new Order("number", true) {
+            @Override
+            public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery) {
+                return "cast(number as decimal)";
+            }
+        });*/
+        // fixme зачем дополнительно сортируешь?
+        List<Item> sortedItems = new ArrayList<Item>(criteria.list());
+        Collections.sort(sortedItems);
+        return sortedItems;
     }
 }
 
