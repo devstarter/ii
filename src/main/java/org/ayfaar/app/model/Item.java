@@ -10,7 +10,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @PrimaryKeyJoinColumn(name="uri")
 //@Audited
 @Uri(nameSpace = "ии:пункт:", field = "number")
-public class Item extends UID implements Comparable<Item>{
+public class Item extends UID {
 
     @Column(unique = true)
     private String number;
@@ -66,14 +66,5 @@ public class Item extends UID implements Comparable<Item>{
 
     public void setWiki(String wiki) {
         this.wiki = wiki;
-    }
-
-    @Override
-    public int compareTo(Item that) {
-        double itemNumber1 = Double.parseDouble(this.getNumber());
-        double itemNumber2 = Double.parseDouble(that.getNumber());
-
-        return (itemNumber1 == itemNumber2) ? 0 : (itemNumber1 > itemNumber2) ? 1 : -1;
-
     }
 }
