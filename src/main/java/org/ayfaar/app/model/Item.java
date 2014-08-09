@@ -12,7 +12,6 @@ import static java.lang.Float.parseFloat;
 
 @Entity
 @PrimaryKeyJoinColumn(name="uri")
-//@Audited
 @Setter @Getter
 @Uri(nameSpace = "ии:пункт:", field = "number")
 public class Item extends UID {
@@ -46,7 +45,7 @@ public class Item extends UID {
 
     /*
     order index sql:
-    ALTER TABLE `item` CHANGE COLUMN `order` `order_index` DECIMAL(10,5) NULL DEFAULT NULL AFTER `next`;
+    ALTER TABLE `item` ADD COLUMN `order_index` DECIMAL(10,5) NULL DEFAULT NULL AFTER `next`;
 	update item set order_index = cast(number as decimal(10, 5));
 	ALTER TABLE `item` ADD INDEX `order_index` (`order_index`);
      */
