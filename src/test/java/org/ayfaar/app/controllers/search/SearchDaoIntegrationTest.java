@@ -6,7 +6,6 @@ import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -28,7 +27,7 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
         queries = unmodifiableList(asList("времён", "времена", "временам", "временами", "временах", "временем", "времени", "время"));
     }
 
-    @Test(/*timeout = 10000*/)
+    @Test(timeout = 10000)
     public void testTimeForMethodFindInItems() {
         int skip = 0;
         long start = System.currentTimeMillis();

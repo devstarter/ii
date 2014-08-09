@@ -8,8 +8,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.*;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -64,12 +62,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         }
 
         criteria.add(disjunction).setMaxResults(limit).setFirstResult(skip);
-        criteria.addOrder(new Order("number", true) {
-            @Override
-            public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery) {
-                return "cast(number as decimal)";
-            }
-        });
+        criteria.addOrder(Order.asc("orderIndex"));
 
         return criteria.list();
     }
