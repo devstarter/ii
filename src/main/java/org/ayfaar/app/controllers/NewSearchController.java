@@ -1,15 +1,22 @@
 package org.ayfaar.app.controllers;
 
-import org.apache.commons.lang.NotImplementedException;
+import net.sf.cglib.core.CollectionUtils;
+import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchCache;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
+import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.SearchDao;
+import org.ayfaar.app.dao.TermMorphDao;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.model.TermMorph;
+import org.ayfaar.app.utils.AliasesMap;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -22,6 +29,15 @@ public class NewSearchController {
 
     @Inject
     private SearchDao searchDao;
+
+    @Inject
+    private AliasesMap aliasesMap;
+
+    @Inject
+    private TermMorphDao termMorphDao;
+
+    @Inject
+    private LinkDao linkDao;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Inject
@@ -50,11 +66,7 @@ public class NewSearchController {
         page.setHasMore(false);
 
         // 3. Определить термин ли это
-        Term term = getTerm(query);
-        // если нет поискать в разных падежах
-        if (term == null) {
-            term = findTermInMorphs(query);
-        }
+        Term term = aliasesMap.getTerm(query);
 
         // 3.1. Если да, Получить все синониме термина
         List<Item> foundItems;
@@ -72,7 +84,8 @@ public class NewSearchController {
                 // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
                 List<Term> aliases = getAllAliases(term);
                 List<String> aliasesSearchQueries = getAllMorphs(aliases);
-                foundItems.addAll(searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE - foundItems.size() + 1, fromItemNumber));
+                foundItems.addAll(searchDao.findInItems(searchQueries, skipResults,
+                        PAGE_SIZE - foundItems.size() + 1, fromItemNumber));
                 searchQueries.addAll(aliasesSearchQueries);
             }
         } else {
@@ -96,35 +109,35 @@ public class NewSearchController {
         return page;
     }
 
-    private List<String> getAllMorphs(Term term) {
+    List<String> getAllMorphs(Term term) {
         return getAllMorphs(asList(term));
     }
-    private List<String> getAllMorphs(List<Term> terms) {
-        throw new NotImplementedException();
+
+    List<String> getAllMorphs(List<Term> terms) {
+        List<TermMorph> morphs = new ArrayList<TermMorph>();
+        for (Term term : terms) {
+            morphs.addAll(termMorphDao.getList("termUri", term.getUri()));
+        }
+        //noinspection unchecked
+        return CollectionUtils.transform(morphs, new Transformer() {
+            @Override
+            public Object transform(Object value) {
+                return ((TermMorph) value).getName();
+            }
+        });
     }
 
     private List<Term> getAllAliases(Term term) {
-        throw new NotImplementedException();
-    }
-
-    private Term findTermInMorphs(String query) {
-        throw new NotImplementedException();
-    }
-
-    private Term getTerm(String query) {
-        throw new NotImplementedException();
-    }
-
-    private SearchResultPage getCache(String query, Integer page, String fromItemNumber) {
-        throw new NotImplementedException();
-    }
-
-    private boolean hasCached(String query, Integer page, String fromItemNumber) {
-        throw new NotImplementedException();
+        List<Term> aliases = new ArrayList<Term>();
+        for (Link link : linkDao.getAliases(term.getUri())) {
+            aliases.add((Term) link.getUid2());
+        }
+        return aliases;
     }
 
     private String prepareQuery(String query) {
-        throw new NotImplementedException();
+        // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
+        return query != null ? query.toLowerCase().trim() : null;
     }
 
 }

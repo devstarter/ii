@@ -89,6 +89,11 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
         return super.get(key.toLowerCase());
     }
 
+    public Term getTerm(String name) {
+        Proxy proxy = get(name);
+        return proxy != null ? proxy.getTerm() : null;
+    }
+
     public class Proxy {
         private String uri;
         private Term term;
