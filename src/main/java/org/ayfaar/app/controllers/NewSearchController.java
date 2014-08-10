@@ -7,7 +7,6 @@ import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
-import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -42,6 +41,7 @@ public class NewSearchController {
         }
 
         SearchResultPage page = new SearchResultPage();
+        page.setHasMore(false);
 
         // 3. Определить термин ли это
         Term term = getTerm(query);
@@ -60,18 +60,25 @@ public class NewSearchController {
             searchQueries = getAllMorphs(term);
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
-            foundItems = searchDao.searchInDb(searchQueries, skipResults, PAGE_SIZE, fromItemNumber);
-            // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
-            List<Term> aliases = getAllAliases(term);
-            List<String> aliasesSearchQueries = getAllMorphs(aliases);
-            foundItems.addAll(searchDao.searchInDb(searchQueries, skipResults, PAGE_SIZE - foundItems.size(), fromItemNumber));
-            searchQueries.addAll(aliasesSearchQueries);
+            foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
+
+            if (foundItems.size() < PAGE_SIZE) {
+                // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
+                List<Term> aliases = getAllAliases(term);
+                List<String> aliasesSearchQueries = getAllMorphs(aliases);
+                foundItems.addAll(searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE - foundItems.size() + 1, fromItemNumber));
+                searchQueries.addAll(aliasesSearchQueries);
+            }
         } else {
             // 4. Поиск фразы (не термин)
-            foundItems = searchDao.searchInDb(query, skipResults, PAGE_SIZE, fromItemNumber);
+            foundItems = searchDao.findInItems(asList(query), skipResults, PAGE_SIZE + 1, fromItemNumber);
         }
 
-        page.setHasMore(false);
+        if (foundItems.size() > PAGE_SIZE ) {
+            foundItems.subList(0, foundItems.size() - 1);
+            page.setHasMore(true);
+        }
+
 
         // 5. Обработка найденных пунктов
         List<Quote> quotes = handleItems.createQuotes(foundItems, searchQueries);

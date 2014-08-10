@@ -1,6 +1,5 @@
 package org.ayfaar.app.dao.impl;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
 import org.hibernate.Criteria;
@@ -8,10 +7,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.*;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static org.hibernate.criterion.Restrictions.like;
 
 @Repository
@@ -20,24 +17,6 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
 
     public SearchDaoImpl() {
         super(Item.class);
-    }
-
-    public List<Item> searchInDb(String query, int skipResults, int maxResults, String fromItemNumber) {
-        return searchInDb(asList(query), skipResults, maxResults, fromItemNumber);
-    }
-
-    public List<Item> searchInDb(List<String> words, int skipResults, int maxResults, String fromItemNumber) {
-        // 4.3. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
-        List<Item> items = findInItems(words, skipResults, maxResults + 1, fromItemNumber);
-
-        if(items.size() == maxResults + 1) {
-            hasMore = true;
-            return items.subList(0, items.size() - 1);
-        }
-        else {
-            hasMore = false;
-            return items;
-        }
     }
 
     public boolean hasMoreItems() {
@@ -54,13 +33,15 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
             criteria.add(new SimpleExpression(columnName, fromItemNumber, op) {
                 @Override
                 public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery) throws HibernateException {
-                    StringBuilder fragment = new StringBuilder();
+                    /*StringBuilder fragment = new StringBuilder();
                     fragment.append("CAST(");
                     fragment.append(columnName);
                     fragment.append(" as DECIMAL(10,6))");
                     fragment.append(getOp()).append("?");
 
-                    return fragment.toString();
+                    return fragment.toString();*/
+                    // так вроди наглядней, как тебе?
+                    return String.format("CAST(%s as DECIMAL(10,6))%s?", columnName, getOp());
                 }
             });
         }
