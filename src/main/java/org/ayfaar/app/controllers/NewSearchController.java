@@ -2,6 +2,7 @@ package org.ayfaar.app.controllers;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.controllers.search.Quote;
+import org.ayfaar.app.controllers.search.SearchCache;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.dao.SearchDao;
@@ -22,6 +23,10 @@ public class NewSearchController {
     @Inject
     private SearchDao searchDao;
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Inject
+    private SearchCache cache;
+
     private List<String> searchQueries;
 
 
@@ -36,8 +41,9 @@ public class NewSearchController {
         query = prepareQuery(query);
 
         // 2. Проверяем есть ли кеш, если да возвращаем его
-        if (hasCached(query, pageNumber, fromItemNumber)) {
-            return getCache(query, pageNumber, fromItemNumber);
+        Object cacheKey = cache.generateKey(query, pageNumber, fromItemNumber);
+        if (cache.has(cacheKey)) {
+            return cache.get(cacheKey);
         }
 
         SearchResultPage page = new SearchResultPage();
@@ -84,7 +90,9 @@ public class NewSearchController {
         List<Quote> quotes = handleItems.createQuotes(foundItems, searchQueries);
         page.setQuotes(quotes);
 
-        // 6. Вернуть результат
+        // 6. Сохранение в кеше
+        cache.put(cacheKey, page);
+        // 7. Вернуть результат
         return page;
     }
 
