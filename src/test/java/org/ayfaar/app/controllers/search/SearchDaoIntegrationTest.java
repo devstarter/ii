@@ -84,7 +84,7 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
 
     @Test
     public void testOrder() {
-        final List<Item> items = searchDao.findInItems(asList("ааиигла-маа"), 0, 4000, null);
+        final List<Item> items = searchDao.findInItems(asList("ААИИГЛА-МАА"), 0, pageSize, null);
         @SuppressWarnings("unchecked")
         List<String> numbers = CollectionUtils.transform(items, new Transformer() {
             @Override

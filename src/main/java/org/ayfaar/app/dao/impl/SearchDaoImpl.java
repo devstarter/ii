@@ -45,7 +45,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
                     fragment.append("CAST(");
                     fragment.append(columnName);
                     fragment.append(" as DECIMAL(10,6))");
-                    fragment.append( getOp() ).append( "?" );
+                    fragment.append(getOp()).append("?");
 
                     return fragment.toString();
                 }
