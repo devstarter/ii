@@ -8,6 +8,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -15,6 +16,7 @@ import static org.hibernate.criterion.Restrictions.like;
 
 @Repository
 public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchDao {
+    private boolean hasMore = false;
 
     public SearchDaoImpl() {
         super(Item.class);
@@ -25,10 +27,21 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
     }
 
     public List<Item> searchInDb(List<String> words, int skipResults, int maxResults, String fromItemNumber) {
-
         // 4.3. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
-        findInItems(words, skipResults, maxResults, fromItemNumber);
-        throw new NotImplementedException();
+        List<Item> items = findInItems(words, skipResults, maxResults + 1, fromItemNumber);
+
+        if(items.size() == maxResults + 1) {
+            hasMore = true;
+            return items.subList(0, items.size() - 1);
+        }
+        else {
+            hasMore = false;
+            return items;
+        }
+    }
+
+    public boolean hasMoreItems() {
+        return hasMore;
     }
 
     public List<Item> findInItems(List<String> aliases, int skip, int limit, String fromItemNumber) {
@@ -45,7 +58,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
                     fragment.append("CAST(");
                     fragment.append(columnName);
                     fragment.append(" as DECIMAL(10,6))");
-                    fragment.append( getOp() ).append( "?" );
+                    fragment.append(getOp()).append("?");
 
                     return fragment.toString();
                 }
