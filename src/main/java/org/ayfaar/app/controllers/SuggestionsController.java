@@ -40,6 +40,15 @@ public class SuggestionsController {
             List<String> founded = getSuggestedTerms(queriesQueue.poll(), suggestions);
             suggestions.addAll(founded.subList(0, min(MAX_SUGGESTIONS - suggestions.size(), founded.size())));
         }
+        for (int i = 0; i < suggestions.size(); i++) {
+            for (int j = i+1; j < suggestions.size()-1;j++){
+                if (suggestions.get(i).length() > suggestions.get(j).length()) {
+                    String tmp = suggestions.get(i);
+                    suggestions.set(i, suggestions.get(j));
+                    suggestions.set(j, tmp);
+                }
+            }
+        }
         return suggestions;
     }
 

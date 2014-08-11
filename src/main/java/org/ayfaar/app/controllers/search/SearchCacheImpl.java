@@ -29,7 +29,8 @@ public class SearchCacheImpl implements SearchCache {
 
     @Override
     public boolean has(Object cacheKey) {
-        return !cacheKey.equals(null);
+        if (cacheKey.equals(null)) return false;
+        return true;
     }
 
     @Override
@@ -38,9 +39,9 @@ public class SearchCacheImpl implements SearchCache {
     }
 
     @Override
-    public void put(Object cacheKey, SearchResultPage page) throws NullPointerException{
+    public void put(Object cacheKey, SearchResultPage page) throws IllegalArgumentException{
         try {
             myCache.put(cacheKey, page);
-        }catch(NullPointerException e){}
+        }catch(IllegalArgumentException e){}
     }
 }
