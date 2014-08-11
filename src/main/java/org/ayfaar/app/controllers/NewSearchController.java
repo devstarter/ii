@@ -67,7 +67,6 @@ public class NewSearchController {
 
         // 3. Определить термин ли это
         Term term = aliasesMap.getTerm(query);
-
         // 3.1. Если да, Получить все синониме термина
         List<Item> foundItems;
         // указывает сколько результатов поиска нужно пропустиьб, то есть когда ищем следующую страницу
@@ -79,16 +78,16 @@ public class NewSearchController {
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
-
             if (foundItems.size() < PAGE_SIZE) {
                 // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
                 List<Term> aliases = getAllAliases(term);
                 // Если у термина вообще есть синонимы:
                 if (!aliases.isEmpty()) {
                     List<String> aliasesSearchQueries = getAllMorphs(aliases);
+                    searchQueries.addAll(aliasesSearchQueries);
                     foundItems.addAll(searchDao.findInItems(searchQueries, skipResults,
                             PAGE_SIZE - foundItems.size() + 1, fromItemNumber));
-                    searchQueries.addAll(aliasesSearchQueries);
+                    //searchQueries.addAll(aliasesSearchQueries);
                 }
             }
         } else {
@@ -117,7 +116,7 @@ public class NewSearchController {
     }
 
     // todo добавить тесты для этого метода
-    List<String> getAllMorphs(List<Term> terms) {
+    public List<String> getAllMorphs(List<Term> terms) {
         List<String> allWordsModes = new ArrayList<String>();
         List<TermMorph> morphs = new ArrayList<TermMorph>();
         for (Term term : terms) {
