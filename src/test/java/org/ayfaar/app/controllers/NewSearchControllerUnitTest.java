@@ -54,6 +54,7 @@ public class NewSearchControllerUnitTest {
 
         assertTrue(page.isHasMore());
         verify(searchDao, only()).findInItems(anyList(), anyInt(), anyInt(), anyString());
+        verify(items).remove(20);
     }
 
     // в таком же стиле можно добавить тесты на:

@@ -1,6 +1,5 @@
 package org.ayfaar.app.controllers;
 
-import net.sf.cglib.core.CollectionUtils;
 import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchCache;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static net.sf.cglib.core.CollectionUtils.transform;
 
 //todo пометить как контролер и зделать доступнім по адресу "v2/search"
 public class NewSearchController {
@@ -94,7 +94,7 @@ public class NewSearchController {
         }
 
         if (foundItems.size() > PAGE_SIZE ) {
-            foundItems.subList(0, foundItems.size() - 1);
+            foundItems.remove(foundItems.size() - 1);
             page.setHasMore(true);
         }
 
@@ -113,18 +113,22 @@ public class NewSearchController {
         return getAllMorphs(asList(term));
     }
 
+    // todo добавить тесты для этого метода
     List<String> getAllMorphs(List<Term> terms) {
+        List<String> allWordsModes = new ArrayList<String>();
         List<TermMorph> morphs = new ArrayList<TermMorph>();
         for (Term term : terms) {
             morphs.addAll(termMorphDao.getList("termUri", term.getUri()));
+            allWordsModes.add(term.getName());
         }
         //noinspection unchecked
-        return CollectionUtils.transform(morphs, new Transformer() {
+        allWordsModes.addAll(transform(morphs, new Transformer() {
             @Override
             public Object transform(Object value) {
                 return ((TermMorph) value).getName();
             }
-        });
+        }));
+        return allWordsModes;
     }
 
     private List<Term> getAllAliases(Term term) {
