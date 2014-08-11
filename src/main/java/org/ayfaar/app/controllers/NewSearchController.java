@@ -131,7 +131,7 @@ public class NewSearchController {
         return allWordsModes;
     }
 
-    private List<Term> getAllAliases(Term term) {
+    List<Term> getAllAliases(Term term) {
         List<Term> aliases = new ArrayList<Term>();
         for (Link link : linkDao.getAliases(term.getUri())) {
             aliases.add((Term) link.getUid2());
