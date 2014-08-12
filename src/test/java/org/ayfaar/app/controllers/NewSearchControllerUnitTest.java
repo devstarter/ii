@@ -4,9 +4,10 @@ import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.controllers.search.SearchCache;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
+import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.SearchDao;
-import org.ayfaar.app.model.Item;
-import org.ayfaar.app.model.Term;
+import org.ayfaar.app.dao.TermMorphDao;
+import org.ayfaar.app.model.*;
 import org.ayfaar.app.utils.AliasesMap;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -30,11 +32,14 @@ import static org.mockito.Mockito.*;
 public class NewSearchControllerUnitTest {
 
     @Mock SearchDao searchDao;
+    @Mock LinkDao linkDao;
+    @Mock TermMorphDao termMorphDao;
     @Mock SearchCache cache;
     @Mock SearchQuotesHelper handleItems;
     @Mock AliasesMap aliasesMap;
     @InjectMocks @Spy
     NewSearchController controller;
+
 
     @Before
     public void setUp() {
@@ -70,23 +75,50 @@ public class NewSearchControllerUnitTest {
         String phrase = "каждый момент";
 
         controller.search(phrase, 0, null);
-        verify(searchDao, only()).findInItems(asList(phrase), 0, PAGE_SIZE+1, null);
+        verify(searchDao, only()).findInItems(asList(phrase), 0, PAGE_SIZE + 1, null);
     }
 
     @Test
     public void testSearchSynonyms() {
-        String query = "Ирркогликтивная Квалитация";
+        String query = "ирркогликтивная квалитация";
         Term term = new Term(query);
+        System.out.println("term = " + term.getName());
         when(aliasesMap.getTerm(query)).thenReturn(term);
+
+        /*List<Term> aliases = asList(new Term("Трансгрессионная диверсификация"), new Term("Ирркогликтивная сингуляция"),
+                new Term("Ирркогликтивная сингуляция"), new Term("и-Квалитация"));*/
+        //when(controller.getAllAliases(term)).thenReturn(aliases);
+
+        List<String> aliases = asList("Трансгрессионная диверсификация", "Ирркогликтивная сингуляция",
+                                    "Ирркогликтивная сингуляция", "и-Квалитация");
+
+        when(linkDao.getAliases(term.getUri())).thenReturn(transform(aliases, new Transformer() {
+            @Override
+            public Object transform(Object value) {
+                return new Link();
+            }
+        }));
+
+        when(controller.getAllAliases(term)).thenReturn(transform(aliases, new Transformer() {
+            @Override
+            public Object transform(Object value) {
+                return new Term((String)value);
+            }
+        }));
 
         List<String> morphs = asList(query);
         when(controller.getAllMorphs(anyList())).thenReturn(morphs);
 
         controller.search(query, 0, null);
-
-        //List<Item> actual = searchDao.findInItems(asList(query), 0, PAGE_SIZE+1, null);
-        //actual.addAll(searchDao.findInItems(morphs, 0, PAGE_SIZE - actual.size()+1, null));
-
         verify(searchDao, times(2)).findInItems(anyList(), anyInt(), anyInt(), anyString());
+    }
+
+    @Test
+    public void testGetAllMorphs() {
+        List<Term> terms = asList(new Term("Трансгрессионная диверсификация"), new Term("Ирркогликтивная сингуляция"),
+                                  new Term("Ирркогликтивная сингуляция"), new Term("и-Квалитация"));
+
+        controller.getAllMorphs(terms);
+        verify(termMorphDao, times(4)).getList(anyString(), anyString());
     }
 }

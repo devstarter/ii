@@ -61,12 +61,12 @@ public class NewSearchController {
         if (cache.has(cacheKey)) {
             return cache.get(cacheKey);
         }
-
         SearchResultPage page = new SearchResultPage();
         page.setHasMore(false);
 
         // 3. Определить термин ли это
         Term term = aliasesMap.getTerm(query);
+        //System.out.println("controller term = " + term.getName());
         // 3.1. Если да, Получить все синониме термина
         List<Item> foundItems;
         // указывает сколько результатов поиска нужно пропустиьб, то есть когда ищем следующую страницу
@@ -78,21 +78,26 @@ public class NewSearchController {
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
+            System.out.println("invoke first time");
+            //System.out.println("foundItems " + foundItems.size());
             if (foundItems.size() < PAGE_SIZE) {
                 // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
+                System.out.println("< PAGE SIZE");
                 List<Term> aliases = getAllAliases(term);
+                System.out.println("alieases size " + aliases.size());
                 // Если у термина вообще есть синонимы:
                 if (!aliases.isEmpty()) {
                     List<String> aliasesSearchQueries = getAllMorphs(aliases);
-                    searchQueries.addAll(aliasesSearchQueries);
                     foundItems.addAll(searchDao.findInItems(searchQueries, skipResults,
                             PAGE_SIZE - foundItems.size() + 1, fromItemNumber));
-                    //searchQueries.addAll(aliasesSearchQueries);
+                    searchQueries.addAll(aliasesSearchQueries);
+                    System.out.println("invoke second time");
                 }
             }
         } else {
             // 4. Поиск фразы (не термин)
             foundItems = searchDao.findInItems(asList(query), skipResults, PAGE_SIZE + 1, fromItemNumber);
+            System.out.println("invoke third time");
         }
 
         if (foundItems.size() > PAGE_SIZE ) {
@@ -116,7 +121,7 @@ public class NewSearchController {
     }
 
     // todo добавить тесты для этого метода
-    public List<String> getAllMorphs(List<Term> terms) {
+    List<String> getAllMorphs(List<Term> terms) {
         List<String> allWordsModes = new ArrayList<String>();
         List<TermMorph> morphs = new ArrayList<TermMorph>();
         for (Term term : terms) {
@@ -135,9 +140,19 @@ public class NewSearchController {
 
     List<Term> getAllAliases(Term term) {
         List<Term> aliases = new ArrayList<Term>();
-        for (Link link : linkDao.getAliases(term.getUri())) {
+        System.out.println("inside get allAliases ");
+        List<Link> list = linkDao.getAliases(term.getUri());
+        System.out.println("size list " + list.size());
+        for (Link link : list) {
+            System.out.println("link ");
+            //System.out.println("link " + link.getUid2());
             aliases.add((Term) link.getUid2());
+            //aliases.add((Term) link.getUid2());
         }
+        /*for (Link link : linkDao.getAliases(term.getUri())) {
+            System.out.println("link " + link.getUid2());
+            aliases.add((Term) link.getUid2());
+        }*/
         return aliases;
     }
 
