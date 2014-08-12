@@ -1,11 +1,9 @@
 package org.ayfaar.app.controllers;
 
-import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.controllers.search.SearchCache;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.dao.SearchDao;
-import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.utils.AliasesMap;
 import org.junit.Before;
@@ -19,9 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static net.sf.cglib.core.CollectionUtils.transform;
 import static org.ayfaar.app.controllers.NewSearchController.PAGE_SIZE;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.*;
@@ -76,6 +72,8 @@ public class NewSearchControllerUnitTest {
     @Test
     public void testSearchSynonyms() {
         String query = "Ирркогликтивная Квалитация";
+        query = controller.prepareQuery(query);
+
         Term term = new Term(query);
         when(aliasesMap.getTerm(query)).thenReturn(term);
 

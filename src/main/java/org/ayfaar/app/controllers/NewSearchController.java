@@ -141,7 +141,7 @@ public class NewSearchController {
         return aliases;
     }
 
-    private String prepareQuery(String query) {
+    String prepareQuery(String query) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         return query != null ? query.toLowerCase().trim() : null;
     }
