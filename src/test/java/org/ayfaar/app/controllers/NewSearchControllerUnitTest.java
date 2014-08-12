@@ -81,13 +81,9 @@ public class NewSearchControllerUnitTest {
     @Test
     public void testSearchSynonyms() {
         String query = "ирркогликтивная квалитация";
-        Term term = new Term(query);
-        System.out.println("term = " + term.getName());
-        when(aliasesMap.getTerm(query)).thenReturn(term);
 
-        /*List<Term> aliases = asList(new Term("Трансгрессионная диверсификация"), new Term("Ирркогликтивная сингуляция"),
-                new Term("Ирркогликтивная сингуляция"), new Term("и-Квалитация"));*/
-        //when(controller.getAllAliases(term)).thenReturn(aliases);
+        Term term = new Term(query);
+        when(aliasesMap.getTerm(query)).thenReturn(term);
 
         List<String> aliases = asList("Трансгрессионная диверсификация", "Ирркогликтивная сингуляция",
                                     "Ирркогликтивная сингуляция", "и-Квалитация");
