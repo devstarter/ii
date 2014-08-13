@@ -29,7 +29,13 @@ public class SuggestionsController{
 
     @RequestMapping("{q}")
     @ResponseBody
-
+    /**
+     * Поиск подходящих вариантов должен производится по принципу сначала совпадения в начале фразы, затем в начале
+     * слова в середине фразы, затем где угодно в середине фразы.
+     * Максимум резултатов - 7.
+     *
+     * https://github.com/devstarter/ii/issues/19
+     */
     public List<String> suggestions(@PathVariable String q) {
 
         Queue<String> queriesQueue = new LinkedList<String>(asList(
