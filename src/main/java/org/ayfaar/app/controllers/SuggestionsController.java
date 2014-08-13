@@ -22,7 +22,7 @@ import static java.util.Arrays.asList;
 
 @Controller
 @RequestMapping("v2/suggestions")
-public class SuggestionsController implements Comparator{
+public class SuggestionsController{
     @Autowired AliasesMap aliasesMap;
 
     public static final int MAX_SUGGESTIONS = 7;
@@ -31,19 +31,24 @@ public class SuggestionsController implements Comparator{
     @ResponseBody
 
     public List<String> suggestions(@PathVariable String q) {
+
         Queue<String> queriesQueue = new LinkedList<String>(asList(
                 "^"+q,
                 "[\\s\\-]" + q,
                 q
         ));
-
         List<String> suggestions = new ArrayList<String>();
 
         while (suggestions.size() < MAX_SUGGESTIONS && queriesQueue.peek() != null) {
             List<String> founded = getSuggestedTerms(queriesQueue.poll(), suggestions);
             suggestions.addAll(founded.subList(0, min(MAX_SUGGESTIONS - suggestions.size(), founded.size())));
         }
-        Collections.sort(suggestions, new SuggestionsController());
+        Collections.sort(suggestions, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return Integer.valueOf(o1.length()).compareTo(o2.length());
+            }
+        });
         return suggestions;
     }
 
@@ -60,9 +65,4 @@ public class SuggestionsController implements Comparator{
         return terms;
     }
 
-    @Override
-    public int compare(Object o1, Object o2) {
-
-        return Integer.valueOf(o1.toString().length()).compareTo(o2.toString().length());
-    }
 }
