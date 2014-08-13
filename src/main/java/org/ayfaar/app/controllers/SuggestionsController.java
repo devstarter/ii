@@ -14,19 +14,22 @@ import java.util.List;
 import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Collections;
+import java.util.Comparator;
 
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 
 @Controller
 @RequestMapping("v2/suggestions")
-public class SuggestionsController {
+public class SuggestionsController implements Comparator{
     @Autowired AliasesMap aliasesMap;
 
     public static final int MAX_SUGGESTIONS = 7;
 
     @RequestMapping("{q}")
     @ResponseBody
+
     public List<String> suggestions(@PathVariable String q) {
         Queue<String> queriesQueue = new LinkedList<String>(asList(
                 "^"+q,
@@ -40,6 +43,7 @@ public class SuggestionsController {
             List<String> founded = getSuggestedTerms(queriesQueue.poll(), suggestions);
             suggestions.addAll(founded.subList(0, min(MAX_SUGGESTIONS - suggestions.size(), founded.size())));
         }
+        Collections.sort(suggestions, new SuggestionsController());
         return suggestions;
     }
 
@@ -54,5 +58,11 @@ public class SuggestionsController {
             }
         }
         return terms;
+    }
+
+    @Override
+    public int compare(Object o1, Object o2) {
+
+        return Integer.valueOf(o1.toString().length()).compareTo(o2.toString().length());
     }
 }
