@@ -14,7 +14,7 @@ public class SearchCacheUnitTest {
     @Before
     public void setUp() {
         // todo создать клас имплиментирующий SearchCache
-        //cache = new SearchCacheImpl();
+        cache = new SearchCacheImpl();
     }
 
     @Test
