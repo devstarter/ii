@@ -36,7 +36,10 @@
                     searchInContent();
                 },
                 rateUp: function(e) {
-                    $.post(searchApiUrl+"rate/+", {uri: e.data.uri, quote: e.data.quote, query: viewModel.query}, rateComplete);
+                    $.get(searchApiUrl+"rate/+", {uri: e.data.uri, query: viewModel.query}, rateComplete);
+                },
+                rateDown: function(e) {
+                    $.get(searchApiUrl+"rate/-", {uri: e.data.uri, query: viewModel.query}, rateComplete);
                 },
                 getContent: function(e) {
                     /*$.get(searchApiUrl+"get-content", {uri: e.data.uri}, function(r) {

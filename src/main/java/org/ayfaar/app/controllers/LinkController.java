@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.mail.MessagingException;
 
-import java.util.List;
-
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
@@ -86,11 +84,5 @@ public class LinkController {
     @RequestMapping("remove/{id}")
     public void remove(@PathVariable Integer id) {
         linkDao.remove(id);
-    }
-
-    @RequestMapping("created-from-search")
-    @ResponseBody
-    public List<Link> getCreatedFromSearch(){
-        return linkDao.getList("source", "search");
     }
 }
