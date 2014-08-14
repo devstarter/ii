@@ -69,11 +69,6 @@ public class NewSearchControllerUnitTest {
         verify(items).remove(20);
     }
 
-    // в таком же стиле можно добавить тесты на:
-    // поиск фразы - не термина
-    // поиск второй страницы
-    // поиск по двумя запросами в базу (второй для синонимов)
-
     @Test
     public void testSearchPhrase() {
         String phrase = "каждый момент";
