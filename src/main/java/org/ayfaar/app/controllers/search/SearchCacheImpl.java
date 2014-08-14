@@ -1,16 +1,13 @@
 package org.ayfaar.app.controllers.search;
 
-import com.sun.org.apache.bcel.internal.generic.NOP;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by Dim on 09.08.2014.
  */
 public class SearchCacheImpl implements SearchCache{
-    private Map<Object, SearchResultPage> myCache;
+    private Map<Object, SearchResultPage> myCache; // назови более осмысленно переменную :)
 
     public SearchCacheImpl() {
         myCache = new HashMap<Object, SearchResultPage>();
@@ -18,7 +15,9 @@ public class SearchCacheImpl implements SearchCache{
 
     @Override
     public Object generateKey(String query, Integer pageNumber, String fromItemNumber) throws NullPointerException{
+        // зачем тебе здесь переменная?
         String cacheKey = "";
+        // вместо try catch в данном случае использовать if, так как try catch более ресурсоёмкая операция
         try {
             cacheKey = query + pageNumber + fromItemNumber;
             return cacheKey;
@@ -30,12 +29,15 @@ public class SearchCacheImpl implements SearchCache{
 
     @Override
     public boolean has(Object cacheKey) {
-        if (myCache.containsKey(cacheKey) && !myCache.get(cacheKey).equals(null)) return true;
-        return false;
+//        if (myCache.containsKey(cacheKey) && !myCache.get(cacheKey).equals(null)) return true;
+//        return false;
+        // можно упростить, так мне кажеться читабельнее
+        return myCache.containsKey(cacheKey) && myCache.get(cacheKey) != null;
     }
 
     @Override
     public SearchResultPage get(Object cacheKey){
+        // зачем это условие, если кеша по ключу нет то myCache.get(cacheKey) вернёт null
         if (cacheKey.equals(null)) return null;
         return myCache.get(cacheKey);
     }
