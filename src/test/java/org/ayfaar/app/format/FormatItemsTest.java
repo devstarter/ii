@@ -4,50 +4,47 @@ import org.ayfaar.app.AbstractTest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.jsoup.safety.Whitelist;
 import org.junit.Test;
 
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class FormatItemsTest extends AbstractTest {
     private static Document doc;
-    private final String item10_10001;
+    private final String html10_10001;
     private final String item10_10042;
+    private final String text10_10001;
 
     public FormatItemsTest() throws IOException {
         doc = Jsoup.parse(getFile("10tom.html"));
-        item10_10001 = getFile("10.10001.html");
+        html10_10001 = getFile("10.10001.html");
+        text10_10001 = getFile("10.10001.txt");
         item10_10042 = getFile("10.10042.html");
     }
 
     @Test
-    public void format() throws IOException {
-        Elements items = doc.select(".par-numbers.char-style-override-3");
-        assertTrue(items.size() > 0);
-    }
-
-    @Test
     public void first() throws IOException {
-        Element item = doc.select(".par-numbers.char-style-override-3").first();
+        Element item = getItemHtmlElement("10.10001");
         String number = item.text();
         number = number.substring(0, number.length()-1);
         assertEquals("10.10001", number);
-        String formatted = FormatItems.format(item.nextSibling());
-        assertEquals(item10_10001, formatted);
+        String formatted = FormatItems.format(item);
+        assertEquals(html10_10001, formatted);
+        String unformatted = Jsoup.clean(formatted, Whitelist.none());
+        // HtmlCharacterEntityDecoder
+        assertEquals(text10_10001, unformatted);
+    }
+
+    private Element getItemHtmlElement(String itemNumber) {
+        return doc.select(".par-numbers.char-style-override-3:contains("+itemNumber+")").get(0);
     }
 
     @Test
     public void test10_11806() throws IOException {
-        Elements items = doc.select(".par-numbers.char-style-override-3");
-        for (Element item : items) {
-            if (item.text().equals("10.11806.")) {
-                String formatted = FormatItems.format(item.nextSibling());
-                System.out.println(formatted);
-            }
-        }
+        String formatted = FormatItems.format(getItemHtmlElement("10.11806"));
+        System.out.println(formatted);
 
     }
 
