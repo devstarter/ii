@@ -13,6 +13,10 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.utils.AliasesMap;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -22,6 +26,8 @@ import static java.util.Arrays.asList;
 import static net.sf.cglib.core.CollectionUtils.transform;
 
 //todo пометить как контролер и зделать доступнім по адресу "v2/search"
+@Controller
+@RequestMapping("v2/search")
 public class NewSearchController {
     public static final int PAGE_SIZE = 20;
     @Inject
@@ -52,7 +58,9 @@ public class NewSearchController {
      *
      * @param pageNumber номер страницы
      */
-    public SearchResultPage search(String query, Integer pageNumber, String fromItemNumber) {
+    @RequestMapping("{query}")
+    @ResponseBody
+    public SearchResultPage search(@PathVariable String query, Integer pageNumber, String fromItemNumber) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         query = prepareQuery(query);
 
@@ -61,13 +69,11 @@ public class NewSearchController {
         if (cache.has(cacheKey)) {
             return cache.get(cacheKey);
         }
-
         SearchResultPage page = new SearchResultPage();
         page.setHasMore(false);
 
         // 3. Определить термин ли это
         Term term = aliasesMap.getTerm(query);
-
         // 3.1. Если да, Получить все синониме термина
         List<Item> foundItems;
         // указывает сколько результатов поиска нужно пропустиьб, то есть когда ищем следующую страницу
@@ -79,7 +85,6 @@ public class NewSearchController {
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
-
             if (foundItems.size() < PAGE_SIZE) {
                 // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
                 List<Term> aliases = getAllAliases(term);
