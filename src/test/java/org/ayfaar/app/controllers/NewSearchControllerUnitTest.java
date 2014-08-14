@@ -7,17 +7,21 @@ import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.dao.TermMorphDao;
-import org.ayfaar.app.model.*;
+import org.ayfaar.app.model.Link;
+import org.ayfaar.app.model.Term;
+import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -111,10 +115,31 @@ public class NewSearchControllerUnitTest {
 
     @Test
     public void testGetAllMorphs() {
-        List<Term> terms = asList(new Term("Трансгрессионная диверсификация"), new Term("Ирркогликтивная сингуляция"),
-                                  new Term("Ирркогликтивная сингуляция"), new Term("и-Квалитация"));
+        final String t1 = "Трансгрессионная диверсификация";
+        List<String> termNames = asList(t1, "Ирркогликтивная сингуляция");
+        List<Term> terms = transform(termNames, new Transformer() {
+            @Override
+            public Object transform(Object value) {
+                Term term = new Term((String) value);
+                term.setUri(UriGenerator.generate(term));
+                return term;
+            }
+        });
 
-        controller.getAllMorphs(terms);
-        verify(termMorphDao, times(4)).getList(anyString(), anyString());
+        when(termMorphDao.getList(anyString(), anyString())).then(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                String uri = (String) invocation.getArguments()[1];
+                String name = UriGenerator.getValueFromUri(Term.class, uri);
+                return asList(new TermMorph(name+1, uri), new TermMorph(name+2, uri));
+            }
+        });
+        List<String> morphs = controller.getAllMorphs(terms);
+        verify(termMorphDao, times(2)).getList(anyString(), anyString());
+        assertEquals(6, morphs.size());
+        assertTrue(morphs.contains(t1));
+        assertTrue(morphs.contains(t1 + 1));
+        assertTrue(morphs.contains(t1 + 2));
+
     }
 }
