@@ -19,12 +19,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static net.sf.cglib.core.CollectionUtils.transform;
 import static org.ayfaar.app.controllers.NewSearchController.PAGE_SIZE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.*;
-import static net.sf.cglib.core.CollectionUtils.transform;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NewSearchControllerUnitTest {
@@ -67,6 +67,13 @@ public class NewSearchControllerUnitTest {
 
     @Test
     public void testSearchPhrase() {
+        /*
+        Суть теста состоит в том, что-бы проверить коррекстность вызовов всех методов внутри controller.search
+        (мы ведь здесь тестируем NewSearchController, а не SearchDao - это же мок) для поисковой фразы не термина.
+
+          В этом тесте ты проверяешь просто корректность работы мокито :). То есть ты добавил условие что именно должен
+          вернуть метод и вызвал этот метод. Сам код ты вообще не проверил :)
+         */
         String phrase = "каждый момент";
         List<String> items = asList("1.0032","1.0122", "1.0159", "1.248", "1.0311", "1.0698", "1.0819", "1.0912", "1.0914", "2.0520",
                 "2.0943", "3.0104", "3.0275", "3.0392", "3.0514", "3.0573", "10.10021", "10.10105", "10.10176", "10.10177");
@@ -84,10 +91,20 @@ public class NewSearchControllerUnitTest {
         assertEquals("1.0032", actual.get(0).getNumber());
         assertEquals("2.0943", actual.get(10).getNumber());
         assertEquals("10.10177", actual.get(19).getNumber());
+
+        // как бы я делал:
+        controller.search(phrase, 0, null);
+        verify(searchDao, only()).findInItems(asList(phrase), 0, PAGE_SIZE+1, null);
     }
 
     @Test
     public void testSearchSecondPage() {
+        /*
+        Та же ситуация, тут нужно просто проверить что searchDao.findInItems вызвался дважды и во второй раз для
+        получения недостающего количества результатов.
+           В этом случае должен быть запрос на синонимы и получение падежей для них, если есть синонимы.
+           Этот тест можно совместить со следующим
+         */
         String query = "Фокусной Динамики";
         int pageNumber = 1;
         List<String> items = asList("1.0149","1.0151", "1.0155", "1.161", "1.0173", "1.0181", "1.0183", "1.0185", "1.0187", "1.0196",
