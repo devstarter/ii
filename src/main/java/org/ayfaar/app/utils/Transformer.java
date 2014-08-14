@@ -1,4 +1,5 @@
 package org.ayfaar.app.utils;
 
-public class Transformer {
+public interface Transformer<E, T> {
+    public T transform(E value);
 }

@@ -1,13 +1,11 @@
 package org.ayfaar.app.controllers.search;
 
-import com.sun.org.apache.bcel.internal.generic.NOP;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Dim on 09.08.2014.
- */
+@Component
 public class SearchCacheImpl implements SearchCache {
     private Map<Object, SearchResultPage> myCache;
 
@@ -29,8 +27,7 @@ public class SearchCacheImpl implements SearchCache {
 
     @Override
     public boolean has(Object cacheKey) {
-        if (cacheKey.equals(null)) return false;
-        return true;
+        return cacheKey != null;
     }
 
     @Override
