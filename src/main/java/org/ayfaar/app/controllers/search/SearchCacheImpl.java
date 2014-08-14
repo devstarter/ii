@@ -4,11 +4,12 @@ import com.sun.org.apache.bcel.internal.generic.NOP;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Dim on 09.08.2014.
  */
-public class SearchCacheImpl implements SearchCache {
+public class SearchCacheImpl implements SearchCache{
     private Map<Object, SearchResultPage> myCache;
 
     public SearchCacheImpl() {
@@ -29,18 +30,20 @@ public class SearchCacheImpl implements SearchCache {
 
     @Override
     public boolean has(Object cacheKey) {
-        return !cacheKey.equals(null);
+        if (myCache.containsKey(cacheKey) && !myCache.get(cacheKey).equals(null)) return true;
+        return false;
     }
 
     @Override
-    public SearchResultPage get(Object cacheKey) {
+    public SearchResultPage get(Object cacheKey){
+        if (cacheKey.equals(null)) return null;
         return myCache.get(cacheKey);
     }
 
     @Override
-    public void put(Object cacheKey, SearchResultPage page) throws NullPointerException{
-        try {
-            myCache.put(cacheKey, page);
-        }catch(NullPointerException e){}
+    public void put(Object cacheKey, SearchResultPage page){
+        if (cacheKey == null) throw new IllegalArgumentException();
+        if (page == null) throw new IllegalArgumentException();
+        myCache.put(cacheKey, page);
     }
 }
