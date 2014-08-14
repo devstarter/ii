@@ -75,22 +75,6 @@ public class NewSearchControllerUnitTest {
           вернуть метод и вызвал этот метод. Сам код ты вообще не проверил :)
          */
         String phrase = "каждый момент";
-        List<String> items = asList("1.0032","1.0122", "1.0159", "1.248", "1.0311", "1.0698", "1.0819", "1.0912", "1.0914", "2.0520",
-                "2.0943", "3.0104", "3.0275", "3.0392", "3.0514", "3.0573", "10.10021", "10.10105", "10.10176", "10.10177");
-
-        when(searchDao.findInItems(asList(phrase), 0, PAGE_SIZE+1, null)).thenReturn(transform(items, new Transformer() {
-            @Override
-            public Object transform(Object o) {
-                return new Item((String) o);
-            }
-        }));
-
-        List<Item> actual = searchDao.findInItems(asList(phrase), 0, PAGE_SIZE+1, null);
-
-        assertTrue(actual.size() == 20);
-        assertEquals("1.0032", actual.get(0).getNumber());
-        assertEquals("2.0943", actual.get(10).getNumber());
-        assertEquals("10.10177", actual.get(19).getNumber());
 
         // как бы я делал:
         controller.search(phrase, 0, null);

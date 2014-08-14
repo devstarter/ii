@@ -1,6 +1,7 @@
 package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.IntegrationTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -9,6 +10,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class SuggestionsControllerIntegrationTest extends IntegrationTest {
     @Inject
     SuggestionsController searchController;
