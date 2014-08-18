@@ -35,39 +35,21 @@ public class SearchQuotesHelper {
             }
 
             String[] phrases = content.split("<strong>");
-            String firstPart = createPartQuote(phrases[0] + "<strong>", forLeftPart, "", "left");
+            String leftPart = getPartQuote(phrases[0] + "<strong>", forLeftPart, "", "left");
 
-            if(firstPart.charAt(0) == '.' || firstPart.charAt(0) == '?' || firstPart.charAt(0) == '!') {
-                firstPart = firstPart.substring(1, firstPart.length());
-                firstPart = firstPart.trim();
+            if(leftPart.charAt(0) == '.' || leftPart.charAt(0) == '?' || leftPart.charAt(0) == '!') {
+                leftPart = leftPart.substring(1, leftPart.length());
+                leftPart = leftPart.trim();
             }
+            String[] first = leftPart.split(" ");
 
-            String[] first = firstPart.split(" ");
-            String newFirstPart = "";
+            String rightPart = getPartQuote("<strong>" + phrases[phrases.length-1], forRightPart, "", "right");
+            String[] last = rightPart.split(" ");
 
-            if(first.length > MAX_WORDS_ON_BOUNDARIES + 1) {
-                for(int i = first.length - (MAX_WORDS_ON_BOUNDARIES + 1); i < first.length; i++) {
-                    newFirstPart += first[i] + " ";
-                }
-                newFirstPart = newFirstPart.trim();
-                firstPart = "..." + newFirstPart.substring(0, newFirstPart.length() - 8).trim();
-            }
-            else {
-                firstPart = firstPart.substring(0, firstPart.length() - 8).trim();
-            }
+            leftPart = cutSentence(leftPart, first.length - (MAX_WORDS_ON_BOUNDARIES + 1), first.length, "left", first);
+            rightPart = cutSentence(rightPart, 0, MAX_WORDS_ON_BOUNDARIES + 1, "right", last);
 
-            String lastPart = createPartQuote("<strong>" + phrases[phrases.length-1], forRightPart, "", "right");
-            String[] last = lastPart.split(" ");
-            String newLastPart = "";
-
-            if(last.length > MAX_WORDS_ON_BOUNDARIES + 1) {
-                for(int i = 0; i < MAX_WORDS_ON_BOUNDARIES + 1; i++) {
-                    newLastPart += last[i] + " ";
-                }
-                lastPart = newLastPart.trim() + "...";
-            }
-
-            String textQuote = createTextQuote(phrases, firstPart, lastPart);
+            String textQuote = createTextQuote(phrases, leftPart, rightPart);
 
             Quote quote = new Quote();
             quote.setUri(uri + item.getNumber());
@@ -77,7 +59,7 @@ public class SearchQuotesHelper {
         return quotes;
     }
 
-    String createPartQuote(String content, String regexp, String text, String flag) {
+    String getPartQuote(String content, String regexp, String text, String flag) {
         Pattern pattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
         Matcher matcher = pattern.matcher(content);
 
@@ -89,7 +71,7 @@ public class SearchQuotesHelper {
             if (text.charAt(1) == ')' || text.charAt(1) == '»') {
                 String temp = text.substring(2, text.length());
                 if(content.length() - text.length() > 0) {
-                    text = createPartQuote(content.substring(0, (content.length() - text.length()) + 2), forCreateLeftPartQuote, text, "left");
+                    text = getPartQuote(content.substring(0, (content.length() - text.length()) + 2), forCreateLeftPartQuote, text, "left");
                 }
                 text += temp;
             }
@@ -97,8 +79,28 @@ public class SearchQuotesHelper {
 
         if(flag.equals("right") && content.length() > text.length()) {
             if (content.charAt(text.length()) == ')' || content.charAt(text.length()) == '»') {
-                text += createPartQuote(content.substring(text.length(), content.length()), forCreateRightPartQuote, text, "right");
+                text += getPartQuote(content.substring(text.length(), content.length()), forCreateRightPartQuote, text, "right");
             }
+        }
+        return text;
+    }
+
+    private String cutSentence(String text, int startIndex, int endIndex, String flag, String[] words) {
+        String partText = "";
+        if(words.length > MAX_WORDS_ON_BOUNDARIES + 1) {
+            for(int i = startIndex; i < endIndex; i++) {
+                partText += words[i] + " ";
+            }
+            if (flag.equals("left")) {
+                partText = partText.trim();
+                text = "..." + partText.substring(0, partText.length() - 8).trim();
+            }
+            if(flag.equals("right")) {
+                text = partText.trim() + "...";
+            }
+        }
+        else if(words.length <= MAX_WORDS_ON_BOUNDARIES + 1 && flag.equals("left")) {
+            text = text.substring(0, text.length() - 8).trim();
         }
         return text;
     }

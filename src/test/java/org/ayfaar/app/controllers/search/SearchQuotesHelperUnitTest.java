@@ -39,7 +39,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
         String expectedQuote = "Всю Информацию, копируемую.) с ЛЛААСС-Форм, ГЛООГОЛМ-ГЛЛИИ-Творцы специфически перекодируют и адаптируют в виде двух эфирных Потоков, один из которых " +
                 "содержит только «проекции» первичных кодировок данного Вселенского Творения, и наполняют Их <strong>";
 
-        String actualQuote = handleItems.createPartQuote(content, "([\\.\\?!]*)([^\\.\\?!]*)(<strong>)", "", "left");
+        String actualQuote = handleItems.getPartQuote(content, "([\\.\\?!]*)([^\\.\\?!]*)(<strong>)", "", "left");
         assertEquals(expectedQuote, actualQuote);
     }
 
@@ -54,7 +54,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
                 "Каузального План-Обертонов - дублируют и свилгс-сферационно трансгрессируют все эти «проекции» «низших» Уровней (с ±14,0-±13,0 мерности) Вторичной Иллюзии в" +
                 " Фокусную Динамику синтезирующих Формо-Творцов Третичной Иллюзии.";
 
-        String actualQuote = handleItems.createPartQuote(content, "(<strong>)([^\\.\\?!]*)([\\.\\?!]*)", "", "right");
+        String actualQuote = handleItems.getPartQuote(content, "(<strong>)([^\\.\\?!]*)([\\.\\?!]*)", "", "right");
         assertEquals(expectedQuote, actualQuote);
     }
 
