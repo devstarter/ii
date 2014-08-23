@@ -5,11 +5,11 @@ import org.ayfaar.app.utils.RegExpUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.apache.commons.lang3.StringUtils.join;
 
 @Component
 public class SearchQuotesHelper {
@@ -19,10 +19,9 @@ public class SearchQuotesHelper {
 
     public List<Quote> createQuotes(List<Item> foundedItems, List<String> allPossibleSearchQueries) {
         List<Quote> quotes = new ArrayList<Quote>();
-        String uri = "ии:пункт:";
         String forLeftPart = "([\\.\\?!]*)([^\\.\\?!]*)(<strong>)";
         String forRightPart = "(<strong>)([^\\.\\?!]*)([\\.\\?!]*)";
-        String regexp = createRegExp(allPossibleSearchQueries);
+        String regexp = join(allPossibleSearchQueries, "|");
 
         for (Item item : foundedItems) {
             String content = "";
@@ -52,7 +51,7 @@ public class SearchQuotesHelper {
             String textQuote = createTextQuote(phrases, leftPart, rightPart);
 
             Quote quote = new Quote();
-            quote.setUri(uri + item.getNumber());
+            quote.setUri(item.getUri());
             quote.setQuote(textQuote);
             quotes.add(quote);
         }
@@ -71,7 +70,8 @@ public class SearchQuotesHelper {
             if (text.charAt(1) == ')' || text.charAt(1) == '»') {
                 String temp = text.substring(2, text.length());
                 if(content.length() - text.length() > 0) {
-                    text = getPartQuote(content.substring(0, (content.length() - text.length()) + 2), forCreateLeftPartQuote, text, "left");
+                    text = getPartQuote(content.substring(0, (content.length() - text.length()) + 2),
+                            forCreateLeftPartQuote, text, "left");
                 }
                 text += temp;
             }
@@ -79,7 +79,8 @@ public class SearchQuotesHelper {
 
         if(flag.equals("right") && content.length() > text.length()) {
             if (content.charAt(text.length()) == ')' || content.charAt(text.length()) == '»') {
-                text += getPartQuote(content.substring(text.length(), content.length()), forCreateRightPartQuote, text, "right");
+                text += getPartQuote(content.substring(text.length(), content.length()),
+                        forCreateRightPartQuote, text, "right");
             }
         }
         return text;
@@ -108,12 +109,8 @@ public class SearchQuotesHelper {
     private String createTextQuote(String[] phrases, String firstPart, String lastPart) {
         String textQuote = firstPart;
         for (int i = 1; i < phrases.length - 1; i++) {
-            if(!textQuote.isEmpty()) {
-                textQuote += textQuote.charAt(textQuote.length()-1) == '-' ? "<strong>" + phrases[i].trim() : " <strong>" + phrases[i].trim();
-            }
-            else {
-                textQuote = "<strong>" + phrases[i].trim();
-            }
+            textQuote += (textQuote.isEmpty() || textQuote.charAt(textQuote.length()-1) == '-' ? "" : " ")
+                + "<strong>" + phrases[i].trim();
         }
 
         if(!textQuote.isEmpty() && textQuote.charAt(textQuote.length()-1) == '-') {
@@ -125,6 +122,8 @@ public class SearchQuotesHelper {
         return textQuote.trim();
     }
 
+    // заменил эту функцию на org.apache.commons.lang3.StringUtils.join
+    // todo remove it
     private String createRegExp(List<String> queries) {
         String reg = "";
         for(String s : queries) {

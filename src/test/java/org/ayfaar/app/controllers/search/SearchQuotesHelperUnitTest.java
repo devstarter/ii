@@ -2,6 +2,7 @@ package org.ayfaar.app.controllers.search;
 
 import org.ayfaar.app.AbstractTest;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,6 +23,9 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
         Item item_1_0131 = new Item("1.0131", getFile("item-1.0131.txt"));
         Item item_1_0771 = new Item("1.0771", getFile("item-1.0771.txt"));
         Item item_1_0846 = new Item("1.0846", getFile("item-1.0846.txt"));
+        item_1_0131.setUri(UriGenerator.generate(item_1_0131));
+        item_1_0771.setUri(UriGenerator.generate(item_1_0771));
+        item_1_0846.setUri(UriGenerator.generate(item_1_0846));
 
         items = unmodifiableList(asList(item_1_0131, item_1_0771, item_1_0846));
     }
@@ -33,6 +37,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     }
 
     @Test
+    // не понял что ты тут проверяешь... content и expectedQuote ведь одинаковые
     public void testCreatePartQuoteIfLeftPartContainsBracket() {
         String content = "Всю Информацию, копируемую.) с ЛЛААСС-Форм, ГЛООГОЛМ-ГЛЛИИ-Творцы специфически перекодируют и адаптируют в виде двух эфирных Потоков, один из которых " +
                 "содержит только «проекции» первичных кодировок данного Вселенского Творения, и наполняют Их <strong>";
@@ -44,6 +49,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     }
 
     @Test
+    // тоже самое
     public void testCreatePartQuoteIfRightPartContainsBracket() {
         String content = "<strong>Содержанием</strong> все Формо-структуры (Стабилизационного?) План-Обертона (которые никогда не изменяются, служа для Формо-Творцов как бы своеобразными " +
                 "Эталонами Творения!), в то время как НИИССЛИИ-И-Творцы Трансмутационного План-Обертона – через Формо-структуры Ментального, Астрального и Каузального " +
