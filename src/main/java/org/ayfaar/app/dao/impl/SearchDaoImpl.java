@@ -51,7 +51,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
                 for (char startChar : new char[]{'-', ' ', '(', '«'})  {
                     disjunction.add(like("content", startChar + alias + endChar, MatchMode.ANYWHERE));
                 }
-                disjunction.add(like("content", alias + endChar, MatchMode.ANYWHERE));
+                disjunction.add(like("content", alias + endChar, MatchMode.START));
             }
         }
 

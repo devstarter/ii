@@ -25,7 +25,6 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static net.sf.cglib.core.CollectionUtils.transform;
 
-//todo пометить как контролер и зделать доступнім по адресу "v2/search"
 @Controller
 @RequestMapping("v2/search")
 public class NewSearchController {
@@ -49,12 +48,9 @@ public class NewSearchController {
     @Inject
     private SearchCache cache;
 
-    private List<String> searchQueries;
-
 
     /**
      * Поиск будет производить только по содержимому Item
-     * todo сделать этот метод доступным через веб
      *
      * @param pageNumber номер страницы
      */
@@ -79,6 +75,7 @@ public class NewSearchController {
         // указывает сколько результатов поиска нужно пропустиьб, то есть когда ищем следующую страницу
         int skipResults = pageNumber*PAGE_SIZE;
 
+        List<String> searchQueries = null;
         if (term != null) {
             // 3.2. Получить все падежи по всем терминам
             searchQueries = getAllMorphs(term);
@@ -91,7 +88,7 @@ public class NewSearchController {
                 // Если у термина вообще есть синонимы:
                 if (!aliases.isEmpty()) {
                     List<String> aliasesSearchQueries = getAllMorphs(aliases);
-                    foundItems.addAll(searchDao.findInItems(searchQueries, skipResults,
+                    foundItems.addAll(searchDao.findInItems(aliasesSearchQueries, skipResults,
                             PAGE_SIZE - foundItems.size() + 1, fromItemNumber));
                     searchQueries.addAll(aliasesSearchQueries);
                 }
@@ -121,7 +118,6 @@ public class NewSearchController {
         return getAllMorphs(asList(term));
     }
 
-    // todo добавить тесты для этого метода
     List<String> getAllMorphs(List<Term> terms) {
         List<String> allWordsModes = new ArrayList<String>();
         List<TermMorph> morphs = new ArrayList<TermMorph>();
