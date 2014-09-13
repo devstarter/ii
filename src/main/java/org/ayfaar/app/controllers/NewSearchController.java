@@ -14,8 +14,8 @@ import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.utils.AliasesMap;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.inject.Inject;
@@ -44,9 +44,8 @@ public class NewSearchController {
     @Inject
     private LinkDao linkDao;
 
-    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Inject
-    private SearchCache cache;
+    protected SearchCache cache;
 
 
     /**
@@ -54,9 +53,11 @@ public class NewSearchController {
      *
      * @param pageNumber номер страницы
      */
-    @RequestMapping("{query}")
+    @RequestMapping
     @ResponseBody
-    public SearchResultPage search(@PathVariable String query, Integer pageNumber, String fromItemNumber) {
+    public SearchResultPage search(@RequestParam String query,
+                                   @RequestParam Integer pageNumber,
+                                   @RequestParam(required = false) String fromItemNumber) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         query = prepareQuery(query);
 
@@ -82,9 +83,13 @@ public class NewSearchController {
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
+
             if (foundItems.size() < PAGE_SIZE) {
                 // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
                 List<Term> aliases = getAllAliases(term);
+                for(Term t : aliases) {
+                    System.out.println(t.getName());
+                }
                 // Если у термина вообще есть синонимы:
                 if (!aliases.isEmpty()) {
                     List<String> aliasesSearchQueries = getAllMorphs(aliases);
