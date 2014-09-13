@@ -1,4 +1,4 @@
-angular.module('app', ['ui.router', 'live-search'])
+angular.module('app', ['ui.router', 'live-search', 'ngSanitize'])
     .config(function($locationProvider, $urlRouterProvider, $stateProvider) {
 //        $locationProvider.html5Mode(true).hashPrefix('!');
 
@@ -13,7 +13,8 @@ angular.module('app', ['ui.router', 'live-search'])
             })
             .state('search', {
                 url: "/search/:query",
-                templateUrl: "partials/search.html"
+                templateUrl: "partials/search.html",
+                controller: SearchController
             })
             .state('article', {
                 url: "/a/:id",
@@ -44,7 +45,7 @@ angular.module('app', ['ui.router', 'live-search'])
     })
     .factory("$api", function($rootScope, $state, $http, errorService, $q){
         var apiUrl = "http://ii.ayfaar.org/api/";
-//        var apiUrl = "http://localhost:8081/";
+//        var apiUrl = "http://localhost:8081/api/";
         return {
             post: function(url, data) {
                 var deferred = $q.defer();
@@ -210,9 +211,16 @@ angular.module('app', ['ui.router', 'live-search'])
             } else {
                 defStateGo.bind($state)(to, params, options)
             }
+        };
+        $state.goToItem = function(number) {
+            defStateGo.bind($state)("item", {number: number})
         }
     });
 
 Array.prototype.append = function(array){
     this.push.apply(this, array)
 };
+
+function isItemNumber(s) {
+    return s.match("\\d+\\.\\d+");
+}

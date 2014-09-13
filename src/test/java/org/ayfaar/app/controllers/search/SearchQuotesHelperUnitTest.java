@@ -141,10 +141,10 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
 
     @Test
     public void testCreateQuotesWhenFewItems() throws IOException {
-        String expectedUri1 = "ии:пункт:1.0131";
+        String expectedUri1 = "1.0131";
         String expectedQuote1 = "...«участками» Конфигураций), тем самым порождая в информационном пространстве Самосознаний эффект субъективного (очень узкого, ограниченного) восприятия " +
                 "«самих себя» в неких специфических условиях психоментального проявления, «плотноплазменные» варианты которых вы определяете как «физическое» Пространство-<strong>Время</strong>.";
-        String expectedUri2 = "ии:пункт:1.0771";
+        String expectedUri2 = "1.0771";
         String expectedQuote2 = "<strong>Время</strong> характеризует собой два момента - начало взаимодействия с позиции данной диссонационности между двумя Фокусами и его окончание," +
                 " когда эти два диссонационных по отношению друг к другу Фокуса смогут образовать единую резонационную фокусную Конфигурацию. <strong>Время</strong> не сокращает " +
                 "существующее диссонационное расстояние, оно только показывает, сколько ещё разнородной Информации (в виде Фокусов соответствующей Ей Энергии) необходимо вложить в данное " +
@@ -162,11 +162,11 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
                 "разнородностью индивидуальных признаков, что уже «изначально» присуща всей Информации!";
         List<Quote> actual = handleItems.createQuotes(items, queries);
 
-        assertEquals(expectedUri1, actual.get(0).getUri());
+        assertEquals(expectedUri1, actual.get(0).getNumber());
         assertEquals(expectedQuote1, actual.get(0).getQuote());
-        assertEquals(expectedUri2, actual.get(1).getUri());
+        assertEquals(expectedUri2, actual.get(1).getNumber());
         assertEquals(expectedQuote2, actual.get(1).getQuote());
-        assertEquals(expectedUri3, actual.get(2).getUri());
+        assertEquals(expectedUri3, actual.get(2).getNumber());
         assertEquals(expectedQuote3, actual.get(2).getQuote());
     }
 

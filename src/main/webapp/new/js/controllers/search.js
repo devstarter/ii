@@ -1,103 +1,94 @@
-﻿(function ($, undefined) {
-    var searchApiUrl = ii.apiUrl + "search/", viewModel, pageCounter = 0, currentQuery;
-    ii.search = {
-        load: function(query) {
-            if (currentQuery == query) {
-                return;
-            }
-            currentQuery = query;
-            pageCounter = 0;
-            document.title = "Поиск "+query;
-            query = query.replace("+", " ").trim();
-            if (isItemNumber(query)) {
-                location.hash = "#"+query;
-                return
-            }
-            viewModel = kendo.observable({
-                terms: [],
-                articles: [],
-                quotes: [],
-                query: query,
-                loadNextPageLabel: "Искать далее...",
-                search: function(e) {
-                    var q = typeof e == "string" ? e : viewModel.query;
-//                    location.hash = "#search:"+q.replace(" ", "+");
-                    ii.navigateToSearch(q);
-                },
-                getLabel: function(data) {
-                    return ii.getLabel(data);
-                },
-                navigate: function(e) {
-                    ii.navigateToUri(e.data.uri);
-                },
-                navigateToExactTerm: function(e) {
-                    ii.navigateToUri(e.data.exactMatchTerm.uri);
-                },
-                loadNextPage: function(e) {
-                    searchInContent();
-                },
-                rateUp: function(e) {
-                    $.post(searchApiUrl+"rate/+", {uri: e.data.uri, quote: e.data.quote, query: viewModel.query}, rateComplete);
-                },
-                getContent: function(e) {
-                    /*$.get(searchApiUrl+"get-content", {uri: e.data.uri}, function(r) {
-                        if (r) {
-                            for(var i in viewModel.contents) {
-                                var quote = viewModel.contents[i];
-                                if (quote.uri == e.data.uri) {
-                                    quote.set("quote", r);
-                                    break
-                                }
-                            }
-                        }
-                    })*/
-                }
-            });
-            kendo.bind($('#search'), viewModel);
-            if (query) search(query);
-            $("#search").find(".prompt").keypress(function (e) {
-                if (e.which == 13) {
-                    viewModel.search(viewModel.query);
-                }
-                pageCounter = 0;
-            });
-        }
+﻿function SearchController($scope, $stateParams, $api, $state) {
+    var pageCounter = 0, currentQuery;
+
+    var query = $scope.query = $stateParams.query;
+
+    if (currentQuery == query) {
+        return;
+    }
+    currentQuery = query;
+    pageCounter = 0;
+    document.title = "Поиск " + query;
+    query = query.replace("+", " ").trim();
+    if (isItemNumber(query)) {
+        $state.goToItem(query);
+        return
+    }
+
+    /*search: function(e) {
+     var q = typeof e == "string" ? e : $scope.query;
+     ii.navigateToSearch(q);
+     },*/
+
+    /* navigateToExactTerm: function(e) {
+     ii.navigateToUri(e.data.exactMatchTerm.uri);
+     },*/
+    $scope.loadNextPage = function () {
+        searchInContent();
     };
-    var search = function(e) {
-        $.get(searchApiUrl+"term", {
-            query: viewModel.query
-        }, function(r) {
-            viewModel.set("loadingTerms", false);
-            viewModel.set("terms", r.terms);
-            viewModel.set("articles", r.articles);
-            viewModel.set("exactMatchTerm", r.exactMatchTerm);
+    $scope.rateUp = function (quote) {
+        $api.post("search/rate/+", {
+            uri: "ии:пункт:" + quote.number,
+            quote: quote.quote,
+            query: $scope.query
+        }).then(rateComplete);
+    };
+    $scope.expand = function(quote) {
+        $api.get("search/get-content", {uri: "ии:пункт:"+quote.number})
+            .then(function(r){
+                quote.full = r;
+            })
+    };
+    if (query) search(query);
+    /*$("#search").find(".prompt").keypress(function (e) {
+     if (e.which == 13) {
+     $scope.search($scope.query);
+     }
+     pageCounter = 0;
+     });*/
+
+    function search(e) {
+        $api.get("search/term", {
+            query: $scope.query
+        }).then(function (r) {
+            $scope.loadingTerms = false;
+            $scope.terms = r.terms;
+            $scope.articles = r.articles;
+            $scope.exactMatchTerm = r.exactMatchTerm;
             searchInContent();
         });
-        viewModel.set("loadingTerms", true);
-    };
+        $scope.loadingTerms = true;
+    }
+
     function searchInContent() {
-        $.get(ii.apiUrl + "v2/search", {
-            query: viewModel.query,
+        $api.get("v2/search", {
+            query: $scope.query,
             pageNumber: pageCounter
-        }, function(r) {
+        }).then(function (r) {
             pageCounter++;
-            viewModel.set("loadingContents", false);
-            viewModel.set("quotes", viewModel.quotes.toJSON().concat(r.quotes));
-            if (viewModel.quotes.length == 0) {
+            $scope.quotes = $scope.quotes ? $scope.quotes.concat(r.quotes) : r.quotes;
+            if ($scope.quotes.length == 0) {
                 // no result
-                viewModel.set("noResult", viewModel.quotes.length == 0);
-                if (ga) ga('send', 'event', 'not-found', viewModel.query);
+                $scope.noResult = $scope.quotes.length == 0;
+                if (ga) ga('send', 'event', 'not-found', $scope.query);
             }
-            viewModel.set("showLoadMore", r.hasMore);
-            if (!r.length) {
+            $scope.showLoadMore = r.hasMore;
+            if (!r.quotes.length) {
                 pageCounter = 0;
             }
+        })['finally'](function(){
+            $scope.loadingContents = false;
+            $scope.loadingMore = false;
         });
-        if (viewModel.quotes.length == 0) {
-            viewModel.set("loadingContents", true);
+        if (!$scope.quotes || !$scope.quotes.length) {
+            $scope.loadingContents = true;
+        } else {
+            $scope.loadingMore = true;
         }
+
     }
+
     function rateComplete() {
         alert("Ваш голос учтён, благодарим за помощь! :)")
     }
-})(jQuery);
+}

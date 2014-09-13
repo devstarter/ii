@@ -14,7 +14,7 @@
         </div>
         <!--<span class="info" data-bind="invisible: description">Нет короткого определения</span>-->
         <blockquote ng-repeat="quote in quotes">
-            <div>{{quote.quote}}</div>
+            <div ng-bind-html="quote.quote"></div>
             <cite>&mdash; <entity ng-model="quote"/></cite>
         </blockquote>
         <span ng-show="related.length">Также связан с</span>
