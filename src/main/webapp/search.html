@@ -11,11 +11,15 @@
     <div data-bind="visible: terms.length">
         <h3>В названиях терминов</h3>
         <div data-bind="source: terms" data-template="search-terms-template"></div>
-        <script type="text/kendo-x-tmpl" id="search-terms-template">
-            <button class="grey" data-bind="text: name, click: navigate"></button>
-        </script>
     </div>
-    <div class="block loading" data-bind="visible: loadingContents">Загрузка результатов поиска по содержимому...</div>
+    <script type="text/kendo-x-tmpl" id="search-terms-template">
+        <button class="grey" data-bind="text: name, click: navigate"></button>
+    </script>
+    <div data-bind="visible: articles.length">
+        <h3>Статьи из 9 тома</h3>
+        <div data-bind="source: articles" data-template="search-terms-template"></div>
+    </div>
+    <div class="block loading" style="padding: 50px;" data-bind="visible: loadingContents">Поиска по содержимому (может занять около минуты)...</div>
     <div data-bind="invisible: loadingContents">
         <div data-bind="visible: noResult">
             <strong>Ничего не найдено.</strong> Побробуйте со звёздочкой после корня слова для учёта всех вариантов
@@ -41,6 +45,9 @@
         </div>
     </div>
     <style type="text/css">
+        h3 {
+            margin-bottom: 5px;
+        }
         button {
             color: #ffffff;
         }

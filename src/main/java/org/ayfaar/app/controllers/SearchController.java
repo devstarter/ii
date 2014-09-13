@@ -9,6 +9,7 @@ import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.Content;
 import org.ayfaar.app.utils.EmailNotifier;
+import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -31,6 +32,7 @@ public class SearchController {
     @Autowired AliasesMap aliasesMap;
     @Autowired TermDao termDao;
     @Autowired ItemDao itemDao;
+    @Autowired ArticleDao articleDao;
     @Autowired LinkDao linkDao;
     @Autowired CommonDao commonDao;
     @Autowired TermMorphDao termMorphDao;
@@ -197,6 +199,7 @@ public class SearchController {
         }
         ModelMap modelMap = new ModelMap();
         modelMap.put("terms", terms);
+        modelMap.put("articles", articleDao.getLike("name", query, MatchMode.ANYWHERE));
         modelMap.put("exactMatchTerm", exactMatchTerm);
 
         return modelMap;
@@ -208,13 +211,19 @@ public class SearchController {
                      @RequestParam String query,
                      @RequestParam String quote) {
         if (kind.equals("+")) {
-            notifier.rate(kind, query, uri);
             Term term = aliasesMap.getTerm(query);
             Item item = itemDao.get(uri);
+            boolean possibleDuplication = false;
             if (term != null && item != null) {
-                Link link = new Link(term, item, quote, "search");
-                linkDao.save(link);
+                final List<Link> links = linkDao.get(term, item);
+                if (links.size() == 0) {
+                    Link link = new Link(term, item, quote, "search");
+                    linkDao.save(link);
+                } else {
+                    possibleDuplication = true;
+                }
             }
+            notifier.rate(term, item, quote, possibleDuplication);
         }
     }
 

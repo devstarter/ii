@@ -15,6 +15,7 @@
             }
             viewModel = kendo.observable({
                 terms: [],
+                articles: [],
                 contents: [],
                 query: query,
                 loadNextPageLabel: "Искать далее...",
@@ -68,15 +69,16 @@
         }, function(r) {
             viewModel.set("loadingTerms", false);
             viewModel.set("terms", r.terms);
+            viewModel.set("articles", r.articles);
             viewModel.set("exactMatchTerm", r.exactMatchTerm);
             searchInContent();
         });
         viewModel.set("loadingTerms", true);
     };
     function searchInContent() {
-        $.get(searchApiUrl+"content", {
+        $.get(ii.apiUrl + "v2/search", {
             query: viewModel.query,
-            page: pageCounter
+            pageNumber: pageCounter
         }, function(r) {
             pageCounter++;
             viewModel.set("loadingContents", false);

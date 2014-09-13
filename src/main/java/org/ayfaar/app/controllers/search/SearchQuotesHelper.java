@@ -69,9 +69,11 @@ public class SearchQuotesHelper {
         if(flag.equals("left")) {
             if (text.charAt(1) == ')' || text.charAt(1) == '»') {
                 String temp = text.substring(2, text.length());
+
                 if(content.length() - text.length() > 0) {
                     text = getPartQuote(content.substring(0, (content.length() - text.length()) + 2),
                             forCreateLeftPartQuote, text, "left");
+                    text += content.substring(text.length() + 4, content.length() - temp.length());
                 }
                 text += temp;
             }
@@ -120,16 +122,6 @@ public class SearchQuotesHelper {
             textQuote += " " + lastPart;
         }
         return textQuote.trim();
-    }
-
-    // заменил эту функцию на org.apache.commons.lang3.StringUtils.join
-    // todo remove it
-    private String createRegExp(List<String> queries) {
-        String reg = "";
-        for(String s : queries) {
-            reg += s + "|";
-        }
-        return reg.substring(0, reg.length()-1);
     }
 }
 
