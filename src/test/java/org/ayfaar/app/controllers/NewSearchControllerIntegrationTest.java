@@ -28,6 +28,9 @@ public class NewSearchControllerIntegrationTest extends IntegrationTest {
         SearchResultPage page = controller.search("Универсальная мерность", 0, null);
         assertNotNull(page);
         List<Quote> quotes = page.getQuotes();
+        for(Quote q : quotes) {
+            System.out.println(q.getUri());
+        }
         assertEquals(2, quotes.size());
         assertFalse(page.isHasMore());
         assertEquals("ии:пункт:2.0140", quotes.get(0).getUri());
@@ -35,7 +38,6 @@ public class NewSearchControllerIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    @Ignore
     public void test_ННААССММ() throws Exception {
         SearchResultPage page = controller.search("ННААССММ", 0, null);
         assertNotNull(page);

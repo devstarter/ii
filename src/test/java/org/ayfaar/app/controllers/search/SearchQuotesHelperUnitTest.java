@@ -169,4 +169,19 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
         assertEquals(expectedUri3, actual.get(2).getUri());
         assertEquals(expectedQuote3, actual.get(2).getQuote());
     }
+
+    @Test
+    public void test() {
+        String content = "Всю. Информацию, копируемую.) с ЛЛААСС-Форм,.) ГЛООГОЛМ-ГЛЛИИ-Творцы.) (специфически?) перекодируют и адаптируют в виде двух эфирных Потоков, один из которых " +
+                "содержит только «проекции» первичных кодировок данного Вселенского Творения, и наполняют Их <strong>";
+        String expectedQuote = " Информацию, копируемую.) с ЛЛААСС-Форм,.) ГЛООГОЛМ-ГЛЛИИ-Творцы.) (специфически?) перекодируют и адаптируют в виде двух эфирных Потоков, один из которых " +
+                "содержит только «проекции» первичных кодировок данного Вселенского Творения, и наполняют Их <strong>";
+
+        String actualQuote = handleItems.getPartQuote(content, "([\\.\\?!]*)([^\\.\\?!]*)(<strong>)", "", "left");
+        assertEquals(expectedQuote, actualQuote);
+    }
+
+
+
+
 }
