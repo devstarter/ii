@@ -12,10 +12,7 @@ import org.ayfaar.app.utils.EmailNotifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -205,11 +202,20 @@ public class SearchController {
         return modelMap;
     }
 
-    @RequestMapping("rate/{kind}")
-    public void rate(@PathVariable String kind, @RequestParam String uri, @RequestParam String query) {
-//        if (kind.equals("+")) {
+    @RequestMapping(value = "rate/{kind}", method = RequestMethod.POST)
+    public void rate(@PathVariable String kind,
+                     @RequestParam String uri,
+                     @RequestParam String query,
+                     @RequestParam String quote) {
+        if (kind.equals("+")) {
             notifier.rate(kind, query, uri);
-//        }
+            Term term = aliasesMap.getTerm(query);
+            Item item = itemDao.get(uri);
+            if (term != null && item != null) {
+                Link link = new Link(term, item, quote, "search");
+                linkDao.save(link);
+            }
+        }
     }
 
     @RequestMapping("get-content")
