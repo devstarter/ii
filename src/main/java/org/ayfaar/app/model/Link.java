@@ -16,27 +16,10 @@ public class Link {
     public static final Byte ABBREVIATION = 2;
 
     /**
-     * Ссылка на словарную статью
-     */
-    public static final Byte DEFINITION = 3;
-
-    /**
      * Ссылка на код понятия
      * Первый понятие, воторой код
      */
     public static final Byte CODE = 4;
-
-    /**
-     * Ссылка на группу к которой относиться понятие. Первым указываеться понятие
-     * вторым группа
-     */
-//    public static final Byte GROUP = ;
-//    public static final Byte START = 4;
-//    public static final Byte END = 5;
-//    public static final byte DIRECTION = 2;
-//    public static final byte PRIORITY = 3;
-//    public static final byte MORPHEME_WEIGHT = -1;
-//    public static final byte ABBREVIATION_WEIGHT = 1;
 
     @Id
     @GeneratedValue

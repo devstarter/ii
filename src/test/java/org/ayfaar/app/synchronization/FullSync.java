@@ -9,6 +9,7 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.synchronization.mediawiki.*;
 import org.hibernate.criterion.MatchMode;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringTestConfiguration.class)
+@Ignore
 public class FullSync {
 
     @Autowired
