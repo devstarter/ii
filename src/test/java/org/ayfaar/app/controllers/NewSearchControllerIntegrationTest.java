@@ -42,4 +42,12 @@ public class NewSearchControllerIntegrationTest extends IntegrationTest {
         assertEquals(20, quotes.size());
         assertFalse(page.isHasMore());
     }
+
+    @Test
+    public void test_328() throws Exception {
+        SearchResultPage page = controller.search("328", 0, null);
+        assertNotNull(page);
+        List<Quote> quotes = page.getQuotes();
+        assertTrue(quotes.size() > 0);
+    }
 }
