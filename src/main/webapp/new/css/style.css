@@ -1,3 +1,10 @@
+
+blockquote>cite {
+    height: 30px;
+    cursor: pointer;
+    display: block;
+}
+
 body {
     font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Trebuchet MS', sans-serif;
     color: #00006d;

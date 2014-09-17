@@ -26,9 +26,9 @@
             окончания слова. Например "лийллусцивный" - "лийллусцивн*" (будут учтены "лийллусцивн<u>о</u>", "лийллусцивн<u>ые</u>",
             "лийллусцивн<u>ость</u>" и т. д.
         </div>
-        <div data-bind="visible: contents.length">
+        <div data-bind="visible: quotes.length">
             <h3>В содержимом</h3>
-            <div data-bind="source: contents" data-template="search-content-template"></div>
+            <div data-bind="source: quotes" data-template="search-content-template"></div>
             <script type="text/kendo-x-tmpl" id="search-content-template">
                 <blockquote>
                     <div>#=data.quote#</div>

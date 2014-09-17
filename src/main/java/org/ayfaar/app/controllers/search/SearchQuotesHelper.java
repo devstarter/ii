@@ -13,10 +13,9 @@ import static org.apache.commons.lang3.StringUtils.join;
 
 @Component
 public class SearchQuotesHelper {
-    public static final int MAX_WORDS_ON_BOUNDARIES = 30;
-    private String forCreateLeftPartQuote = "([^\\.\\?!]*)([\\.\\?!]*)(\\.|\\?|\\!)(\\)|\\»)";
-    private String forCreateRightPartQuote = "(\\)|\\»)([^\\.\\?!]*)([\\.\\?!]*)";
-    public static int i = 0;
+    public static final int MAX_WORDS_ON_BOUNDARIES = 50;
+    private static final String forCreateLeftPartQuote = "([^\\.\\?!]*)([\\.\\?!]*)(\\.|\\?|\\!)(\\)|\\»)";
+    private static final String forCreateRightPartQuote = "(\\)|\\»)([^\\.\\?!]*)([\\.\\?!]*)";
 
     public List<Quote> createQuotes(List<Item> foundedItems, List<String> allPossibleSearchQueries) {
         List<Quote> quotes = new ArrayList<Quote>();
@@ -52,7 +51,7 @@ public class SearchQuotesHelper {
             String textQuote = createTextQuote(phrases, leftPart, rightPart);
 
             Quote quote = new Quote();
-            quote.setUri(item.getUri());
+            quote.setNumber(item.getNumber());
             quote.setQuote(textQuote);
             quotes.add(quote);
         }
