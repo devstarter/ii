@@ -24,23 +24,16 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
     }
 
     public List<Item> findInItems(List<String> aliases, int skip, int limit, String fromItemNumber) {
-        final String columnName = "number";
-        String op = ">=";
         Criteria criteria = criteria();
         Disjunction disjunction = Restrictions.disjunction();
 
         if(fromItemNumber != null) {
+            final String columnName = "number";
+            String op = ">=";
             criteria.add(new SimpleExpression(columnName, fromItemNumber, op) {
                 @Override
                 public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery) throws HibernateException {
-                    /*StringBuilder fragment = new StringBuilder();
-                    fragment.append("CAST(");
-                    fragment.append(columnName);
-                    fragment.append(" as DECIMAL(10,6))");
-                    fragment.append(getOp()).append("?");
-
-                    return fragment.toString();*/
-                    // так вроди наглядней, как тебе?
+                    // можно переделать для сравнения с order_index
                     return String.format("CAST(%s as DECIMAL(10,6))%s?", columnName, getOp());
                 }
             });
