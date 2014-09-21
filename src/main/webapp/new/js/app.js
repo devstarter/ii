@@ -1,4 +1,4 @@
-angular.module('app', ['ui.router', 'live-search'])
+angular.module('app', ['ui.router', 'live-search', 'ngSanitize'])
     .config(function($locationProvider, $urlRouterProvider, $stateProvider) {
 //        $locationProvider.html5Mode(true).hashPrefix('!');
 
@@ -13,7 +13,8 @@ angular.module('app', ['ui.router', 'live-search'])
             })
             .state('search', {
                 url: "/search/:query",
-                templateUrl: "partials/search.html"
+                templateUrl: "partials/search.html",
+                controller: SearchController
             })
             .state('article', {
                 url: "/a/:id",
@@ -31,11 +32,20 @@ angular.module('app', ['ui.router', 'live-search'])
 //                onEnter: function($location, $stateParams, $log){
 //                    $log.info($stateParams)
 //                }
-            })
+            });
+    })
+    .factory("analytics", function(){
+        return {
+            registerEmptyTerm: function(termName) {
+                if (ga) {
+                    ga('send', 'event', 'no-data', termName);
+                }
+            }
+        }
     })
     .factory("$api", function($rootScope, $state, $http, errorService, $q){
-        var apiUrl = "http://ii.ayfaar.org/api/v2/";
-//        var apiUrl = "http://localhost:8081/";
+        var apiUrl = "http://ii.ayfaar.org/api/";
+//        var apiUrl = "http://localhost:8081/api/";
         return {
             post: function(url, data) {
                 var deferred = $q.defer();
@@ -140,8 +150,77 @@ angular.module('app', ['ui.router', 'live-search'])
                 });*/
             }
         };
+    })
+    .factory('entityService', function(){
+        var service = {
+            getName: function (entity) {
+                switch (service.getType(entity)) {
+                    case 'term':
+                        return entity.uri.replace("ии:термин:", "");
+                    case 'item':
+                        return entity.uri.replace("ии:пункт:", "");
+                }
+            },
+            getType: function(entity) {
+                if (entity.uri.indexOf("ии:термин:") === 0) {
+                    return 'term'
+                }
+                if (entity.uri.indexOf("ии:пункт:") === 0) {
+                    return 'item'
+                }
+            }
+        };
+        return service;
+    })
+    .directive('entity', function($state, entityService) {
+        return {
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            template: '<a href></a>',
+            compile : function(element, attr, linker) {
+                return function ($scope, $element, $attr) {
+                    var entity = $scope[$attr.ngModel];
+//                    var uiSref = "term({name:'"+name+"'})";
+//                    $attr.$set('uiSref', uiSref);
+                    $element.append(entityService.getName(entity));
+                    $element.bind('click', function() {
+                        $state.go(entity)
+                    })
+                }
+            }
+             /*link: function(scope, element, attrs) {
+                var entity = scope[attrs.ngModel];
+                var name = entity.uri.replace("ии:термин:", "");
+                var uiSref = "term({name:'"+name+"'})";
+                attrs.$set('uiSref', uiSref);
+                element.removeAttr('ng-transclude');
+                element.append(name);
+                $compile(element)(scope);
+            }*/
+        };
+    })
+    .run(function($state, entityService){
+        var defStateGo = $state.go;
+        $state.go = function(to, params, options) {
+            if (to.hasOwnProperty('uri')) {
+                var uri = to.uri;
+                if (entityService.getType(to) == "term") {
+                    defStateGo.bind($state)("term", {name: entityService.getName(to)})
+                }
+            } else {
+                defStateGo.bind($state)(to, params, options)
+            }
+        };
+        $state.goToItem = function(number) {
+            defStateGo.bind($state)("item", {number: number})
+        }
     });
 
 Array.prototype.append = function(array){
     this.push.apply(this, array)
 };
+
+function isItemNumber(s) {
+    return s.match("\\d+\\.\\d+");
+}

@@ -1,111 +1,152 @@
 package org.ayfaar.app.controllers;
 
-import org.apache.commons.lang.NotImplementedException;
+import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.controllers.search.Quote;
-import org.ayfaar.app.controllers.search.SearchFilter;
+import org.ayfaar.app.controllers.search.SearchCache;
+import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
+import org.ayfaar.app.dao.LinkDao;
+import org.ayfaar.app.dao.SearchDao;
+import org.ayfaar.app.dao.TermMorphDao;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.controllers.search.HandleItems;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.ayfaar.app.model.TermMorph;
+import org.ayfaar.app.utils.AliasesMap;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-//todo пометить как контролер и зделать доступнім по адресу "v2/search"
+import static java.util.Arrays.asList;
+import static net.sf.cglib.core.CollectionUtils.transform;
+
+@Controller
+@RequestMapping("v2/search")
 public class NewSearchController {
-    @Autowired
-    private HandleItems handleItems;
+    public static final int PAGE_SIZE = 20;
+    @Inject
+    private SearchQuotesHelper handleItems;
+
+    @Inject
+    private SearchDao searchDao;
+
+    @Inject
+    private AliasesMap aliasesMap;
+
+    @Inject
+    private TermMorphDao termMorphDao;
+
+    @Inject
+    private LinkDao linkDao;
+
+    @Inject
+    protected SearchCache cache;
+
 
     /**
      * Поиск будет производить только по содержимому Item
-     * todo сделать этот метод доступным через веб
      *
      * @param pageNumber номер страницы
      */
-    private List<Item> foundItems = new ArrayList<Item>();
-    private List<String> allPossibleSearchQueries = new ArrayList<String>();
-
-
-    public SearchResultPage search(String query, Integer pageNumber, SearchFilter filter) {
+    @RequestMapping
+    @ResponseBody
+    public SearchResultPage search(@RequestParam String query,
+                                   @RequestParam Integer pageNumber,
+                                   @RequestParam(required = false) String fromItemNumber) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         query = prepareQuery(query);
 
         // 2. Проверяем есть ли кеш, если да возвращаем его
-        if (hasCached(query, pageNumber, filter)) {
-            return getCache(query, pageNumber, filter);
+        Object cacheKey = cache.generateKey(query, pageNumber, fromItemNumber);
+        if (cache.has(cacheKey)) {
+            return cache.get(cacheKey);
         }
-
         SearchResultPage page = new SearchResultPage();
-
-        // 3. Определить термин ли это
-        Term term = getTerm(query);
-        // если нет поискать в разных падежах
-        if (term == null) {
-            term = findTermInMorphs(query);
-        }
-
-        // 3.1. Если да, Получить все синониме термина
-        if (term != null) {
-            List<Term> allSearchTerms = getAllAliases(term);
-
-            // 3.2. Получить все падежи по всем терминам
-            allPossibleSearchQueries = getAllMorphs(allSearchTerms);
-            // 4. Произвести поиск по списку синонимов слов
-            foundItems = searchInDb(query, allPossibleSearchQueries, pageNumber, filter);
-        } else {
-            // 4. Поиск фразы (не термин)
-            foundItems = searchInDb(query, null, pageNumber, filter);
-        }
-
         page.setHasMore(false);
 
-        // 5. Обработка найденных пунктов
-        // пройтись по всем пунктам и вырезать предложением, в котором встречаеться поисковая фраза или фразы
-        // Если до или после найденной фразы слов больше чем 10, то обрезать всё до (или после) 10 слова и поставить "..."
-        // Обозначить поисковую фразу или фразы тегами <strong></strong>
+        // 3. Определить термин ли это
+        Term term = aliasesMap.getTerm(query);
+        // 3.1. Если да, Получить все синониме термина
+        List<Item> foundItems;
+        // указывает сколько результатов поиска нужно пропустиьб, то есть когда ищем следующую страницу
+        int skipResults = pageNumber*PAGE_SIZE;
 
-        List<Quote> quotes = handleItems.createQuotes(foundItems, allPossibleSearchQueries);
+        List<String> searchQueries = null;
+        if (term != null) {
+            // 3.2. Получить все падежи по всем терминам
+            searchQueries = getAllMorphs(term);
+            // 4. Произвести поиск
+            // 4.1. Сначала поискать совпадение термина в различных падежах
+            foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
+            if (foundItems.size() < PAGE_SIZE) {
+                // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
+                List<Term> aliases = getAllAliases(term);
+                // Если у термина вообще есть синонимы:
+                if (!aliases.isEmpty()) {
+                    List<String> aliasesSearchQueries = getAllMorphs(aliases);
+                    foundItems.addAll(searchDao.findInItems(aliasesSearchQueries, skipResults,
+                            PAGE_SIZE - foundItems.size() + 1, fromItemNumber));
+                    searchQueries.addAll(aliasesSearchQueries);
+                }
+            }
+        } else {
+            // 4. Поиск фразы (не термин)
+            foundItems = searchDao.findInItems(asList(query), skipResults, PAGE_SIZE + 1, fromItemNumber);
+        }
+
+        if (foundItems.size() > PAGE_SIZE ) {
+            foundItems.remove(foundItems.size() - 1);
+            page.setHasMore(true);
+        }
+
+
+        // 5. Обработка найденных пунктов
+        List<Quote> quotes = handleItems.createQuotes(foundItems, searchQueries);
         page.setQuotes(quotes);
 
-        // 6. Вернуть результат
+        // 6. Сохранение в кеше
+        cache.put(cacheKey, page);
+        // 7. Вернуть результат
         return page;
     }
 
-    private List<Item> searchInDb(String query, List<String> words, Integer page, SearchFilter filter) {
-        // 4.1. Результат должен быть отсортирован:
-        // а. В первую очередь должны быть точные совпадения
-        // б. Сначала самые ранние пункты
-
-        // 4.2. В результате нужно знать есть ли ещё результаты поиска для следующей страницы
-        throw new NotImplementedException();
+    List<String> getAllMorphs(Term term) {
+        return getAllMorphs(asList(term));
     }
 
-    private List<String> getAllMorphs(List<Term> terms) {
-        throw new NotImplementedException();
+    List<String> getAllMorphs(List<Term> terms) {
+        List<String> allWordsModes = new ArrayList<String>();
+        List<TermMorph> morphs = new ArrayList<TermMorph>();
+        for (Term term : terms) {
+            morphs.addAll(termMorphDao.getList("termUri", term.getUri()));
+            allWordsModes.add(term.getName());
+        }
+        //noinspection unchecked
+        allWordsModes.addAll(transform(morphs, new Transformer() {
+            @Override
+            public Object transform(Object value) {
+                return ((TermMorph) value).getName();
+            }
+        }));
+        return allWordsModes;
     }
 
-    private List<Term> getAllAliases(Term term) {
-        throw new NotImplementedException();
-    }
-
-    private Term findTermInMorphs(String query) {
-        throw new NotImplementedException();
-    }
-
-    private Term getTerm(String query) {
-        throw new NotImplementedException();
-    }
-
-    private SearchResultPage getCache(String query, Integer page, SearchFilter filter) {
-        throw new NotImplementedException();
-    }
-
-    private boolean hasCached(String query, Integer page, SearchFilter filter) {
-        throw new NotImplementedException();
+    List<Term> getAllAliases(Term term) {
+        List<Term> aliases = new ArrayList<Term>();
+        for (Link link : linkDao.getAliases(term.getUri())) {
+            aliases.add((Term) link.getUid2());
+        }
+        return aliases;
     }
 
     private String prepareQuery(String query) {
-        throw new NotImplementedException();
+        // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
+        return query != null ? query.toLowerCase().trim() : null;
     }
+
 }

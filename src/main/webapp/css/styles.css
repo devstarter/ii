@@ -1,7 +1,10 @@
-blockquote>cite>span {
+blockquote>cite>button {
     display: none;
 }
-blockquote:hover>cite>span {
+blockquote>cite {
+    height: 30px;
+}
+blockquote:hover>cite>button {
     display: inline;
 }
 header {
@@ -12,12 +15,6 @@ header {
 
 .alias:hover {
     text-decoration: underline;
-}
-.icon-thumbs-up-2 {
-    color: #d2d2d2;
-}
-.icon-thumbs-up {
-    color: #0239b4;
 }
 html,body{
     /*font-family: 'PT Serif';*/

@@ -1,7 +1,6 @@
-package issues.issue19;
+package org.ayfaar.app.controllers;
 
 import net.sf.cglib.core.Transformer;
-import org.ayfaar.app.controllers.SuggestionsController;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.utils.AliasesMap;
 import org.junit.Test;
@@ -19,8 +18,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
+@SuppressWarnings("unchecked")
 @RunWith(MockitoJUnitRunner.class)
-public class Issue19UnitTest {
+public class SuggestionsControllerUnitTest {
     @Mock AliasesMap aliasesMap;
 
     @InjectMocks
@@ -31,12 +31,7 @@ public class Issue19UnitTest {
         String q = "a";
         List<String> fakeTerms = asList("a", "1 a", "bterfd", "b-aaaa", "aa", "242a424");
 
-        Mockito.when(aliasesMap.getAllTerms()).thenReturn(transform(fakeTerms, new Transformer() {
-            @Override
-            public Object transform(Object value) {
-                return new Term((String) value);
-            }
-        }));
+        Mockito.when(aliasesMap.getAllTerms()).thenReturn(transform(fakeTerms, transformer));
 
         List<String> suggestions = controller.suggestions(q);
 
@@ -56,14 +51,36 @@ public class Issue19UnitTest {
                                         "Звёздно-Галактическая Форма", "Вселенский Межгалактический Диапазон", "Межгалактический",
                                         "Межгалактические Комплекс-Планы", "Межгалактический Астральный Комплекс-План", "Галактика");
 
-        Mockito.when(aliasesMap.getAllTerms()).thenReturn(transform(fakeTerms, new Transformer() {
-            @Override
-            public Object transform(Object value) {
-                return new Term((String) value);
-            }
-        }));
+        Mockito.when(aliasesMap.getAllTerms()).thenReturn(transform(fakeTerms, transformer));
 
         List<String> suggestions = controller.suggestions(q);
         assertTrue(suggestions.size() <= SuggestionsController.MAX_SUGGESTIONS);
     }
+
+    /**
+     * Сначала должны быть самые короткие слова (фразы)
+     */
+    @Test
+    public void testOrder() {
+        String q = "aa";
+        List<String> fakeTerms = asList("aabbcc", "242aa424", "aa", "aabb", "aab");
+
+        Mockito.when(aliasesMap.getAllTerms()).thenReturn(transform(fakeTerms, transformer));
+
+        List<String> suggestions = controller.suggestions(q);
+
+        assertEquals(5, suggestions.size());
+        assertEquals("aa", suggestions.get(0));
+        assertEquals("aab", suggestions.get(1));
+        assertEquals("aabb", suggestions.get(2));
+        assertEquals("aabbcc", suggestions.get(3));
+        assertEquals("242aa424", suggestions.get(4));
+    }
+
+    private static final Transformer transformer = new Transformer() {
+        @Override
+        public Object transform(Object value) {
+            return new Term((String) value);
+        }
+    };
 }

@@ -1,5 +1,7 @@
 package org.ayfaar.app.utils;
 
+import org.ayfaar.app.model.Item;
+import org.ayfaar.app.model.Term;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -50,14 +52,14 @@ public class EmailNotifier {
         return "<a href=\"http://ii.ayfaar.org/api/link/remove/" + linkId + "\">удалить ссылку</a>";
     }
 
-    public void rate(String kind, String query, String uri) {
+    public void rate(Term term, Item item, String quote, boolean possibleDuplication) {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
         try {
             helper.setFrom(FROM);
             helper.setTo(TO);
-            helper.setSubject("Рейтинг "+kind+" (" + query + " + " + uri + ")");
-            helper.setText("");
+            helper.setSubject("Связь через поиск (" + term.getName() + " + " + item.getNumber() + ")");
+            helper.setText(quote + (possibleDuplication ? "\n\nНе создана по причине возможной дубликации" : ""));
         } catch (MessagingException e) {
             e.printStackTrace();
         }

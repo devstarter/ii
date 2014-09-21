@@ -96,4 +96,16 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
                 )
                 .list();
     }
+
+    @Override
+    public List<Link> get(UID uid1, UID uid2) {
+        return criteria()
+                .add(
+                    or(
+                        and(eq("uid1", uid1), eq("uid2", uid2)),
+                        and(eq("uid1", uid2), eq("uid2", uid1))
+                    )
+                )
+                .list();
+    }
 }

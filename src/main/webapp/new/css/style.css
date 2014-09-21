@@ -1,8 +1,28 @@
 
+blockquote>cite {
+    height: 30px;
+    cursor: pointer;
+    display: block;
+}
+
+body {
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Trebuchet MS', sans-serif;
+    color: #00006d;
+}
+
+div[ui-view] {
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+blockquote {
+    font-size: inherit;
+    padding: 0 10px;
+}
 /* home */
 .home {
-    max-width: 500px;
     margin: 0 auto;
+    max-width: 500px;
 }
 .home h1 {
     text-align: center;

@@ -15,7 +15,8 @@
             }
             viewModel = kendo.observable({
                 terms: [],
-                contents: [],
+                articles: [],
+                quotes: [],
                 query: query,
                 loadNextPageLabel: "Искать далее...",
                 search: function(e) {
@@ -36,10 +37,7 @@
                     searchInContent();
                 },
                 rateUp: function(e) {
-                    $.get(searchApiUrl+"rate/+", {uri: e.data.uri, query: viewModel.query}, rateComplete);
-                },
-                rateDown: function(e) {
-                    $.get(searchApiUrl+"rate/-", {uri: e.data.uri, query: viewModel.query}, rateComplete);
+                    $.post(searchApiUrl+"rate/+", {uri: e.data.uri, quote: e.data.quote, query: viewModel.query}, rateComplete);
                 },
                 getContent: function(e) {
                     /*$.get(searchApiUrl+"get-content", {uri: e.data.uri}, function(r) {
@@ -71,30 +69,31 @@
         }, function(r) {
             viewModel.set("loadingTerms", false);
             viewModel.set("terms", r.terms);
+            viewModel.set("articles", r.articles);
             viewModel.set("exactMatchTerm", r.exactMatchTerm);
             searchInContent();
         });
         viewModel.set("loadingTerms", true);
     };
     function searchInContent() {
-        $.get(searchApiUrl+"content", {
+        $.get(ii.apiUrl + "v2/search", {
             query: viewModel.query,
-            page: pageCounter
+            pageNumber: pageCounter
         }, function(r) {
             pageCounter++;
             viewModel.set("loadingContents", false);
-            viewModel.set("contents", viewModel.contents.toJSON().concat(r));
-            if (viewModel.contents.length == 0) {
+            viewModel.set("quotes", viewModel.quotes.toJSON().concat(r.quotes));
+            if (viewModel.quotes.length == 0) {
                 // no result
-                viewModel.set("noResult", viewModel.contents.length == 0);
+                viewModel.set("noResult", viewModel.quotes.length == 0);
                 if (ga) ga('send', 'event', 'not-found', viewModel.query);
             }
-            viewModel.set("showLoadMore", r.length > 0);
+            viewModel.set("showLoadMore", r.hasMore);
             if (!r.length) {
                 pageCounter = 0;
             }
         });
-        if (viewModel.contents.length == 0) {
+        if (viewModel.quotes.length == 0) {
             viewModel.set("loadingContents", true);
         }
     }

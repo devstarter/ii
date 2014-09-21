@@ -11,28 +11,32 @@
     <div data-bind="visible: terms.length">
         <h3>В названиях терминов</h3>
         <div data-bind="source: terms" data-template="search-terms-template"></div>
-        <script type="text/kendo-x-tmpl" id="search-terms-template">
-            <button class="grey" data-bind="text: name, click: navigate"></button>
-        </script>
     </div>
-    <div class="block loading" data-bind="visible: loadingContents">Загрузка результатов поиска по содержимому...</div>
+    <script type="text/kendo-x-tmpl" id="search-terms-template">
+        <button class="grey" data-bind="text: name, click: navigate"></button>
+    </script>
+    <div data-bind="visible: articles.length">
+        <h3>Статьи из 9 тома</h3>
+        <div data-bind="source: articles" data-template="search-terms-template"></div>
+    </div>
+    <div class="block loading" style="padding: 50px;" data-bind="visible: loadingContents">Поиска по содержимому (может занять около минуты)...</div>
     <div data-bind="invisible: loadingContents">
         <div data-bind="visible: noResult">
             <strong>Ничего не найдено.</strong> Побробуйте со звёздочкой после корня слова для учёта всех вариантов
             окончания слова. Например "лийллусцивный" - "лийллусцивн*" (будут учтены "лийллусцивн<u>о</u>", "лийллусцивн<u>ые</u>",
             "лийллусцивн<u>ость</u>" и т. д.
         </div>
-        <div data-bind="visible: contents.length">
+        <div data-bind="visible: quotes.length">
             <h3>В содержимом</h3>
-            <div data-bind="source: contents" data-template="search-content-template"></div>
+            <div data-bind="source: quotes" data-template="search-content-template"></div>
             <script type="text/kendo-x-tmpl" id="search-content-template">
                 <blockquote>
                     <div>#=data.quote#</div>
                     <cite>&mdash; <a data-bind="text: getLabel, click: navigate"></a>
-                        <span>
-                            <i data-bind="click: rateUp" class="icon-thumbs-up" title="Цитата соответствует запросу"></i>
-                            <i data-bind="click: rateDown" class="icon-thumbs-up-2" title="Цитата безполезна"></i>
-                        </span>
+                        <button class="flat" data-bind="click: rateUp">
+                            <i class="icon-thumbs-up"></i>
+                            Полезная цитата
+                        </button>
                     </cite>
                 </blockquote>
             </script>
@@ -41,6 +45,9 @@
         </div>
     </div>
     <style type="text/css">
+        h3 {
+            margin-bottom: 5px;
+        }
         button {
             color: #ffffff;
         }

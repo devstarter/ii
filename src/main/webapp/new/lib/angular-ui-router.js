@@ -2947,7 +2947,7 @@ function $StateRefDirective($state, $timeout) {
         }
       });
     }
-  };
+  };                 D
 }
 
 /**

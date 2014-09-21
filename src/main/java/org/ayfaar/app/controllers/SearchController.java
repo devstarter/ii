@@ -9,13 +9,11 @@ import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.Content;
 import org.ayfaar.app.utils.EmailNotifier;
+import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +32,7 @@ public class SearchController {
     @Autowired AliasesMap aliasesMap;
     @Autowired TermDao termDao;
     @Autowired ItemDao itemDao;
+    @Autowired ArticleDao articleDao;
     @Autowired LinkDao linkDao;
     @Autowired CommonDao commonDao;
     @Autowired TermMorphDao termMorphDao;
@@ -124,7 +123,6 @@ public class SearchController {
             }
 
             query = query.replaceAll("\\*", "[" + w + "]*");
-
             if (aliasesList.size() > 0) {
                 items = commonDao.findInAllContent(aliasesList, page * pageSize, pageSize);
             } else {
@@ -134,6 +132,7 @@ public class SearchController {
         // [^\.\?!]* - star is greedy, so pattern will find the last match to make first group as long as possible
         Pattern pattern = Pattern.compile("([^\\.\\?!]*)\\b(" + query + ")\\b([^\\.\\?!]*)([\\.\\?!]*)",
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+
 
         for (Content item : items) {
             ModelMap map = new ModelMap();
@@ -200,16 +199,32 @@ public class SearchController {
         }
         ModelMap modelMap = new ModelMap();
         modelMap.put("terms", terms);
+        modelMap.put("articles", articleDao.getLike("name", query, MatchMode.ANYWHERE));
         modelMap.put("exactMatchTerm", exactMatchTerm);
 
         return modelMap;
     }
 
-    @RequestMapping("rate/{kind}")
-    public void rate(@PathVariable String kind, @RequestParam String uri, @RequestParam String query) {
-//        if (kind.equals("+")) {
-            notifier.rate(kind, query, uri);
-//        }
+    @RequestMapping(value = "rate/{kind}", method = RequestMethod.POST)
+    public void rate(@PathVariable String kind,
+                     @RequestParam String uri,
+                     @RequestParam String query,
+                     @RequestParam String quote) {
+        if (kind.equals("+")) {
+            Term term = aliasesMap.getTerm(query);
+            Item item = itemDao.get(uri);
+            boolean possibleDuplication = false;
+            if (term != null && item != null) {
+                final List<Link> links = linkDao.get(term, item);
+                if (links.size() == 0) {
+                    Link link = new Link(term, item, quote, "search");
+                    linkDao.save(link);
+                } else {
+                    possibleDuplication = true;
+                }
+            }
+            notifier.rate(term, item, quote, possibleDuplication);
+        }
     }
 
     @RequestMapping("get-content")
