@@ -14,6 +14,8 @@ import static org.junit.Assert.assertNull;
 public class Issue11UnitTest extends AbstractTest {
     private String cleanItem11_13017;
 	private String dirtyItem11_13017;
+    private String cleanItem1_0002;
+    private String dirtyItem1_0002;
     private String dirtyItemWithStars;
     private String cleanItemWithStars;
 
@@ -21,6 +23,8 @@ public class Issue11UnitTest extends AbstractTest {
     public void init() throws IOException {
         cleanItem11_13017 = getFile("clean-item-11.13017.txt");
 	    dirtyItem11_13017 = getFile("dirty-item-11.13017.txt");
+        cleanItem1_0002 = getFile("clean-item§.txt");
+        dirtyItem1_0002 = getFile("dirty-item§.txt");
         dirtyItemWithStars = getFile("dirty-item-contain-stars.txt");
         cleanItemWithStars = getFile("clean-item-contain-stars.txt");
 	}
@@ -59,5 +63,11 @@ public class Issue11UnitTest extends AbstractTest {
     public void testCleanFootnoteStarEmptyString() throws IOException {
         String actualValue = ItemsHelper.cleanFootnoteStar("");
         Assert.assertEquals("", actualValue);
+    }
+
+    @Test
+    public void testCleanFootnote() throws IOException {
+        String actualValue = ItemsHelper.cleanFootnote(dirtyItem1_0002);
+        assertEquals(cleanItem1_0002, actualValue);
     }
 }
