@@ -139,10 +139,10 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
 
     @Test
     public void testCreateQuotesWhenFewItems() throws IOException {
-        String expectedUri1 = "ии:пункт:1.0131";
+        String expectedUri1 = "1.0131";
         String expectedQuote1 = "...«участками» Конфигураций), тем самым порождая в информационном пространстве Самосознаний эффект субъективного (очень узкого, ограниченного) восприятия " +
                 "«самих себя» в неких специфических условиях психоментального проявления, «плотноплазменные» варианты которых вы определяете как «физическое» Пространство-<strong>Время</strong>.";
-        String expectedUri2 = "ии:пункт:1.0771";
+        String expectedUri2 = "1.0771";
         String expectedQuote2 = "<strong>Время</strong> характеризует собой два момента - начало взаимодействия с позиции данной диссонационности между двумя Фокусами и его окончание," +
                 " когда эти два диссонационных по отношению друг к другу Фокуса смогут образовать единую резонационную фокусную Конфигурацию. <strong>Время</strong> не сокращает " +
                 "существующее диссонационное расстояние, оно только показывает, сколько ещё разнородной Информации (в виде Фокусов соответствующей Ей Энергии) необходимо вложить в данное " +
@@ -152,7 +152,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
                 " на результат изменения реализационных возможностей Формо-Творцов данной Формы, стимулируя процесс «перепроецирования» их Фокусной Динамики в более соответствующую этой" +
                 " Информации Форму Самосознания. Это похоже на навигатор дорожных маршрутов: когда вы отмечаете какую-то точку на карте навигатора, то он сразу же показывает, сколько " +
                 "<strong>времени</strong> понадобится вам, чтобы прибыть в выбранное вами место, двигаясь с определённой скоростью.";
-        String expectedUri3 = "ии:пункт:1.0846";
+        String expectedUri3 = "1.0846";
         String expectedQuote3 = "...Сущее», из-за пока ещё отсутствия «внутренней» Динамики между менее коварллертными Фокусами, образовавшееся статично-гармоничное Состояние Энерго-Информации" +
                 " оказывается неспособным отражать собой какие-то признаки потенциального наличия в нём временной функции, хотя Квинтэссенция Абсолютного <strong>Времени</strong> УЖЕ в самом" +
                 " «Начале» зарождения Энерго-Плазмы потенциально присутствует в Ней! Где же или в чём же Она - эта Квинтэссенция <strong>Времени</strong> - сокрыта? Предвидя ваш вопрос: «Откуда" +
@@ -160,26 +160,24 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
                 "разнородностью индивидуальных признаков, что уже «изначально» присуща всей Информации!";
         List<Quote> actual = handleItems.createQuotes(items, queries);
 
-        assertEquals(expectedUri1, actual.get(0).getUri());
+        assertEquals(expectedUri1, actual.get(0).getNumber());
         assertEquals(expectedQuote1, actual.get(0).getQuote());
-        assertEquals(expectedUri2, actual.get(1).getUri());
+        assertEquals(expectedUri2, actual.get(1).getNumber());
         assertEquals(expectedQuote2, actual.get(1).getQuote());
-        assertEquals(expectedUri3, actual.get(2).getUri());
+        assertEquals(expectedUri3, actual.get(2).getNumber());
         assertEquals(expectedQuote3, actual.get(2).getQuote());
     }
 
     @Test
-    public void test() {
-        String content = "Всю. Информацию, копируемую.) с ЛЛААСС-Форм,.) ГЛООГОЛМ-ГЛЛИИ-Творцы.) (специфически?) перекодируют и адаптируют в виде двух эфирных Потоков, один из которых " +
-                "содержит только «проекции» первичных кодировок данного Вселенского Творения, и наполняют Их <strong>";
-        String expectedQuote = " Информацию, копируемую.) с ЛЛААСС-Форм,.) ГЛООГОЛМ-ГЛЛИИ-Творцы.) (специфически?) перекодируют и адаптируют в виде двух эфирных Потоков, один из которых " +
-                "содержит только «проекции» первичных кодировок данного Вселенского Творения, и наполняют Их <strong>";
+    public void testGetPartQuoteWhenQuoteStartsWithBracket() throws IOException {
+        String expectedQuote = "3) — диапазон 2-3-й мерностей: КУ-У-ВВУ-Дооллсы — ЛУ-У-ВВУ, ВУ-У-ВВУ, ФУ-У-ВВУ, " +
+                "РУ-У-ВВУ,ГУ-У-ВВУ, КК-У-ВВУ, ЛЛ-У-ВВУ, ВВ-У-ВВУ, ФФ-У-ВВУ,РР-У-ВВУ, ГГ-У-ВВУ, КА-А-ВВУ, ЛА-А-ВВУ, " +
+                "ВА-А-ВВУ,ФА-А-ВВУ, <strong>РА</strong>-А-ВВУ, ГА-А-ВВУ, КК-А-ВВУ, ЛЛ-А-ВВУ,ВВ-А-ВВУ, ФФ-А-ВВУ, " +
+                "РР-А-ВВУ, ГТ-А-ВВУ...";
 
-        String actualQuote = handleItems.getPartQuote(content, "([\\.\\?!]*)([^\\.\\?!]*)(<strong>)", "", "left");
-        assertEquals(expectedQuote, actualQuote);
+        Item item = new Item("10.11834", getFile("item-10.11834.txt"));
+        List<Quote> actual = handleItems.createQuotes(asList(item), asList("РА"));
+
+        assertEquals(expectedQuote, actual.get(0).getQuote());
     }
-
-
-
-
 }

@@ -5,6 +5,7 @@ import org.ayfaar.app.utils.RegExpUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,10 +14,10 @@ import static org.apache.commons.lang3.StringUtils.join;
 
 @Component
 public class SearchQuotesHelper {
-    public static final int MAX_WORDS_ON_BOUNDARIES = 30;
-    private String forCreateLeftPartQuote = "([^\\.\\?!]*)([\\.\\?!]*)(\\.|\\?|\\!)(\\)|\\»)";
-    private String forCreateRightPartQuote = "(\\)|\\»)([^\\.\\?!]*)([\\.\\?!]*)";
-    public static int i = 0;
+    public static final int MAX_WORDS_ON_BOUNDARIES = 50;
+    private static final String forCreateLeftPartQuote = "([^\\.\\?!]*)([\\.\\?!]*)(\\.|\\?|\\!)(\\)|\\»)";
+    private static final String forCreateRightPartQuote = "(\\)|\\»)([^\\.\\?!]*)([\\.\\?!]*)";
+    private static final List<String> brackets = Arrays.asList(".)", "!)", "?)", ".»", "!»", "?»");
 
     public List<Quote> createQuotes(List<Item> foundedItems, List<String> allPossibleSearchQueries) {
         List<Quote> quotes = new ArrayList<Quote>();
@@ -52,7 +53,7 @@ public class SearchQuotesHelper {
             String textQuote = createTextQuote(phrases, leftPart, rightPart);
 
             Quote quote = new Quote();
-            quote.setUri(item.getUri());
+            quote.setNumber(item.getNumber());
             quote.setQuote(textQuote);
             quotes.add(quote);
         }
@@ -68,7 +69,8 @@ public class SearchQuotesHelper {
         }
 
         if(flag.equals("left")) {
-            if (text.charAt(1) == ')' || text.charAt(1) == '»') {
+            //if (text.charAt(1) == ')' || text.charAt(1) == '»') {
+            if (brackets.contains(text.substring(0, 2))) {
                 String temp = text.substring(2, text.length());
                 if(content.length() - text.length() > 0) {
                     text = getPartQuote(content.substring(0, (content.length() - text.length()) + 2),
