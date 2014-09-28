@@ -69,7 +69,6 @@ public class SearchQuotesHelper {
         }
 
         if(flag.equals("left")) {
-            //if (text.charAt(1) == ')' || text.charAt(1) == '»') {
             if (brackets.contains(text.substring(0, 2))) {
                 String temp = text.substring(2, text.length());
                 if(content.length() - text.length() > 0) {

@@ -87,9 +87,6 @@ public class NewSearchController {
             if (foundItems.size() < PAGE_SIZE) {
                 // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
                 List<Term> aliases = getAllAliases(term);
-                for(Term t : aliases) {
-                    System.out.println(t.getName());
-                }
                 // Если у термина вообще есть синонимы:
                 if (!aliases.isEmpty()) {
                     List<String> aliasesSearchQueries = getAllMorphs(aliases);
@@ -100,14 +97,14 @@ public class NewSearchController {
             }
         } else {
             // 4. Поиск фразы (не термин)
-            foundItems = searchDao.findInItems(asList(query), skipResults, PAGE_SIZE + 1, fromItemNumber);
+            searchQueries = asList(query);
+            foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
         }
 
         if (foundItems.size() > PAGE_SIZE ) {
             foundItems.remove(foundItems.size() - 1);
             page.setHasMore(true);
         }
-
 
         // 5. Обработка найденных пунктов
         List<Quote> quotes = handleItems.createQuotes(foundItems, searchQueries);
