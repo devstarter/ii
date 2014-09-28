@@ -5,6 +5,7 @@ import org.ayfaar.app.utils.RegExpUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,9 +67,10 @@ public class SearchQuotesHelper {
             text = matcher.group();
         }
 
-        if(flag.equals("left")) {
+        if(flag.equals("left") && !text.isEmpty()) {
             if (text.charAt(1) == ')' || text.charAt(1) == '»') {
                 String temp = text.substring(2, text.length());
+
                 if(content.length() - text.length() > 0) {
                     text = getPartQuote(content.substring(0, (content.length() - text.length()) + 2),
                             forCreateLeftPartQuote, text.substring(2, text.length()), "left");
