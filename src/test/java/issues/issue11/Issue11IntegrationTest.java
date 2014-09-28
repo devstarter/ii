@@ -18,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 
 
 public class Issue11IntegrationTest extends IntegrationTest {
-
     @Autowired ItemDao itemDao;
 
      public String getFile(String fileName) throws IOException {
