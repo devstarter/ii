@@ -19,6 +19,9 @@ public class CleanDBFromFootnotes {
             String clean = ItemsHelper.cleanFootnote(item.getContent());
             clean = ItemsHelper.cleanFootnoteStar(clean);
             if (!clean.equals(item.getContent())) {
+                System.out.println(item.getNumber());
+                System.out.println(item.getContent());
+                System.out.println(clean);
                 item.setContent(clean);
                 itemDao.save(item);
             }
