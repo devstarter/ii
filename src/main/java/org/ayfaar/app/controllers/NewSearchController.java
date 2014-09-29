@@ -149,5 +149,4 @@ public class NewSearchController {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         return query != null ? query.toLowerCase().trim() : null;
     }
-
 }

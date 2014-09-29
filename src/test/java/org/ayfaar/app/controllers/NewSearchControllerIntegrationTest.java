@@ -50,4 +50,13 @@ public class NewSearchControllerIntegrationTest extends IntegrationTest {
         List<Quote> quotes = page.getQuotes();
         assertTrue(quotes.size() > 0);
     }
+
+    @Test
+    public void птиц() {
+        SearchResultPage page = controller.search("птиц", 0, null);
+        assertNotNull(page);
+        List<Quote> quotes = page.getQuotes();
+        assertTrue(quotes.size() > 0);
+        assertNotEquals(quotes.get(0).getQuote(), "<strong>");
+    }
 }

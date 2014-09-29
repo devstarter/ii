@@ -45,7 +45,7 @@ angular.module('app', ['ui.router', 'live-search', 'ngSanitize'])
         }
     })
     .factory("$api", function($rootScope, $state, $http, errorService, $q){
-        var apiUrl = "http://ii.ayfaar.org/api/";
+        var apiUrl = "/api/";
 //        var apiUrl = "http://localhost:8081/api/";
         return {
             post: function(url, data) {

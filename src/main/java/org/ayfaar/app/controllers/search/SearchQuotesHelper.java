@@ -14,7 +14,7 @@ import static org.apache.commons.lang3.StringUtils.join;
 
 @Component
 public class SearchQuotesHelper {
-    public static final int MAX_WORDS_ON_BOUNDARIES = 50;
+    protected static int MAX_WORDS_ON_BOUNDARIES = 50;
     private static final String forCreateLeftPartQuote = "([^\\.\\?!]*)([\\.\\?!]*)(\\.|\\?|\\!)(\\)|\\»)";
     private static final String forCreateRightPartQuote = "(\\)|\\»)([^\\.\\?!]*)([\\.\\?!]*)";
     private static final List<String> brackets = Arrays.asList(".)", "!)", "?)", ".»", "!»", "?»");

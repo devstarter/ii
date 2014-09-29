@@ -31,8 +31,11 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     }
 
     @Before
-    public void init() throws IOException {
+    public void init() throws Exception {
+        SearchQuotesHelper.MAX_WORDS_ON_BOUNDARIES = 30;
         handleItems = new SearchQuotesHelper();
+//        final Field max_words_on_boundaries = handleItems.getClass().getField("MAX_WORDS_ON_BOUNDARIES");
+//        ReflectionUtils.setFinalStatic(handleItems, max_words_on_boundaries, 30);
         queries = asList("время", "Времени", "Временем", "Временах", "Временами");
     }
 
