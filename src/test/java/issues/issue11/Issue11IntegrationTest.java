@@ -18,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 
 
 public class Issue11IntegrationTest extends IntegrationTest {
-
     @Autowired ItemDao itemDao;
 
      public String getFile(String fileName) throws IOException {
@@ -46,7 +45,6 @@ public class Issue11IntegrationTest extends IntegrationTest {
         for (String itemNumber : asList("3.0436", "10.11151")) {
             assertTrue(itemDao.getByNumber(itemNumber).getContent().contains("*"));
              }
-
          }
 
      @Test
@@ -55,9 +53,6 @@ public class Issue11IntegrationTest extends IntegrationTest {
      */
      public void testStarAsFootnote() {
         List<Item> dirtyItems = itemDao.getLike("content", " *", MatchMode.ANYWHERE);
-         for(Item i : dirtyItems) {
-             System.out.println(i.getNumber());
-         }
         assertEquals(0, dirtyItems.size());
      }
 }
