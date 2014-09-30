@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 public class ItemsHelper {
 
     public static final String QUESTION = "ВОПРОС.";
+    public static final String punctuation = "[ \\.\\,!\\?\\):;'\"»%-]";
 
     public static String clean(String value) {
         String newContext = "";
@@ -138,7 +139,7 @@ public class ItemsHelper {
         if(content == null) {
             return null;
         }
-        String regexp = "(([^\\d^\\n][\\*]{2,})|( [\\*]{1}))";
+        String regexp = "([^\\d^\\n][\\*]+" + punctuation + ")|([^\\d^\\n][\\*]{2,}.)";
         String separator = "\\*";
 
         return findFootnote(content, regexp, separator);
@@ -158,6 +159,14 @@ public class ItemsHelper {
     private static String replace(String content, String phrase, String regexp, String separator) {
         String[] letters = phrase.split(separator);
         String replacing = letters[0].equals(" ") ? "" : letters[0];
+
+        if(letters.length > 1) {
+            Pattern pattern = Pattern.compile(punctuation);
+            Matcher matcher = pattern.matcher(letters[letters.length - 1]);
+            String lastLetter = matcher.find() ? "" : " ";
+            replacing += letters[letters.length - 1].equals(" ") ? " " : lastLetter + letters[letters.length - 1];
+        }
+
         return content.replaceFirst(regexp, replacing);
     }
 }
