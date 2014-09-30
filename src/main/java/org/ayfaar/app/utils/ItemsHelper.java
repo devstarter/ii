@@ -15,15 +15,15 @@ public class ItemsHelper {
     public static final String punctuation = "[ \\.\\,!\\?\\):;'\"»%-]";
 
     public static String clean(String value) {
-        String newContext = "";
-
         if(value == null) {
             return null;
         }
 
-        newContext = cleanChapter(value);
-        newContext = cleanSection(newContext);
-        return newContext;
+        value = cleanChapter(value);
+        value = cleanSection(value);
+        value = cleanFootnote(value);
+        value = cleanFootnoteStar(value);
+        return value;
     }
 
     private static String cleanChapter(String value) {
