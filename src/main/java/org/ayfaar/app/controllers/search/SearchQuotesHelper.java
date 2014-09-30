@@ -17,7 +17,6 @@ public class SearchQuotesHelper {
     public static final int MAX_WORDS_ON_BOUNDARIES = 50;
     private static final String forCreateLeftPartQuote = "([^\\.\\?!]*)([\\.\\?!]*)(\\.|\\?|\\!)(\\)|\\»)";
     private static final String forCreateRightPartQuote = "(\\)|\\»)([^\\.\\?!]*)([\\.\\?!]*)";
-    private static final List<String> brackets = Arrays.asList(".)", "!)", "?)", ".»", "!»", "?»");
 
     public List<Quote> createQuotes(List<Item> foundedItems, List<String> allPossibleSearchQueries) {
         List<Quote> quotes = new ArrayList<Quote>();
@@ -68,9 +67,10 @@ public class SearchQuotesHelper {
             text = matcher.group();
         }
 
-        if(flag.equals("left")) {
-            if (brackets.contains(text.substring(0, 2))) {
+        if(flag.equals("left") && !text.isEmpty()) {
+            if (text.charAt(1) == ')' || text.charAt(1) == '»') {
                 String temp = text.substring(2, text.length());
+
                 if(content.length() - text.length() > 0) {
                     text = getPartQuote(content.substring(0, (content.length() - text.length()) + 2),
                             forCreateLeftPartQuote, text.substring(2, text.length()), "left");

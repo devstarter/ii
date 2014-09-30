@@ -1,5 +1,4 @@
 angular.module('app', ['ui.router', 'live-search', 'ngSanitize'])
-    .controller('SearchController', SearchController)
     .config(function($locationProvider, $urlRouterProvider, $stateProvider) {
 //        $locationProvider.html5Mode(true).hashPrefix('!');
 

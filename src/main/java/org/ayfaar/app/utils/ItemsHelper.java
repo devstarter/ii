@@ -1,6 +1,9 @@
 package org.ayfaar.app.utils;
 
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Очистка пунктов от сносок, названий Глав и Разделов
  *
@@ -112,5 +115,49 @@ public class ItemsHelper {
         }
 
         return question + "\r\n" + text;
+    }
+
+    /**
+     * Удаляет из текста все сноски †, ‡ и §
+     */
+    public static String cleanFootnote(String content) {
+        if(content == null) {
+            return null;
+        }
+
+        String regexp = ".†+|.‡+|.§+";
+        String separator = "†|‡|§";
+
+        return findFootnote(content, regexp, separator);
+    }
+
+    /**
+     * Удаляет из текста все сноски со звёздочками но оставляет перечисления
+     */
+    public static String cleanFootnoteStar(String content) {
+        if(content == null) {
+            return null;
+        }
+        String regexp = "(([^\\d^\\n][\\*]{2,})|( [\\*]{1}))";
+        String separator = "\\*";
+
+        return findFootnote(content, regexp, separator);
+    }
+
+    private static String findFootnote(String content, String regexp, String separator) {
+        Pattern pattern = Pattern.compile(regexp);
+        Matcher matcher = pattern.matcher(content);
+
+        while(matcher.find()) {
+            String phrase = matcher.group();
+            content = replace(content, phrase, regexp, separator);
+        }
+        return content;
+    }
+
+    private static String replace(String content, String phrase, String regexp, String separator) {
+        String[] letters = phrase.split(separator);
+        String replacing = letters[0].equals(" ") ? "" : letters[0];
+        return content.replaceFirst(regexp, replacing);
     }
 }
