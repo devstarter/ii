@@ -7,7 +7,7 @@ function HomeController($scope, $api, $log, $state) {
     };
     $scope.search = function() {
         if ($scope.query) {
-            $state.go("search", {query: $scope.query});
+            $state.go("term", {query: $scope.query});
         }
     };
 }

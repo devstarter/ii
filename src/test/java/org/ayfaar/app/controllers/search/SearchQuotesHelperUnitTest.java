@@ -37,6 +37,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     }
 
     @Test
+    // не понял что ты тут проверяешь... content и expectedQuote ведь одинаковые
     public void testCreatePartQuoteIfLeftPartContainsBracket() {
         String content = "Всю. Информацию, копируемую.) с ЛЛААСС-Форм, ГЛООГОЛМ-ГЛЛИИ-Творцы (специфически?) перекодируют и адаптируют в виде двух эфирных Потоков, один из которых " +
                 "содержит только «проекции» первичных кодировок данного Вселенского Творения, и наполняют Их <strong>";
@@ -48,6 +49,7 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     }
 
     @Test
+    // тоже самое
     public void testCreatePartQuoteIfRightPartContainsBracket() {
         String content = "<strong>Содержанием</strong> все Формо-структуры (Стабилизационного?) План-Обертона (которые никогда не изменяются, служа для Формо-Творцов как бы своеобразными " +
                 "Эталонами Творения!), в то время.) как НИИССЛИИ-И-Творцы Трансмутационного План-Обертона – через Формо-структуры Ментального, Астрального и Каузального " +

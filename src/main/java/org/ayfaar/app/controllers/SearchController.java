@@ -209,7 +209,7 @@ public class SearchController {
     public void rate(@PathVariable String kind,
                      @RequestParam String uri,
                      @RequestParam String query,
-                     @RequestParam String quote) {
+                     @RequestParam(required = false) String quote) {
         if (kind.equals("+")) {
             Term term = aliasesMap.getTerm(query);
             Item item = itemDao.get(uri);
