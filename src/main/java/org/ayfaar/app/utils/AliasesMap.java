@@ -16,24 +16,25 @@ import java.util.regex.Pattern;
 
 import static java.util.Collections.sort;
 import static java.util.regex.Pattern.compile;
+import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
 @Lazy
-public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
+public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> implements TermsMap {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
     @Autowired CommonDao commonDao;
 
     private List<Term> allTerms;
-    private List<TermMorph> allTermMorphs;
-    private Map<String, Proxy> proxyMap;
+    private Map<String, Term> termsMap;
 
     @PostConstruct
     private void load() {
         clear();
         allTerms = termDao.getAll();
-        allTermMorphs = commonDao.getAll(TermMorph.class);
-        proxyMap = new HashMap<String, Proxy>();
+        termsMap = new HashMap<String, Term>();
+        List<TermMorph> allTermMorphs = commonDao.getAll(TermMorph.class);
+        Map<String, Proxy> proxyMap = new HashMap<String, Proxy>();
         Map<String, Proxy> tmpMap = new HashMap<String, Proxy>();
 
         for (Term term : allTerms) {
@@ -43,6 +44,7 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
                 proxyMap.put(term.getUri(), proxy);
             }
             tmpMap.put(term.getName(), proxy);
+            termsMap.put(term.getName(), term);
         }
         for (TermMorph termMorph : allTermMorphs) {
             Proxy proxy = proxyMap.get(termMorph.getTermUri());
@@ -51,6 +53,7 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
                 proxyMap.put(termMorph.getTermUri(), proxy);
             }
             tmpMap.put(termMorph.getName(), proxy);
+            termsMap.put(termMorph.getName(), termsMap.get(getValueFromUri(Term.class, termMorph.getTermUri())));
         }
 
         List<Map.Entry<String, Proxy>> entries =
@@ -127,6 +130,11 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> {
 
     public List<Term> getAllTerms() {
         return allTerms;
+    }
+
+    @Override
+    public Set<Map.Entry<String, Term>> getAll() {
+        return termsMap.entrySet();
     }
 
     public List<Term> findTermsInside(String content) {
