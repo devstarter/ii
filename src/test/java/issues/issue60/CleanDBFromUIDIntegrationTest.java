@@ -19,7 +19,7 @@ public class CleanDBFromUIDIntegrationTest extends IntegrationTest{
 
     @Test
     public void test() {
-        List<UIDTest> uidUris = uidDao.getAll();
+        List<String> uidUris = uidDao.getAll();
         List<Article> articles = articleDao.getAll();
         List<Category> categories = categoryDao.getAll();
         List<Item> items = itemDao.getAll();
