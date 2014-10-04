@@ -40,7 +40,7 @@ public class NewSearchControllerIntegrationTest extends IntegrationTest {
         assertNotNull(page);
         List<Quote> quotes = page.getQuotes();
         assertEquals(20, quotes.size());
-        assertFalse(page.isHasMore());
+        assertTrue(page.isHasMore());
     }
 
     @Test
