@@ -1,9 +1,14 @@
 function TermController($scope, $stateParams, $api, $state, analytics) {
     var pageCounter = 0, currentQuery;
     var query = $scope.query = $stateParams.name;
+    if (isItemNumber(query)) {
+        $state.goToItem(query);
+        return
+    }
+    query = query.replace("+", " ").trim();
     $scope.name = query;
     $scope.loading = true;
-    $api.get('term/', {name: $stateParams.name})
+    $api.get('term/', {name: $stateParams.name}, true)
         .then(function(data) {
             $scope.termFound = true;
             for(var p in data) {
@@ -12,17 +17,18 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
             if (data && !data.description && !data.shortDescription && !data.quotes.length && !data.related.length) {
                 analytics.registerEmptyTerm(data.name);
             }
-        }, function(){})
+            if (data && !data.description && !data.shortDescription && !data.quotes.length) {
+                $scope.search();
+            }
+        }, function(){
+            $scope.search();
+        })
         ['finally'](function(){
             $scope.loading = false;
         });
 
     document.title = query;
-    query = query.replace("+", " ").trim();
-    if (isItemNumber(query)) {
-        $state.goToItem(query);
-        return
-    }
+
 
     /*search: function(e) {
      var q = typeof e == "string" ? e : $scope.query;
@@ -52,13 +58,10 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
                 quote.full = r;
             })
     };
-//    if (query) search(query);
-    /*$("#search").find(".prompt").keypress(function (e) {
-     if (e.which == 13) {
-     $scope.search($scope.query);
-     }
-     pageCounter = 0;
-     });*/
+
+    $scope.navigate = function(entity) {
+        $state.go(entity);
+    };
 
     $scope.search = function() {
         if (currentQuery == query) {

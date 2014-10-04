@@ -35,4 +35,6 @@ public interface SearchCache {
      * @param page страница поиска
      */
     void put(Object cacheKey, SearchResultPage page);
+
+    void clean();
 }

@@ -38,7 +38,7 @@ angular.module('app', ['ui.router', 'live-search', 'ngSanitize'])
     .factory("analytics", function(){
         return {
             registerEmptyTerm: function(termName) {
-                if (ga) {
+                if (typeof ga !== 'undefined') {
                     ga('send', 'event', 'no-data', termName);
                 }
             }
@@ -66,13 +66,13 @@ angular.module('app', ['ui.router', 'live-search', 'ngSanitize'])
                     });
                 return deferred.promise;
             },
-            get: function(url, data) {
+            get: function(url, data, skipError) {
                 var deferred = $q.defer();
                 $http.get(apiUrl+url+serializeGet(data))
                     .then(function(response){
                         deferred.resolve(response.data)
                     },function(response){
-                        errorService.resolve(response.error);
+                        if (!skipError) errorService.resolve(response.error);
                         deferred.reject(response);
                     });
                 return deferred.promise;
