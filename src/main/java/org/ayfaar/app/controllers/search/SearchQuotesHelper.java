@@ -5,6 +5,7 @@ import org.ayfaar.app.utils.RegExpUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,6 +17,7 @@ public class SearchQuotesHelper {
     protected static int MAX_WORDS_ON_BOUNDARIES = 50;
     private static final String forCreateLeftPartQuote = "([^\\.\\?!]*)([\\.\\?!]*)(\\.|\\?|\\!)(\\)|\\»)";
     private static final String forCreateRightPartQuote = "(\\)|\\»)([^\\.\\?!]*)([\\.\\?!]*)";
+    private static final List<String> brackets = Arrays.asList(".)", "!)", "?)", ".»", "!»", "?»");
 
     public List<Quote> createQuotes(List<Item> foundedItems, List<String> allPossibleSearchQueries) {
         List<Quote> quotes = new ArrayList<Quote>();
@@ -66,8 +68,8 @@ public class SearchQuotesHelper {
             text = matcher.group();
         }
 
-        if(flag.equals("left") && !text.isEmpty()) {
-            if (text.charAt(1) == ')' || text.charAt(1) == '»') {
+        if(flag.equals("left")) {
+            if (brackets.contains(text.substring(0, 2))) {
                 String temp = text.substring(2, text.length());
 
                 if(content.length() - text.length() > 0) {
