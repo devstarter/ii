@@ -173,7 +173,6 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     }
 
     @Test
-    //@Ignore
     public void testGetPartQuoteWhenQuoteStartsWithBracket() throws IOException {
         String expectedQuote = "3) — диапазон 2-3-й мерностей: КУ-У-ВВУ-Дооллсы — ЛУ-У-ВВУ, ВУ-У-ВВУ, ФУ-У-ВВУ, " +
                 "РУ-У-ВВУ,ГУ-У-ВВУ, КК-У-ВВУ, ЛЛ-У-ВВУ, ВВ-У-ВВУ, ФФ-У-ВВУ,РР-У-ВВУ, ГГ-У-ВВУ, КА-А-ВВУ, ЛА-А-ВВУ, " +
@@ -187,7 +186,6 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     }
 
     @Test
-    @Ignore
     public void spacer() throws IOException {
         Item item = new Item("1.0744", getFile("item-1.0744.txt"));
         final String actual = handleItems.createQuotes(asList(item), asList("ра", "резонационной Активностью")).get(0).getQuote();
@@ -195,7 +193,6 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
         String expected = "В результате осуществления такой взаимосвязи образовалось некое парное сочетание " +
                 "очень схожей между собой Информации; условно назовём это " +
                 "состояние «<strong>резонационной Активностью</strong>» (<strong>РА</strong>).";
-        // лишние пробелы: "состояние « <strong>резонационной Активностью</strong>» ( <strong>РА</strong>).";
         assertEquals(expected, actual);
     }
 }

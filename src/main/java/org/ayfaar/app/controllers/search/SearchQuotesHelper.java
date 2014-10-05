@@ -18,6 +18,7 @@ public class SearchQuotesHelper {
     private static final String forCreateLeftPartQuote = "([^\\.\\?!]*)([\\.\\?!]*)(\\.|\\?|\\!)(\\)|\\»)";
     private static final String forCreateRightPartQuote = "(\\)|\\»)([^\\.\\?!]*)([\\.\\?!]*)";
     private static final List<String> brackets = Arrays.asList(".)", "!)", "?)", ".»", "!»", "?»");
+    private static final List<Character> openQuoteBracketHyphen = Arrays.asList('«', '(', '-');
 
     public List<Quote> createQuotes(List<Item> foundedItems, List<String> allPossibleSearchQueries) {
         List<Quote> quotes = new ArrayList<Quote>();
@@ -118,11 +119,12 @@ public class SearchQuotesHelper {
     private String createTextQuote(String[] phrases, String firstPart, String lastPart) {
         String textQuote = firstPart;
         for (int i = 1; i < phrases.length - 1; i++) {
-            textQuote += (textQuote.isEmpty() || textQuote.charAt(textQuote.length()-1) == '-' ? "" : " ")
-                + "<strong>" + phrases[i].trim();
+            textQuote += (textQuote.isEmpty() ||
+                    openQuoteBracketHyphen.contains(textQuote.charAt(textQuote.length()-1)) ? "" : " ")
+                    + "<strong>" + phrases[i].trim();
         }
 
-        if(!textQuote.isEmpty() && textQuote.charAt(textQuote.length()-1) == '-') {
+        if(!textQuote.isEmpty() && openQuoteBracketHyphen.contains(textQuote.charAt(textQuote.length()-1))) {
             textQuote += lastPart;
         }
         else {
