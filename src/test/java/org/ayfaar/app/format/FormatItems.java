@@ -21,6 +21,10 @@ public class FormatItems {
         formatted = formatted.replaceAll("</li>\\s*</ol>", "");
         formatted = formatted.replaceAll("^<li>", "");
         formatted = formatted.replaceAll("</li>\\s*$", "");
+
+        formatted = formatted.replaceAll("<span class=\"char-style-override-4\">\\s*</span>", " ");
+        formatted = formatted.replaceAll("(<a.*href=\"http://www.ayfaar.org/wiki.*\">)(.*)(</a>)", "$2");
+
         return formatted;
     }
 

@@ -21,11 +21,19 @@ public class FormatItemsTest extends AbstractTest {
     private final String item10_10042;
     private final String text10_10001;
 
+    private final String text10_10001_2;
+    private final String text10_10031;
+    private final String text10_10183;
+
     public FormatItemsTest() throws IOException {
         doc = Jsoup.parse(getFile("10tom.html"));
         html10_10001 = getFile("10.10001.html");
         text10_10001 = getFile("10.10001.txt");
+        text10_10001_2 = getFile("10.10001_2.txt");
         item10_10042 = getFile("10.10042.html");
+        text10_10031 = getFile("10.10031.txt");
+        text10_10183 = getFile("10.10183.txt");
+
     }
 
     @Test
@@ -42,7 +50,10 @@ public class FormatItemsTest extends AbstractTest {
         String unformatted = Jsoup.clean(formatted, Whitelist.none());
         // нужно помимо очистки от тегов приобразовать коды типа &laquo; в текстовое представление типа "
         // возможно поможет клас HtmlCharacterEntityDecoder
-        assertEquals(text10_10001, unformatted);
+        unformatted = org.springframework.web.util.HtmlUtils.htmlUnescape(unformatted);
+        //assertEquals(text10_10001, unformatted);
+        //10.10001.txt - не соответс тексту из 10tom.html, 10.10001_2.txt - соответс, отличие: ... и символ многоточие
+        assertEquals(text10_10001_2, unformatted);
     }
 
     private Element getItemHtmlElement(String itemNumber) {
@@ -54,6 +65,37 @@ public class FormatItemsTest extends AbstractTest {
         String formatted = FormatItems.format(getItemHtmlElement("10.11806"));
         System.out.println(formatted);
 
+    }
+
+    @Test
+    /*
+     // убрать ссылки на http://www.ayfaar.org/wiki/... например в пункте 10.10031.
+     */
+    public void test10_10031() throws IOException {
+        String formatted = FormatItems.format(getItemHtmlElement("10.10031"));
+        assertEquals(text10_10031, formatted);
+    }
+
+    @Test
+    /*
+    оставить италик напрмер <span class="italic">informare»</span> в 10.10042.
+     */
+    public void test10_10_10042() throws IOException {
+        String formatted = FormatItems.format(getItemHtmlElement("10.10042"));
+
+        formatted = org.springframework.web.util.HtmlUtils.htmlUnescape(formatted);
+        assertEquals(item10_10042, formatted);
+    }
+
+    @Test
+    /*
+    оставить италик и подчёркнутый например <span class="italic-und">недискретного</span> в 10.10083.
+     */
+    public void test10_10_10183() throws IOException {
+        String formatted = FormatItems.format(getItemHtmlElement("10.10183"));
+
+        formatted = org.springframework.web.util.HtmlUtils.htmlUnescape(formatted);
+        assertEquals(text10_10183, formatted);
     }
 
     // todo написать тесты для этих случаев
