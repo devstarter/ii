@@ -1,6 +1,21 @@
 <div class="term">
+    <span ng-hide="editMode" class="current-term-title">{{name}}</span>
+    <a ng-hide="editMode" class="btn" ng-click="editMode = true">изменить</a>
+    <table ng-show="editMode" class="full-width">
+        <tr>
+            <td class="full-width">
+                <input type="text" ng-model="name" placeholder="Введите термин или фразу"
+                       ii-lookup
+                       typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
+                       typeahead-on-select="$suggestionSelected($label)" class="form-control"/>
+            </td>
+            <td>
+                <button class="btn btn-primary" ng-click="updateName()">Искать</button>
+            </td>
+        </tr>
+    </table>
+
     <div class="block loading" ng-show="loading">Загрузка...</div>
-    <span class="current-term-title">{{name}}</span>
     <div ng-hide="loading && termFound">
         <span class="info" ng-show="from">Перенапраленно с: {{from.name}}</span>
         <span class="info" ng-show="code">Код понятия: {{code.name}}</span>
@@ -17,7 +32,7 @@
         <!--<span class="info" data-bind="invisible: description">Нет короткого определения</span>-->
         <blockquote ng-repeat="quote in quotes" ng-mouseover="quote.showControlls = true"
                     ng-mouseleave="quote.showControlls = false">
-            <div ng-bind-html="quote.quote"></div>
+            <div ng-bind-html="quote.full ? quote.full : quote.quote"></div>
             <cite>&mdash; <span><entity ng-model="quote"/></span>
                 <span ng-show="quote.showControlls">
                     <button ng-hide="quote.full" class="btn btn-default btn-icon" ng-click="expand(quote)"
@@ -31,7 +46,7 @@
         <entity ng-model="link" ng-repeat="link in related" class="related-btn btn btn-link"/>
     </div>
     <a ng-hide="foundQuotes || loadingContents || loadingTerms" class="search btn btn-primary" ng-click="search()">
-        <i class="icon-search"></i> Искать все упоминания в томах
+        <i class="icon-search"></i> Искать упоминания в томах
     </a>
     <div id="search">
         <div class="block loading" ng-show="loadingTerms">Загрузка терминов...</div>
@@ -48,9 +63,7 @@
         </div>
         <div ng-hide="loadingContents">
             <div ng-show="noResult">
-                <strong>Ничего не найдено.</strong> Побробуйте со звёздочкой после корня слова для учёта всех вариантов
-                окончания слова. Например "лийллусцивный" - "лийллусцивн*" (будут учтены "лийллусцивн<u>о</u>", "лийллусцивн<u>ые</u>",
-                "лийллусцивн<u>ость</u>" и т. д.
+                Упоминаний в текстах томов не найденны, подкорректируйте фразу.
             </div>
             <div ng-show="foundQuotes.length">
                 <h3>Цитаты из томов</h3>

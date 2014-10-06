@@ -1,4 +1,4 @@
-angular.module('app', ['ui.router', 'live-search', 'ngSanitize'])
+angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     .controller('SearchController', SearchController)
     .config(function($locationProvider, $urlRouterProvider, $stateProvider) {
 //        $locationProvider.html5Mode(true).hashPrefix('!');
@@ -199,6 +199,19 @@ angular.module('app', ['ui.router', 'live-search', 'ngSanitize'])
                 element.append(name);
                 $compile(element)(scope);
             }*/
+        };
+    })
+    .directive('iiLookup', function($api, $state) {
+        return {
+            require:'ngModel',
+            link:function (originalScope, element, attrs, modelCtrl) {
+                originalScope.$getSuggestions = function(query) {
+                    return $api.get("v2/suggestions/"+query)
+                };
+                originalScope.$suggestionSelected = function(suggestion) {
+                    $state.go("term", {name: suggestion});
+                };
+            }
         };
     })
     .run(function($state, entityService){
