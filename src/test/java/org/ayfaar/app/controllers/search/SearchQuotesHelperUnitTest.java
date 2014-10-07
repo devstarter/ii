@@ -4,6 +4,7 @@ import org.ayfaar.app.AbstractTest;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -31,8 +32,11 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     }
 
     @Before
-    public void init() throws IOException {
+    public void init() throws Exception {
+        SearchQuotesHelper.MAX_WORDS_ON_BOUNDARIES = 30;
         handleItems = new SearchQuotesHelper();
+//        final Field max_words_on_boundaries = handleItems.getClass().getField("MAX_WORDS_ON_BOUNDARIES");
+//        ReflectionUtils.setFinalStatic(handleItems, max_words_on_boundaries, 30);
         queries = asList("время", "Времени", "Временем", "Временах", "Временами");
     }
 
@@ -179,5 +183,16 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
         List<Quote> actual = handleItems.createQuotes(asList(item), asList("РА"));
 
         assertEquals(expectedQuote, actual.get(0).getQuote());
+    }
+
+    @Test
+    public void spacer() throws IOException {
+        Item item = new Item("1.0744", getFile("item-1.0744.txt"));
+        final String actual = handleItems.createQuotes(asList(item), asList("ра", "резонационной Активностью")).get(0).getQuote();
+
+        String expected = "В результате осуществления такой взаимосвязи образовалось некое парное сочетание " +
+                "очень схожей между собой Информации; условно назовём это " +
+                "состояние «<strong>резонационной Активностью</strong>» (<strong>РА</strong>).";
+        assertEquals(expected, actual);
     }
 }

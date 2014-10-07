@@ -83,7 +83,6 @@ public class NewSearchController {
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
-
             if (foundItems.size() < PAGE_SIZE) {
                 // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
                 List<Term> aliases = getAllAliases(term);
@@ -150,4 +149,8 @@ public class NewSearchController {
         return query != null ? query.toLowerCase().trim() : null;
     }
 
+    @RequestMapping("clean")
+    public void cleanCache() {
+        cache.clean();
+    }
 }

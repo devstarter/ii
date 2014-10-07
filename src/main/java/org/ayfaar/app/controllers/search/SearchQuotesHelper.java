@@ -14,10 +14,11 @@ import static org.apache.commons.lang3.StringUtils.join;
 
 @Component
 public class SearchQuotesHelper {
-    public static final int MAX_WORDS_ON_BOUNDARIES = 50;
+    protected static int MAX_WORDS_ON_BOUNDARIES = 50;
     private static final String forCreateLeftPartQuote = "([^\\.\\?!]*)([\\.\\?!]*)(\\.|\\?|\\!)(\\)|\\»)";
     private static final String forCreateRightPartQuote = "(\\)|\\»)([^\\.\\?!]*)([\\.\\?!]*)";
     private static final List<String> brackets = Arrays.asList(".)", "!)", "?)", ".»", "!»", "?»");
+    private static final List<Character> openQuoteBracketHyphen = Arrays.asList('«', '(', '-');
 
     public List<Quote> createQuotes(List<Item> foundedItems, List<String> allPossibleSearchQueries) {
         List<Quote> quotes = new ArrayList<Quote>();
@@ -71,6 +72,7 @@ public class SearchQuotesHelper {
         if(flag.equals("left")) {
             if (brackets.contains(text.substring(0, 2))) {
                 String temp = text.substring(2, text.length());
+
                 if(content.length() - text.length() > 0) {
                     text = getPartQuote(content.substring(0, (content.length() - text.length()) + 2),
                             forCreateLeftPartQuote, text.substring(2, text.length()), "left");
@@ -117,11 +119,12 @@ public class SearchQuotesHelper {
     private String createTextQuote(String[] phrases, String firstPart, String lastPart) {
         String textQuote = firstPart;
         for (int i = 1; i < phrases.length - 1; i++) {
-            textQuote += (textQuote.isEmpty() || textQuote.charAt(textQuote.length()-1) == '-' ? "" : " ")
-                + "<strong>" + phrases[i].trim();
+            textQuote += (textQuote.isEmpty() ||
+                    openQuoteBracketHyphen.contains(textQuote.charAt(textQuote.length()-1)) ? "" : " ")
+                    + "<strong>" + phrases[i].trim();
         }
 
-        if(!textQuote.isEmpty() && textQuote.charAt(textQuote.length()-1) == '-') {
+        if(!textQuote.isEmpty() && openQuoteBracketHyphen.contains(textQuote.charAt(textQuote.length()-1))) {
             textQuote += lastPart;
         }
         else {

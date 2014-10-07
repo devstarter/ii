@@ -13,7 +13,6 @@ import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +23,7 @@ import static org.ayfaar.app.utils.UriGenerator.generate;
 
 @Controller
 @RequestMapping("evernote")
-@EnableScheduling
+//@EnableScheduling
 public class EvernoteSync {
     @Autowired EvernoteBot bot;
     @Autowired LinkDao linkDao;

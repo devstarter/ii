@@ -1,4 +1,5 @@
 angular.module('app', ['ui.router', 'live-search', 'ngSanitize'])
+    .controller('SearchController', SearchController)
     .config(function($locationProvider, $urlRouterProvider, $stateProvider) {
 //        $locationProvider.html5Mode(true).hashPrefix('!');
 
@@ -37,14 +38,14 @@ angular.module('app', ['ui.router', 'live-search', 'ngSanitize'])
     .factory("analytics", function(){
         return {
             registerEmptyTerm: function(termName) {
-                if (ga) {
+                if (typeof ga !== 'undefined') {
                     ga('send', 'event', 'no-data', termName);
                 }
             }
         }
     })
     .factory("$api", function($rootScope, $state, $http, errorService, $q){
-        var apiUrl = "http://ii.ayfaar.org/api/";
+        var apiUrl = "/api/";
 //        var apiUrl = "http://localhost:8081/api/";
         return {
             post: function(url, data) {
@@ -65,13 +66,13 @@ angular.module('app', ['ui.router', 'live-search', 'ngSanitize'])
                     });
                 return deferred.promise;
             },
-            get: function(url, data) {
+            get: function(url, data, skipError) {
                 var deferred = $q.defer();
                 $http.get(apiUrl+url+serializeGet(data))
                     .then(function(response){
                         deferred.resolve(response.data)
                     },function(response){
-                        errorService.resolve(response.error);
+                        if (!skipError) errorService.resolve(response.error);
                         deferred.reject(response);
                     });
                 return deferred.promise;
