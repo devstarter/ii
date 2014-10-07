@@ -24,6 +24,7 @@ public class FormatItems {
 
         formatted = formatted.replaceAll("<span class=\"char-style-override-4\">\\s*</span>", " ");
         formatted = formatted.replaceAll("(<a.*href=\"http://www.ayfaar.org/wiki.*\">)(.*)(</a>)", "$2");
+        formatted = formatted.replaceAll("<li><span><a id=\"footnote-236458.+</a></span>", "");
 
         return formatted;
     }
