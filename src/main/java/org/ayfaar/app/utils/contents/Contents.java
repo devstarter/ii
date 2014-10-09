@@ -18,9 +18,14 @@ public class Contents {
     @Autowired
     private ItemDao itemDao;
 
-    public List<String> createContents(Category category) {
-        List<Category> subCategories = getSubCategories(category);
+    public List<String> createContents(String categoryName) {
         List<String> contents = new ArrayList<String>();
+
+        Category category = categoryDao.get("name", categoryName);
+        List<Category> subCategories = getSubCategories(category);
+
+        String parent = category.isTom() ? categoryName : formatSectionAndChapter(category);
+        contents.add(parent);
 
         if(subCategories.get(0).isParagraph()) {
             for(Category c : subCategories) {
@@ -30,12 +35,8 @@ public class Contents {
         }
         else {
             for(Category c : subCategories) {
-                if(c.isParagraph()) {
-                    contents.add(formatParagraph(c));
-                }
-                else {
-                    contents.add(formatSectionAndChapter(c));
-                }
+                String child = c.isParagraph() ? formatParagraph(c) : formatSectionAndChapter(c);
+                contents.add(child);
             }
         }
 
@@ -93,7 +94,9 @@ public class Contents {
 
     public String formatSectionAndChapter(Category category) {
         String[] names = category.getName().split("/");
-        String line = names[names.length-1].trim() + ". " + category.getDescription();
+        String description = category.getDescription() == null ? "." : ". " + category.getDescription();
+        String line = names[names.length-1].trim() + description;
+        //String line = names[names.length-1].trim() + ". " + category.getDescription();
         return  line;
     }
 
