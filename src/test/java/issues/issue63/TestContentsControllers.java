@@ -69,9 +69,11 @@ public class TestContentsControllers extends IntegrationTest{
         assertEquals(subCategoryChapter3[60].trim(), chapter3Contents.get(60));
     }
 
-    public void print(List<String> categories) {
+    private void print(List<String> categories) {
         for(String s : categories) {
             System.out.println(s);
         }
+        System.out.println();
+        System.out.println();
     }
 }

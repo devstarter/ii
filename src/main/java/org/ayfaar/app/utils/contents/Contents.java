@@ -94,10 +94,7 @@ public class Contents {
 
     public String formatSectionAndChapter(Category category) {
         String[] names = category.getName().split("/");
-        String description = category.getDescription() == null ? "." : ". " + category.getDescription();
-        String line = names[names.length-1].trim() + description;
-        //String line = names[names.length-1].trim() + ". " + category.getDescription();
-        return  line;
+        return names[names.length-1].trim() + ". " + category.getDescription();
     }
 
     public String formatParagraph(Category category) {
