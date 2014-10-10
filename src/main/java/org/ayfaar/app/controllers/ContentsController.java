@@ -1,7 +1,7 @@
 package org.ayfaar.app.controllers;
 
-
-import org.ayfaar.app.utils.contents.Contents;
+import org.ayfaar.app.utils.contents.CategoryPresentation;
+import org.ayfaar.app.utils.contents.ContentsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,11 +14,11 @@ import java.util.List;
 @RequestMapping("v2/category")
 public class ContentsController {
     @Autowired
-    private Contents contents;
+    private ContentsHelper contentsHelper;
 
-    @RequestMapping(value="{name}")
+    @RequestMapping("{name}")
     @ResponseBody
-    public List<String> getContents(@PathVariable String categoryName) {
-        return contents.createContents(categoryName);
+    public List<CategoryPresentation> getContents(@PathVariable String categoryName) {
+        return contentsHelper.createContents(categoryName);
     }
 }
