@@ -4,13 +4,13 @@ import org.ayfaar.app.AbstractTest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.safety.Whitelist;
 import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.ayfaar.app.format.FormatItems.unformat;
 import static org.junit.Assert.assertEquals;
-import static org.springframework.web.util.HtmlUtils.htmlUnescape;
+import static org.junit.Assert.assertFalse;
 
 /**
  *  Для тестирования возьмём 10 том в формате html, который лежит в ресурсах к тесту
@@ -19,33 +19,29 @@ import static org.springframework.web.util.HtmlUtils.htmlUnescape;
 public class FormatItemsTest extends AbstractTest {
     private static Document doc;
     private final String html10_10001;
-    private final String item10_10042;
+    private final String html10_10042;
     private final String text10_10001;
 
-    private final String text10_10001_2;
     private final String text10_10031;
     private final String text10_10183;
     private final String item10_10183;
     private final String text10_10042;
-    private final String item10_10042_2;
-    private final String item10_10031;
-    private final String item10_11255;
+    private final String html10_10031;
+    private final String html10_11255;
 
     public FormatItemsTest() throws IOException {
         doc = Jsoup.parse(getFile("10tom.html"));
         html10_10001 = getFile("10.10001.html");
         text10_10001 = getFile("10.10001.txt");
-        text10_10001_2 = getFile("10.10001_2.txt");
-        item10_10042 = getFile("10.10042.html");
+        html10_10042 = getFile("10.10042.html");
         text10_10031 = getFile("10.10031.txt");
         text10_10183 = getFile("10.10183.txt");
         item10_10183 = getFile("10.10183.html");
         text10_10042 = getFile("10.10042.txt");
-        item10_10042_2 = getFile("10.10042_2.html");
         //10.10183.html и 10.10042_2.html по примеру 10.10001.html с &laquo; вместо "
 
-        item10_10031 = getFile("10.10031.html");
-        item10_11255 = getFile("10.11255.html");
+        html10_10031 = getFile("10.10031.html");
+        html10_11255 = getFile("10.11255.html");
 
     }
 
@@ -60,9 +56,7 @@ public class FormatItemsTest extends AbstractTest {
         assertEquals("10.10001", number);
         String formatted = FormatItems.format(item);
         assertEquals(html10_10001, formatted);
-        //assertEquals(text10_10001, unformatted);
-        //10.10001.txt - не соответс тексту из 10tom.html, 10.10001_2.txt - соответс, отличие: ... и символ многоточие
-        assertEquals(text10_10001_2, unformat(formatted));
+        assertEquals(text10_10001, unformat(formatted));
     }
 
     private Element getItemHtmlElement(String itemNumber) {
@@ -81,8 +75,9 @@ public class FormatItemsTest extends AbstractTest {
      */
     public void test10_10031() throws IOException {
         String formatted = FormatItems.format(getItemHtmlElement("10.10031"));
-        //assertEquals(text10_10031, formatted);
-        assertEquals(item10_10031, formatted);
+        assertFalse(formatted.contains("http://www.ayfaar.org/wiki"));
+        assertEquals(html10_10031, formatted);
+        assertEquals(text10_10031, unformat(formatted));
     }
 
     @Test
@@ -93,7 +88,7 @@ public class FormatItemsTest extends AbstractTest {
     public void test10_11255() throws IOException {
         String formatted = FormatItems.format(getItemHtmlElement("10.11255"));
         //String formatted = FormatItems.format(getItemHtmlElement("10.11805"));
-        assertEquals(item10_11255, formatted);
+        assertEquals(html10_11255, formatted);
     }
 
     @Test
@@ -102,7 +97,7 @@ public class FormatItemsTest extends AbstractTest {
      */
     public void test10_10_10042() throws IOException {
         String formatted = FormatItems.format(getItemHtmlElement("10.10042"));
-        assertEquals(item10_10042_2, formatted);
+        assertEquals(html10_10042, formatted);
         assertEquals(text10_10042, unformat(formatted));
     }
 
@@ -114,13 +109,5 @@ public class FormatItemsTest extends AbstractTest {
         String formatted = FormatItems.format(getItemHtmlElement("10.10183"));
         assertEquals(item10_10183, formatted);
         assertEquals(text10_10183, unformat(formatted));
-    }
-
-    private String unformat(String formatted){
-        String unformatted = Jsoup.clean(formatted, Whitelist.none());
-        // нужно помимо очистки от тегов приобразовать коды типа &laquo; в текстовое представление типа "
-        // возможно поможет клас HtmlCharacterEntityDecoder
-        unformatted = htmlUnescape(unformatted);
-        return unformatted;
     }
 }

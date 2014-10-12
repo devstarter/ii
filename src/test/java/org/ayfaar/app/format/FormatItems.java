@@ -1,7 +1,11 @@
 package org.ayfaar.app.format;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.jsoup.safety.Whitelist;
+
+import static org.springframework.web.util.HtmlUtils.htmlUnescape;
 
 /**
  * Задача класа вернуть форматированный (html) текст для всеx пунктов. Сейчас в Item.content храниться текст без
@@ -15,7 +19,7 @@ public class FormatItems {
 
     public static String format(Node item) {
         item = item.nextSibling();
-        String formatted = _format(item);
+        String formatted = formatInternal(item);
         formatted = formatted.replace(END, "");
         formatted = formatted.replaceAll("<ol><li>", "");
         formatted = formatted.replaceAll("</li>\\s*</ol>", "");
@@ -33,7 +37,7 @@ public class FormatItems {
      * @param item ветвь документа html, с которой нужно начать полученик форматированного текста
      * @return форматированный текст
      */
-    private static String _format(Node item) {
+    private static String formatInternal(Node item) {
         StringBuilder sb = new StringBuilder();
         while (item != null) {
             Element el = item instanceof Element ? (Element) item : null;
@@ -45,7 +49,7 @@ public class FormatItems {
                     return sb.toString();
                 }
                 else if (el.children().size() > 0) {
-                    String formattedChild = _format(el.childNode(0));
+                    String formattedChild = formatInternal(el.childNode(0));
                     if (!formattedChild.isEmpty()) {
 //                        sb.append(String.format("<%s>%s</%s>", el.nodeName(), formattedChild, el.nodeName()));
                         sb.append(formattedChild);
@@ -71,5 +75,14 @@ public class FormatItems {
             }
         }
         return sb.toString();
+    }
+
+    static String unformat(String formatted){
+        String unformatted = Jsoup.clean(formatted, Whitelist.none());
+        // нужно помимо очистки от тегов приобразовать коды типа &laquo; в текстовое представление типа "
+        // возможно поможет клас HtmlCharacterEntityDecoder
+        unformatted = htmlUnescape(unformatted);
+        unformatted = unformatted.replaceAll("…", "...");
+        return unformatted;
     }
 }
