@@ -205,14 +205,7 @@ public class TermController {
             term.setDescription(description);
             termDao.save(term);
         }
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                aliasesMap.reload();
-            }
-        }).start();
-
+//        aliasesMap.reload();
         return term;
     }
 
