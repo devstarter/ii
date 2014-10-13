@@ -37,14 +37,8 @@ public class TestContentsHelper extends IntegrationTest {
     }
 
     @Test
-    public void testCreateContents() {
-        //List<CategoryPresentation> chapters= contentsHelper.createContents("БДК / Раздел I");
-        //List<CategoryPresentation> paragraphs = contentsHelper.createContents("БДК / Раздел I / Глава 1");
-        //List<CategoryPresentation> items = contentsHelper.createContents("Параграф 10.1.1.1");
-        List<CategoryPresentation> sections = contentsHelper.createContents("Том 10");
-
-        for(CategoryPresentation c : sections) {
-            System.out.println(c.getName() + " "  +c.getDescription() + c.getChildren());
-        }
+    public void testExtractCategoryName() {
+        assertEquals("Раздел I", contentsHelper.extractCategoryName("БДК / Раздел I"));
+        assertEquals("Глава 5", contentsHelper.extractCategoryName("БДК / Раздел IV / Глава 5"));
     }
 }

@@ -39,14 +39,15 @@ public class ContentsHelper {
                     String description = category.isTom() ? "" : category.getDescription();
                     List<Category> children = getChildren(category);
 
-                    CategoryPresentation presentation = new CategoryPresentation(category.getName(),
-                            description, getSubCategory(children, count));
+                    CategoryPresentation presentation = new CategoryPresentation(
+                            extractCategoryName(category.getName()), category.getUri(), description,
+                            getSubCategory(children, count));
 
                     listPresentations.add(presentation);
                 } else {
                     List<Item> items = getItems(category);
-                    CategoryPresentation presentation = new CategoryPresentation
-                            (category.getName(), category.getDescription(), getParagraphSubCategory(items, count));
+                    CategoryPresentation presentation = new CategoryPresentation(category.getName(),
+                            category.getUri(), category.getDescription(), getParagraphSubCategory(items, count));
 
                     listPresentations.add(presentation);
                 }
@@ -59,7 +60,7 @@ public class ContentsHelper {
         List<CategoryPresentation> listPresentations = new ArrayList<CategoryPresentation>();
         if(count < SUBCATEGORY_COUNT) {
             for (Item item : items) {
-                listPresentations.add(new CategoryPresentation(item.getNumber(), "", null));
+                listPresentations.add(new CategoryPresentation(item.getNumber(), item.getUri(), "", null));
             }
         }
         return listPresentations;
@@ -96,5 +97,10 @@ public class ContentsHelper {
             items.add(currentItem);
         }
         return items;
+    }
+
+    String extractCategoryName(String categoryName) {
+        String[] names = categoryName.split("/");
+        return names[names.length-1].trim();
     }
 }
