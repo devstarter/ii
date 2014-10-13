@@ -4,14 +4,12 @@ import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.utils.contents.CategoryPresentation;
-import org.ayfaar.app.utils.contents.ContentsHelper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TestContentsHelper extends IntegrationTest {
     @Autowired

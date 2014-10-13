@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TestContentsController extends IntegrationTest {
+public class ContentsControllerTest extends IntegrationTest {
     @Autowired
     private ContentsHelper contentsHelper;
 
