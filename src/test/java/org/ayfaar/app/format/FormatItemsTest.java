@@ -1,13 +1,12 @@
 package org.ayfaar.app.format;
 
 import org.ayfaar.app.AbstractTest;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.ayfaar.app.format.FormatItems.getItemHtmlElement;
 import static org.ayfaar.app.format.FormatItems.unformat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -17,7 +16,6 @@ import static org.junit.Assert.assertFalse;
  * (src/test/resources/org/ayfaar/app/format/10tom.html).
  */
 public class FormatItemsTest extends AbstractTest {
-    private static Document doc;
     private final String html10_10001;
     private final String html10_10042;
     private final String text10_10001;
@@ -30,7 +28,7 @@ public class FormatItemsTest extends AbstractTest {
     private final String html10_11255;
 
     public FormatItemsTest() throws IOException {
-        doc = Jsoup.parse(getFile("10tom.html"));
+        FormatItems.open(getFile("10tom.html"));
         html10_10001 = getFile("10.10001.html");
         text10_10001 = getFile("10.10001.txt");
         html10_10042 = getFile("10.10042.html");
@@ -57,10 +55,6 @@ public class FormatItemsTest extends AbstractTest {
         String formatted = FormatItems.format(item);
         assertEquals(html10_10001, formatted);
         assertEquals(text10_10001, unformat(formatted));
-    }
-
-    private Element getItemHtmlElement(String itemNumber) {
-        return doc.select(".par-numbers.char-style-override-3:contains("+itemNumber+")").get(0);
     }
 
     @Test

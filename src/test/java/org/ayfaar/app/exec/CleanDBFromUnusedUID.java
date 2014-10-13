@@ -9,7 +9,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.util.ArrayList;
 import java.util.List;
 
-public class CleanDBFromUID {
+public class CleanDBFromUnusedUID {
     private static UIDDao uidDao;
 
     public static void main(String[] args) {

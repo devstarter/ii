@@ -1,9 +1,14 @@
 package org.ayfaar.app.format;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.safety.Whitelist;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.springframework.web.util.HtmlUtils.htmlUnescape;
 
@@ -16,6 +21,7 @@ import static org.springframework.web.util.HtmlUtils.htmlUnescape;
 public class FormatItems {
     // знак окончания пункта
     private static final String END = "^END^";
+    private static Document doc;
 
     public static String format(Node item) {
         item = item.nextSibling();
@@ -43,7 +49,8 @@ public class FormatItems {
             Element el = item instanceof Element ? (Element) item : null;
             if (el != null) {
                 // par-numbers char-style-override-3 это классы, которыми помечен span номера абраза.
-                if ("par-numbers char-style-override-3".equals(((Element) item).className())) {
+                final String className = ((Element) item).className();
+                if (className != null && className.matches("(^par-numbers\\schar-style-override-[38]$)|(H1)")) {
                     // значит это уже следующий пункт, по этому ставим метку окончания.
                     sb.append(END);
                     return sb.toString();
@@ -84,5 +91,26 @@ public class FormatItems {
         unformatted = htmlUnescape(unformatted);
         unformatted = unformatted.replaceAll("…", "...");
         return unformatted;
+    }
+
+    public static void open(String html) {
+        doc = Jsoup.parse(html);
+    }
+
+    public static Element getItemHtmlElement(String itemNumber) {
+        Elements select = doc.select(".par-numbers.char-style-override-3:contains(" + itemNumber + ")");
+        if (select.size() == 0) {
+            select = doc.select(".par-numbers.char-style-override-8:contains(" + itemNumber + ")");
+
+        }
+        return select.get(0);
+    }
+
+    public static void open(InputStream inputStream) throws IOException {
+        doc = Jsoup.parse(inputStream, "UTF-8", "");
+    }
+
+    public static String format(String number) {
+        return format(getItemHtmlElement(number));
     }
 }
