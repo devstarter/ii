@@ -2,7 +2,6 @@
   <artifact type="exploded-war" name="app:war exploded">
     <output-path>$PROJECT_DIR$/target/app-1.0-SNAPSHOT</output-path>
     <root id="root">
-      <element id="javaee-facet-resources" facet="app/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="app" />
@@ -116,6 +115,7 @@
           <element id="library" level="project" name="Maven: asm:asm:3.1" />
         </element>
       </element>
+      <element id="javaee-facet-resources" facet="app/web/Web" />
     </root>
   </artifact>
 </component>
