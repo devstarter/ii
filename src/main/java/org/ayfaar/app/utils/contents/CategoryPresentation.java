@@ -15,8 +15,9 @@ public class CategoryPresentation {
     private String description;
     private List<CategoryPresentation> children;
 
-    public CategoryPresentation(String name, String description, List<CategoryPresentation> children){
+    public CategoryPresentation(String name, String uri, String description, List<CategoryPresentation> children){
         this.name = name;
+        this.uri = uri;
         this.description = description;
         this.children = children;
     }
