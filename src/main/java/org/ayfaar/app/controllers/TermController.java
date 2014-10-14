@@ -4,12 +4,10 @@ import org.apache.commons.lang.WordUtils;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
+import org.ayfaar.app.dao.TermMorphDao;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.spring.Model;
-import org.ayfaar.app.utils.AliasesMap;
-import org.ayfaar.app.utils.Morpher;
-import org.ayfaar.app.utils.TermUtils;
-import org.ayfaar.app.utils.ValueObjectUtils;
+import org.ayfaar.app.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -31,6 +29,7 @@ public class TermController {
 
     @Autowired CommonDao commonDao;
     @Autowired TermDao termDao;
+    @Autowired TermMorphDao termMorphDao;
     @Autowired LinkDao linkDao;
     @Autowired AliasesMap aliasesMap;
     @Autowired
@@ -277,5 +276,24 @@ public class TermController {
     @RequestMapping("reload-aliases-map")
     public void reloadAliasesMap() {
         aliasesMap.reload();
+    }
+
+    public void renameTerm(String oldName, String newName) {
+        Term oldTerm = termDao.getByName(oldName);
+        Term newTerm = new Term(newName, oldTerm.getDescription(), oldTerm.getShortDescription());
+        newTerm.setUri(UriGenerator.generate(Term.class, newName));
+        add(newTerm);
+
+        List<Link> links = linkDao.getAllLinks(oldTerm.getUri());
+        for(Link link : links) {
+            if(link.getUid1().getUri().equals(oldTerm.getUri())) {
+                link.setUid1(newTerm);
+            }
+            else if(link.getUid2().getUri().equals(oldTerm.getUri())) {
+                link.setUid2(newTerm);
+            }
+            linkDao.save(link);
+        }
+        remove(oldName);
     }
 }
