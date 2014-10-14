@@ -18,7 +18,7 @@ public class ContentsController {
 
     @RequestMapping("{name}")
     @ResponseBody
-    public List<CategoryPresentation> getContents(@PathVariable String categoryName) {
+    public List<CategoryPresentation> getContents(@PathVariable("name") String categoryName) {
         return contentsHelper.createContents(categoryName);
     }
 }
