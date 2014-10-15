@@ -278,11 +278,15 @@ public class TermController {
         aliasesMap.reload();
     }
 
-    public void renameTerm(String oldName, String newName) {
-        Term oldTerm = termDao.getByName(oldName);
-        Term newTerm = new Term(newName, oldTerm.getDescription(), oldTerm.getShortDescription());
-        newTerm.setUri(UriGenerator.generate(Term.class, newName));
-        add(newTerm);
+
+    @RequestMapping(value = "rename")
+    @ResponseBody
+    public void renameTerm(@RequestParam("oldTerm") String oldName, @RequestParam("newTerm") String newName) {
+        Term oldTerm = aliasesMap.getTerm(oldName);
+        add(newName, oldTerm.getShortDescription(), oldTerm.getDescription());
+
+        reloadAliasesMap();
+        Term newTerm = aliasesMap.getTerm(newName);
 
         List<Link> links = linkDao.getAllLinks(oldTerm.getUri());
         for(Link link : links) {
