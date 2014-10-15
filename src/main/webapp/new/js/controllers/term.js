@@ -55,15 +55,17 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
         searchInContent();
     };
     $scope.rateUp = function (item) {
-        var data = {
-            uri: "ии:пункт:" + item.number,
-            query: $scope.query
-        };
-        var quote = getSelectionText() || (item.full ? null : item.quote);
-        if (quote) {
-            data.quote = quote;
+        if (confirm("Цитата будет помечена как помогающая понять этот термин, вы согласны?")) {
+            var data = {
+                uri: "ии:пункт:" + item.number,
+                query: $scope.query
+            };
+            var quote = getSelectionText() || (item.full ? null : item.quote);
+            if (quote) {
+                data.quote = quote;
+            }
+            $api.post("search/rate/+", data).then(rateComplete);
         }
-        $api.post("search/rate/+", data).then(rateComplete);
     };
     $scope.expand = function(quote) {
         var uri = quote.uri ? quote.uri : "ии:пункт:"+quote.number;
