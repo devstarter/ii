@@ -7,9 +7,11 @@ import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,16 +22,18 @@ public class TermControllerIntegrationTest extends IntegrationTest {
     @Autowired private TermController termController;
     @Autowired private TermDao termDao;
     @Autowired private LinkDao linkDao;
+    @Autowired private AliasesMap aliasesMap;
 
     @Test
+    @Transactional
     public void testRenameTerm1() {
         String oldName = "ВСЕ-Воля-ВСЕ-Разума";
         String newName = "test new name";
         termController.renameTerm(oldName, newName);
 
-        Term term = termDao.getByName(newName);
+        Term term = aliasesMap.getTerm(newName);
         List<Link> links = linkDao.getAllLinks(term.getUri());
-        UriGenerator.generate(Term.class, "Разум");
+
         assertEquals(UriGenerator.generate(Term.class, "Разум"), links.get(0).getUid1().getUri());
         assertEquals(UriGenerator.generate(Term.class, "Test new name"), links.get(0).getUid2().getUri());
         assertEquals(UriGenerator.generate(Term.class, "Test new name"), links.get(1).getUid1().getUri());
@@ -43,12 +47,13 @@ public class TermControllerIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @Transactional
     public void testRenameTerm2() {
         String oldName = "Временная Сущность";
         String newName = "Новая Сущность";
         termController.renameTerm(oldName, newName);
 
-        Term term = termDao.getByName(newName);
+        Term term = aliasesMap.getTerm(newName);
         List<Link> links = linkDao.getAllLinks(term.getUri());
 
         assertEquals(UriGenerator.generate(Term.class, "Время"), links.get(0).getUid1().getUri());
