@@ -8,18 +8,21 @@
         <table class="full-width">
             <tr>
                 <td class="full-width">
-                    <live-search fetch-data="searchCallback"
+                    <!--live-search fetch-data="searchCallback"
                                  fetch-delay="777"
                                  selected="suggestionSelected"
                                  ng-model="query"
-                                 class="form-control full-width"></live-search>
+                                 class="form-control full-width"></live-search-->
+                    <input type="text" ng-model="query" placeholder="Введите термин или фразу"
+                           ii-lookup
+                           typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
+                           typeahead-on-select="$suggestionSelected($label)" class="form-control"/>
                 </td>
                 <td>
-                    <button class="btn btn-primary" ng-click="search()">Искать</button>
+                    <button class="btn btn-primary" ng-click="search(query)">Искать</button>
                 </td>
             </tr>
         </table>
-        Примеры поиска: <a href="#?птиц*">птиц*</a>, <a href="#?НАСМ">НАСМ</a>, <a href="#?10.10176">10.10176</a>
     </div>
     <div class="footer">
         <a class="btn" href="https://www.youtube.com/watch?v=6oZJHu1dEnQ" target="_blank">

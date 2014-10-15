@@ -7,28 +7,41 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
     }
     query = query.replace("+", " ").trim();
     $scope.name = query;
-    $scope.loading = true;
-    $api.get('term/', {name: $stateParams.name}, true)
-        .then(function(data) {
-            $scope.termFound = true;
-            for(var p in data) {
-                $scope[p] = data[p];
-            }
-            if (data && !data.description && !data.shortDescription && !data.quotes.length && !data.related.length) {
-                analytics.registerEmptyTerm(data.name);
-            }
-            if (data && !data.description && !data.shortDescription && !data.quotes.length) {
+    loadTerm();
+
+    function loadTerm() {
+        $scope.loading = true;
+        $api.get('term/', {name: $stateParams.name}, true)
+            .then(function (data) {
+                $scope.termFound = true;
+                for (var p in data) {
+                    $scope[p] = data[p];
+                }
+                if (data && !data.description && !data.shortDescription && !data.quotes.length && !data.related.length) {
+                    analytics.registerEmptyTerm(data.name);
+                }
+                if (data && !data.description && !data.shortDescription && !data.quotes.length) {
+                    $scope.search();
+                }
+            }, function () {
                 $scope.search();
-            }
-        }, function(){
-            $scope.search();
-        })
-        ['finally'](function(){
+            })
+            ['finally'](function () {
             $scope.loading = false;
         });
+        document.title = query;
+    }
 
-    document.title = query;
+    $scope.searchCallback = function() {
+        return $api.get("v2/suggestions/"+$scope.name)
+    };
+    $scope.suggestionSelected = function(suggestion) {
+        $state.go("term", {name: suggestion});
+    };
 
+    $scope.updateName = function() {
+        $state.go("term", {name: $scope.name});
+    };
 
     /*search: function(e) {
      var q = typeof e == "string" ? e : $scope.query;
@@ -53,7 +66,8 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
         $api.post("search/rate/+", data).then(rateComplete);
     };
     $scope.expand = function(quote) {
-        $api.get("search/get-content", {uri: "ии:пункт:"+quote.number})
+        var uri = quote.uri ? quote.uri : "ии:пункт:"+quote.number;
+        $api.get("search/get-content", {uri: uri})
             .then(function(r){
                 quote.full = r;
             })

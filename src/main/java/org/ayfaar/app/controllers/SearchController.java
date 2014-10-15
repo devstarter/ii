@@ -214,16 +214,17 @@ public class SearchController {
             Term term = aliasesMap.getTerm(query);
             Item item = itemDao.get(uri);
             boolean possibleDuplication = false;
+            Link link = null;
             if (term != null && item != null) {
                 final List<Link> links = linkDao.get(term, item);
                 if (links.size() == 0) {
-                    Link link = new Link(term, item, quote, "search");
+                    link = new Link(term, item, quote, "search");
                     linkDao.save(link);
                 } else {
                     possibleDuplication = true;
                 }
             }
-            notifier.rate(term, item, quote, possibleDuplication);
+            notifier.rate(term, item, quote, link != null ? link.getLinkId() : null);
         }
     }
 
