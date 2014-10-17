@@ -11,8 +11,7 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
 
     function loadTerm() {
         $scope.loading = true;
-        $api.get('term/', {name: $stateParams.name}, true)
-            .then(function (data) {
+        $api.term.get($stateParams.name).then(function (data) {
                 $scope.termFound = true;
                 for (var p in data) {
                     $scope[p] = data[p];
