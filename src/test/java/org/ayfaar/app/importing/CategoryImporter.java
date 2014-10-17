@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,13 +19,12 @@ import static java.util.Arrays.asList;
 @Slf4j
 public class CategoryImporter {
 
-    CommonDao commonDao;
-    ItemDao itemDao;
-    private ApplicationContext ctx;
-    private HashMap<String, Category> categoriesMap;
+    static CommonDao commonDao;
+    static ItemDao itemDao;
+    private static ApplicationContext ctx;
+    private static HashMap<String, Category> categoriesMap;
 
-//    @Test
-    public void categoryImport() throws IOException {
+    public static void main(String[] args) throws Exception {
         ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
         commonDao = ctx.getBean(CommonDao.class);
         itemDao = ctx.getBean(ItemDao.class);
@@ -103,14 +101,15 @@ public class CategoryImporter {
                     paragraphCat.setEnd(byNumber.getUri());
                 }
                 commonDao.save(paragraphCat);
-                log.info(paragraphCat.getName());
+                System.out.println("new " + paragraphCat.getName());
             }
-            if (prevParagraphCat != null) {
+            if (prevParagraphCat != null && !paragraphCat.getUri().equals(prevParagraphCat.getNext())) {
                 prevParagraphCat.setNext(paragraphCat.getUri());
                 if (prevParagraphCat.getEnd() == null) {
                     prevParagraphCat.setEnd(paragraphCat.getStart());
                 }
                 commonDao.save(prevParagraphCat);
+                System.out.println("update "+paragraphCat.getName());
             }
             if (glavaCat.getStart() == null) {
                 glavaCat.setStart(paragraphCat.getUri());
@@ -119,11 +118,11 @@ public class CategoryImporter {
         }
     }
 
-    private Category getCat(String categoryUniqCode, Category prevCategory, Category parent) {
+    private static Category getCat(String categoryUniqCode, Category prevCategory, Category parent) {
         return getCat(categoryUniqCode, null, prevCategory, parent);
     }
-    private Category getCat(String categoryUniqCode, String description,
-                            Category prevCategory, Category parent) {
+    private static Category getCat(String categoryUniqCode, String description,
+                                   Category prevCategory, Category parent) {
 //        String[] split = categoryName.split("\\.\\s");
 //        categoryName = split[0];
 //        String categoryDescription = null;

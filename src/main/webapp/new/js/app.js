@@ -1,5 +1,4 @@
 angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
-    .controller('SearchController', SearchController)
     .config(function($locationProvider, $urlRouterProvider, $stateProvider) {
 //        $locationProvider.html5Mode(true).hashPrefix('!');
 
@@ -11,11 +10,6 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 url: "/home",
                 templateUrl: "partials/home.html",
                 controller: HomeController
-            })
-            .state('search', {
-                url: "/search/:query",
-                templateUrl: "partials/search.html",
-                controller: SearchController
             })
             .state('article', {
                 url: "/a/:id",
@@ -47,7 +41,7 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     .factory("$api", function($rootScope, $state, $http, errorService, $q){
         var apiUrl = "/api/";
 //        var apiUrl = "http://localhost:8081/api/";
-        return {
+        var api = {
             post: function(url, data) {
                 var deferred = $q.defer();
                 $http.post(apiUrl+url, data, {
@@ -116,6 +110,22 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 ;
             return( source );
         }
+
+        api.item = {
+            get: function(number) {
+                var deferred = $q.defer();
+                // заглушка для тестирования
+                deferred.resolve("Причём <term id=\"ра\" title=\"резонационная Активность\">РА</term> это «<term id=\"резонационная Активность\">квантовое схлопывание</term>» (резонационное «совмещение» лийллусцивных участков сллоогрентной ф-Конфигурации) может происходить на любом из Уровней проявления «личностного» Самосознания, начиная с самых низших, заканчивая самыми качественными (для данной НУУ-ВВУ-Конфигурации). При высокой коварллертности СФУУРММ-Форм, структурирующих какое-то из Направлений Фокусных Динамик «текущей» и «следующей» «личностной» Интерпретации, они синтезируются до общего для них состояния лийллусцивности и благодаря этому у Формо-Творцов какого-то из других участков «новой» НУУ-ВВУ-Конфигурации (не обязательно дувуйллерртных с данным резопазоном), за счёт только что добавленного фрагмента Информации, в данном режиме проявления образуются реальные возможности для формирования наиболее высокой коварллертности (почти лийллусцивности), что предопределяет следующую мгновенную активность Формо-Творцов Фокусной Динамики (то есть очередной акт «квантового смещения») именно в данном конкретном резопазоне. Этот помгновенный процесс «очаговых» (в случае активизации множества дувуйллерртных участков) или «точечных» (при резонации недувуйллерртных резопазонов) трансмутаций осуществляется в нашей Фокусной Динамике непрерывно и бесконечно.");
+                return deferred.promise;
+            }
+        };
+        api.term = {
+            getShortDescription: function(termName) {
+                return api.get("term/get-short-description", {name: termName})
+            }
+        };
+
+        return api;
     })
     .factory("errorService", function($rootScope, $state){
         return {
@@ -204,13 +214,64 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     .directive('iiLookup', function($api, $state) {
         return {
             require:'ngModel',
-            link:function (originalScope, element, attrs, modelCtrl) {
+            link: function (originalScope, element, attrs, modelCtrl) {
                 originalScope.$getSuggestions = function(query) {
                     return $api.get("v2/suggestions/"+query)
                 };
                 originalScope.$suggestionSelected = function(suggestion) {
                     $state.go("term", {name: suggestion});
                 };
+            }
+        };
+    })
+    .directive('term', function($api, $state, $compile) {
+        return {
+            restrict: 'E',
+            compile : function(element, attr, linker) {
+                return function ($scope, $element, $attr) {
+                    var term = $attr.id;
+                    var primeTerm = $attr.title;
+                    var originalContent = $element.html();
+                    var expanded;
+                    $attr.title= "eee";
+                    $element.bind('click', function(e) {
+                        var more = e.target.tagName == "A";
+                        var moreAfterPrimeTerm = e.target.id == "+";
+
+                        if (more && !moreAfterPrimeTerm) {
+                            $state.goToTerm(term);
+                            return;
+                        }
+                        if (expanded && !moreAfterPrimeTerm) {
+                            $element.html(originalContent);
+                            expanded = false;
+                        } else if (primeTerm && !moreAfterPrimeTerm)  {
+                            expanded = true;
+                            $element.append("&nbsp;("+primeTerm+"<a id=\"+\">...</a>)");
+//                            $element.append("&nbsp;(<term id=\""+primeTerm+"\">"+primeTerm+"</term>)");
+//                            $compile($element.contents())($scope);
+                        } else {
+                            expanded = true;
+                            var loadingPlaceHolder = "&nbsp;(загрузка...)";
+                            $element.append(loadingPlaceHolder);
+                            $api.term.getShortDescription(moreAfterPrimeTerm ? primeTerm : term).then(function (shortDescription) {
+                                $element.html(originalContent + " (" + shortDescription +
+                                    "<a title=\"Перейти на детальное описание термина\">...</a>)");
+                            });
+                        }
+                    })
+                }
+            }
+        };
+    })
+    .directive("unsecureBind", function($compile) {
+        // inspired by http://stackoverflow.com/a/25516311/975169
+        return {
+            link: function(scope, element, attrs) {
+                scope.$watch(attrs.unsecureBind, function(newval) {
+                    element.html(newval);
+                    $compile(element.contents())(scope);
+                });
             }
         };
     })
@@ -228,6 +289,9 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         };
         $state.goToItem = function(number) {
             defStateGo.bind($state)("item", {number: number})
+        };
+        $state.goToTerm = function(name) {
+            defStateGo.bind($state)("term", {name: name})
         }
     });
 
