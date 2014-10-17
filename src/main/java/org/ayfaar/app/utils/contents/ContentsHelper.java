@@ -27,6 +27,9 @@ public class ContentsHelper {
 
     public List<CategoryPresentation> createContents(String categoryName) {
         Category parent = categoryDao.get("name", categoryName);
+        if (parent == null) {
+            throw new RuntimeException("Category not found");
+        }
 
         return getSubCategory(Arrays.asList(parent), count);
     }

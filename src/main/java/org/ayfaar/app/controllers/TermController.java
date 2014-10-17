@@ -268,6 +268,12 @@ public class TermController {
         return searchController2.suggestions(filter);
     }
 
+    @RequestMapping("get-short-description")
+    @ResponseBody
+    public String getShortDescription(@RequestParam String name) {
+        return aliasesMap.getTerm(name).getShortDescription();
+    }
+
     @RequestMapping("remove/{name}")
     public void remove(@PathVariable String name) {
         termDao.remove(termDao.getByName(name).getUri());

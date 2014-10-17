@@ -5,6 +5,9 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Category;
+import org.ayfaar.app.utils.UriGenerator;
+import org.ayfaar.app.utils.contents.CategoryPresentation;
+import org.ayfaar.app.utils.contents.ContentsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +27,14 @@ public class CategoryController {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
     @Autowired ItemDao itemDao;
+    @Autowired ContentsHelper contentsHelper;
+
+    @RequestMapping
+    @ResponseBody
+    public List<CategoryPresentation> getContents(@RequestParam("name") String name) {
+        name = UriGenerator.getValueFromUri(Category.class, name);
+        return contentsHelper.createContents(name);
+    }
 
     @RequestMapping(value = "add", method = POST)
     @ResponseBody
