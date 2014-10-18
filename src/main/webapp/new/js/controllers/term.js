@@ -32,7 +32,7 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
     }
 
     $scope.searchCallback = function() {
-        return $api.get("v2/suggestions/"+$scope.name)
+        return $api.search.suggestions($scope.name)
     };
     $scope.suggestionSelected = function(suggestion) {
         $state.go("term", {name: suggestion});
@@ -85,9 +85,7 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
         currentQuery = query;
         pageCounter = 0;
         if (!$scope.termFound) {
-            $api.get("search/term", {
-                query: $scope.query
-            }).then(function (r) {
+            $api.search.term($scope.query).then(function (r) {
                 $scope.loadingTerms = false;
                 $scope.terms = r.terms;
                 $scope.articles = r.articles;
@@ -101,10 +99,7 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
     };
 
     function searchInContent() {
-        $api.get("v2/search", {
-            query: $scope.query,
-            pageNumber: pageCounter
-        }).then(function (r) {
+        $api.search.content($scope.query, pageCounter).then(function (r) {
             pageCounter++;
             $scope.foundQuotes = $scope.foundQuotes ? $scope.foundQuotes.concat(r.quotes) : r.quotes;
             if ($scope.foundQuotes.length == 0) {

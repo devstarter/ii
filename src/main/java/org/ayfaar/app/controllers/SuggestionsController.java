@@ -21,7 +21,7 @@ import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 
 @Controller
-@RequestMapping("v2/suggestions")
+@RequestMapping("api/suggestions")
 public class SuggestionsController{
     @Autowired AliasesMap aliasesMap;
 

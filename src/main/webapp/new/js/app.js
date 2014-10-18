@@ -1,8 +1,8 @@
+//var originEncodeURIComponent = window.encodeURIComponent;
 angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     .config(function($locationProvider, $urlRouterProvider, $stateProvider) {
-//        $locationProvider.html5Mode(true).hashPrefix('!');
-
-        $urlRouterProvider.otherwise("/home");
+        $locationProvider.html5Mode(true).hashPrefix('!');
+        $urlRouterProvider.otherwise("home");
         //
 //        // Now set up the states
         $stateProvider
@@ -30,6 +30,10 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 templateUrl: "partials/category.html",
                 controller: CategoryController
             });
+
+//        window.encodeURIComponent = function(arg) {
+//            return originEncodeURIComponent(arg);
+//        }
     })
     .factory("analytics", function(){
         return {
@@ -75,10 +79,7 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             },
             item: {
                 get: function(number) {
-                    var deferred = $q.defer();
-                    // заглушка для тестирования
-                    deferred.resolve("Причём <term id=\"ра\" title=\"резонационная Активность\">РА</term> это «<term id=\"резонационная Активность\">квантовое схлопывание</term>» (резонационное «совмещение» лийллусцивных участков сллоогрентной ф-Конфигурации) может происходить на любом из Уровней проявления «личностного» Самосознания, начиная с самых низших, заканчивая самыми качественными (для данной НУУ-ВВУ-Конфигурации). При высокой коварллертности СФУУРММ-Форм, структурирующих какое-то из Направлений Фокусных Динамик «текущей» и «следующей» «личностной» Интерпретации, они синтезируются до общего для них состояния лийллусцивности и благодаря этому у Формо-Творцов какого-то из других участков «новой» НУУ-ВВУ-Конфигурации (не обязательно дувуйллерртных с данным резопазоном), за счёт только что добавленного фрагмента Информации, в данном режиме проявления образуются реальные возможности для формирования наиболее высокой коварллертности (почти лийллусцивности), что предопределяет следующую мгновенную активность Формо-Творцов Фокусной Динамики (то есть очередной акт «квантового смещения») именно в данном конкретном резопазоне. Этот помгновенный процесс «очаговых» (в случае активизации множества дувуйллерртных участков) или «точечных» (при резонации недувуйллерртных резопазонов) трансмутаций осуществляется в нашей Фокусной Динамике непрерывно и бесконечно.");
-                    return deferred.promise;
+                    return api.get("item/"+number+"/")
                 }
             },
             term: {
@@ -92,6 +93,20 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             category: {
                 get: function(name) {
                     return api.get('category', {name: name});
+                }
+            },
+            search: {
+                term: function(query) {
+                    return api.get("search/term", {query: query})
+                },
+                content: function(query, page) {
+                    return api.get("v2/search", {
+                        query: query,
+                        pageNumber: page
+                    })
+                },
+                suggestions: function(query) {
+                    return api.get("suggestions/"+query);
                 }
             }
         };
@@ -225,7 +240,7 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             require:'ngModel',
             link: function (originalScope, element, attrs, modelCtrl) {
                 originalScope.$getSuggestions = function(query) {
-                    return $api.get("v2/suggestions/"+query)
+                    return $api.get("suggestions/"+query)
                 };
                 originalScope.$suggestionSelected = function(suggestion) {
                     $state.go("term", {name: suggestion});
@@ -285,22 +300,27 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         };
     })
     .run(function($state, entityService){
-        var defStateGo = $state.go;
+        var originStateGo = $state.go;
         $state.go = function(to, params, options) {
             if (to.hasOwnProperty('uri')) {
                 var uri = to.uri;
-                if (entityService.getType(to) == "term") {
-                    defStateGo.bind($state)("term", {name: entityService.getName(to)})
+                switch (entityService.getType(to)) {
+                    case "term":
+                        originStateGo.bind($state)("term", {name: entityService.getName(to)});
+                        return;
+                    case "item":
+                        originStateGo.bind($state)("item", {number: entityService.getName(to)});
+                        return;
                 }
             } else {
-                defStateGo.bind($state)(to, params, options)
+                originStateGo.bind($state)(to, params, options)
             }
         };
         $state.goToItem = function(number) {
-            defStateGo.bind($state)("item", {number: number})
+            originStateGo.bind($state)("item", {number: number})
         };
         $state.goToTerm = function(name) {
-            defStateGo.bind($state)("term", {name: name})
+            originStateGo.bind($state)("term", {name: name})
         }
     });
 

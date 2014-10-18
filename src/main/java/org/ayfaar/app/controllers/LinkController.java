@@ -24,7 +24,7 @@ import java.util.List;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("link")
+@RequestMapping("api/link")
 public class LinkController {
     @Autowired LinkDao linkDao;
     @Autowired TermDao termDao;

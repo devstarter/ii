@@ -24,7 +24,7 @@ import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 import static org.springframework.util.Assert.notNull;
 
 @Controller
-@RequestMapping("term")
+@RequestMapping("api/term")
 public class TermController {
 
     private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(TermController.class.getName());

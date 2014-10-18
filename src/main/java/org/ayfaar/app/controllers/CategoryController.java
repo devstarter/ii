@@ -21,7 +21,7 @@ import static org.springframework.util.Assert.hasLength;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("category")
+@RequestMapping("api/category")
 public class CategoryController {
     @Autowired CommonDao commonDao;
     @Autowired TermDao termDao;
