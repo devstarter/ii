@@ -22,7 +22,7 @@ import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 import static org.springframework.util.Assert.notNull;
 
 @Controller
-@RequestMapping("term")
+@RequestMapping("api/term")
 public class TermController {
 
     private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(TermController.class.getName());
@@ -265,6 +265,12 @@ public class TermController {
     @ResponseBody
     public List<String> autoComplete(@RequestParam("filter[filters][0][value]") String filter) {
         return searchController2.suggestions(filter);
+    }
+
+    @RequestMapping("get-short-description")
+    @ResponseBody
+    public String getShortDescription(@RequestParam String name) {
+        return aliasesMap.getTerm(name).getShortDescription();
     }
 
     @RequestMapping("remove/{name}")

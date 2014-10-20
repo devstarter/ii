@@ -11,8 +11,7 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
 
     function loadTerm() {
         $scope.loading = true;
-        $api.get('term/', {name: $stateParams.name}, true)
-            .then(function (data) {
+        $api.term.get($stateParams.name).then(function (data) {
                 $scope.termFound = true;
                 for (var p in data) {
                     $scope[p] = data[p];
@@ -33,7 +32,7 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
     }
 
     $scope.searchCallback = function() {
-        return $api.get("v2/suggestions/"+$scope.name)
+        return $api.search.suggestions($scope.name)
     };
     $scope.suggestionSelected = function(suggestion) {
         $state.go("term", {name: suggestion});
@@ -55,15 +54,17 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
         searchInContent();
     };
     $scope.rateUp = function (item) {
-        var data = {
-            uri: "ии:пункт:" + item.number,
-            query: $scope.query
-        };
-        var quote = getSelectionText() || (item.full ? null : item.quote);
-        if (quote) {
-            data.quote = quote;
+        if (confirm("Цитата будет помечена как помогающая понять этот термин, вы согласны?")) {
+            var data = {
+                uri: "ии:пункт:" + item.number,
+                query: $scope.query
+            };
+            var quote = getSelectionText() || (item.full ? null : item.quote);
+            if (quote) {
+                data.quote = quote;
+            }
+            $api.post("search/rate/+", data).then(rateComplete);
         }
-        $api.post("search/rate/+", data).then(rateComplete);
     };
     $scope.expand = function(quote) {
         var uri = quote.uri ? quote.uri : "ии:пункт:"+quote.number;
@@ -84,9 +85,7 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
         currentQuery = query;
         pageCounter = 0;
         if (!$scope.termFound) {
-            $api.get("search/term", {
-                query: $scope.query
-            }).then(function (r) {
+            $api.search.term($scope.query).then(function (r) {
                 $scope.loadingTerms = false;
                 $scope.terms = r.terms;
                 $scope.articles = r.articles;
@@ -100,10 +99,7 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
     };
 
     function searchInContent() {
-        $api.get("v2/search", {
-            query: $scope.query,
-            pageNumber: pageCounter
-        }).then(function (r) {
+        $api.search.content($scope.query, pageCounter).then(function (r) {
             pageCounter++;
             $scope.foundQuotes = $scope.foundQuotes ? $scope.foundQuotes.concat(r.quotes) : r.quotes;
             if ($scope.foundQuotes.length == 0) {

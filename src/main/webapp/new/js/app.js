@@ -1,9 +1,8 @@
+//var originEncodeURIComponent = window.encodeURIComponent;
 angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
-    .controller('SearchController', SearchController)
     .config(function($locationProvider, $urlRouterProvider, $stateProvider) {
-//        $locationProvider.html5Mode(true).hashPrefix('!');
-
-        $urlRouterProvider.otherwise("/home");
+        $locationProvider.html5Mode(true).hashPrefix('!');
+        $urlRouterProvider.otherwise("home");
         //
 //        // Now set up the states
         $stateProvider
@@ -11,11 +10,6 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 url: "/home",
                 templateUrl: "partials/home.html",
                 controller: HomeController
-            })
-            .state('search', {
-                url: "/search/:query",
-                templateUrl: "partials/search.html",
-                controller: SearchController
             })
             .state('article', {
                 url: "/a/:id",
@@ -30,10 +24,16 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 url: "/term/:name",
                 templateUrl: "partials/term.html",
                 controller: TermController
-//                onEnter: function($location, $stateParams, $log){
-//                    $log.info($stateParams)
-//                }
+            })
+            .state('cat', {
+                url: "/cat/:name",
+                templateUrl: "partials/category.html",
+                controller: CategoryController
             });
+
+//        window.encodeURIComponent = function(arg) {
+//            return originEncodeURIComponent(arg);
+//        }
     })
     .factory("analytics", function(){
         return {
@@ -47,7 +47,7 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     .factory("$api", function($rootScope, $state, $http, errorService, $q){
         var apiUrl = "/api/";
 //        var apiUrl = "http://localhost:8081/api/";
-        return {
+        var api = {
             post: function(url, data) {
                 var deferred = $q.defer();
                 $http.post(apiUrl+url, data, {
@@ -76,6 +76,38 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                         deferred.reject(response);
                     });
                 return deferred.promise;
+            },
+            item: {
+                get: function(number) {
+                    return api.get("item/"+number+"/")
+                }
+            },
+            term: {
+                get: function(name) {
+                    return api.get('term/', {name: name}, true);
+                },
+                getShortDescription: function(termName) {
+                    return api.get("term/get-short-description", {name: termName})
+                }
+            },
+            category: {
+                get: function(name) {
+                    return api.get('category', {name: name});
+                }
+            },
+            search: {
+                term: function(query) {
+                    return api.get("search/term", {query: query})
+                },
+                content: function(query, page) {
+                    return api.get("v2/search", {
+                        query: query,
+                        pageNumber: page
+                    })
+                },
+                suggestions: function(query) {
+                    return api.get("suggestions/"+query);
+                }
             }
         };
         function serializeGet(obj) {
@@ -116,6 +148,8 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 ;
             return( source );
         }
+
+        return api;
     })
     .factory("errorService", function($rootScope, $state){
         return {
@@ -204,9 +238,9 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     .directive('iiLookup', function($api, $state) {
         return {
             require:'ngModel',
-            link:function (originalScope, element, attrs, modelCtrl) {
+            link: function (originalScope, element, attrs, modelCtrl) {
                 originalScope.$getSuggestions = function(query) {
-                    return $api.get("v2/suggestions/"+query)
+                    return $api.get("suggestions/"+query)
                 };
                 originalScope.$suggestionSelected = function(suggestion) {
                     $state.go("term", {name: suggestion});
@@ -214,25 +248,89 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             }
         };
     })
+    .directive('term', function($api, $state, $compile) {
+        return {
+            restrict: 'E',
+            compile : function(element, attr, linker) {
+                return function ($scope, $element, $attr) {
+                    var term = $attr.id;
+                    var primeTerm = $attr.title;
+                    var originalContent = $element.html();
+                    var expanded;
+                    $attr.title= "eee";
+                    $element.bind('click', function(e) {
+                        var more = e.target.tagName == "A";
+                        var moreAfterPrimeTerm = e.target.id == "+";
+
+                        if (more && !moreAfterPrimeTerm) {
+                            $state.goToTerm(term);
+                            return;
+                        }
+                        if (expanded && !moreAfterPrimeTerm) {
+                            $element.html(originalContent);
+                            expanded = false;
+                        } else if (primeTerm && !moreAfterPrimeTerm)  {
+                            expanded = true;
+                            $element.append("&nbsp;("+primeTerm+"<a id=\"+\">...</a>)");
+//                            $element.append("&nbsp;(<term id=\""+primeTerm+"\">"+primeTerm+"</term>)");
+//                            $compile($element.contents())($scope);
+                        } else {
+                            expanded = true;
+                            var loadingPlaceHolder = "&nbsp;(загрузка...)";
+                            $element.append(loadingPlaceHolder);
+                            $api.term.getShortDescription(moreAfterPrimeTerm ? primeTerm : term).then(function (shortDescription) {
+                                $element.html(originalContent + " (" + shortDescription +
+                                    "<a title=\"Перейти на детальное описание термина\">...</a>)");
+                            });
+                        }
+                    })
+                }
+            }
+        };
+    })
+    .directive("unsecureBind", function($compile) {
+        // inspired by http://stackoverflow.com/a/25516311/975169
+        return {
+            link: function(scope, element, attrs) {
+                scope.$watch(attrs.unsecureBind, function(newval) {
+                    element.html(newval);
+                    $compile(element.contents())(scope);
+                });
+            }
+        };
+    })
     .run(function($state, entityService){
-        var defStateGo = $state.go;
+        var originStateGo = $state.go;
         $state.go = function(to, params, options) {
             if (to.hasOwnProperty('uri')) {
                 var uri = to.uri;
-                if (entityService.getType(to) == "term") {
-                    defStateGo.bind($state)("term", {name: entityService.getName(to)})
+                switch (entityService.getType(to)) {
+                    case "term":
+                        originStateGo.bind($state)("term", {name: entityService.getName(to)});
+                        return;
+                    case "item":
+                        originStateGo.bind($state)("item", {number: entityService.getName(to)});
+                        return;
                 }
             } else {
-                defStateGo.bind($state)(to, params, options)
+                originStateGo.bind($state)(to, params, options)
             }
         };
         $state.goToItem = function(number) {
-            defStateGo.bind($state)("item", {number: number})
+            originStateGo.bind($state)("item", {number: number})
+        };
+        $state.goToTerm = function(name) {
+            originStateGo.bind($state)("term", {name: name})
         }
     });
 
 Array.prototype.append = function(array){
     this.push.apply(this, array)
+};
+function copyObjectTo(from, to) {
+    for (var p in from) {
+        to[p] = from[p];
+    }
 };
 
 function isItemNumber(s) {

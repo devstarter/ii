@@ -15,9 +15,10 @@ import static org.apache.commons.lang3.StringUtils.join;
 @Component
 public class SearchQuotesHelper {
     protected static int MAX_WORDS_ON_BOUNDARIES = 50;
-    private static final String forCreateLeftPartQuote = "([^\\.\\?!]*)([\\.\\?!]*)(\\.|\\?|\\!)(\\)|\\»)";
-    private static final String forCreateRightPartQuote = "(\\)|\\»)([^\\.\\?!]*)([\\.\\?!]*)";
+    private static final String forCreateLeftPartQuote = "([^\\.\\?!]*)([\\.\\?!]*)(\\.|\\?|\\!)(\\)|\\»| -| –)";
+    private static final String forCreateRightPartQuote = "(\\)|\\»| -| –)[^\\.\\?!]*[\\.\\?!]*";
     private static final List<String> brackets = Arrays.asList(".)", "!)", "?)", ".»", "!»", "?»");
+    private static final List<String> directSpeech = Arrays.asList(". –", "! –", "? –", ". -", "! -", "? -");
     private static final List<Character> openQuoteBracketHyphen = Arrays.asList('«', '(', '-');
 
     public List<Quote> createQuotes(List<Item> foundedItems, List<String> allPossibleSearchQueries) {
@@ -70,29 +71,36 @@ public class SearchQuotesHelper {
         }
 
         if(flag.equals("left")) {
-            if (brackets.contains(text.substring(0, 2))) {
-                String temp = text.substring(2, text.length());
-
-                if(content.length() - text.length() > 0) {
-                    text = getPartQuote(content.substring(0, (content.length() - text.length()) + 2),
-                            forCreateLeftPartQuote, text.substring(2, text.length()), "left");
-
-                    int offset = 0;
-                    if(content.contains(text)) {
-                        offset = content.indexOf(text);
-                    }
-                    text += content.substring(text.length() + offset, content.length() - temp.length());
-                }
-                text += temp;
+            if(brackets.contains(text.substring(0, 2))) {
+                text = skipBracketOrDirectSpeech(content, text, text.substring(2, text.length()), 2);
+            }
+            else if(directSpeech.contains(text.substring(0, 3))) {
+                text = skipBracketOrDirectSpeech(content, text, text.substring(3, text.length()), 3);
             }
         }
 
         if(flag.equals("right") && content.length() > text.length()) {
-            if (content.charAt(text.length()) == ')' || content.charAt(text.length()) == '»') {
+            String sub = content.substring(text.length(), content.length());
+            if(sub.startsWith(")") || sub.startsWith("»") || isHyphen(sub.substring(0,2))) {
                 text += getPartQuote(content.substring(text.length(), content.length()),
                         forCreateRightPartQuote, text, "right");
             }
         }
+        return text;
+    }
+
+    private String skipBracketOrDirectSpeech(String content, String text, String temp, int skip) {
+        if(content.length() - text.length() > 0) {
+            text = getPartQuote(content.substring(0, (content.length() - text.length()) + skip),
+                    forCreateLeftPartQuote, text.substring(2, text.length()), "left");
+
+            int offset = 0;
+            if(content.contains(text)) {
+                offset = content.indexOf(text);
+            }
+            text += content.substring(text.length() + offset, content.length() - temp.length());
+        }
+        text += temp;
         return text;
     }
 
@@ -131,6 +139,11 @@ public class SearchQuotesHelper {
             textQuote += " " + lastPart;
         }
         return textQuote.trim();
+    }
+
+    private boolean isHyphen(String text) {
+        char hyphen = text.charAt(1);
+        return (int)hyphen == 45 ? true : (int)hyphen == 8211 ? true : false;
     }
 }
 

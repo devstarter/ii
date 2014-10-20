@@ -27,7 +27,7 @@ import static org.ayfaar.app.utils.TermUtils.isCosmicCode;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Controller
-@RequestMapping("search")
+@RequestMapping("api/search")
 public class SearchController {
     @Autowired AliasesMap aliasesMap;
     @Autowired TermDao termDao;
