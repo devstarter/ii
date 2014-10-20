@@ -285,8 +285,7 @@ public class TermController {
         Term oldTerm = aliasesMap.getTerm(oldName);
         add(newName, oldTerm.getShortDescription(), oldTerm.getDescription());
 
-        reloadAliasesMap();
-        Term newTerm = aliasesMap.getTerm(newName);
+        Term newTerm = termDao.getByName(newName);
 
         List<Link> links = linkDao.getAllLinks(oldTerm.getUri());
         for(Link link : links) {
