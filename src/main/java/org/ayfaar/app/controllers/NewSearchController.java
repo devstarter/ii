@@ -26,7 +26,7 @@ import static java.util.Arrays.asList;
 import static net.sf.cglib.core.CollectionUtils.transform;
 
 @Controller
-@RequestMapping("v2/search")
+@RequestMapping("api/v2/search")
 public class NewSearchController {
     public static final int PAGE_SIZE = 20;
     @Inject
@@ -98,6 +98,7 @@ public class NewSearchController {
             // 4. Поиск фразы (не термин)
             searchQueries = asList(query);
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
+            searchQueries = asList(query.replace("%", ""));
         }
 
         if (foundItems.size() > PAGE_SIZE ) {

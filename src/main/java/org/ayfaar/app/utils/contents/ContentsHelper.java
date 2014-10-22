@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.ayfaar.app.utils.StringUtils.trim;
+
 @Component
 public class ContentsHelper {
     @Autowired
@@ -25,6 +27,9 @@ public class ContentsHelper {
 
     public List<CategoryPresentation> createContents(String categoryName) {
         Category parent = categoryDao.get("name", categoryName);
+        if (parent == null) {
+            throw new RuntimeException("Category not found");
+        }
 
         return getSubCategory(Arrays.asList(parent), count);
     }
@@ -47,7 +52,7 @@ public class ContentsHelper {
                 } else {
                     List<Item> items = getItems(category);
                     CategoryPresentation presentation = new CategoryPresentation(category.getName(),
-                            category.getUri(), category.getDescription(), getParagraphSubCategory(items, count));
+                            category.getUri(), trim(category.getDescription()), getParagraphSubCategory(items, count));
 
                     listPresentations.add(presentation);
                 }

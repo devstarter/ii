@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,13 +19,12 @@ import static java.util.Arrays.asList;
 @Slf4j
 public class CategoryImporter {
 
-    CommonDao commonDao;
-    ItemDao itemDao;
-    private ApplicationContext ctx;
-    private HashMap<String, Category> categoriesMap;
+    static CommonDao commonDao;
+    static ItemDao itemDao;
+    private static ApplicationContext ctx;
+    private static HashMap<String, Category> categoriesMap;
 
-//    @Test
-    public void categoryImport() throws IOException {
+    public static void main(String[] args) throws Exception {
         ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
         commonDao = ctx.getBean(CommonDao.class);
         itemDao = ctx.getBean(ItemDao.class);
@@ -39,7 +37,7 @@ public class CategoryImporter {
         Category glavaCat = null;
 
 //        List<String> lines = FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\paragraphs\\Параграфы, БДК, Том 10,14.utf.csv"));
-        CSVReader reader = new CSVReader(new FileReader("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\paragraphs\\Параграфы, БДК, Том 10,14.utf.csv"), ';');
+        CSVReader reader = new CSVReader(new FileReader("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\paragraphs\\Параграфы.csv"), ';');
         String [] nextLine;
         List<String> columns;
 //        List myEntries = reader.readAll();
@@ -60,8 +58,11 @@ public class CategoryImporter {
             String paragraphDescription = columns.get(10).trim();
             String[] items = columns.get(11).split("-");
 
-            String itemFrom = tomNumber+"."+items[0];
-            String itemTo = null;
+            String item = items[0];
+            if (!item.contains(".")) {
+                item = tomNumber+"."+item;
+            }
+            String itemTo;
 
             if (items.length == 1) {
                 itemTo = null;
@@ -93,18 +94,22 @@ public class CategoryImporter {
             if (paragraphCat == null) {
                 paragraphCat = new Category(paragraphName, glavaCat.getUri());
                 paragraphCat.setDescription(paragraphDescription);
-                Item number = itemDao.getByNumber(itemFrom);
+                Item number = itemDao.getByNumber(item);
                 paragraphCat.setStart(number.getUri());
                 if (itemTo != null) {
                     Item byNumber = itemDao.getByNumber(itemTo);
                     paragraphCat.setEnd(byNumber.getUri());
                 }
                 commonDao.save(paragraphCat);
-                log.info(paragraphCat.getName());
+                System.out.println("new " + paragraphCat.getName());
             }
-            if (prevParagraphCat != null) {
+            if (prevParagraphCat != null && !paragraphCat.getUri().equals(prevParagraphCat.getNext())) {
                 prevParagraphCat.setNext(paragraphCat.getUri());
+                if (prevParagraphCat.getEnd() == null) {
+                    prevParagraphCat.setEnd(paragraphCat.getStart());
+                }
                 commonDao.save(prevParagraphCat);
+                System.out.println("update "+paragraphCat.getName());
             }
             if (glavaCat.getStart() == null) {
                 glavaCat.setStart(paragraphCat.getUri());
@@ -113,11 +118,11 @@ public class CategoryImporter {
         }
     }
 
-    private Category getCat(String categoryUniqCode, Category prevCategory, Category parent) {
+    private static Category getCat(String categoryUniqCode, Category prevCategory, Category parent) {
         return getCat(categoryUniqCode, null, prevCategory, parent);
     }
-    private Category getCat(String categoryUniqCode, String categoryName,
-                            Category prevCategory, Category parent) {
+    private static Category getCat(String categoryUniqCode, String description,
+                                   Category prevCategory, Category parent) {
 //        String[] split = categoryName.split("\\.\\s");
 //        categoryName = split[0];
 //        String categoryDescription = null;
@@ -128,7 +133,10 @@ public class CategoryImporter {
         if (category == null) {
             category = commonDao.get(Category.class, "name", categoryUniqCode);
             if (category == null) {
-                category = commonDao.save(new Category(categoryUniqCode, categoryName, parent != null ? parent.getUri() : null));
+                if (description != null) {
+                    description = description.trim();
+                }
+                category = commonDao.save(new Category(categoryUniqCode, description, parent != null ? parent.getUri() : null));
             }
             categoriesMap.put(categoryUniqCode, category);
         }
