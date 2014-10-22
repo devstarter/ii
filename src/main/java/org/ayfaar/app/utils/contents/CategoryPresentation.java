@@ -13,12 +13,19 @@ public class CategoryPresentation {
     private String name;
     private String uri;
     private String description;
+    private List<CategoryPresentation> parents;
     private List<CategoryPresentation> children;
 
-    public CategoryPresentation(String name, String uri, String description, List<CategoryPresentation> children){
+    public CategoryPresentation(String name, String uri, String description,  List<CategoryPresentation> children){
         this.name = name;
         this.uri = uri;
         this.description = description;
         this.children = children;
+    }
+
+    public CategoryPresentation(String name, String uri, String description, List<CategoryPresentation> parents,
+                                                         List<CategoryPresentation> children){
+        this(name, uri, description, children);
+        this.parents = parents;
     }
 }

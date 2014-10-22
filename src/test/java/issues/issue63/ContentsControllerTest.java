@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ContentsControllerTest extends IntegrationTest {
     @Autowired
@@ -70,5 +71,29 @@ public class ContentsControllerTest extends IntegrationTest {
         assertEquals(UriGenerator.generate(Item.class, "10.11155"), items.get(0).getUri());
         assertEquals("10.11170", items.get(15).getName());
         assertNull(items.get(0).getChildren());
+    }
+
+    @Test
+    public void testGetContentsWithParents() {
+        List<CategoryPresentation> contents = contentsHelper.createContents("БДК / Раздел IV / Глава 5");
+        List<CategoryPresentation> parents = contents.get(0).getParents();
+        List<CategoryPresentation> subParents = parents.get(0).getParents();
+        List<CategoryPresentation> children = parents.get(0).getChildren();
+        List<CategoryPresentation> subChildren = children.get(0).getChildren();
+        List<CategoryPresentation> chapterChildren = contents.get(0).getChildren();
+
+        assertEquals(3, parents.size());
+        assertEquals("Раздел IV", parents.get(0).getName());
+        assertEquals("Том 10", parents.get(1).getName());
+        assertEquals("БДК", parents.get(2).getName());
+        assertEquals(2, subParents.size());
+        assertEquals("Том 10", subParents.get(0).getName());
+        assertEquals("БДК", subParents.get(1).getName());
+        assertTrue(parents.get(2).getParents().isEmpty());
+        assertEquals(5, children.size());
+        assertEquals(10, subChildren.size());
+        assertTrue(subChildren.get(0).getChildren().isEmpty());
+        assertNull(chapterChildren.get(0).getParents());
+        assertNull(subChildren.get(0).getParents());
     }
 }

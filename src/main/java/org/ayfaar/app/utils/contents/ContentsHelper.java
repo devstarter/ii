@@ -23,18 +23,22 @@ public class ContentsHelper {
     private ItemDao itemDao;
 
     private final int SUBCATEGORY_COUNT = 3;
-    private  int count = 0;
+    private int countSubCategory = 0;
+    private int countParentsChildren = 0;
 
     public List<CategoryPresentation> createContents(String categoryName) {
-        Category parent = categoryDao.get("name", categoryName);
-        if (parent == null) {
+        Category category = categoryDao.get("name", categoryName);
+        if (category == null) {
             throw new RuntimeException("Category not found");
         }
 
-        return getSubCategory(Arrays.asList(parent), count);
+        List<CategoryPresentation> content = createChildrenPresentation(Arrays.asList(category), countSubCategory);
+        List<CategoryPresentation> parents = createParentPresentation(getParents(category), countParentsChildren);
+        content.get(0).setParents(parents);
+        return content;
     }
 
-    private List<CategoryPresentation> getSubCategory(List<Category> parents, int count) {
+    private List<CategoryPresentation> createChildrenPresentation(List<Category> parents, int count) {
         List<CategoryPresentation> listPresentations = new ArrayList<CategoryPresentation>();
 
         if(count < SUBCATEGORY_COUNT) {
@@ -46,7 +50,7 @@ public class ContentsHelper {
 
                     CategoryPresentation presentation = new CategoryPresentation(
                             extractCategoryName(category.getName()), category.getUri(), description,
-                            getSubCategory(children, count));
+                            createChildrenPresentation(children, count));
 
                     listPresentations.add(presentation);
                 } else {
@@ -88,6 +92,16 @@ public class ContentsHelper {
         return children;
     }
 
+    List<Category> getParents(Category category) {
+        List<Category> parents = new ArrayList<Category>();
+        if(category.getParent() != null) {
+            Category c = categoryDao.get(category.getParent());
+            parents.add(c);
+            parents.addAll(getParents(c));
+        }
+        return parents;
+    }
+
     List<Item> getItems(Category category) {
         List<Item> items = new ArrayList<Item>();
         Item currentItem = itemDao.get(category.getStart());
@@ -107,5 +121,32 @@ public class ContentsHelper {
     String extractCategoryName(String categoryName) {
         String[] names = categoryName.split("/");
         return names[names.length-1].trim();
+    }
+
+    List<CategoryPresentation> createParentPresentation(List<Category> categories, int count) {
+        List<CategoryPresentation> presentations = new ArrayList<CategoryPresentation>();
+        count++;
+
+        for(Category category : categories) {
+            if(!category.isParagraph()) {
+                String description = category.isTom() ? "" : category.getDescription();
+                List<Category> parents = getParents(category);
+                List<Category> children = getChildren(category);
+                CategoryPresentation presentation = new CategoryPresentation(extractCategoryName(category.getName()),
+                        category.getUri(), description, createParentPresentation(parents, count),
+                        createChildrenPresentation(children, count));
+
+                presentations.add(presentation);
+            } else {
+                List<Category> par = getParents(category);
+                List<Item> items = getItems(category);
+                CategoryPresentation presentation = new CategoryPresentation(category.getName(),
+                        category.getUri(), trim(category.getDescription()),
+                        createParentPresentation(par, count), getParagraphSubCategory(items, count));
+
+                presentations.add(presentation);
+            }
+        }
+        return presentations;
     }
 }

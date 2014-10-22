@@ -41,4 +41,17 @@ public class TestContentsHelper extends IntegrationTest {
         assertEquals("Раздел I", contentsHelper.extractCategoryName("БДК / Раздел I"));
         assertEquals("Глава 5", contentsHelper.extractCategoryName("БДК / Раздел IV / Глава 5"));
     }
+
+    @Test
+    public void testGetParents() {
+        Category category = categoryDao.get("name", "Параграф 10.1.1.6");
+        List<Category> parents = contentsHelper.getParents(category);
+        List<CategoryPresentation> parentPresentations = contentsHelper.createParentPresentation(parents, 0);
+
+        assertEquals(4, parentPresentations.size());
+        assertEquals("Глава 1", parentPresentations.get(0).getName());
+        assertEquals("Раздел I", parentPresentations.get(1).getName());
+        assertEquals("Том 10", parentPresentations.get(2).getName());
+        assertEquals("БДК", parentPresentations.get(3).getName());
+    }
 }
