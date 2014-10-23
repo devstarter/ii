@@ -25,7 +25,7 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 templateUrl: "partials/term.html",
                 controller: TermController
             })
-            .state('cat', {
+            .state('category', {
                 url: "/cat/:name",
                 templateUrl: "partials/category.html",
                 controller: CategoryController
