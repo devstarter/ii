@@ -28,4 +28,12 @@ public class CategoryPresentation {
         this(name, uri, description, children);
         this.parents = parents;
     }
+
+    public CategoryPresentation(String name, String uri, String description) {
+        this(name, uri, description, null);
+    }
+
+    public CategoryPresentation(String name, String uri) {
+        this(name, uri, null);
+    }
 }
