@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.ayfaar.app.utils.StringUtils.trim;
@@ -22,51 +21,48 @@ public class ContentsHelper {
     @Autowired
     private ItemDao itemDao;
 
-    private final int SUBCATEGORY_COUNT = 3;
-    private  int count = 0;
+    private final int SUBCATEGORY_COUNT = 2;
 
-    public List<CategoryPresentation> createContents(String categoryName) {
-        Category parent = categoryDao.get("name", categoryName);
-        if (parent == null) {
+    public CategoryPresentation createContents(String categoryName) {
+        Category category = categoryDao.get("name", categoryName);
+        if (category == null) {
             throw new RuntimeException("Category not found");
         }
-
-        return getSubCategory(Arrays.asList(parent), count);
+        return new CategoryPresentation(extractCategoryName(category.getName()),
+                category.getUri(), category.getDescription(), createParentPresentation(getParents(category)),
+                createChildrenPresentation(getChildren(category), 0));
     }
 
-    private List<CategoryPresentation> getSubCategory(List<Category> parents, int count) {
-        List<CategoryPresentation> listPresentations = new ArrayList<CategoryPresentation>();
+    private List<CategoryPresentation> createChildrenPresentation(List<Category> categories, int count) {
+        if(count >= SUBCATEGORY_COUNT) return null;
 
-        if(count < SUBCATEGORY_COUNT) {
-            count++;
-            for (Category category : parents) {
-                if (!category.isParagraph()) {
-                    String description = category.isTom() ? "" : category.getDescription();
-                    List<Category> children = getChildren(category);
+        List<CategoryPresentation> childrenPresentations = new ArrayList<CategoryPresentation>();
 
-                    CategoryPresentation presentation = new CategoryPresentation(
-                            extractCategoryName(category.getName()), category.getUri(), description,
-                            getSubCategory(children, count));
+        count++;
 
-                    listPresentations.add(presentation);
-                } else {
-                    List<Item> items = getItems(category);
-                    CategoryPresentation presentation = new CategoryPresentation(category.getName(),
-                            category.getUri(), trim(category.getDescription()), getParagraphSubCategory(items, count));
+        for (Category category : categories) {
+            if (!category.isParagraph()) {
+                childrenPresentations.add(new CategoryPresentation(
+                        extractCategoryName(category.getName()), category.getUri(), category.getDescription(),
+                        createChildrenPresentation(getChildren(category), count)));
 
-                    listPresentations.add(presentation);
-                }
+            } else {
+                List<Item> items = getItems(category);
+                CategoryPresentation presentation = new CategoryPresentation(category.getName(),
+                        category.getUri(), trim(category.getDescription()), getParagraphSubCategory(items, count));
+
+                childrenPresentations.add(presentation);
             }
         }
-        return listPresentations;
+
+        return childrenPresentations;
     }
 
     private List<CategoryPresentation> getParagraphSubCategory(List<Item> items, int count) {
+        if(count >= SUBCATEGORY_COUNT) return null;
         List<CategoryPresentation> listPresentations = new ArrayList<CategoryPresentation>();
-        if(count < SUBCATEGORY_COUNT) {
-            for (Item item : items) {
-                listPresentations.add(new CategoryPresentation(item.getNumber(), item.getUri(), "", null));
-            }
+        for (Item item : items) {
+            listPresentations.add(new CategoryPresentation(item.getNumber(), item.getUri()));
         }
         return listPresentations;
     }
@@ -88,6 +84,16 @@ public class ContentsHelper {
         return children;
     }
 
+    List<Category> getParents(Category category) {
+        List<Category> parents = new ArrayList<Category>();
+        if(category.getParent() != null) {
+            Category c = categoryDao.get(category.getParent());
+            parents.add(c);
+            parents.addAll(getParents(c));
+        }
+        return parents;
+    }
+
     List<Item> getItems(Category category) {
         List<Item> items = new ArrayList<Item>();
         Item currentItem = itemDao.get(category.getStart());
@@ -107,5 +113,21 @@ public class ContentsHelper {
     String extractCategoryName(String categoryName) {
         String[] names = categoryName.split("/");
         return names[names.length-1].trim();
+    }
+
+    /**
+     * For parents presentations we need only name, uri and description. children and parents should be null
+     *
+     * @param categories
+     * @return
+     */
+    List<CategoryPresentation> createParentPresentation(List<Category> categories) {
+        List<CategoryPresentation> presentations = new ArrayList<CategoryPresentation>();
+
+        for(Category category : categories) {
+            presentations.add(new CategoryPresentation(extractCategoryName(category.getName()),
+                    category.getUri(), trim(category.getDescription())));
+        }
+        return presentations;
     }
 }

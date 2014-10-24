@@ -31,7 +31,7 @@ public class CategoryController {
 
     @RequestMapping
     @ResponseBody
-    public List<CategoryPresentation> getContents(@RequestParam("name") String name) {
+    public CategoryPresentation getContents(@RequestParam("name") String name) {
         name = UriGenerator.getValueFromUri(Category.class, name);
         return contentsHelper.createContents(name);
     }
