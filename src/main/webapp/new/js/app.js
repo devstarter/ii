@@ -1,7 +1,7 @@
 //var originEncodeURIComponent = window.encodeURIComponent;
 angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     .config(function($locationProvider, $urlRouterProvider, $stateProvider) {
-        $locationProvider.html5Mode(true).hashPrefix('!');
+        //$locationProvider.html5Mode(true).hashPrefix('!');
         $urlRouterProvider.otherwise("home");
         //
 //        // Now set up the states
@@ -45,8 +45,8 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         }
     })
     .factory("$api", function($rootScope, $state, $http, errorService, $q){
-        var apiUrl = "/api/";
-//        var apiUrl = "http://localhost:8081/api/";
+        //var apiUrl = "/api/";
+        var apiUrl = "https://ii.ayfaar.org/api/";
         var api = {
             post: function(url, data) {
                 var deferred = $q.defer();
