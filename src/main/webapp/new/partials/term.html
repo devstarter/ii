@@ -1,48 +1,69 @@
 <div class="term">
+    <span ng-hide="editMode" class="current-term-title">{{name}}</span>
+    <a ng-hide="editMode" class="btn" ng-click="editMode = true">изменить</a>
+    <table ng-show="editMode" class="full-width">
+        <tr>
+            <td class="full-width">
+                <input type="text" ng-model="name" placeholder="Введите термин или фразу"
+                       ii-lookup
+                       typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
+                       typeahead-on-select="$suggestionSelected($label)" class="form-control"/>
+            </td>
+            <td>
+                <button class="btn btn-primary" ng-click="updateName()">Искать</button>
+            </td>
+        </tr>
+    </table>
+
     <div class="block loading" ng-show="loading">Загрузка...</div>
-    <span class="current-term-title">{{name}}</span>
     <div ng-hide="loading && termFound">
         <span class="info" ng-show="from">Перенапраленно с: {{from.name}}</span>
         <span class="info" ng-show="code">Код понятия: {{code.name}}</span>
         <span class="info" ng-show="aliases.length">Синонимы и сокращения:
-            <span class="alias" ng-repeat="alias in aliases">{{alias.name}}</span>
+            <span class="alias" ng-repeat="alias in aliases">
+                {{alias.name}}{{$last ? '' : ', '}}
+            </span>
         </span>
         <br/>
-        <div class="highlight" ng-show="shortDescription && description">
-            <p class="shortDescription">{{shortDescription}}</p>
-            <p>{{description}}</p>
+        <div class="highlight" ng-show="shortDescription || description">
+            <p ng-show="shortDescription" class="shortDescription">{{shortDescription}}</p>
+            <p ng-show="description">{{description}}</p>
         </div>
         <!--<span class="info" data-bind="invisible: description">Нет короткого определения</span>-->
-        <blockquote ng-repeat="quote in quotes">
-            <div ng-bind-html="quote.quote"></div>
-            <cite>&mdash; <entity ng-model="quote"/></cite>
+        <blockquote ng-repeat="quote in quotes" ng-mouseover="quote.showControlls = true"
+                    ng-mouseleave="quote.showControlls = false">
+            <div ng-bind-html="quote.full ? quote.full : quote.quote"></div>
+            <cite>&mdash; <span><entity ng-model="quote"/></span>
+                <span ng-show="quote.showControlls">
+                    <button ng-hide="quote.full" class="btn btn-default btn-icon" ng-click="expand(quote)"
+                            title="Показать весь пункт">
+                        <i class="icon-maximize"></i>
+                    </button>
+                </span>
+            </cite>
         </blockquote>
         <span ng-show="related.length">Также связан с</span>
-        <entity ng-model="link" ng-repeat="link in related" class="related-btn btn btn-default"/>
+        <entity ng-model="link" ng-repeat="link in related" class="related-btn btn btn-link"/>
     </div>
-    <span ng-hide="termFound" class="header">Термин не найден, воспользуйтесь пожалуйста поиском</span>
-    <a ng-hide="foundQuotes" class="btn btn-default" ng-click="search()">Поиск по содержимому...</a>
+    <a ng-hide="foundQuotes || loadingContents || loadingTerms" class="search btn btn-primary" ng-click="search()">
+        <i class="icon-search"></i> Искать упоминания в томах
+    </a>
     <div id="search">
         <div class="block loading" ng-show="loadingTerms">Загрузка терминов...</div>
-        <div ng-show="exactMatchTerm" class="exact-match">
-            Найден термин <button class="btn btn-primary" ng-click="navigateToExactTerm">{{exactMatchTerm.name}}</button>
-        </div>
         <div ng-show="terms.length">
             <h3>В названиях терминов</h3>
-            <button class="btn btn-link" ng-repeat="term in terms"ng-click="navigate">{{term.name}}</button>
+            <button class="btn btn-link" ng-repeat="term in terms" ng-click="navigate(term)">{{term.name}}</button>
         </div>
         <div ng-show="articles.length">
             <h3>Статьи из 9 тома</h3>
-            <button class="btn btn-link" ng-repeat="article in articles" ng-click="navigate">{{article.name}}</button>
+            <button class="btn btn-link" ng-repeat="article in articles" ng-click="navigate(article)">{{article.name}}</button>
         </div>
         <div class="block loading" style="padding: 50px;" ng-show="loadingContents">
-            <img src="images/ajax-loader.gif"/> Поиска по содержимому (может занять около минуты)...
+            <img src="images/ajax-loader.gif"/> Поиск по содержимому (может занять около минуты)...
         </div>
         <div ng-hide="loadingContents">
             <div ng-show="noResult">
-                <strong>Ничего не найдено.</strong> Побробуйте со звёздочкой после корня слова для учёта всех вариантов
-                окончания слова. Например "лийллусцивный" - "лийллусцивн*" (будут учтены "лийллусцивн<u>о</u>", "лийллусцивн<u>ые</u>",
-                "лийллусцивн<u>ость</u>" и т. д.
+                Упоминаний в текстах томов не найденны, подкорректируйте фразу.
             </div>
             <div ng-show="foundQuotes.length">
                 <h3>Цитаты из томов</h3>
@@ -50,15 +71,15 @@
                             ng-mouseleave="quote.showControlls = false">
                     <div ng-bind-html="quote.full ? quote.full : quote.quote"></div>
                     <cite>&mdash; <a ng-click="$state.goToItem(quote.number)">{{quote.number}}</a>
-                    <span ng-show="quote.showControlls">
-                        <button class="btn btn-default" ng-click="rateUp(quote)" title="Полезная цитата">
-                            <i class="icon-thumbs-up"></i>
-                        </button>
-                        <button ng-hide="quote.full" class="btn btn-default" ng-click="expand(quote)"
-                                title="Показать весь пункт">
-                            <i class="icon-expand"></i>
-                        </button>
-                    </span>
+                        <span ng-show="quote.showControlls">
+                            <button ng-show="termFound" class="btn btn-default btn-icon" ng-click="rateUp(quote)" title="Полезная цитата">
+                                <i class="icon-star"></i>
+                            </button>
+                            <button ng-hide="quote.full" class="btn btn-default btn-icon" ng-click="expand(quote)"
+                                    title="Показать весь пункт">
+                                <i class="icon-maximize"></i>
+                            </button>
+                        </span>
                     </cite>
                 </blockquote>
                 <button class="btn btn-success" ng-show="showLoadMore" ng-click="loadNextPage()">
@@ -68,6 +89,9 @@
     </div>
 </div>
 <style type="text/css">
+    .search {
+        margin-top: 20px;
+    }
     h3 {
         margin-bottom: 5px;
     }

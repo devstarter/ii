@@ -38,4 +38,9 @@ public class SearchCacheImpl implements SearchCache{
         if (page == null) throw new IllegalArgumentException();
         cache.put(cacheKey, page);
     }
+
+    @Override
+    public void clean() {
+        cache.clear();
+    }
 }

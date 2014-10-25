@@ -26,7 +26,7 @@ import static java.util.Arrays.asList;
 import static net.sf.cglib.core.CollectionUtils.transform;
 
 @Controller
-@RequestMapping("v2/search")
+@RequestMapping("api/v2/search")
 public class NewSearchController {
     public static final int PAGE_SIZE = 20;
     @Inject
@@ -83,7 +83,6 @@ public class NewSearchController {
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
-
             if (foundItems.size() < PAGE_SIZE) {
                 // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
                 List<Term> aliases = getAllAliases(term);
@@ -99,6 +98,7 @@ public class NewSearchController {
             // 4. Поиск фразы (не термин)
             searchQueries = asList(query);
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
+            searchQueries = asList(query.replace("%", ""));
         }
 
         if (foundItems.size() > PAGE_SIZE ) {
@@ -148,5 +148,10 @@ public class NewSearchController {
     private String prepareQuery(String query) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         return query != null ? query.toLowerCase().trim() : null;
+    }
+
+    @RequestMapping("clean")
+    public void cleanCache() {
+        cache.clean();
     }
 }

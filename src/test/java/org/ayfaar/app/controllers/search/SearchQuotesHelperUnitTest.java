@@ -40,7 +40,6 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     }
 
     @Test
-    // не понял что ты тут проверяешь... content и expectedQuote ведь одинаковые
     public void testCreatePartQuoteIfLeftPartContainsBracket() {
         String content = "Всю. Информацию, копируемую.) с ЛЛААСС-Форм, ГЛООГОЛМ-ГЛЛИИ-Творцы (специфически?) перекодируют и адаптируют в виде двух эфирных Потоков, один из которых " +
                 "содержит только «проекции» первичных кодировок данного Вселенского Творения, и наполняют Их <strong>";
@@ -52,7 +51,6 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     }
 
     @Test
-    // тоже самое
     public void testCreatePartQuoteIfRightPartContainsBracket() {
         String content = "<strong>Содержанием</strong> все Формо-структуры (Стабилизационного?) План-Обертона (которые никогда не изменяются, служа для Формо-Творцов как бы своеобразными " +
                 "Эталонами Творения!), в то время.) как НИИССЛИИ-И-Творцы Трансмутационного План-Обертона – через Формо-структуры Ментального, Астрального и Каузального " +
@@ -184,5 +182,60 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
         List<Quote> actual = handleItems.createQuotes(asList(item), asList("РА"));
 
         assertEquals(expectedQuote, actual.get(0).getQuote());
+    }
+
+    @Test
+    public void spacer() throws IOException {
+        Item item = new Item("1.0744", getFile("item-1.0744.txt"));
+        final String actual = handleItems.createQuotes(asList(item), asList("ра", "резонационной Активностью")).get(0).getQuote();
+
+        String expected = "В результате осуществления такой взаимосвязи образовалось некое парное сочетание " +
+                "очень схожей между собой Информации; условно назовём это " +
+                "состояние «<strong>резонационной Активностью</strong>» (<strong>РА</strong>).";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test() throws IOException {
+        Item item = new Item("1.0463", getFile("item-1.0463.txt"));
+        String expectedQuote = "Другими словами, <strong>декогерентность</strong> означает, что в каждый конкретный" +
+                " миг вы способны сделать лишь тот – единственный! – выбор, который уже «изначально» определён теми" +
+                " узкоспецифическими взаимосвязями, которые в этот момент структурируют фокусируемую вами" +
+                " НУУ-ВВУ-Конфигурацию.";
+
+        List<Quote> actual = handleItems.createQuotes(asList(item), asList("декогерентность"));
+        assertEquals(expectedQuote, actual.get(0).getQuote());
+    }
+
+    @Test
+    public void testGetPartRightWhenHyphen() {
+        String content = "<strong>Содержанием</strong> все Формо-структуры " +
+                "Стабилизационного План-Обертона! - (которые никогда не изменяются, служа для Формо-Творцов как бы " +
+                "своеобразными Эталонами Творения!), в то время как НИИССЛИИ-И-Творцы Трансмутационного План-Обертона " +
+                "– через Формо-структуры Ментального, Астрального и Каузального План-Обертонов - дублируют и " +
+                "свилгс-сферационно трансгрессируют все эти «проекции» «низших» Уровней (с ±14,0-±13,0 мерности) " +
+                "Вторичной Иллюзии в Фокусную Динамику синтезирующих Формо-Творцов Третичной Иллюзии.";
+        String expectedQuote = "<strong>Содержанием</strong> все Формо-структуры " +
+                "Стабилизационного План-Обертона! - (которые никогда не изменяются, служа для Формо-Творцов как бы " +
+                "своеобразными Эталонами Творения!), в то время как НИИССЛИИ-И-Творцы Трансмутационного План-Обертона " +
+                "– через Формо-структуры Ментального, Астрального и Каузального План-Обертонов - дублируют и " +
+                "свилгс-сферационно трансгрессируют все эти «проекции» «низших» Уровней (с ±14,0-±13,0 мерности) " +
+                "Вторичной Иллюзии в Фокусную Динамику синтезирующих Формо-Творцов Третичной Иллюзии.";
+
+        String actualQuote = handleItems.getPartQuote(content, "(<strong>)([^\\.\\?!]*)([\\.\\?!]*)", "", "right");
+        assertEquals(expectedQuote, actualQuote);
+    }
+
+    @Test
+    public void testGetPartLeftWhenHyphen() {
+        String content = "который уже «изначально» определён. Другими словами, означает, что в каждый. - конкретный" +
+                " миг вы способны?) сделать лишь тот – единственный! - выбор, который уже «изначально» определён" +
+                " теми узкоспецифическими взаимосвязями, <strong>";
+        String expectedQuote = " Другими словами, означает, что в каждый. - конкретный миг вы " +
+                "способны?) сделать лишь тот – единственный! - выбор, который уже «изначально» определён теми" +
+                " узкоспецифическими взаимосвязями, <strong>";
+
+        String actualQuote = handleItems.getPartQuote(content, "([\\.\\?!]*)([^\\.\\?!]*)(<strong>)", "", "left");
+        assertEquals(expectedQuote, actualQuote);
     }
 }

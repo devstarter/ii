@@ -15,7 +15,7 @@ import java.util.List;
 import static org.springframework.util.Assert.notNull;
 
 @Controller
-@RequestMapping("article")
+@RequestMapping("api/article")
 public class ArticleController {
 
     @Autowired ArticleDao articleDao;

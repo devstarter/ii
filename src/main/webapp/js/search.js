@@ -15,8 +15,7 @@
             }
             viewModel = kendo.observable({
                 terms: [],
-                articles: [],
-                quotes: [],
+                contents: [],
                 query: query,
                 loadNextPageLabel: "Искать далее...",
                 search: function(e) {
@@ -69,31 +68,30 @@
         }, function(r) {
             viewModel.set("loadingTerms", false);
             viewModel.set("terms", r.terms);
-            viewModel.set("articles", r.articles);
             viewModel.set("exactMatchTerm", r.exactMatchTerm);
             searchInContent();
         });
         viewModel.set("loadingTerms", true);
     };
     function searchInContent() {
-        $.get(ii.apiUrl + "v2/search", {
+        $.get(searchApiUrl+"content", {
             query: viewModel.query,
-            pageNumber: pageCounter
+            page: pageCounter
         }, function(r) {
             pageCounter++;
             viewModel.set("loadingContents", false);
-            viewModel.set("quotes", viewModel.quotes.toJSON().concat(r.quotes));
-            if (viewModel.quotes.length == 0) {
+            viewModel.set("contents", viewModel.contents.toJSON().concat(r));
+            if (viewModel.contents.length == 0) {
                 // no result
-                viewModel.set("noResult", viewModel.quotes.length == 0);
+                viewModel.set("noResult", viewModel.contents.length == 0);
                 if (ga) ga('send', 'event', 'not-found', viewModel.query);
             }
-            viewModel.set("showLoadMore", r.hasMore);
+            viewModel.set("showLoadMore", r.length > 0);
             if (!r.length) {
                 pageCounter = 0;
             }
         });
-        if (viewModel.quotes.length == 0) {
+        if (viewModel.contents.length == 0) {
             viewModel.set("loadingContents", true);
         }
     }

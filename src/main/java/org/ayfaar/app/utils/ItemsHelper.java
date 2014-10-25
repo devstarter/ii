@@ -1,6 +1,9 @@
 package org.ayfaar.app.utils;
 
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Очистка пунктов от сносок, названий Глав и Разделов
  *
@@ -9,17 +12,18 @@ package org.ayfaar.app.utils;
 public class ItemsHelper {
 
     public static final String QUESTION = "ВОПРОС.";
+    public static final String punctuation = "[ \\.\\,!\\?\\):;'\"»%-]";
 
     public static String clean(String value) {
-        String newContext = "";
-
         if(value == null) {
             return null;
         }
 
-        newContext = cleanChapter(value);
-        newContext = cleanSection(newContext);
-        return newContext;
+        value = cleanChapter(value);
+        value = cleanSection(value);
+        value = cleanFootnote(value);
+        value = cleanFootnoteStar(value);
+        return value;
     }
 
     private static String cleanChapter(String value) {
@@ -112,5 +116,57 @@ public class ItemsHelper {
         }
 
         return question + "\r\n" + text;
+    }
+
+    /**
+     * Удаляет из текста все сноски †, ‡ и §
+     */
+    public static String cleanFootnote(String content) {
+        if(content == null) {
+            return null;
+        }
+
+        String regexp = ".†+|.‡+|.§+";
+        String separator = "†|‡|§";
+
+        return findFootnote(content, regexp, separator);
+    }
+
+    /**
+     * Удаляет из текста все сноски со звёздочками но оставляет перечисления
+     */
+    public static String cleanFootnoteStar(String content) {
+        if(content == null) {
+            return null;
+        }
+        String regexp = "([^\\d^\\n][\\*]+" + punctuation + ")|([^\\d^\\n][\\*]{2,}.)";
+        String separator = "\\*";
+
+        return findFootnote(content, regexp, separator);
+    }
+
+    private static String findFootnote(String content, String regexp, String separator) {
+        Pattern pattern = Pattern.compile(regexp);
+        Matcher matcher = pattern.matcher(content);
+
+        while(matcher.find()) {
+            String phrase = matcher.group();
+            content = replace(content, phrase, regexp, separator);
+        }
+        return content;
+    }
+
+    private static String replace(String content, String phrase, String regexp, String separator) {
+        String[] letters = phrase.split(separator);
+        String replacing = letters[0].equals(" ") ? "" : letters[0];
+
+        if(letters.length > 1) {
+            Pattern pattern = Pattern.compile(punctuation);
+            Matcher matcher = pattern.matcher(letters[letters.length - 1]);
+            String lastLetter = matcher.find() ? "" : " ";
+            replacing += letters[letters.length - 1].equals(" ") ? " " : lastLetter + letters[letters.length - 1];
+        }
+
+        return content.replaceFirst(regexp, replacing);
     }
 }

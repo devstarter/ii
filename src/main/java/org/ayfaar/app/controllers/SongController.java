@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 
 @Controller
-@RequestMapping("song")
+@RequestMapping("api/song")
 public class SongController {
     @Autowired SongDao songDao;
 
