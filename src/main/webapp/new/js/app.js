@@ -25,7 +25,7 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 templateUrl: "partials/term.html",
                 controller: TermController
             })
-            .state('cat', {
+            .state('category', {
                 url: "/cat/:name",
                 templateUrl: "partials/category.html",
                 controller: CategoryController
@@ -288,16 +288,31 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             }
         };
     })
-    .directive("unsecureBind", function($compile) {
+    .directive("iiBind", function($compile) {
         // inspired by http://stackoverflow.com/a/25516311/975169
         return {
             link: function(scope, element, attrs) {
-                scope.$watch(attrs.unsecureBind, function(newval) {
+                scope.$watch(attrs.iiBind, function(newval) {
+                    newval = newval.replace(new RegExp("\\(([^\\)]+)\\)","gm"), "<bracket>$1</bracket>");
                     element.html(newval);
                     $compile(element.contents())(scope);
                 });
             }
         };
+    })
+    .directive("bracket", function($compile) {
+        return {
+            restrict: 'E',
+            scope: {},
+            compile: function (element, attr, linker) {
+                return function ($scope, $element, $attr) {
+                    var span = "<span class='bracket' ng-click='collapse = !collapse'><span ng-click='collapse = !collapse' ng-class='{highlite: h}' ng-mouseover='h = true' ng-mouseleave='h = false'>";
+                    var html = span+"(</span>{{collapse ? '...' : '"+$element.html()+"'}}"+span+")</span></span>";
+                    $element.html("");
+                    $element.append($compile(html)($scope));
+                }
+            }
+        }
     })
     .run(function($state, entityService){
         var originStateGo = $state.go;
