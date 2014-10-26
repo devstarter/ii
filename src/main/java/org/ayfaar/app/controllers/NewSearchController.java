@@ -5,6 +5,9 @@ import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchCache;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
+import org.ayfaar.app.controllers.search.cache.DBCache;
+import org.ayfaar.app.controllers.search.cache.DBCacheImpl;
+import org.ayfaar.app.controllers.search.cache.JsonEntity;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.dao.TermMorphDao;
@@ -13,6 +16,7 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.utils.AliasesMap;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,12 +51,16 @@ public class NewSearchController {
     @Inject
     protected SearchCache cache;
 
+    @Inject
+    protected DBCache dbCache;
+
 
     /**
      * Поиск будет производить только по содержимому Item
      *
      * @param pageNumber номер страницы
      */
+    @Cacheable("searchResult.json")
     @RequestMapping
     @ResponseBody
     public SearchResultPage search(@RequestParam String query,
@@ -112,6 +120,11 @@ public class NewSearchController {
 
         // 6. Сохранение в кеше
         cache.put(cacheKey, page);
+
+        String json = ""/*получить json*/;
+        JsonEntity jsonEntity = new JsonEntity(query, term.getUri(), json);
+        dbCache.save(jsonEntity);
+
         // 7. Вернуть результат
         return page;
     }
