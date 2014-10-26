@@ -15,7 +15,7 @@ import static org.ayfaar.app.utils.UriGenerator.generate;
 import static org.springframework.util.Assert.notNull;
 
 @Controller
-@RequestMapping("v2/item")
+@RequestMapping("api/v2/item")
 public class NewItemController {
 
     @Inject ItemDao itemDao;
