@@ -28,9 +28,11 @@ public class ContentsHelper {
         if (category == null) {
             throw new RuntimeException("Category not found");
         }
-        return new CategoryPresentation(extractCategoryName(category.getName()),
-                category.getUri(), category.getDescription(), createParentPresentation(getParents(category)),
-                createChildrenPresentation(getChildren(category), 0));
+        Category previous = categoryDao.get("next", "категория:" + categoryName);
+
+        return new CategoryPresentation(extractCategoryName(category.getName()), category.getUri(),
+                category.getDescription(), previous.getName(), extractNextCategoryName(category.getNext()),
+                createParentPresentation(getParents(category)), createChildrenPresentation(getChildren(category), 0));
     }
 
     private List<CategoryPresentation> createChildrenPresentation(List<Category> categories, int count) {
@@ -112,6 +114,11 @@ public class ContentsHelper {
 
     String extractCategoryName(String categoryName) {
         String[] names = categoryName.split("/");
+        return names[names.length-1].trim();
+    }
+
+    String extractNextCategoryName(String categoryName) {
+        String[] names = categoryName.split(":");
         return names[names.length-1].trim();
     }
 

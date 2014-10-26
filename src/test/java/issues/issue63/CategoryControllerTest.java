@@ -85,4 +85,11 @@ public class CategoryControllerTest extends IntegrationTest {
         assertNull(parents.get(0).getChildren());
         assertNull(chapterChildren.get(0).getParents());
     }
+
+    @Test
+    public void testNextAndPreviousCategory() {
+        CategoryPresentation rootCategory = contentsHelper.createContents("БДК / Раздел III / Глава 7");
+        assertEquals("БДК / Раздел III / Глава 6", rootCategory.getPrevious());
+        assertEquals("БДК / Раздел IV / Глава 1", rootCategory.getNext());
+    }
 }

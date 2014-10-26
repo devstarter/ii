@@ -45,6 +45,14 @@ public class ContentsHelperTest extends IntegrationTest {
     }
 
     @Test
+    public void testExtractNextCategoryName() {
+        String actualChapter = contentsHelper.extractNextCategoryName("категория:БДК / Раздел VI / Глава 1");
+        String actualItem = contentsHelper.extractNextCategoryName("категория:Параграф 10.1.3.5");
+        assertEquals("БДК / Раздел VI / Глава 1", actualChapter);
+        assertEquals("Параграф 10.1.3.5", actualItem);
+    }
+
+    @Test
     public void testGetParents() {
         Category category = categoryDao.get("name", "Параграф 10.1.1.6");
         List<Category> parents = contentsHelper.getParents(category);
