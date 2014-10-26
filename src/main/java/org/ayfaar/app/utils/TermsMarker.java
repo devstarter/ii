@@ -50,10 +50,12 @@ public class TermsMarker {
                     String charBefore = contentMatcher.group(2) != null ? contentMatcher.group(2) : "";
                     String charAfter = contentMatcher.group(5) != null ? contentMatcher.group(5) : "";
                     // формируем маску для тегирования, title="%s" это дополнительное требования, не описывал ещё в задаче
-                    String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
+                    //String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
+                    //пока забыли о  title="...."
+                    String replacer = format("%s<term id=\"%s\">%s</term>%s",
                             charBefore,
                             entry.getValue().getName(),
-                            entry.getValue().getShortDescription(),
+                   //         entry.getValue().getShortDescription(),
                             foundWord,
                             charAfter
                     );
@@ -62,7 +64,7 @@ public class TermsMarker {
                 }
             }
         }
-
-        throw new NotImplementedException();
+        return result;
+       // throw new NotImplementedException();
     }
 }
