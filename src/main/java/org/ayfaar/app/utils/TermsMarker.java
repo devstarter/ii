@@ -1,6 +1,5 @@
 package org.ayfaar.app.utils;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.model.Term;
 import org.springframework.stereotype.Component;
 
@@ -52,10 +51,11 @@ public class TermsMarker {
                     // формируем маску для тегирования, title="%s" это дополнительное требования, не описывал ещё в задаче
                     //String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
                     //пока забыли о  title="...."
-                    String replacer = format("%s<term id=\"%s\">%s</term>%s",
+                    final String description = entry.getValue().getShortDescription();
+                    String replacer = format("%s<term id=\"%s\"%s>%s</term>%s",
                             charBefore,
                             entry.getValue().getName(),
-                   //         entry.getValue().getShortDescription(),
+                            description != null && !description.isEmpty() ? " hasDescription=\"true\"" : "",
                             foundWord,
                             charAfter
                     );
