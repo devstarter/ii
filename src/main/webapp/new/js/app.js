@@ -1,7 +1,7 @@
 //var originEncodeURIComponent = window.encodeURIComponent;
 angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     .config(function($locationProvider, $urlRouterProvider, $stateProvider) {
-        $locationProvider.html5Mode(true).hashPrefix('!');
+        //$locationProvider.html5Mode(true).hashPrefix('!');
         $urlRouterProvider.otherwise("home");
         //
 //        // Now set up the states
@@ -45,8 +45,8 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         }
     })
     .factory("$api", function($rootScope, $state, $http, errorService, $q){
-        var apiUrl = "/api/";
-//        var apiUrl = "http://localhost:8081/api/";
+        //var apiUrl = "/api/";
+        var apiUrl = "https://ii.ayfaar.org/api/";
         var api = {
             post: function(url, data) {
                 var deferred = $q.defer();
@@ -306,8 +306,15 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             scope: {},
             compile: function (element, attr, linker) {
                 return function ($scope, $element, $attr) {
-                    var span = "<span class='bracket' ng-click='collapse = !collapse'><span ng-click='collapse = !collapse' ng-class='{highlite: h}' ng-mouseover='h = true' ng-mouseleave='h = false'>";
-                    var html = span+"(</span>{{collapse ? '...' : '"+$element.html()+"'}}"+span+")</span></span>";
+                    var bracketSpan = "<span ng-class='{highlite: h}' ng-mouseover='h = true' ng-mouseleave='h = false'>";
+                    // предотвращение глюка вставки HTML
+                    //var html = $element.html().replace("<strong>", "").replace("</strong>", "");
+                    var html = "<span class='bracket' ng-click='collapse = !collapse'>"
+                        +bracketSpan+"(</span>"
+                        +"<span ng-show='collapse'>...</span>"
+                        +"<span ng-hide='collapse'>"+$element.html()+"</span>"
+                        +bracketSpan+")</span>"
+                    +"</span>";
                     $element.html("");
                     $element.append($compile(html)($scope));
                 }
