@@ -5,6 +5,7 @@ import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +30,10 @@ public class ContentsHelper {
             throw new RuntimeException("Category not found");
         }
         Category previous = categoryDao.get("next", "категория:" + categoryName);
-
+        String nextCategory = UriGenerator.getValueFromUri(Category.class, category.getNext().getUri());
+        //System.out.println("uri " + uri);
         return new CategoryPresentation(extractCategoryName(category.getName()), category.getUri(),
-                category.getDescription(), previous.getName(), extractNextCategoryName(category.getNext()),
+                category.getDescription(), previous.getName(), nextCategory,
                 createParentPresentation(getParents(category)), createChildrenPresentation(getChildren(category), 0));
     }
 
@@ -114,11 +116,6 @@ public class ContentsHelper {
 
     String extractCategoryName(String categoryName) {
         String[] names = categoryName.split("/");
-        return names[names.length-1].trim();
-    }
-
-    String extractNextCategoryName(String categoryName) {
-        String[] names = categoryName.split(":");
         return names[names.length-1].trim();
     }
 
