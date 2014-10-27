@@ -1,11 +1,13 @@
 package org.ayfaar.app.utils;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ayfaar.app.model.Term;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,8 +33,17 @@ public class TermsMarker {
     public String mark(String content) {
         // копируем исходный текст, в этой копии мы будем производить тегирование слов
         String result = content;
+        //перед обходом отсортируем по длине термина
+        SortedSet<Map.Entry<String, Term>> sortedTerm =  new TreeSet<Map.Entry<String, Term>>(new Comparator<Map.Entry<String, Term>>() {
+            @Override
+            public int compare(Map.Entry<String, Term> o1, Map.Entry<String, Term> o2) {
+                int r = Integer.compare(o2.getValue().getName().length(),o1.getValue().getName().length());
+                return r==0?1:r;
+            }
+        });
+        sortedTerm.addAll(termsMap.getAll());
 
-        for (Map.Entry<String, Term> entry : termsMap.getAll()) {
+        for (Map.Entry<String, Term> entry : sortedTerm) {
             // получаем слово связаное с термином, напрмер "времени" будет связано с термином "Время"
             String word = entry.getKey();
             // составляем условие по которому проверяем есть ли это слов в тексте
@@ -43,6 +54,7 @@ public class TermsMarker {
             if (contentMatcher.find()) {
                 // ищем в результирующем тексте
                 Matcher matcher = pattern.matcher(result);
+
                 if (matcher.find()) {
                     // сохраняем найденое слово из текста так как оно может быть в разных регистрах,
                     // например с большой буквы, или полностью большими буквами
@@ -61,6 +73,8 @@ public class TermsMarker {
                     );
                     // заменяем найденое слово тегированным вариантом
                     result = matcher.replaceAll(replacer);
+                    // убираем обработанный термин, чтобы не заменить его более мелким
+                    content = contentMatcher.replaceAll(" ");
                 }
             }
         }
