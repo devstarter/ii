@@ -2,25 +2,20 @@ package org.ayfaar.app.controllers.search.cache;
 
 
 import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springframework.cache.support.AbstractCacheManager;
 
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Arrays.asList;
 
 
-public class DBCacheManager implements CacheManager {
-    private Collection<DBCache> caches;
-
-    @Override
-    public Cache getCache(String name) {
-        return null;
-    }
+public class DBCacheManager extends AbstractCacheManager {
+    public static final String SEARCH_CACHE_NAME = "searchResult.json";
 
     @Override
-    public Collection<String> getCacheNames() {
-        return null;
+    protected Collection<? extends Cache> loadCaches() {
+        return asList(new DbCache(SEARCH_CACHE_NAME, new ConcurrentHashMap<Object, Object>(), false));
     }
 
-    public void setCaches(Collection<DBCache> caches) {
-        this.caches = caches;
-    }
 }

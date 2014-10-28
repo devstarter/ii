@@ -17,7 +17,7 @@
     <context:component-scan base-package="org.ayfaar.app.spring.converter"/>
 
     <mvc:annotation-driven />
-    <cache:annotation-driven />
+    <cache:annotation-driven cache-manager="cacheManager" />
 
     <mvc:interceptors>
         <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
@@ -111,11 +111,5 @@
             </set>
         </property>
     </bean>-->
-    <bean id="cacheManager" class="org.ayfaar.app.controllers.search.cache.DBCacheManager" >
-        <property name="caches" >
-            <set>
-                <bean name="cache" class="org.ayfaar.app.controllers.search.cache.DBCacheImpl" />
-            </set>
-        </property>
-    </bean>
+    <bean id="cacheManager" class="org.ayfaar.app.controllers.search.cache.DBCacheManager" />
 </beans>
