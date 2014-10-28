@@ -30,10 +30,13 @@ public class ContentsHelper {
             throw new RuntimeException("Category not found");
         }
         Category previous = categoryDao.get("next", UriGenerator.generate(Category.class, categoryName));
-        String nextCategory = UriGenerator.getValueFromUri(Category.class, category.getNext());
+
+        String previousCategory = previous != null ? previous.getName() : null;
+        String nextCategory = category.getNext() != null ?
+                UriGenerator.getValueFromUri(Category.class, category.getNext()) : null;
 
         return new CategoryPresentation(extractCategoryName(category.getName()), category.getUri(),
-                category.getDescription(), previous.getName(), nextCategory,
+                category.getDescription(), previousCategory, nextCategory,
                 createParentPresentation(getParents(category)), createChildrenPresentation(getChildren(category), 0));
     }
 
