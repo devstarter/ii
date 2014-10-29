@@ -327,7 +327,26 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             }
         }
     })
-    .run(function($state, entityService){
+    .value("selectedContext", {text: "test"})
+    .controller("HeaderController", function($scope) {
+        var body = angular.element(document).find('body');
+
+        body.bind('mouseup', function(e) {
+            var text = getSelectedText();
+            $scope.text = text;
+            $scope.$apply();
+        });
+
+        function getSelectedText() {
+            if (window.getSelection) {
+                return window.getSelection().toString();
+            } else if (document.selection) {
+                return document.selection.createRange().text;
+            }
+            return null;
+        }
+    })
+    .run(function($state, entityService, selectedContext){
         var originStateGo = $state.go;
         $state.go = function(to, params, options) {
             if (to.hasOwnProperty('uri') || angular.isString(to)) {
@@ -349,7 +368,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         };
         $state.goToTerm = function(name) {
             originStateGo.bind($state)("term", {name: name})
-        }
+        };
     });
 
 Array.prototype.append = function(array){

@@ -30,7 +30,9 @@
 </head>
 
 <body ng-app="app">
-
+<header ng-show="text" class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController">
+<span class="navbar-brand">{{text}}</span>
+</header>
 <div ui-view></div>
 
 </body>
