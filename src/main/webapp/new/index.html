@@ -14,7 +14,8 @@
     <script src="lib/angular/angular.min.js"></script>
     <script src="lib/angular/angular-sanitize.min.js"></script>
     <script src="lib/angular-ui-router.min.js"></script>
-    <script src="lib/ui-bootstrap/ui-bootstrap-typeahead-0.10.0.js"></script>
+    <script src="lib/ui-bootstrap/ui-bootstrap-0.11.2.min.js"></script>
+    <!--<script src="lib/ui-bootstrap/ui-bootstrap-custom-tpls-0.10.0.min.js"></script>-->
     <!--<script src="js/live-search.js"></script>-->
     <!--<script src="lib/angular/angular-route.js"></script>-->
     <!--<script src="lib/ui-bootstrap-tpls-0.11.0.js"></script>-->
@@ -31,7 +32,28 @@
 
 <body ng-app="app">
 <header ng-show="text" class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController">
-<span class="navbar-brand">{{text}}</span>
+        <span tooltip="{{text}}" title="{{text}}" class="navbar-brand trim-info">{{text}}</span>
+        <div class="input-group" style="padding: 10px;">
+            <input ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
+                   ii-lookup
+                   typeahead="suggestion for suggestion in $getSuggestions($viewValue)">
+                <span class="input-group-btn" dropdown>
+                  <!--<button class="btn btn-primary" ng-click="search(query)">Искать</button>-->
+                        <button type="button" class="btn btn-primary">Action {{state}}</button>
+                        <button type="button" class="btn btn-primary dropdown-toggle">
+                            <span class="caret"></span>
+                            <span class="sr-only">Split button!</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Цитировать</a></li>
+                            <li class="divider"></li>
+                            <li><a ng-click="alert(1)">Связать с термином</a></li>
+                            <li><a href="#">Синоним</a></li>
+                            <li><a href="#">Другой падеж</a></li>
+                            <li><a href="#">Другая форма</a></li>
+                        </ul>
+                </span>
+        </div>
 </header>
 <div ui-view></div>
 

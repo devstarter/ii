@@ -327,14 +327,19 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             }
         }
     })
-    .value("selectedContext", {text: "test"})
-    .controller("HeaderController", function($scope) {
-        var body = angular.element(document).find('body');
+    .controller("HeaderController", function($scope, $state, $stateParams) {
+        var body = angular.element(document);//.find('body');
 
+        $scope.alert = function(e) {
+            alert(e);
+        };
         body.bind('mouseup', function(e) {
             var text = getSelectedText();
-            $scope.text = text;
-            $scope.$apply();
+            if (text) {
+                $scope.state = $state.current.name+$stateParams.number;
+                $scope.text = text;
+                $scope.$apply();
+            }
         });
 
         function getSelectedText() {
@@ -346,7 +351,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             return null;
         }
     })
-    .run(function($state, entityService, selectedContext){
+    .run(function($state, entityService){
         var originStateGo = $state.go;
         $state.go = function(to, params, options) {
             if (to.hasOwnProperty('uri') || angular.isString(to)) {
@@ -368,6 +373,25 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         };
         $state.goToTerm = function(name) {
             originStateGo.bind($state)("term", {name: name})
+        };
+    })
+    .filter('cut', function () {
+        return function (value, wordwise, max, tail) {
+            if (!value) return '';
+
+            max = parseInt(max, 10);
+            if (!max) return value;
+            if (value.length <= max) return value;
+
+            value = value.substr(0, max);
+            if (wordwise) {
+                var lastspace = value.lastIndexOf(' ');
+                if (lastspace != -1) {
+                    value = value.substr(0, lastspace);
+                }
+            }
+
+            return value + (tail || ' …');
         };
     });
 
