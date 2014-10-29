@@ -244,7 +244,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                     return $api.get("suggestions/"+query)
                 };
                 originalScope.$suggestionSelected = function(suggestion) {
-                    $state.go("term", {name: suggestion});
+                    $state.goToTerm(suggestion);
                 };
             }
         };
