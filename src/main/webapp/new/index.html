@@ -11,7 +11,7 @@
     <link href="css/style.css" type="text/css" rel="stylesheet">
     <link href="css/icons/style.css" rel="stylesheet" type="text/css" />
 
-    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular/angular.min.js"></script>
     <script src="lib/angular/angular-sanitize.min.js"></script>
     <script src="lib/angular-ui-router.min.js"></script>
     <script src="lib/ui-bootstrap/ui-bootstrap-typeahead-0.10.0.js"></script>
@@ -24,6 +24,9 @@
     <script src="js/controllers/term.js"></script>
     <script src="js/controllers/category.js"></script>
     <script src="js/app.js"></script>
+    <script>
+        app.constant('config', {useHtml5Mode: true, apiUrl: "/api/"});
+    </script>
 </head>
 
 <body ng-app="app">

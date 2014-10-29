@@ -3,15 +3,18 @@ package org.ayfaar.app.controllers.search.cache;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ayfaar.app.model.UID;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Data
 @NoArgsConstructor
-@Entity
+//@Entity
 public class JsonEntity {
+    @Column
+    @Id
+    // это ключ по которому запрашивает кеш org.ayfaar.app.controllers.search.cache.DbCache.get()
+    private Integer key;
     @Column
     private String name;
     @Column

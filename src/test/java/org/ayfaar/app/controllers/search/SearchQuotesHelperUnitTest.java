@@ -238,4 +238,28 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
         String actualQuote = handleItems.getPartQuote(content, "([\\.\\?!]*)([^\\.\\?!]*)(<strong>)", "", "left");
         assertEquals(expectedQuote, actualQuote);
     }
+
+    @Test
+    public void testCreateQuoteForImageFootnote() throws IOException {
+        Item item_1_0082 = new Item("1.0082", getFile("item-1.0082.txt"));
+        Item item_1_0098 = new Item("1.0098", getFile("item-1.0098.txt"));
+        Item item_2_0258 = new Item("2.0258", getFile("item-2.0258.txt"));
+        Item item_2_0888 = new Item("2.0888", getFile("item-2.0888.txt"));
+        Item item_2_1094 = new Item("2.1094", getFile("item-2.1094.txt"));
+
+        String expectedQuote_item_1_0082 = getFile("expected_item-1.0082.txt");
+        String expectedQuote_item_1_0098 = getFile("expected_item-1.0098.txt");
+        String expectedQuote_item_2_0258 = getFile("expected_item-2.0258.txt");
+        String expectedQuote_item_2_0888 = getFile("expected_item-2.0888.txt");
+        String expectedQuote_item_2_1094 = getFile("expected_item-2.1094.txt");
+
+        List<Quote> actual = handleItems.createQuotes(
+                asList(item_1_0082, item_1_0098, item_2_0258, item_2_0888, item_2_1094), asList("рис."));
+
+        assertEquals(expectedQuote_item_1_0082, actual.get(0).getQuote());
+        assertEquals(expectedQuote_item_1_0098, actual.get(1).getQuote());
+        assertEquals(expectedQuote_item_2_0258, actual.get(2).getQuote());
+        assertEquals(expectedQuote_item_2_0888, actual.get(3).getQuote());
+        assertEquals(expectedQuote_item_2_1094, actual.get(4).getQuote());
+    }
 }

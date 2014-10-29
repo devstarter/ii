@@ -60,7 +60,7 @@ public class NewSearchControllerUnitTest {
         when(searchDao.findInItems(morphs, 0, PAGE_SIZE+1, null)).thenReturn(items);
         when(items.size()).thenReturn(21);
 
-        SearchResultPage page = controller.search(q, 0, null);
+        SearchResultPage page = (SearchResultPage) controller.search(q, 0, null);
         assertTrue(page.isHasMore());
         verify(searchDao, only()).findInItems(anyList(), anyInt(), anyInt(), anyString());
         verify(items).remove(20);
