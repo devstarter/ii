@@ -1,5 +1,21 @@
+/*поднять шрифт для планшета*/
+@media screen and (max-width: 767px) {
+    body {
+        font-size: 200%;
+        padding: 5px;
+    }
+}
+.highlite {
+    font-weight: bold;
+}
+.bracket {
+    cursor: pointer;
+}
+.bracket:hover {
+    color: rgb(0, 0, 173);
+}
 term {
-    color: rgb(7, 131, 199);
+    color: rgb(3, 86, 151);
     cursor: pointer;
 }
 .btn-icon {

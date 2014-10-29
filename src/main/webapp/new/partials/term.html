@@ -32,7 +32,7 @@
         <!--<span class="info" data-bind="invisible: description">Нет короткого определения</span>-->
         <blockquote ng-repeat="quote in quotes" ng-mouseover="quote.showControlls = true"
                     ng-mouseleave="quote.showControlls = false">
-            <div ng-bind-html="quote.full ? quote.full : quote.quote"></div>
+            <div ii-bind="quote.full ? quote.full : quote.quote"></div>
             <cite>&mdash; <span><entity ng-model="quote"/></span>
                 <span ng-show="quote.showControlls">
                     <button ng-hide="quote.full" class="btn btn-default btn-icon" ng-click="expand(quote)"
@@ -69,7 +69,7 @@
                 <h3>Цитаты из томов</h3>
                 <blockquote ng-repeat="quote in foundQuotes" ng-mouseover="quote.showControlls = true"
                             ng-mouseleave="quote.showControlls = false">
-                    <div ng-bind-html="quote.full ? quote.full : quote.quote"></div>
+                    <div ii-bind="quote.full ? quote.full : quote.quote"></div>
                     <cite>&mdash; <a ng-click="$state.goToItem(quote.number)">{{quote.number}}</a>
                         <span ng-show="quote.showControlls">
                             <button ng-show="termFound" class="btn btn-default btn-icon" ng-click="rateUp(quote)" title="Полезная цитата">

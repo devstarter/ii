@@ -5,24 +5,15 @@
     <h1>Интерактивная Ииссиидиология</h1>
     <div>
         Поиск пунктов, терминов, словосочетаний в материалах:
-        <table class="full-width">
-            <tr>
-                <td class="full-width">
-                    <!--live-search fetch-data="searchCallback"
-                                 fetch-delay="777"
-                                 selected="suggestionSelected"
-                                 ng-model="query"
-                                 class="form-control full-width"></live-search-->
-                    <input type="text" ng-model="query" placeholder="Введите термин или фразу"
-                           ii-lookup
-                           typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
-                           typeahead-on-select="$suggestionSelected($label)" class="form-control"/>
-                </td>
-                <td>
-                    <button class="btn btn-primary" ng-click="search(query)">Искать</button>
-                </td>
-            </tr>
-        </table>
+        <div class="input-group">
+            <input ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
+                   ii-lookup
+                   typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
+                   typeahead-on-select="$suggestionSelected($label)">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" ng-click="search(query)">Искать</button>
+            </span>
+        </div>
     </div>
     <div class="footer">
         <a class="btn" href="https://www.youtube.com/watch?v=6oZJHu1dEnQ" target="_blank">
