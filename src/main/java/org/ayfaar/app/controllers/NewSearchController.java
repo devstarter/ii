@@ -5,7 +5,7 @@ import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchCache;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
-import org.ayfaar.app.controllers.search.cache.DBCacheManager;
+import org.ayfaar.app.controllers.search.cache.DBCache;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.dao.TermMorphDao;
@@ -55,7 +55,7 @@ public class NewSearchController {
      *
      * @param pageNumber номер страницы
      */
-    @Cacheable(DBCacheManager.SEARCH_CACHE_NAME)
+    @Cacheable(DBCache.CACHE_NAME)
     @RequestMapping
     @ResponseBody
     public SearchResultPage search(@RequestParam String query,

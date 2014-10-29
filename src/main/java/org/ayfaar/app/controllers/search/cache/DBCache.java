@@ -1,20 +1,21 @@
 package org.ayfaar.app.controllers.search.cache;
 
+import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ConcurrentMap;
+import javax.inject.Inject;
+import java.io.IOException;
 
-public class DbCache extends ConcurrentMapCache {
-    public DbCache(String name) {
-        super(name);
-    }
+@Component
+public class DBCache extends ConcurrentMapCache {
+    public static final String CACHE_NAME = "searchResult.json";
 
-    public DbCache(String name, boolean allowNullValues) {
-        super(name, allowNullValues);
-    }
+    @Inject CustomObjectMapper objectMapper;
+//    @Inject TermM
 
-    public DbCache(String name, ConcurrentMap<Object, Object> store, boolean allowNullValues) {
-        super(name, store, allowNullValues);
+    public DBCache() {
+        super(CACHE_NAME);
     }
 
     @Override
@@ -26,6 +27,12 @@ public class DbCache extends ConcurrentMapCache {
     @Override
     public void put(Object key, Object value) {
         // todo запись объекта SearchResultPage приобразованого в json в БД
-        super.put(key, value);
+        String json;
+        try {
+            json = objectMapper.writeValueAsString(value);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        super.put(key, json);
     }
 }
