@@ -5,6 +5,7 @@ import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,9 +29,15 @@ public class ContentsHelper {
         if (category == null) {
             throw new RuntimeException("Category not found");
         }
-        return new CategoryPresentation(extractCategoryName(category.getName()),
-                category.getUri(), category.getDescription(), createParentPresentation(getParents(category)),
-                createChildrenPresentation(getChildren(category), 0));
+        Category previous = categoryDao.get("next", UriGenerator.generate(Category.class, categoryName));
+
+        String previousCategory = previous != null ? previous.getName() : null;
+        String nextCategory = category.getNext() != null ?
+                UriGenerator.getValueFromUri(Category.class, category.getNext()) : null;
+
+        return new CategoryPresentation(extractCategoryName(category.getName()), category.getUri(),
+                category.getDescription(), previousCategory, nextCategory,
+                createParentPresentation(getParents(category)), createChildrenPresentation(getChildren(category), 0));
     }
 
     private List<CategoryPresentation> createChildrenPresentation(List<Category> categories, int count) {

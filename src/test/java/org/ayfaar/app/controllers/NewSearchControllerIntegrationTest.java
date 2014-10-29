@@ -2,8 +2,8 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.controllers.search.Quote;
-import org.ayfaar.app.controllers.search.SearchCache;
 import org.ayfaar.app.controllers.search.SearchResultPage;
+import org.ayfaar.app.controllers.search.cache.DBCache;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,12 +19,12 @@ public class NewSearchControllerIntegrationTest extends IntegrationTest {
 
     @Before
     public void setup() {
-        controller.cache = mock(SearchCache.class);
+        controller.cache = mock(DBCache.class);
     }
 
     @Test
     public void testSearch() throws Exception {
-        SearchResultPage page = controller.search("Универсальная мерность", 0, null);
+        SearchResultPage page = (SearchResultPage) controller.search("Универсальная мерность", 0, null);
         assertNotNull(page);
         List<Quote> quotes = page.getQuotes();
 
@@ -35,8 +35,8 @@ public class NewSearchControllerIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void test_ННААССММ() throws Exception {
-        SearchResultPage page = controller.search("ННААССММ", 0, null);
+    public void ННААССММ() throws Exception {
+        SearchResultPage page = (SearchResultPage) controller.search("ННААССММ", 0, null);
         assertNotNull(page);
         List<Quote> quotes = page.getQuotes();
         assertEquals(20, quotes.size());
@@ -44,8 +44,17 @@ public class NewSearchControllerIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void test_cache() throws Exception {
+        SearchResultPage page = (SearchResultPage) controller.search("ВЛОООМООТ", 0, null);
+        String json = (String) controller.search("ВЛОООМООТ", 0, null);
+        assertNotNull(page);
+        assertNotNull(json);
+        // хорошо бы убедится что json соответствет этому page
+    }
+
+    @Test
     public void test_328() throws Exception {
-        SearchResultPage page = controller.search("328", 0, null);
+        SearchResultPage page = (SearchResultPage) controller.search("328", 0, null);
         assertNotNull(page);
         List<Quote> quotes = page.getQuotes();
         assertTrue(quotes.size() > 0);
@@ -53,7 +62,7 @@ public class NewSearchControllerIntegrationTest extends IntegrationTest {
 
     @Test
     public void птиц() {
-        SearchResultPage page = controller.search("птиц", 0, null);
+        SearchResultPage page = (SearchResultPage) controller.search("птиц", 0, null);
         assertNotNull(page);
         List<Quote> quotes = page.getQuotes();
         assertTrue(quotes.size() > 0);

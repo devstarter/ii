@@ -20,11 +20,12 @@ public class SearchQuotesHelper {
     private static final List<String> brackets = Arrays.asList(".)", "!)", "?)", ".»", "!»", "?»");
     private static final List<String> directSpeech = Arrays.asList(". –", "! –", "? –", ". -", "! -", "? -");
     private static final List<Character> openQuoteBracketHyphen = Arrays.asList('«', '(', '-');
+    private static final List<String> punctual = Arrays.asList(".", "?", "!", ":", ";");
 
     public List<Quote> createQuotes(List<Item> foundedItems, List<String> allPossibleSearchQueries) {
         List<Quote> quotes = new ArrayList<Quote>();
         String forLeftPart = "([\\.\\?!]*)([^\\.\\?!]*)(<strong>)";
-        String forRightPart = "(<strong>)([^\\.\\?!]*)([\\.\\?!]*)";
+        String forRightPart = "<strong>[^\\.\\?!]+[\\.\\?!]*</strong>[^\\.\\?!]*[\\.\\?!]*";
         String regexp = join(allPossibleSearchQueries, "|");
 
         for (Item item : foundedItems) {
@@ -34,7 +35,15 @@ public class SearchQuotesHelper {
             Matcher matcher = pattern.matcher(item.getContent());
 
             if (matcher.find()) {
-                content = item.getContent().replaceAll("(?iu)\\b(" + regexp + ")\\b", "<strong>$1</strong>");
+                if(punctual.contains(regexp.substring(regexp.length()-1))) {
+                    String lastCharacter = regexp.substring(regexp.length()-1);
+                    String newRegexp = lastCharacter.equals(".") || lastCharacter.equals("?") ?
+                            regexp.substring(0, regexp.length()-1) + "\\" + lastCharacter : regexp;
+                    content = item.getContent().replaceAll("(?iu)(" + newRegexp + ")", "<strong>$1</strong>");
+                }
+                else {
+                    content = item.getContent().replaceAll("(?iu)\\b(" + regexp + ")\\b", "<strong>$1</strong>");
+                }
             }
 
             String[] phrases = content.split("<strong>");
@@ -45,7 +54,6 @@ public class SearchQuotesHelper {
                 leftPart = leftPart.trim();
             }
             String[] first = leftPart.split(" ");
-
             String rightPart = getPartQuote("<strong>" + phrases[phrases.length-1], forRightPart, "", "right");
             String[] last = rightPart.split(" ");
 
@@ -53,7 +61,6 @@ public class SearchQuotesHelper {
             rightPart = cutSentence(rightPart, 0, MAX_WORDS_ON_BOUNDARIES + 1, "right", last);
 
             String textQuote = createTextQuote(phrases, leftPart, rightPart);
-
             Quote quote = new Quote();
             quote.setNumber(item.getNumber());
             quote.setQuote(textQuote);
@@ -65,7 +72,6 @@ public class SearchQuotesHelper {
     String getPartQuote(String content, String regexp, String text, String flag) {
         Pattern pattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
         Matcher matcher = pattern.matcher(content);
-
         if(matcher.find()) {
             text = matcher.group();
         }

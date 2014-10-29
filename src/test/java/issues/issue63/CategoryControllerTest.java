@@ -20,7 +20,7 @@ public class CategoryControllerTest extends IntegrationTest {
     private ContentsHelper contentsHelper;
 
     @Test
-    public void testGetContentsForTom() {
+    public void testCreateContentsForTom() {
         CategoryPresentation rootCategory = contentsHelper.createContents("Том 10");
         List<CategoryPresentation> sections = rootCategory.getChildren();
         List<CategoryPresentation> chapters = sections.get(3).getChildren();
@@ -37,7 +37,7 @@ public class CategoryControllerTest extends IntegrationTest {
     }
 
     @Test
-    public void testGetContentsForSection() {
+    public void testCreateContentsForSection() {
         CategoryPresentation rootCategory = contentsHelper.createContents("БДК / Раздел III");
         List<CategoryPresentation> chapters = rootCategory.getChildren();
         List<CategoryPresentation> paragraphs = chapters.get(2).getChildren();
@@ -53,7 +53,7 @@ public class CategoryControllerTest extends IntegrationTest {
     }
 
     @Test
-    public void testGetContentsForChapter() {
+    public void testCreateContentsForChapter() {
         String chapterFullName = "БДК / Раздел IV / Глава 3";
         CategoryPresentation rootCategory = contentsHelper.createContents(chapterFullName);
         List<CategoryPresentation> paragraphs = rootCategory.getChildren();
@@ -72,7 +72,7 @@ public class CategoryControllerTest extends IntegrationTest {
     }
 
     @Test
-    public void testGetContentsWithParents() {
+    public void testCreateContentsWithParents() {
         CategoryPresentation rootCategory = contentsHelper.createContents("БДК / Раздел IV / Глава 5");
         List<CategoryPresentation> parents = rootCategory.getParents();
         List<CategoryPresentation> chapterChildren = rootCategory.getChildren();
@@ -84,5 +84,25 @@ public class CategoryControllerTest extends IntegrationTest {
         assertNull(parents.get(0).getParents());
         assertNull(parents.get(0).getChildren());
         assertNull(chapterChildren.get(0).getParents());
+    }
+
+    @Test
+    public void testNextAndPreviousCategory() {
+        CategoryPresentation rootCategory = contentsHelper.createContents("БДК / Раздел III / Глава 7");
+        assertEquals("БДК / Раздел III / Глава 6", rootCategory.getPrevious());
+        assertEquals("БДК / Раздел IV / Глава 1", rootCategory.getNext());
+    }
+
+    @Test
+    public void testCreateContentsWhenNextOrPreviousCategoryIsNull() {
+        CategoryPresentation tom10Content = contentsHelper.createContents("Том 10");
+        CategoryPresentation tom14Content = contentsHelper.createContents("Том 14");
+        CategoryPresentation section = contentsHelper.createContents("БДК / Раздел ХVIII");
+
+        assertNull(tom10Content.getPrevious());
+        assertEquals("Том 14", tom10Content.getNext());
+        assertEquals("Том 10", tom14Content.getPrevious());
+        assertNull(tom14Content.getNext());
+        assertNull(section.getNext());
     }
 }

@@ -13,6 +13,8 @@ public class CategoryPresentation {
     private String name;
     private String uri;
     private String description;
+    private String previous;
+    private String next;
     private List<CategoryPresentation> parents;
     private List<CategoryPresentation> children;
 
@@ -23,9 +25,12 @@ public class CategoryPresentation {
         this.children = children;
     }
 
-    public CategoryPresentation(String name, String uri, String description, List<CategoryPresentation> parents,
-                                                         List<CategoryPresentation> children){
+    public CategoryPresentation(String name, String uri, String description, String previous, String next,
+                                 List<CategoryPresentation> parents, List<CategoryPresentation> children){
+
         this(name, uri, description, children);
+        this.previous = previous;
+        this.next= next;
         this.parents = parents;
     }
 

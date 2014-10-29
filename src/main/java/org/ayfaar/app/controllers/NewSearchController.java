@@ -2,7 +2,6 @@ package org.ayfaar.app.controllers;
 
 import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.controllers.search.Quote;
-import org.ayfaar.app.controllers.search.SearchCache;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.controllers.search.cache.DBCache;
@@ -47,8 +46,7 @@ public class NewSearchController {
     private LinkDao linkDao;
 
     @Inject
-    protected SearchCache cache;
-
+    protected DBCache cache;
 
     /**
      * Поиск будет производить только по содержимому Item
@@ -58,17 +56,13 @@ public class NewSearchController {
     @Cacheable(DBCache.CACHE_NAME)
     @RequestMapping
     @ResponseBody
-    public SearchResultPage search(@RequestParam String query,
+    // возвращаем Object чтобы можно было вернуть закешированный json или SearchResultPage
+    public Object search(@RequestParam String query,
                                    @RequestParam Integer pageNumber,
                                    @RequestParam(required = false) String fromItemNumber) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         query = prepareQuery(query);
 
-        // 2. Проверяем есть ли кеш, если да возвращаем его
-        Object cacheKey = cache.generateKey(query, pageNumber, fromItemNumber);
-        if (cache.has(cacheKey)) {
-            return cache.get(cacheKey);
-        }
         SearchResultPage page = new SearchResultPage();
         page.setHasMore(false);
 
@@ -112,9 +106,6 @@ public class NewSearchController {
         // 5. Обработка найденных пунктов
         List<Quote> quotes = handleItems.createQuotes(foundItems, searchQueries);
         page.setQuotes(quotes);
-
-        // 6. Сохранение в кеше
-        cache.put(cacheKey, page);
 
 //        String json = ""/*получить json*/;
 //        JsonEntity jsonEntity = new JsonEntity(query, term.getUri(), json);
@@ -160,6 +151,6 @@ public class NewSearchController {
 
     @RequestMapping("clean")
     public void cleanCache() {
-        cache.clean();
+        cache.clear();
     }
 }

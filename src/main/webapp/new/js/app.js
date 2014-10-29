@@ -1,7 +1,7 @@
 //var originEncodeURIComponent = window.encodeURIComponent;
-angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
-    .config(function($locationProvider, $urlRouterProvider, $stateProvider) {
-        $locationProvider.html5Mode(true).hashPrefix('!');
+var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
+    .config(function($locationProvider, $urlRouterProvider, $stateProvider, config) {
+        if (config.useHtml5Mode) $locationProvider.html5Mode(true).hashPrefix('!');
         $urlRouterProvider.otherwise("home");
         //
 //        // Now set up the states
@@ -44,9 +44,9 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             }
         }
     })
-    .factory("$api", function($rootScope, $state, $http, errorService, $q){
-        var apiUrl = "/api/";
-//        var apiUrl = "http://localhost:8081/api/";
+    .factory("$api", function($rootScope, $state, $http, errorService, $q, config){
+        var apiUrl = config.apiUrl;
+//        var apiUrl = "https://ii.ayfaar.org/api/";
         var api = {
             post: function(url, data) {
                 var deferred = $q.defer();
@@ -79,7 +79,7 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             },
             item: {
                 get: function(number) {
-                    return api.get("item/"+number+"/")
+                    return api.get("v2/item", {number: number})
                 }
             },
             term: {
@@ -188,19 +188,20 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     })
     .factory('entityService', function(){
         var service = {
-            getName: function (entity) {
-                switch (service.getType(entity)) {
+            getName: function (uri) {
+                uri = uri.hasOwnProperty("uri") ? uri.uri : uri;
+                switch (service.getType(uri)) {
                     case 'term':
-                        return entity.uri.replace("ии:термин:", "");
+                        return uri.replace("ии:термин:", "");
                     case 'item':
-                        return entity.uri.replace("ии:пункт:", "");
+                        return uri.replace("ии:пункт:", "");
                 }
             },
-            getType: function(entity) {
-                if (entity.uri.indexOf("ии:термин:") === 0) {
+            getType: function(uri) {
+                if (uri.indexOf("ии:термин:") === 0) {
                     return 'term'
                 }
-                if (entity.uri.indexOf("ии:пункт:") === 0) {
+                if (uri.indexOf("ии:пункт:") === 0) {
                     return 'item'
                 }
             }
@@ -257,7 +258,8 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                     var primeTerm = $attr.title;
                     var originalContent = $element.html();
                     var expanded;
-                    $attr.title= "eee";
+                    var hasShortDescription = $attr.hasShortDescription;
+//                    $attr.title= "eee";
                     $element.bind('click', function(e) {
                         var more = e.target.tagName == "A";
                         var moreAfterPrimeTerm = e.target.id == "+";
@@ -276,12 +278,16 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
 //                            $compile($element.contents())($scope);
                         } else {
                             expanded = true;
-                            var loadingPlaceHolder = "&nbsp;(загрузка...)";
-                            $element.append(loadingPlaceHolder);
-                            $api.term.getShortDescription(moreAfterPrimeTerm ? primeTerm : term).then(function (shortDescription) {
-                                $element.html(originalContent + " (" + shortDescription +
-                                    "<a title=\"Перейти на детальное описание термина\">...</a>)");
-                            });
+                            if (hasShortDescription) {
+                                var loadingPlaceHolder = "&nbsp;(загрузка...)";
+                                $element.append(loadingPlaceHolder);
+                                $api.term.getShortDescription(moreAfterPrimeTerm ? primeTerm : term).then(function (shortDescription) {
+                                    $element.html(originalContent + " (" + shortDescription +
+                                        "<a title=\"Перейти на детальное описание термина\">...</a>)");
+                                });
+                            } else {
+                                $element.html(originalContent + " (<i>нет короткого пояснения</i>, <a>пояснить детально</a>)");
+                            }
                         }
                     })
                 }
@@ -306,8 +312,15 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             scope: {},
             compile: function (element, attr, linker) {
                 return function ($scope, $element, $attr) {
-                    var span = "<span class='bracket' ng-click='collapse = !collapse'><span ng-click='collapse = !collapse' ng-class='{highlite: h}' ng-mouseover='h = true' ng-mouseleave='h = false'>";
-                    var html = span+"(</span>{{collapse ? '...' : '"+$element.html()+"'}}"+span+")</span></span>";
+                    var bracketSpan = "<span ng-click='collapse = !collapse' ng-class='{highlite: h}' ng-mouseover='h = true' ng-mouseleave='h = false'>";
+                    // предотвращение глюка вставки HTML
+                    //var html = $element.html().replace("<strong>", "").replace("</strong>", "");
+                    var html = "<span class='bracket'>"
+                        +bracketSpan+"(</span>"
+                        +"<span ng-click='collapse = !collapse' ng-show='collapse'>...</span>"
+                        +"<span ng-hide='collapse'>"+$element.html()+"</span>"
+                        +bracketSpan+")</span>"
+                    +"</span>";
                     $element.html("");
                     $element.append($compile(html)($scope));
                 }
@@ -317,14 +330,14 @@ angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     .run(function($state, entityService){
         var originStateGo = $state.go;
         $state.go = function(to, params, options) {
-            if (to.hasOwnProperty('uri')) {
-                var uri = to.uri;
-                switch (entityService.getType(to)) {
+            if (to.hasOwnProperty('uri') || angular.isString(to)) {
+                var uri = angular.isString(to) ? to : to.uri;
+                switch (entityService.getType(uri)) {
                     case "term":
-                        originStateGo.bind($state)("term", {name: entityService.getName(to)});
+                        originStateGo.bind($state)("term", {name: entityService.getName(uri)});
                         return;
                     case "item":
-                        originStateGo.bind($state)("item", {number: entityService.getName(to)});
+                        originStateGo.bind($state)("item", {number: entityService.getName(uri)});
                         return;
                 }
             } else {
@@ -344,9 +357,11 @@ Array.prototype.append = function(array){
 };
 function copyObjectTo(from, to) {
     for (var p in from) {
-        to[p] = from[p];
+        if (from.hasOwnProperty(p)) {
+            to[p] = from[p];
+        }
     }
-};
+}
 
 function isItemNumber(s) {
     return s.match("\\d+\\.\\d+");

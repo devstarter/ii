@@ -12,10 +12,10 @@
     cursor: pointer;
 }
 .bracket:hover {
-    color: rgb(7, 131, 199);
+    color: rgb(0, 0, 173);
 }
 term {
-    color: rgb(7, 131, 199);
+    color: rgb(3, 86, 151);
     cursor: pointer;
 }
 .btn-icon {
