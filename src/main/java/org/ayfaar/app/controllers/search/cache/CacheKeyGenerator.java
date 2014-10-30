@@ -12,6 +12,9 @@ public class CacheKeyGenerator extends DefaultKeyGenerator {
         if (method.toString().equals("public org.ayfaar.app.controllers.search.SearchResultPage org.ayfaar.app.controllers.NewSearchController.search(java.lang.String,java.lang.Integer,java.lang.String)")) {
             // вернём в качестве ключа поисковую фразу с номером страници
             return new SearchCacheKey((String) params[0], (Integer) params[1]);
+        } else if (method.toString().equals("public org.ayfaar.app.utils.contents.CategoryPresentation org.ayfaar.app.controllers.CategoryController.getContents(java.lang.String)")){
+            // вернём в качестве ключа имя категории
+            return new SearchCacheKey((String) params[0], 0);
         } else {
             return super.generate(target, method, params);
         }

@@ -107,10 +107,6 @@ public class NewSearchController {
         List<Quote> quotes = handleItems.createQuotes(foundItems, searchQueries);
         page.setQuotes(quotes);
 
-//        String json = ""/*получить json*/;
-//        JsonEntity jsonEntity = new JsonEntity(query, term.getUri(), json);
-//        dbCache.save(jsonEntity);
-
         // 7. Вернуть результат
         return page;
     }
