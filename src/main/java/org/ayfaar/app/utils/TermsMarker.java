@@ -23,24 +23,24 @@ public class TermsMarker {
      *
      * За основу взять org.ayfaar.app.synchronization.mediawiki.TermSync#markTerms
      *
-     * @see org.ayfaar.app.synchronization.mediawiki.TermSync#markTerms
      * @param content исходный текст с терминами
      * @return текст с тегами терминов
+     * @see org.ayfaar.app.synchronization.mediawiki.TermSync#markTerms
      */
     public String mark(String content) {
         // копируем исходный текст, в этой копии мы будем производить тегирование слов
-        String result = content;
+        StringBuilder result = new StringBuilder(content);
         //перед обходом отсортируем по длине термина, сначала самые длинные
-        List<Map.Entry<String, Term>> sortedTerm =  new ArrayList<Map.Entry<String, Term>>(termsMap.getAll());
+        List<Map.Entry<String, Term>> sortedTerms =  new ArrayList<Map.Entry<String, Term>>(termsMap.getAll());
 
-        Collections.sort(sortedTerm, new Comparator<Map.Entry<String, Term>>() {
+        Collections.sort(sortedTerms, new Comparator<Map.Entry<String, Term>>() {
             @Override
             public int compare(Map.Entry<String, Term> o1, Map.Entry<String, Term> o2) {
                 return Integer.compare(o2.getKey().length(), o1.getKey().length());
             }
         });
 
-        for (Map.Entry<String, Term> entry : sortedTerm) {
+        for (Map.Entry<String, Term> entry : sortedTerms) {
             // получаем слово связаное с термином, напрмер "времени" будет связано с термином "Время"
             String word = entry.getKey();
             // составляем условие по которому проверяем есть ли это слов в тексте
@@ -51,31 +51,42 @@ public class TermsMarker {
             if (contentMatcher.find()) {
                 // ищем в результирующем тексте
                 Matcher matcher = pattern.matcher(result);
-
-                if (matcher.find()) {
+                int offset = 0;
+                // if (matcher.find()) {
+                //перенесем обрамления для каждого слова - одно слово может встречаться несколько раз с разными обрамл.
+                while (offset < result.length() && matcher.find(offset)) {
+                    offset = matcher.end();
+                    //убедимся что это не уже обработанный термин, а следующий(в им.падеже)
+                    String sub = result.substring(matcher.start() - 3, matcher.start());
+                    if (sub.equals("id=")) {
+                        continue;
+                    }
                     // сохраняем найденое слово из текста так как оно может быть в разных регистрах,
                     // например с большой буквы, или полностью большими буквами
-                    String foundWord = contentMatcher.group(3);
-                    String charBefore = contentMatcher.group(2) != null ? contentMatcher.group(2) : "";
-                    String charAfter = contentMatcher.group(5) != null ? contentMatcher.group(5) : "";
+                    String foundWord = matcher.group(3);
+                    String charBefore = matcher.group(2) != null ? matcher.group(2) : "";
+                    String charAfter = matcher.group(5) != null ? matcher.group(5) : "";
                     // формируем маску для тегирования, title="%s" это дополнительное требования, не описывал ещё в задаче
                     //String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
                     //пока забыли о  title="...."
-                    String replacer = format("%s<term id=\"%s\">%s</term>%s",
+                    final String shortDescription = entry.getValue().getShortDescription();
+                    String replacer = format("%s<term id=\"%s\"%s>%s</term>%s",
                             charBefore,
                             entry.getValue().getName(),
-                   //         entry.getValue().getShortDescription(),
+                            shortDescription != null && !shortDescription.isEmpty() ? " has-short-description=\"true\"" : "",
                             foundWord,
                             charAfter
                     );
                     // заменяем найденое слово тегированным вариантом
-                    result = matcher.replaceAll(replacer);
+                    //result = matcher.replaceAll(replacer);
+                    result.replace(matcher.start(), matcher.end(), replacer);
+                    //увеличим смещение с учетом замены
+                    offset = matcher.start() + replacer.length();
                     // убираем обработанный термин, чтобы не заменить его более мелким
                     content = contentMatcher.replaceAll(" ");
                 }
             }
         }
-        return result;
-       // throw new NotImplementedException();
+        return result.toString();
     }
 }
