@@ -31,7 +31,7 @@ public class CategoryController {
     @Autowired ItemDao itemDao;
     @Autowired ContentsHelper contentsHelper;
 
-    @Cacheable(DBCache.CACHE_NAME)
+    @Cacheable("DBCache")
     @RequestMapping
     @ResponseBody
     public CategoryPresentation getContents(@RequestParam("name") String name) {

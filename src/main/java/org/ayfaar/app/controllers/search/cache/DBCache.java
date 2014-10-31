@@ -1,6 +1,5 @@
 package org.ayfaar.app.controllers.search.cache;
 
-import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Category;
@@ -9,7 +8,6 @@ import org.ayfaar.app.model.UID;
 import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
 import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.UriGenerator;
-import org.ayfaar.app.utils.contents.CategoryPresentation;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleValueWrapper;
 import org.springframework.stereotype.Component;
@@ -18,98 +16,74 @@ import javax.inject.Inject;
 import java.io.IOException;
 
 import static org.ayfaar.app.controllers.search.cache.CacheKeyGenerator.SearchCacheKey;
+import static org.ayfaar.app.controllers.search.cache.CacheKeyGenerator.ContentsCacheKey;
 
 @Component
 public class DBCache extends ConcurrentMapCache {
-    public static final String CACHE_NAME = "searchResult.json";
-
     @Inject CustomObjectMapper objectMapper;
     @Inject AliasesMap aliasesMap;
     @Inject CommonDao commonDao;
     @Inject CategoryDao categoryDao;
 
     public DBCache() {
-        super(CACHE_NAME);
+        super("DBCache");
     }
+
 
     @Override
     public ValueWrapper get(Object key) {
+        ValueWrapper value = super.get(key);
+        if(value != null) {
+            return value;
+        }
+
+        JsonEntity jsonEntity = null;
         if (key instanceof SearchCacheKey) {
             final Term term = aliasesMap.getTerm(((SearchCacheKey) key).query);
-
-            JsonEntity jsonEntity = null;
             if (term != null) {
-                jsonEntity = commonDao.get(JsonEntity.class, "uri", term);
+                jsonEntity = commonDao.get(JsonEntity.class, "uid", term);
             }
-            else {
-                final Category category = categoryDao.get("name", ((SearchCacheKey) key).query);
-                if(category != null) {
-                    jsonEntity = commonDao.get(JsonEntity.class, "uri", category);
-                } else {
-                    jsonEntity = commonDao.get(JsonEntity.class, "name", ((SearchCacheKey) key).query);
-                }
-            }
-
-            SearchResultPage page = null;
-            CategoryPresentation contents = null;
-            if (jsonEntity != null) {
-                if(jsonEntity.getUri() instanceof Term) {
-                    try {
-                        page = objectMapper.readValue(jsonEntity.getJsonContent(), SearchResultPage.class);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    //зачем мы опять добавляем в кэш если там и так есть это значение?
-                    put(key, page);
-                    return new SimpleValueWrapper(page);
-                } else if (jsonEntity.getUri() instanceof Category) {
-                    try {
-                        contents = objectMapper.readValue(jsonEntity.getJsonContent(), CategoryPresentation.class);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    //зачем мы опять добавляем в кэш если там и так есть это значение?
-                    put(key, contents);
-                    return new SimpleValueWrapper(contents);
-                }
+        } else if(key instanceof ContentsCacheKey) {
+            final Category category = categoryDao.get("uri",
+                    UriGenerator.generate(Category.class, ((ContentsCacheKey) key).categoryName));
+            if(category != null) {
+                jsonEntity = commonDao.get(JsonEntity.class, "uid", category);
             }
         }
-        return super.get(key);
+
+        if (jsonEntity != null) {
+            put(key, jsonEntity.getJsonContent());
+            value = new SimpleValueWrapper(jsonEntity.getJsonContent());
+        }
+        return value;
     }
 
     @Override
     public void put(Object key, Object value) {
         String json;
         String name = "";
-        String link = "";
-        try {
-            json = objectMapper.writeValueAsString(value);
+        UID uid = null;
 
-            if (key instanceof SearchCacheKey) {
-                name = ((SearchCacheKey) key).query;
+        if(value instanceof String) {
+            json = (String)value;
+        }
+        else {
+            try {
+                json = objectMapper.writeValueAsString(value);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
+        }
 
-            if (value instanceof SearchResultPage) {
-                link = UriGenerator.generate(Term.class, name);
-            }
-            else if(value instanceof CategoryPresentation) {
-                link = UriGenerator.generate(Category.class, name);
-            }
-
-            UID uri = commonDao.get(UID.class, link);
-            final JsonEntity jsonEntity = new JsonEntity(name, uri, json);
-            commonDao.save(jsonEntity);
-
-            //если истользую отдельный поток, в базу данных ничего не записывается
-            /*new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    commonDao.save(jsonEntity);
-                }
-            }).start();*/
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (key instanceof SearchCacheKey) {
+            name = ((SearchCacheKey) key).query;
+            uid = aliasesMap.getTerm(name);
+        } else if(key instanceof ContentsCacheKey) {
+            name = ((ContentsCacheKey) key).categoryName;
+            uid = commonDao.get(UID.class, UriGenerator.generate(Category.class, name));
+        }
+        if(uid != null) {
+            commonDao.save(new JsonEntity(name, uid, json));
         }
         super.put(key, json);
     }

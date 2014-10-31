@@ -53,7 +53,7 @@ public class NewSearchController {
      *
      * @param pageNumber номер страницы
      */
-    @Cacheable(DBCache.CACHE_NAME)
+    @Cacheable("DBCache")
     @RequestMapping
     @ResponseBody
     // возвращаем Object чтобы можно было вернуть закешированный json или SearchResultPage

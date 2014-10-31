@@ -3,6 +3,8 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.controllers.search.SearchCache;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
+import org.ayfaar.app.controllers.search.cache.JsonEntity;
+import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.dao.TermMorphDao;
 import org.ayfaar.app.model.Term;
@@ -11,6 +13,7 @@ import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.Transformer;
 import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,6 +37,7 @@ import static org.mockito.Mockito.*;
 public class NewSearchControllerUnitTest {
 
     @Mock SearchDao searchDao;
+    @Mock CommonDao commonDao;
     @Mock TermMorphDao termMorphDao;
     @Mock SearchCache cache;
     @Mock SearchQuotesHelper handleItems;
