@@ -32,6 +32,7 @@ public class SuggestionsController{
 
     public List<String> suggestions(@PathVariable String q) {
 
+        q = "["+q+"|"+q.toLowerCase()+"]";
         Queue<String> queriesQueue = new LinkedList<String>(asList(
                 "^"+q,
                 "[\\s\\-]" + q,
