@@ -80,11 +80,15 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             item: {
                 get: function(number) {
                     return api.get("v2/item", {number: number})
+                },
+                getContent: function(numberOrUri) {
+                    numberOrUri = numberOrUri.replace("ии:пункт:", "");
+                    return api.get("v2/item/"+numberOrUri+"/content")
                 }
             },
             term: {
                 get: function(name) {
-                    return api.get('term/', {name: name}, true);
+                    return api.get('term/', {name: name, mark: true}, true);
                 },
                 getShortDescription: function(termName) {
                     return api.get("term/get-short-description", {name: termName})
@@ -299,6 +303,10 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         return {
             link: function(scope, element, attrs) {
                 scope.$watch(attrs.iiBind, function(newval) {
+                    if (!newval) {
+                        element.html(newval);
+                        return;
+                    }
                     newval = newval.replace(new RegExp("\\(([^\\)]+)\\)","gm"), "<bracket>$1</bracket>");
                     element.html(newval);
                     $compile(element.contents())(scope);

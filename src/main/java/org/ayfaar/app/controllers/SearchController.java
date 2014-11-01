@@ -227,14 +227,4 @@ public class SearchController {
             notifier.rate(term, item, quote, link != null ? link.getLinkId() : null);
         }
     }
-
-    @RequestMapping("get-content")
-    @ResponseBody
-    public String getContent(@RequestParam String uri) {
-        Item item = itemDao.get(uri);
-        if (item != null) {
-            return item.getContent();
-        }
-        return null;
-    }
 }

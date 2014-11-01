@@ -26,8 +26,8 @@
         </span>
         <br/>
         <div class="highlight" ng-show="shortDescription || description">
-            <p ng-show="shortDescription" class="shortDescription">{{shortDescription}}</p>
-            <p ng-show="description">{{description}}</p>
+            <p ng-show="shortDescription" ii-bind="shortDescription" class="shortDescription"></p>
+            <p ng-show="description" ii-bind="description"></p>
         </div>
         <!--<span class="info" data-bind="invisible: description">Нет короткого определения</span>-->
         <blockquote ng-repeat="quote in quotes" ng-mouseover="quote.showControlls = true"

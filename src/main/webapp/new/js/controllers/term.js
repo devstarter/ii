@@ -67,8 +67,7 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
         }
     };
     $scope.expand = function(quote) {
-        var uri = quote.uri ? quote.uri : "ии:пункт:"+quote.number;
-        $api.get("search/get-content", {uri: uri})
+        $api.item.getContent(quote.uri)
             .then(function(r){
                 quote.full = r;
             })

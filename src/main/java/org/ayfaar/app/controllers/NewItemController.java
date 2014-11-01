@@ -4,6 +4,7 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -44,5 +45,16 @@ public class NewItemController {
             number = item.getNumber();
             next = item.getNext();
         }
+    }
+
+
+    @RequestMapping("{number}/content")
+    @ResponseBody
+    public String getContent(@PathVariable String number) {
+        Item item = itemDao.getByNumber(number);
+        if (item != null) {
+            return termsMarker.mark(item.getContent());
+        }
+        return null;
     }
 }
