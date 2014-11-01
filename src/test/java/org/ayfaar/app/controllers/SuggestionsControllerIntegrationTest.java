@@ -42,4 +42,18 @@ public class SuggestionsControllerIntegrationTest extends IntegrationTest {
         assertEquals("АИЙС-ССС", suggestions.get(5));
         assertEquals("Амициссимное ССС-Состояние", suggestions.get(6));
     }
+
+    @Test
+    public void testLowerUpperCase() {
+
+        List<String> suggestionsUpper = searchController.suggestions("НН");
+        List<String> suggestionsLower = searchController.suggestions("нн");
+
+        assertEquals(suggestionsLower.size(), suggestionsUpper.size());
+
+        for (int i = 0; i < suggestionsLower.size() && suggestionsLower.size()==suggestionsUpper.size(); i++) {
+            assertEquals(suggestionsLower.get(i), suggestionsUpper.get(i));
+        }
+
+    }
 }

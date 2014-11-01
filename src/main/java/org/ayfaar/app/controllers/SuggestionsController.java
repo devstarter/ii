@@ -54,7 +54,7 @@ public class SuggestionsController{
 
     public List<String> getSuggestedTerms(String query, List<String> suggestions) {
         List<String> terms = new ArrayList<String>();
-        Pattern pattern = Pattern.compile(query);
+        Pattern pattern = Pattern.compile(query,Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CASE);
 
         for (Term term : aliasesMap.getAllTerms()) {
             Matcher matcher = pattern.matcher(term.getName().toLowerCase());
