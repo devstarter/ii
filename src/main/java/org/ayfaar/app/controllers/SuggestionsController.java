@@ -19,6 +19,7 @@ import java.util.Comparator;
 
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
+import static java.util.regex.Pattern.*;
 
 @Controller
 @RequestMapping("api/suggestions")
@@ -54,7 +55,7 @@ public class SuggestionsController{
 
     public List<String> getSuggestedTerms(String query, List<String> suggestions) {
         List<String> terms = new ArrayList<String>();
-        Pattern pattern = Pattern.compile(query);
+        Pattern pattern = Pattern.compile(query,CASE_INSENSITIVE + UNICODE_CASE);
 
         for (Term term : aliasesMap.getAllTerms()) {
             Matcher matcher = pattern.matcher(term.getName().toLowerCase());
