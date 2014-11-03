@@ -2,6 +2,7 @@ package org.ayfaar.app.dao;
 
 import org.ayfaar.app.model.Term;
 
+
 import java.util.List;
 
 public interface TermDao extends BasicCrudDao<Term> {
@@ -10,4 +11,6 @@ public interface TermDao extends BasicCrudDao<Term> {
     List<Term> getLike(String field, String value);
 
     List<Term> getGreaterThan(String field, Object value);
+
+    List<Object[]> getAllTermInfo();
 }

@@ -2,6 +2,8 @@ package org.ayfaar.app.dao.impl;
 
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Term;
+
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -35,6 +37,14 @@ public class TermDaoImpl extends AbstractHibernateDAO<Term> implements TermDao {
     public List<Term> getGreaterThan(String field, Object value) {
         return criteria()
                 .add(Restrictions.gt(field, value))
+                .list();
+    }
+
+    @Override
+    public List<Object[]> getAllTermInfo() {
+        return criteria().setProjection(Projections.projectionList()
+                .add(Projections.property("name"))
+                .add(Projections.property("shortDescription")))
                 .list();
     }
 }
