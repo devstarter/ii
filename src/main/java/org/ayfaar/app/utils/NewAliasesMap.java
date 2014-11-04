@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Component
-public class NewAliasesMap extends LinkedHashMap<String, NewAliasesMap.TermProvider> {
+public class NewAliasesMap  {
     @Autowired
     private CommonDao commonDao;
     @Autowired
@@ -23,6 +23,7 @@ public class NewAliasesMap extends LinkedHashMap<String, NewAliasesMap.TermProvi
     @Autowired
     private LinkDao linkDao;
 
+    private Map<String, LinkInfo> links;
     public Map<String, TermProvider> aliasesMap;
 
     @PostConstruct
@@ -30,50 +31,36 @@ public class NewAliasesMap extends LinkedHashMap<String, NewAliasesMap.TermProvi
         aliasesMap = new HashMap<String, TermProvider>();
 
         List<TermMorph> allTermMorphs = commonDao.getAll(TermMorph.class);
-        List<TermInfo> termsInfo = getTermInfo();
-        List<Link> links = new ArrayList<Link>();
+        List<TermInfo> termsInfo = termDao.getAllTermInfo();
+        List<Link> allSynonyms = linkDao.getAllSynonyms();
 
-        for(TermInfo info : termsInfo) {
-            links.addAll(linkDao.getAliases(UriGenerator.generate(Term.class, info.getName())));
+
+        links = new HashMap<String, LinkInfo>();
+        for(Link link : allSynonyms) {
+            links.put(link.getUid2().getUri(), new LinkInfo(link.getType(), (Term)link.getUid1()));
         }
 
         for(TermInfo info : termsInfo) {
             String uri = UriGenerator.generate(Term.class, info.getName());
-            TermProvider provider = new TermProvider(uri, getUriToMainTerm(links, uri), info.isHasShortDescription());
-            aliasesMap.put(info.getName(), provider);
+            String link = null;
+
+            if(links.containsKey(uri)) {
+                link = links.get(uri).getMainTerm().getUri();
+            }
+            aliasesMap.put(info.getName(), new TermProvider(uri, link, info.isHasShortDescription()));
         }
 
         for(TermMorph morph : allTermMorphs) {
-            TermProvider provider = new TermProvider(morph.getTermUri(),
-                    getUriToMainTerm(links, morph.getTermUri()), false);
-            aliasesMap.put(morph.getName(), provider);
-        }
-    }
-
-    private List<TermInfo> getTermInfo() {
-        List<TermInfo> termsInfo = new ArrayList<TermInfo>();
-        List<Object[]> allTermInfo = termDao.getAllTermInfo();
-
-        for(int i = 0; i < allTermInfo.size(); i++) {
-            Object[] info = allTermInfo.get(i);
-            boolean hasShortDescription = info[1] != null ? true : false;
-            termsInfo.add(new TermInfo((String)info[0], hasShortDescription));
-        }
-        return termsInfo;
-    }
-
-    private String getUriToMainTerm(List<Link> links, String uri) {
-        String mainUri = null;
-        for(Link link : links) {
-            if(link.getUid2().getUri().equals(uri)) {
-                mainUri = link.getUid1().getUri();
+            String link = null;
+            if(links.containsKey(morph.getTermUri())) {
+                link = links.get(morph.getTermUri()).getMainTerm().getUri();
             }
+            aliasesMap.put(morph.getName(), new TermProvider(morph.getTermUri(), link, false));
         }
-        return mainUri;
     }
 
     @Data
-    private class TermInfo {
+    public class TermInfo {
         private String name;
         private boolean hasShortDescription;
 
@@ -83,6 +70,18 @@ public class NewAliasesMap extends LinkedHashMap<String, NewAliasesMap.TermProvi
         }
     }
 
+    @Data
+    private class LinkInfo {
+        private byte type;
+        private Term mainTerm;
+
+        private LinkInfo(byte type, Term term) {
+            this.type = type;
+            this.mainTerm = term;
+        }
+    }
+
+    @Data
     public class TermProvider {
         private String uri;
         private String mainTermUri;
@@ -93,5 +92,32 @@ public class NewAliasesMap extends LinkedHashMap<String, NewAliasesMap.TermProvi
             this.mainTermUri = mainTermUri;
             this.hasShortDescription = hasShortDescription;
         }
+
+        public Term getTerm() {
+            return termDao.get(uri);
+        }
+    }
+
+    public TermProvider getTermProvider(String name) {
+        return aliasesMap.get(name);
+    }
+
+    public Set<Map.Entry<String, TermProvider>> getAll() {
+        return aliasesMap.entrySet();
+    }
+
+    public Term getTerm(String name) {
+        TermProvider termProvider = aliasesMap.get(name);
+        return termProvider != null ? termProvider.getTerm() : null;
+    }
+
+    public TermProvider getMainTermProvider(String name) {
+        TermProvider provider = getTermProvider(name);
+        String uriToMainTerm = provider.getMainTermUri();
+        return uriToMainTerm != null ? getTermProvider(UriGenerator.getValueFromUri(Term.class, uriToMainTerm)) : null;
+    }
+
+    public byte getTermType(String name) {
+        return links.get(UriGenerator.generate(Term.class, name)).getType();
     }
 }

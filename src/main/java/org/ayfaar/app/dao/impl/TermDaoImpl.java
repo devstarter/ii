@@ -3,10 +3,12 @@ package org.ayfaar.app.dao.impl;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Term;
 
+import org.ayfaar.app.utils.NewAliasesMap;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hibernate.criterion.Restrictions.eq;
@@ -41,10 +43,24 @@ public class TermDaoImpl extends AbstractHibernateDAO<Term> implements TermDao {
     }
 
     @Override
-    public List<Object[]> getAllTermInfo() {
-        return criteria().setProjection(Projections.projectionList()
+    public List<NewAliasesMap.TermInfo> getAllTermInfo() {
+        List<Object[]> termsInfo = criteria().setProjection(Projections.projectionList()
                 .add(Projections.property("name"))
                 .add(Projections.property("shortDescription")))
                 .list();
+
+        return transformToTermInfo(termsInfo);
+    }
+
+    private List<NewAliasesMap.TermInfo> transformToTermInfo(List<Object[]> terms) {
+        List<NewAliasesMap.TermInfo> termsInfo = new ArrayList<NewAliasesMap.TermInfo>();
+        NewAliasesMap aliasesMap = new NewAliasesMap();
+
+        for(int i = 0; i < terms.size(); i++) {
+            Object[] info = terms.get(i);
+            boolean hasShortDescription = info[1] != null ? true : false;
+            termsInfo.add(aliasesMap.new TermInfo((String)info[0], hasShortDescription));
+        }
+        return termsInfo;
     }
 }
