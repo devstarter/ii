@@ -34,7 +34,6 @@ public class NewAliasesMap  {
         List<TermInfo> termsInfo = termDao.getAllTermInfo();
         List<Link> allSynonyms = linkDao.getAllSynonyms();
 
-
         links = new HashMap<String, LinkInfo>();
         for(Link link : allSynonyms) {
             links.put(link.getUid2().getUri(), new LinkInfo(link.getType(), (Term)link.getUid1()));
@@ -119,5 +118,28 @@ public class NewAliasesMap  {
 
     public byte getTermType(String name) {
         return links.get(UriGenerator.generate(Term.class, name)).getType();
+    }
+
+    public List<TermProvider> getAliasTermProviders() {
+        return getListProviders((byte) 1);
+    }
+
+    public List<TermProvider> getAbbreviationTermProviders() {
+        return getListProviders((byte) 2);
+    }
+
+    public List<TermProvider> getCodeTermProviders() {
+        return getListProviders((byte) 4);
+    }
+
+    private List<TermProvider> getListProviders(byte type) {
+        List<TermProvider> providers = new ArrayList<TermProvider>();
+
+        for(Map.Entry<String, LinkInfo> link : links.entrySet()) {
+            if(link.getValue().getType() == type) {
+                providers.add(aliasesMap.get(UriGenerator.getValueFromUri(Term.class, link.getKey())));
+            }
+        }
+        return providers;
     }
 }

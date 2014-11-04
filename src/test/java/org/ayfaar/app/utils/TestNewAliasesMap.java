@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ public class TestNewAliasesMap extends IntegrationTest{
     /**
      * для запуска этих тестов нужно сделать  метод load в классе NewAliasesMap public
      */
-   /* @Before
+    /*@Before
     public void loadTerms() {
         newAliasesMap.load();
     }*/
@@ -70,5 +71,20 @@ public class TestNewAliasesMap extends IntegrationTest{
     @Test
     public void testGetTypeOfTerm() {
         assertEquals(4, newAliasesMap.getTermType("ТОО-УУ"));
+    }
+
+    @Test
+    public void testGetAliasesTermProviders() {
+        assertEquals(99, newAliasesMap.getAliasTermProviders().size());
+    }
+
+    @Test
+    public void testGetAbbreviationTermProviders() {
+        assertEquals(60, newAliasesMap.getAbbreviationTermProviders().size());
+    }
+
+    @Test
+    public void testGetCodeTermProviders() {
+        assertEquals(42, newAliasesMap.getCodeTermProviders().size());
     }
 }
