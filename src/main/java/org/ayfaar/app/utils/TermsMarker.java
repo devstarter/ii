@@ -28,6 +28,8 @@ public class TermsMarker {
      * @see org.ayfaar.app.synchronization.mediawiki.TermSync#markTerms
      */
     public String mark(String content) {
+
+        content = content.replace("–","-");
         // копируем исходный текст, в этой копии мы будем производить тегирование слов
         StringBuilder result = new StringBuilder(content);
         //перед обходом отсортируем по длине термина, сначала самые длинные
