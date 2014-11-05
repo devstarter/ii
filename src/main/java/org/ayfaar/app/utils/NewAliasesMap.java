@@ -9,13 +9,15 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Component
-public class NewAliasesMap implements NewTermsMap {
+@Primary
+public class NewAliasesMap implements TermsMap {
     @Autowired
     private CommonDao commonDao;
     @Autowired
@@ -46,7 +48,7 @@ public class NewAliasesMap implements NewTermsMap {
             if(links.containsKey(uri)) {
                 link = links.get(uri).getMainTerm().getUri();
             }
-            aliasesMap.put(info.getName(), new TermProviderImpl(uri, link, info.isHasShortDescription()));
+            aliasesMap.put(info.getName(), new TermProvider(uri, link, info.isHasShortDescription()));
         }
 
         for(TermMorph morph : allTermMorphs) {
@@ -54,7 +56,7 @@ public class NewAliasesMap implements NewTermsMap {
             if(links.containsKey(morph.getTermUri())) {
                 link = links.get(morph.getTermUri()).getMainTerm().getUri();
             }
-            aliasesMap.put(morph.getName(), new TermProviderImpl(morph.getTermUri(), link, false));
+            aliasesMap.put(morph.getName(), new TermProvider(morph.getTermUri(), link, false));
         }
     }
 
@@ -69,49 +71,25 @@ public class NewAliasesMap implements NewTermsMap {
         }
     }
 
-    @Data
-    public class TermProviderImpl implements TermProvider{
-        private String uri;
-        private String mainTermUri;
-        private boolean hasShortDescription;
-
-        public TermProviderImpl(String uri, String mainTermUri, boolean hasShortDescription) {
-            this.uri = uri;
-            this.mainTermUri = mainTermUri;
-            this.hasShortDescription = hasShortDescription;
-        }
-
-        public Term getTerm() {
-            return termDao.get(uri);
-        }
-
-        public List<NewTermsMap.TermProvider> getAliasTermProviders() {
-            return getListProviders((byte)1, UriGenerator.getValueFromUri(Term.class, uri));
-        }
-
-        public List<TermProvider> getAbbreviationTermProviders() {
-            return getListProviders((byte) 2, UriGenerator.getValueFromUri(Term.class, uri));
-        }
-
-        public List<TermProvider> getCodeTermProviders() {
-            return getListProviders((byte) 4, UriGenerator.getValueFromUri(Term.class, uri));
-        }
-    }
-
     @Override
     public TermProvider getTermProvider(String name) {
         return aliasesMap.get(name);
     }
 
     @Override
-    public Set<Map.Entry<String, TermProvider>> getAll() {
+    public Set<Map.Entry<String, Term>> getAll() {
+        return null;
+    }
+
+    @Override
+    public Set<Map.Entry<String, TermProvider>> getAllProviders() {
         return aliasesMap.entrySet();
     }
 
     @Override
     public Term getTerm(String name) {
         TermProvider termProvider = aliasesMap.get(name);
-        return termProvider != null ? termProvider.getTerm() : null;
+        return termProvider != null ? termDao.get(termProvider.getUri()) : null;
     }
 
     @Override
@@ -125,6 +103,18 @@ public class NewAliasesMap implements NewTermsMap {
     @Override
     public byte getTermType(String name) {
         return links.get(UriGenerator.generate(Term.class, name)).getType();
+    }
+
+    public List<TermProvider> getAliases(String uri) {
+        return getListProviders((byte)1, UriGenerator.getValueFromUri(Term.class, uri));
+    }
+
+    public List<TermProvider> getAbbreviations(String uri) {
+        return getListProviders((byte) 2, UriGenerator.getValueFromUri(Term.class, uri));
+    }
+
+    public List<TermProvider> getCodes(String uri) {
+        return getListProviders((byte) 4, UriGenerator.getValueFromUri(Term.class, uri));
     }
 
     private List<TermProvider> getListProviders(byte type, String name) {

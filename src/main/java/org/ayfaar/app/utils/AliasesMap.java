@@ -97,6 +97,41 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> implemen
         return proxy != null ? proxy.getTerm() : null;
     }
 
+    @Override
+    public byte getTermType(String name) {
+        return 0;
+    }
+
+    @Override
+    public List<TermProvider> getAliases(String uri) {
+        return null;
+    }
+
+    @Override
+    public List<TermProvider> getAbbreviations(String uri) {
+        return null;
+    }
+
+    @Override
+    public List<TermProvider> getCodes(String uri) {
+        return null;
+    }
+
+    @Override
+    public Set<Map.Entry<String, TermProvider>> getAllProviders() {
+        return null;
+    }
+
+    @Override
+    public TermProvider getTermProvider(String name) {
+        return null;
+    }
+
+    @Override
+    public TermProvider getMainTermProvider(String name) {
+        return null;
+    }
+
     public class Proxy {
         private String uri;
         private Term term;
@@ -132,7 +167,7 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> implemen
         return allTerms;
     }
 
-    @Override
+    /*@Override*/
     public Set<Map.Entry<String, Term>> getAll() {
         return termsMap.entrySet();
     }
