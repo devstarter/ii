@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @Ignore
 public class TestNewAliasesMap extends IntegrationTest{
@@ -30,7 +31,7 @@ public class TestNewAliasesMap extends IntegrationTest{
 
     @Test
     public void testGetTermProvider() {
-        NewAliasesMap.TermProvider provider = newAliasesMap.getTermProvider("Чистое Качество");
+        NewTermsMap.TermProvider provider = newAliasesMap.getTermProvider("Чистое Качество");
 
         assertNotNull(provider);
         assertEquals("ии:термин:Чистое Качество", provider.getUri());
@@ -39,7 +40,7 @@ public class TestNewAliasesMap extends IntegrationTest{
 
     @Test
     public void testGetAll() {
-        Set<Map.Entry<String, NewAliasesMap.TermProvider>> set = newAliasesMap.getAll();
+        Set<Map.Entry<String, NewTermsMap.TermProvider>> set = newAliasesMap.getAll();
 
         assertTrue(set.size() > 0);
     }
@@ -75,16 +76,29 @@ public class TestNewAliasesMap extends IntegrationTest{
 
     @Test
     public void testGetAliasesTermProviders() {
-        assertEquals(99, newAliasesMap.getAliasTermProviders().size());
+        List<NewAliasesMap.TermProvider> aliases = newAliasesMap.new TermProviderImpl(
+                "ии:термин:Конфективное ССС-Состояние", null, true).getAliasTermProviders();
+
+        assertEquals("ии:термин:Конфективный", aliases.get(0).getUri());
+        assertEquals("ии:термин:Конфективность", aliases.get(1).getUri());
     }
 
     @Test
     public void testGetAbbreviationTermProviders() {
-        assertEquals(60, newAliasesMap.getAbbreviationTermProviders().size());
+        List<NewAliasesMap.TermProvider> abbreviations = newAliasesMap.new TermProviderImpl(
+                "ии:термин:ФЛУУ-ЛУУ-комплекс", null, true).getAbbreviationTermProviders();
+
+        assertEquals("ии:термин:ФЛК", abbreviations.get(0).getUri());
+        assertEquals("ии:термин:ФЛ-комплекс", abbreviations.get(1).getUri());
     }
 
     @Test
     public void testGetCodeTermProviders() {
-        assertEquals(42, newAliasesMap.getCodeTermProviders().size());
+        List<NewAliasesMap.TermProvider> codes = newAliasesMap.new TermProviderImpl(
+                "ии:термин:Мобиллюрасцитный Дубликатор Сектора", null, true).getCodeTermProviders();
+
+        assertEquals("ии:термин:ЮЮ-ИИЙ-ССС-ЮЮ", codes.get(0).getUri());
     }
 }
+
+
