@@ -245,7 +245,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             require:'ngModel',
             link: function (originalScope, element, attrs, modelCtrl) {
                 originalScope.$getSuggestions = function(query) {
-                    return $api.get("suggestions/"+query)
+                    return $api.get("suggestions/"+query.toLowerCase())
                 };
                 originalScope.$suggestionSelected = function(suggestion) {
                     $state.goToTerm(suggestion);
