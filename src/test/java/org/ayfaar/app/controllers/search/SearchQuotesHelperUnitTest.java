@@ -2,9 +2,12 @@ package org.ayfaar.app.controllers.search;
 
 import org.ayfaar.app.AbstractTest;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.TermsMarker;
 import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,6 +15,9 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 
 public class SearchQuotesHelperUnitTest extends AbstractTest {
 
@@ -34,6 +40,13 @@ public class SearchQuotesHelperUnitTest extends AbstractTest {
     public void init() throws Exception {
         SearchQuotesHelper.MAX_WORDS_ON_BOUNDARIES = 30;
         handleItems = new SearchQuotesHelper();
+        handleItems.termsMarker = mock(TermsMarker.class);
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return invocation.getArguments()[0];
+            }
+        }).when(handleItems.termsMarker).mark(anyString());
 //        final Field max_words_on_boundaries = handleItems.getClass().getField("MAX_WORDS_ON_BOUNDARIES");
 //        ReflectionUtils.setFinalStatic(handleItems, max_words_on_boundaries, 30);
         queries = asList("время", "Времени", "Временем", "Временах", "Временами");
