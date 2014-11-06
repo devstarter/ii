@@ -9,14 +9,12 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Component
-@Primary
 public class NewAliasesMap implements TermsMap {
     @Autowired
     private CommonDao commonDao;
@@ -48,7 +46,7 @@ public class NewAliasesMap implements TermsMap {
             if(links.containsKey(uri)) {
                 link = links.get(uri).getMainTerm().getUri();
             }
-            aliasesMap.put(info.getName(), new TermProvider(uri, link, info.isHasShortDescription()));
+            aliasesMap.put(info.getName(), new TermProviderImpl(uri, link, info.isHasShortDescription()));
         }
 
         for(TermMorph morph : allTermMorphs) {
@@ -56,7 +54,7 @@ public class NewAliasesMap implements TermsMap {
             if(links.containsKey(morph.getTermUri())) {
                 link = links.get(morph.getTermUri()).getMainTerm().getUri();
             }
-            aliasesMap.put(morph.getName(), new TermProvider(morph.getTermUri(), link, false));
+            aliasesMap.put(morph.getName(), new TermProviderImpl(morph.getTermUri(), link, false));
         }
     }
 
@@ -71,18 +69,56 @@ public class NewAliasesMap implements TermsMap {
         }
     }
 
+
+    public class TermProviderImpl implements TermProvider {
+        private String uri;
+        private String uriToMainTerm;
+        private boolean hasShortDescription;
+
+        public TermProviderImpl(String uri, String uriToMainTerm, boolean hasShortDescription) {
+            this.uri = uri;
+            this.uriToMainTerm = uriToMainTerm;
+            this.hasShortDescription = hasShortDescription;
+        }
+
+        @Override
+        public String getUri() {
+            return uri;
+        }
+
+        @Override
+        public String getUriToMainTerm() {
+            return uriToMainTerm;
+        }
+
+        @Override
+        public Term getTerm() {
+            return termDao.get(uri);
+        }
+
+        @Override
+        public List<TermProvider> getAliases() {
+            return getListProviders((byte)1, UriGenerator.getValueFromUri(Term.class, uri));
+        }
+
+        @Override
+        public List<TermProvider> getAbbreviations() {
+            return getListProviders((byte)2, UriGenerator.getValueFromUri(Term.class, uri));
+        }
+
+        @Override
+        public List<TermProvider> getCodes() {
+            return getListProviders((byte)4, UriGenerator.getValueFromUri(Term.class, uri));
+        }
+    }
+
     @Override
     public TermProvider getTermProvider(String name) {
         return aliasesMap.get(name);
     }
 
     @Override
-    public Set<Map.Entry<String, Term>> getAll() {
-        return null;
-    }
-
-    @Override
-    public Set<Map.Entry<String, TermProvider>> getAllProviders() {
+    public Set<Map.Entry<String, TermProvider>> getAll() {
         return aliasesMap.entrySet();
     }
 
@@ -96,25 +132,13 @@ public class NewAliasesMap implements TermsMap {
     public TermProvider getMainTermProvider(String name) {
         TermProvider provider = getTermProvider(name);
 
-        String uriToMainTerm = provider.getMainTermUri();
+        String uriToMainTerm = provider.getUriToMainTerm();
         return uriToMainTerm != null ? getTermProvider(UriGenerator.getValueFromUri(Term.class, uriToMainTerm)) : null;
     }
 
     @Override
     public byte getTermType(String name) {
         return links.get(UriGenerator.generate(Term.class, name)).getType();
-    }
-
-    public List<TermProvider> getAliases(String uri) {
-        return getListProviders((byte)1, UriGenerator.getValueFromUri(Term.class, uri));
-    }
-
-    public List<TermProvider> getAbbreviations(String uri) {
-        return getListProviders((byte) 2, UriGenerator.getValueFromUri(Term.class, uri));
-    }
-
-    public List<TermProvider> getCodes(String uri) {
-        return getListProviders((byte) 4, UriGenerator.getValueFromUri(Term.class, uri));
     }
 
     private List<TermProvider> getListProviders(byte type, String name) {

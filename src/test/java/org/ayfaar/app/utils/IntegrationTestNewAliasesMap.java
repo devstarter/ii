@@ -3,8 +3,6 @@ package org.ayfaar.app.utils;
 
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.model.Term;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,37 +12,30 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-@Ignore
 public class IntegrationTestNewAliasesMap extends IntegrationTest{
     @Autowired
-    NewAliasesMap newAliasesMap;
-
-    /**
-     * для запуска этих тестов нужно сделать  метод load в классе NewAliasesMap public
-     */
-    /*@Before
-    public void loadTerms() {
-        newAliasesMap.load();
-    }*/
+    private NewAliasesMap aliasesMap;
+    @Autowired
+    private TermsMap termsMap;
 
     @Test
     public void testGetTermProvider() {
-        NewAliasesMap.TermProvider provider = newAliasesMap.getTermProvider("Чистое Качество");
+        TermsMap.TermProvider provider = termsMap.getTermProvider("Чистое Качество");
 
         assertNotNull(provider);
         assertEquals("ии:термин:Чистое Качество", provider.getUri());
     }
 
     @Test
-    public void testGetAllProviders() {
-        Set<Map.Entry<String, NewAliasesMap.TermProvider>> set = newAliasesMap.getAllProviders();
+    public void testGetAll() {
+        Set<Map.Entry<String, TermsMap.TermProvider>> set = termsMap.getAll();
 
         assertTrue(set.size() > 0);
     }
 
     @Test
     public void testGetTerm() {
-        Term term = newAliasesMap.getTerm("Вселенский Межгалактический Диапазон");
+        Term term = termsMap.getTerm("Вселенский Межгалактический Диапазон");
 
         assertNotNull(term);
         assertEquals("ии:термин:Вселенский Межгалактический Диапазон", term.getUri());
@@ -52,42 +43,50 @@ public class IntegrationTestNewAliasesMap extends IntegrationTest{
 
     @Test
     public void testGetMainTermProvider() {
-        NewAliasesMap.TermProvider provider = newAliasesMap.getMainTermProvider("Тензор напряжённости");
+        TermsMap.TermProvider provider = termsMap.getMainTermProvider("Тензор напряжённости");
 
         assertNotNull(provider);
         assertEquals("ии:термин:Тензор", provider.getUri());
-        assertNull(provider.getMainTermUri());
+        assertNull(provider.getUriToMainTerm());
     }
 
     @Test
     public void testGetMainTermProviderWhenMainTermProviderNotExist() {
-        NewAliasesMap.TermProvider provider = newAliasesMap.getMainTermProvider("Свилгсон");
+        TermsMap.TermProvider provider = termsMap.getMainTermProvider("Свилгсон");
 
         assertNull(provider);
     }
 
     @Test
     public void testGetTypeOfTerm() {
-        assertEquals(4, newAliasesMap.getTermType("ТОО-УУ"));
+        assertEquals(4, termsMap.getTermType("ТОО-УУ"));
     }
 
     @Test
     public void testGetAliases() {
-        List<NewAliasesMap.TermProvider> aliases = newAliasesMap.getAliases("ии:термин:Конфективное ССС-Состояние");
+        TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
+                "ии:термин:Конфективное ССС-Состояние", null, true);
+
+        List<TermsMap.TermProvider> aliases = provider.getAliases();
         assertEquals("ии:термин:Конфективный", aliases.get(0).getUri());
         assertEquals("ии:термин:Конфективность", aliases.get(1).getUri());
     }
 
     @Test
     public void testGetAbbreviations() {
-        List<NewAliasesMap.TermProvider> aliases = newAliasesMap.getAbbreviations("ии:термин:ФЛУУ-ЛУУ-комплекс");
-        assertEquals("ии:термин:ФЛК", aliases.get(0).getUri());
-        assertEquals("ии:термин:ФЛ-комплекс", aliases.get(1).getUri());
+        TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl("ии:термин:ФЛУУ-ЛУУ-комплекс", null, true);
+
+        List<TermsMap.TermProvider> abbreviations = provider.getAbbreviations();
+        assertEquals("ии:термин:ФЛК", abbreviations.get(0).getUri());
+        assertEquals("ии:термин:ФЛ-комплекс", abbreviations.get(1).getUri());
     }
 
     @Test
     public void testGetCodes() {
-        List<NewAliasesMap.TermProvider> aliases = newAliasesMap.getCodes("ии:термин:Мобиллюрасцитный Дубликатор Сектора");
-        assertEquals("ии:термин:ЮЮ-ИИЙ-ССС-ЮЮ", aliases.get(0).getUri());
+        TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
+                "ии:термин:Мобиллюрасцитный Дубликатор Сектора", null, true);
+
+        List<TermsMap.TermProvider> codes = provider.getCodes();
+        assertEquals("ии:термин:ЮЮ-ИИЙ-ССС-ЮЮ", codes.get(0).getUri());
     }
 }

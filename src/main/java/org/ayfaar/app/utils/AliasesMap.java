@@ -20,7 +20,7 @@ import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
 @Lazy
-public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> implements TermsMap {
+public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> /*implements TermsMap*/ {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
     @Autowired CommonDao commonDao;
@@ -95,41 +95,6 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> implemen
     public Term getTerm(String name) {
         Proxy proxy = get(name);
         return proxy != null ? proxy.getTerm() : null;
-    }
-
-    @Override
-    public byte getTermType(String name) {
-        return 0;
-    }
-
-    @Override
-    public List<TermProvider> getAliases(String uri) {
-        return null;
-    }
-
-    @Override
-    public List<TermProvider> getAbbreviations(String uri) {
-        return null;
-    }
-
-    @Override
-    public List<TermProvider> getCodes(String uri) {
-        return null;
-    }
-
-    @Override
-    public Set<Map.Entry<String, TermProvider>> getAllProviders() {
-        return null;
-    }
-
-    @Override
-    public TermProvider getTermProvider(String name) {
-        return null;
-    }
-
-    @Override
-    public TermProvider getMainTermProvider(String name) {
-        return null;
     }
 
     public class Proxy {
