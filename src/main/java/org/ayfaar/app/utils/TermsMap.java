@@ -16,16 +16,16 @@ public interface TermsMap {
      */
     public Set<Map.Entry<String, TermProvider>> getAll();
     public TermProvider getTermProvider(String name);
-    public TermProvider getMainTermProvider(String name);
     public Term getTerm(String name);
-    public byte getTermType(String name);
 
     public interface TermProvider {
         public String getUri();
-        public String getUriToMainTerm();
+        public boolean isHasShortDescription();
+        public TermProvider getMainTermProvider();
         public Term getTerm();
         public List<TermProvider> getAliases();
         public List<TermProvider> getAbbreviations();
         public List<TermProvider> getCodes();
-        }
+        public byte getTermType(String name);
+    }
 }

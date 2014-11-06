@@ -43,23 +43,20 @@ public class IntegrationTestNewAliasesMap extends IntegrationTest{
 
     @Test
     public void testGetMainTermProvider() {
-        TermsMap.TermProvider provider = termsMap.getMainTermProvider("Тензор напряжённости");
+        TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
+                "ии:термин:Тензор", "ии:термин:Тензор напряжённости", false);
 
-        assertNotNull(provider);
-        assertEquals("ии:термин:Тензор", provider.getUri());
-        assertNull(provider.getUriToMainTerm());
-    }
-
-    @Test
-    public void testGetMainTermProviderWhenMainTermProviderNotExist() {
-        TermsMap.TermProvider provider = termsMap.getMainTermProvider("Свилгсон");
-
-        assertNull(provider);
+        TermsMap.TermProvider mainProvider = provider.getMainTermProvider();
+        assertNotNull(mainProvider);
+        assertEquals("ии:термин:Тензор напряжённости", mainProvider.getUri());
     }
 
     @Test
     public void testGetTypeOfTerm() {
-        assertEquals(4, termsMap.getTermType("ТОО-УУ"));
+        TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
+                "ии:термин:ТОО-УУ", "ии:термин:Коллективный Космический Разум", false);
+
+        assertEquals(4, provider.getTermType("ТОО-УУ"));
     }
 
     @Test

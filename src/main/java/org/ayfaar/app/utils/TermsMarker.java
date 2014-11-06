@@ -73,15 +73,14 @@ public class TermsMarker {
                     // формируем маску для тегирования, title="%s" это дополнительное требования, не описывал ещё в задаче
                     //String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
                     //пока забыли о  title="...."
-                    final String shortDescription = entry.getValue().getTerm().getShortDescription();
                     String replacer = format("%s<term id=\"%s\"%s>%s</term>%s",
                             charBefore,
-                            //entry.getValue().getName(),
                             entry.getValue().getTerm().getName(),
-                            shortDescription != null && !shortDescription.isEmpty() ? " has-short-description=\"true\"" : "",
+                            entry.getValue().isHasShortDescription() ? " has-short-description=\"true\"" : "",
                             foundWord,
                             charAfter
                     );
+                    //System.out.println("charbefore " + charBefore + " entry " + entry.getValue().getTerm().getName());
                     // заменяем найденое слово тегированным вариантом
                     //result = matcher.replaceAll(replacer);
                     result.replace(matcher.start(), matcher.end(), replacer);
