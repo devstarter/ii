@@ -2,6 +2,7 @@ package org.ayfaar.app.utils;
 
 
 import lombok.Data;
+import lombok.Getter;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.*;
 
+import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
+
 @Component
 public class NewAliasesMap implements TermsMap {
     @Autowired
@@ -24,7 +27,7 @@ public class NewAliasesMap implements TermsMap {
     private LinkDao linkDao;
 
     private Map<String, LinkInfo> links;
-    public Map<String, TermProvider> aliasesMap;
+    private Map<String, TermProvider> aliasesMap;
 
     @PostConstruct
     private void load() {
@@ -41,20 +44,23 @@ public class NewAliasesMap implements TermsMap {
 
         for(TermDao.TermInfo info : termsInfo) {
             String uri = UriGenerator.generate(Term.class, info.getName());
-            String link = null;
+            String mainTermUri = null;
 
             if(links.containsKey(uri)) {
-                link = links.get(uri).getMainTerm().getUri();
+                mainTermUri = links.get(uri).getMainTerm().getUri();
             }
-            aliasesMap.put(info.getName(), new TermProviderImpl(uri, link, info.isHasShortDescription()));
+            aliasesMap.put(info.getName(), new TermProviderImpl(uri, mainTermUri, info.isHasShortDescription()));
         }
 
         for(TermMorph morph : allTermMorphs) {
-            String link = null;
+            String mainTermUri = null;
+            boolean hasShortDescription = false;
             if(links.containsKey(morph.getTermUri())) {
-                link = links.get(morph.getTermUri()).getMainTerm().getUri();
+                final Term mainTerm = links.get(morph.getTermUri()).getMainTerm();
+                mainTermUri = mainTerm.getUri();
+                hasShortDescription = mainTerm.getShortDescription() != null;
             }
-            aliasesMap.put(morph.getName(), new TermProviderImpl(morph.getTermUri(), link, false));
+            aliasesMap.put(morph.getName(), new TermProviderImpl(morph.getTermUri(), mainTermUri, hasShortDescription));
         }
     }
 
@@ -70,52 +76,64 @@ public class NewAliasesMap implements TermsMap {
     }
 
     public class TermProviderImpl implements TermProvider {
+        @Getter
         private String uri;
-        private String uriToMainTerm;
+        private String mainTermUri;
         private boolean hasShortDescription;
 
-        public TermProviderImpl(String uri, String uriToMainTerm, boolean hasShortDescription) {
+        public TermProviderImpl(String uri, String mainTermUri, boolean hasShortDescription) {
             this.uri = uri;
-            this.uriToMainTerm = uriToMainTerm;
+            this.mainTermUri = mainTermUri;
             this.hasShortDescription = hasShortDescription;
         }
 
-        public String getUri() {
-            return uri;
+        public String getName() {
+            return getValueFromUri(Term.class, uri);
         }
-        public boolean isHasShortDescription() {
+
+        public boolean hasShortDescription() {
             return hasShortDescription;
         }
 
-        @Override
         public Term getTerm() {
             return termDao.get(uri);
         }
 
-        @Override
         public List<TermProvider> getAliases() {
-            return getListProviders(Link.ALIAS, UriGenerator.getValueFromUri(Term.class, uri));
+            return getListProviders(Link.ALIAS, getName());
         }
 
-        @Override
         public List<TermProvider> getAbbreviations() {
-            return getListProviders(Link.ABBREVIATION, UriGenerator.getValueFromUri(Term.class, uri));
+            return getListProviders(Link.ABBREVIATION, getName());
         }
 
-        @Override
         public TermProvider getCode() {
-            List<TermProvider> codes = getListProviders(Link.CODE, UriGenerator.getValueFromUri(Term.class, uri));
-            return codes.get(0);
+            List<TermProvider> codes = getListProviders(Link.CODE, getName());
+            return codes.size() > 0 ? codes.get(0) : null;
         }
 
-        @Override
         public TermProvider getMainTermProvider() {
-            return aliasesMap.get(UriGenerator.getValueFromUri(Term.class, uriToMainTerm));
+            return hasMainTerm() ? aliasesMap.get(getValueFromUri(Term.class, mainTermUri)) : null;
         }
 
-        @Override
-        public byte getTermType() {
-            return links.get(uri).getType();
+        public Byte getType() {
+            return links.get(uri) != null ? links.get(uri).getType() : null;
+        }
+
+        public boolean hasMainTerm() {
+            return mainTermUri != null;
+        }
+
+        public boolean isAbbreviation() {
+            return Link.ABBREVIATION.equals(getType());
+        }
+
+        public boolean isAlias() {
+            return Link.ALIAS.equals(getType());
+        }
+
+        public boolean isCode() {
+            return Link.CODE.equals(getType());
         }
     }
 
@@ -132,7 +150,7 @@ public class NewAliasesMap implements TermsMap {
     @Override
     public Term getTerm(String name) {
         TermProvider termProvider = aliasesMap.get(name);
-        return termProvider != null ? termDao.get(termProvider.getUri()) : null;
+        return termProvider != null ? termProvider.getTerm() : null;
     }
 
     private List<TermProvider> getListProviders(byte type, String name) {
@@ -140,7 +158,7 @@ public class NewAliasesMap implements TermsMap {
 
         for(Map.Entry<String, LinkInfo> link : links.entrySet()) {
             if(link.getValue().getType() == type && link.getValue().getMainTerm().getName().equals(name)) {
-                providers.add(aliasesMap.get(UriGenerator.getValueFromUri(Term.class, link.getKey())));
+                providers.add(aliasesMap.get(getValueFromUri(Term.class, link.getKey())));
             }
         }
         return providers;

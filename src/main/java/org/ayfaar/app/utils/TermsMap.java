@@ -19,13 +19,18 @@ public interface TermsMap {
     public Term getTerm(String name);
 
     public interface TermProvider {
+        public String getName();
         public String getUri();
-        public boolean isHasShortDescription();
+        public boolean hasShortDescription();
         public TermProvider getMainTermProvider();
         public Term getTerm();
         public List<TermProvider> getAliases();
         public List<TermProvider> getAbbreviations();
         public TermProvider getCode();
-        public byte getTermType();
+        public Byte getType();
+        boolean hasMainTerm();
+        boolean isAbbreviation();
+        boolean isAlias();
+        boolean isCode();
     }
 }

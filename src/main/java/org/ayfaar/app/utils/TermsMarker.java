@@ -73,10 +73,18 @@ public class TermsMarker {
                     // формируем маску для тегирования, title="%s" это дополнительное требования, не описывал ещё в задаче
                     //String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
                     //пока забыли о  title="...."
+                    final TermsMap.TermProvider termProvider = entry.getValue();
+                    final TermsMap.TermProvider mainTermProvider = termProvider.getMainTermProvider();
+                    boolean hasMainTerm = termProvider.hasMainTerm();
+                    boolean hasShortDescription = hasMainTerm ? mainTermProvider.hasShortDescription() : termProvider.hasShortDescription();
+
+                    String attributes = hasShortDescription ? " has-short-description=\"true\"" : "";
+                    attributes += termProvider.isAbbreviation() ?  format(" title=\"%s\"", mainTermProvider.getName()) : "";
+
                     String replacer = format("%s<term id=\"%s\"%s>%s</term>%s",
                             charBefore,
-                            entry.getValue().getTerm().getName(),
-                            entry.getValue().isHasShortDescription() ? " has-short-description=\"true\"" : "",
+                            hasMainTerm ? mainTermProvider.getName() : termProvider.getName(),
+                            attributes,
                             foundWord,
                             charAfter
                     );
@@ -98,9 +106,6 @@ public class TermsMarker {
         int startTag = substring.lastIndexOf("<term id=");
         int endTag = substring.lastIndexOf("</term>");
 
-        if (startTag>=0 && startTag>endTag){
-            return true;
-        }
-        return false;
+        return startTag >= 0 && startTag > endTag;
     }
 }

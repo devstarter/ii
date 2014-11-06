@@ -2,6 +2,7 @@ package org.ayfaar.app.utils;
 
 
 import org.ayfaar.app.IntegrationTest;
+import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.ayfaar.app.utils.TermsMap.TermProvider;
 import static org.junit.Assert.*;
 
 public class IntegrationTestNewAliasesMap extends IntegrationTest{
@@ -20,7 +22,7 @@ public class IntegrationTestNewAliasesMap extends IntegrationTest{
 
     @Test
     public void testGetTermProvider() {
-        TermsMap.TermProvider provider = termsMap.getTermProvider("Чистое Качество");
+        TermProvider provider = termsMap.getTermProvider("Чистое Качество");
 
         assertNotNull(provider);
         assertEquals("ии:термин:Чистое Качество", provider.getUri());
@@ -28,7 +30,7 @@ public class IntegrationTestNewAliasesMap extends IntegrationTest{
 
     @Test
     public void testGetAll() {
-        Set<Map.Entry<String, TermsMap.TermProvider>> set = termsMap.getAll();
+        Set<Map.Entry<String, TermProvider>> set = termsMap.getAll();
 
         assertTrue(set.size() > 0);
     }
@@ -43,47 +45,57 @@ public class IntegrationTestNewAliasesMap extends IntegrationTest{
 
     @Test
     public void testGetMainTermProvider() {
-        TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
+        TermProvider provider = aliasesMap.new TermProviderImpl(
                 "ии:термин:Тензор", "ии:термин:Тензор напряжённости", false);
 
-        TermsMap.TermProvider mainProvider = provider.getMainTermProvider();
+        TermProvider mainProvider = provider.getMainTermProvider();
         assertNotNull(mainProvider);
         assertEquals("ии:термин:Тензор напряжённости", mainProvider.getUri());
     }
 
     @Test
     public void testGetTypeOfTerm() {
-        TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
-                "ии:термин:ТОО-УУ", "ии:термин:Коллективный Космический Разум", false);
+        final TermProvider provider = termsMap.getTermProvider("ТОО-УУ");
 
-        assertEquals(4, provider.getTermType());
+        assertEquals("ТОО-УУ", provider.getName());
+        assertEquals(UriGenerator.generate(Term.class, "ТОО-УУ"), provider.getUri());
+        assertEquals(Link.CODE, provider.getType());
+        assertTrue(provider.isCode());
+        assertFalse(provider.isAbbreviation());
+        assertFalse(provider.isAlias());
+        assertTrue(provider.hasMainTerm());
+        assertNotNull(provider.getMainTermProvider());
+        assertEquals(UriGenerator.generate(Term.class, "Коллективный Космический Разум"), provider.getMainTermProvider().getUri());
+        assertEquals("ТОО-УУ", provider.getTerm().getName());
+//        assertEquals(0, provider.getAliases().size());
+        assertEquals(0, provider.getAbbreviations().size());
+        assertNull(provider.getCode());
+        assertFalse(provider.hasShortDescription());
     }
 
     @Test
     public void testGetAliases() {
-        TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
-                "ии:термин:Конфективное ССС-Состояние", null, true);
+        TermProvider provider = termsMap.getTermProvider("Конфективное ССС-Состояние");
 
-        List<TermsMap.TermProvider> aliases = provider.getAliases();
+        List<TermProvider> aliases = provider.getAliases();
         assertEquals("ии:термин:Конфективный", aliases.get(0).getUri());
         assertEquals("ии:термин:Конфективность", aliases.get(1).getUri());
     }
 
     @Test
     public void testGetAbbreviations() {
-        TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl("ии:термин:ФЛУУ-ЛУУ-комплекс", null, true);
+        TermProvider provider = termsMap.getTermProvider("ФЛУУ-ЛУУ-комплекс");
 
-        List<TermsMap.TermProvider> abbreviations = provider.getAbbreviations();
+        List<TermProvider> abbreviations = provider.getAbbreviations();
         assertEquals("ии:термин:ФЛК", abbreviations.get(0).getUri());
         assertEquals("ии:термин:ФЛ-комплекс", abbreviations.get(1).getUri());
     }
 
     @Test
     public void testGetCodes() {
-        TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
-                "ии:термин:Мобиллюрасцитный Дубликатор Сектора", null, true);
+        TermProvider provider = termsMap.getTermProvider("Мобиллюрасцитный Дубликатор Сектора");
 
-        TermsMap.TermProvider code = provider.getCode();
+        TermProvider code = provider.getCode();
         assertEquals("ии:термин:ЮЮ-ИИЙ-ССС-ЮЮ", code.getUri());
     }
 }
