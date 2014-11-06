@@ -29,6 +29,8 @@ public class TermsMarker {
      */
     public String mark(String content) {
         if (content == null || content.isEmpty()) return content;
+
+        content = content.replace("–","-");
         // копируем исходный текст, в этой копии мы будем производить тегирование слов
         StringBuilder result = new StringBuilder(content);
         //перед обходом отсортируем по длине термина, сначала самые длинные
@@ -58,11 +60,10 @@ public class TermsMarker {
                 while (offset < result.length() && matcher.find(offset)) {
                     offset = matcher.end();
                     //убедимся что это не уже обработанный термин, а следующий(в им.падеже)
-                    if (matcher.start() > 3) {
-                        String sub = result.substring(matcher.start() - 3, matcher.start());
-                        if (sub.equals("id=")) {
-                            continue;
-                        }
+                    //String sub = result.substring(matcher.start() - 3, matcher.start());
+                    //if (sub.equals("id=")) {
+                    if (wordInTag(result.substring(0, matcher.start()))) {
+                        continue;
                     }
                     // сохраняем найденое слово из текста так как оно может быть в разных регистрах,
                     // например с большой буквы, или полностью большими буквами
@@ -91,5 +92,16 @@ public class TermsMarker {
             }
         }
         return result.toString();
+    }
+
+    private boolean wordInTag(String substring) {
+
+        int startTag = substring.lastIndexOf("<term id=");
+        int endTag = substring.lastIndexOf("</term>");
+
+        if (startTag>=0 && startTag>endTag){
+            return true;
+        }
+        return false;
     }
 }
