@@ -26,7 +26,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 controller: TermController
             })
             .state('category', {
-                url: "/cat/:name",
+                url: "/c/*name",
                 templateUrl: "partials/category.html",
                 controller: CategoryController
             });
@@ -195,6 +195,8 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                         return uri.replace("ии:термин:", "");
                     case 'item':
                         return uri.replace("ии:пункт:", "");
+                    case 'category':
+                        return uri.replace("категория:", "");
                 }
             },
             getType: function(uri) {
@@ -203,6 +205,9 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 }
                 if (uri.indexOf("ии:пункт:") === 0) {
                     return 'item'
+                }
+                if (uri.indexOf("категория:") === 0) {
+                    return 'category'
                 }
             }
         };
@@ -246,6 +251,15 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 originalScope.$suggestionSelected = function(suggestion) {
                     $state.goToTerm(suggestion);
                 };
+            }
+        };
+    })
+    .directive('iiRef', function($state) {
+        return {
+            link: function (scope, element, attrs, modelCtrl) {
+                element.bind('click', function() {
+                    $state.go(scope[attrs.iiRef])
+                })
             }
         };
     })
@@ -339,6 +353,9 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                     case "item":
                         originStateGo.bind($state)("item", {number: entityService.getName(uri)});
                         return;
+                    case "category":
+                        originStateGo.bind($state)("category", {name: entityService.getName(uri)});
+                        return;    
                 }
             } else {
                 originStateGo.bind($state)(to, params, options)
