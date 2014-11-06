@@ -108,4 +108,9 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
                 )
                 .list();
     }
+
+    @Override
+    public List<Link> getAllSynonyms() {
+        return  criteria().add(in("type", new Byte[]{Link.ABBREVIATION, Link.ALIAS, Link.CODE})).list();
+    }
 }

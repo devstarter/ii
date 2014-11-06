@@ -1,6 +1,5 @@
 package org.ayfaar.app.utils;
 
-import org.ayfaar.app.model.Term;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -34,16 +33,17 @@ public class TermsMarker {
         // копируем исходный текст, в этой копии мы будем производить тегирование слов
         StringBuilder result = new StringBuilder(content);
         //перед обходом отсортируем по длине термина, сначала самые длинные
-        List<Map.Entry<String, Term>> sortedTerms =  new ArrayList<Map.Entry<String, Term>>(termsMap.getAll());
+        List<Map.Entry<String, TermsMap.TermProvider>> sortedTerms =
+                new ArrayList<Map.Entry<String, TermsMap.TermProvider>>(termsMap.getAll());
 
-        Collections.sort(sortedTerms, new Comparator<Map.Entry<String, Term>>() {
+        Collections.sort(sortedTerms, new Comparator<Map.Entry<String, TermsMap.TermProvider>>() {
             @Override
-            public int compare(Map.Entry<String, Term> o1, Map.Entry<String, Term> o2) {
+            public int compare(Map.Entry<String, TermsMap.TermProvider> o1, Map.Entry<String, TermsMap.TermProvider> o2) {
                 return Integer.compare(o2.getKey().length(), o1.getKey().length());
             }
         });
 
-        for (Map.Entry<String, Term> entry : sortedTerms) {
+        for (Map.Entry<String, TermsMap.TermProvider> entry : sortedTerms) {
             // получаем слово связаное с термином, напрмер "времени" будет связано с термином "Время"
             String word = entry.getKey();
             // составляем условие по которому проверяем есть ли это слов в тексте
@@ -73,14 +73,14 @@ public class TermsMarker {
                     // формируем маску для тегирования, title="%s" это дополнительное требования, не описывал ещё в задаче
                     //String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
                     //пока забыли о  title="...."
-                    final String shortDescription = entry.getValue().getShortDescription();
                     String replacer = format("%s<term id=\"%s\"%s>%s</term>%s",
                             charBefore,
-                            entry.getValue().getName(),
-                            shortDescription != null && !shortDescription.isEmpty() ? " has-short-description=\"true\"" : "",
+                            entry.getValue().getTerm().getName(),
+                            entry.getValue().isHasShortDescription() ? " has-short-description=\"true\"" : "",
                             foundWord,
                             charAfter
                     );
+                    //System.out.println("charbefore " + charBefore + " entry " + entry.getValue().getTerm().getName());
                     // заменяем найденое слово тегированным вариантом
                     //result = matcher.replaceAll(replacer);
                     result.replace(matcher.start(), matcher.end(), replacer);
@@ -95,7 +95,6 @@ public class TermsMarker {
     }
 
     private boolean wordInTag(String substring) {
-
         int startTag = substring.lastIndexOf("<term id=");
         int endTag = substring.lastIndexOf("</term>");
 

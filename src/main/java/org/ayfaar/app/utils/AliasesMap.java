@@ -20,7 +20,7 @@ import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
 @Lazy
-public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> implements TermsMap {
+public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> /*implements TermsMap*/ {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
     @Autowired CommonDao commonDao;
@@ -132,7 +132,7 @@ public class AliasesMap extends LinkedHashMap<String, AliasesMap.Proxy> implemen
         return allTerms;
     }
 
-    @Override
+    /*@Override*/
     public Set<Map.Entry<String, Term>> getAll() {
         return termsMap.entrySet();
     }
