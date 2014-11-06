@@ -103,8 +103,9 @@ public class NewAliasesMap implements TermsMap {
         }
 
         @Override
-        public List<TermProvider> getCodes() {
-            return getListProviders(Link.CODE, UriGenerator.getValueFromUri(Term.class, uri));
+        public TermProvider getCode() {
+            List<TermProvider> codes = getListProviders(Link.CODE, UriGenerator.getValueFromUri(Term.class, uri));
+            return codes.get(0);
         }
 
         @Override

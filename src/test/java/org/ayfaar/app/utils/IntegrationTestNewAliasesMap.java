@@ -83,7 +83,7 @@ public class IntegrationTestNewAliasesMap extends IntegrationTest{
         TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
                 "ии:термин:Мобиллюрасцитный Дубликатор Сектора", null, true);
 
-        List<TermsMap.TermProvider> codes = provider.getCodes();
-        assertEquals("ии:термин:ЮЮ-ИИЙ-ССС-ЮЮ", codes.get(0).getUri());
+        TermsMap.TermProvider code = provider.getCode();
+        assertEquals("ии:термин:ЮЮ-ИИЙ-ССС-ЮЮ", code.getUri());
     }
 }
