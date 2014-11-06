@@ -114,8 +114,8 @@ public class NewAliasesMap implements TermsMap {
         }
 
         @Override
-        public byte getTermType(String name) {
-            return links.get(UriGenerator.generate(Term.class, name)).getType();
+        public byte getTermType() {
+            return links.get(uri).getType();
         }
     }
 

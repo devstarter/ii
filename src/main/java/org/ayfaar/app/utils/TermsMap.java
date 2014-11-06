@@ -26,6 +26,6 @@ public interface TermsMap {
         public List<TermProvider> getAliases();
         public List<TermProvider> getAbbreviations();
         public TermProvider getCode();
-        public byte getTermType(String name);
+        public byte getTermType();
     }
 }

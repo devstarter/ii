@@ -56,7 +56,7 @@ public class IntegrationTestNewAliasesMap extends IntegrationTest{
         TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
                 "ии:термин:ТОО-УУ", "ии:термин:Коллективный Космический Разум", false);
 
-        assertEquals(4, provider.getTermType("ТОО-УУ"));
+        assertEquals(4, provider.getTermType());
     }
 
     @Test
