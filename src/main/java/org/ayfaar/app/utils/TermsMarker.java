@@ -79,7 +79,7 @@ public class TermsMarker {
                     boolean hasShortDescription = hasMainTerm ? mainTermProvider.hasShortDescription() : termProvider.hasShortDescription();
 
                     String attributes = hasShortDescription ? " has-short-description=\"true\"" : "";
-                    attributes += termProvider.isAbbreviation() ?  format(" title=\"%s\"", mainTermProvider.getName()) : "";
+                    attributes += termProvider.hasMainTerm() ?  format(" title=\"%s\"", mainTermProvider.getName()) : "";
 
                     String replacer = format("%s<term id=\"%s\"%s>%s</term>%s",
                             charBefore,

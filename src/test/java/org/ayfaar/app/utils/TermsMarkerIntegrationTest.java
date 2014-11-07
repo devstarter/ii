@@ -1,6 +1,7 @@
 package org.ayfaar.app.utils;
 
 import org.ayfaar.app.IntegrationTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -12,6 +13,7 @@ public class TermsMarkerIntegrationTest extends IntegrationTest {
     TermsMarker termsMarker;
 
     @Test
+    @Ignore // эти тести очень дорогие в поддержке
     public void test() {
 
        final String text = "Например, Формо-Творцы АДД-МАДД-ФЛУЙФ-Уровня, организующие высшие ГЛЭИИЙО-реальности";

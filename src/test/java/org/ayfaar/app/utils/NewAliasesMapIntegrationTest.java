@@ -14,7 +14,7 @@ import java.util.Set;
 import static org.ayfaar.app.utils.TermsMap.TermProvider;
 import static org.junit.Assert.*;
 
-public class IntegrationTestNewAliasesMap extends IntegrationTest{
+public class NewAliasesMapIntegrationTest extends IntegrationTest{
     @Autowired
     private NewAliasesMap aliasesMap;
     @Autowired
@@ -97,5 +97,11 @@ public class IntegrationTestNewAliasesMap extends IntegrationTest{
 
         TermProvider code = provider.getCode();
         assertEquals("ии:термин:ЮЮ-ИИЙ-ССС-ЮЮ", code.getUri());
+    }
+
+    @Test
+    public void testRA() {
+        final TermProvider ra = termsMap.getTermProvider("РА");
+        assertTrue(ra.getMainTermProvider().hasShortDescription());
     }
 }
