@@ -33,17 +33,9 @@ public class TermsMarker {
         // копируем исходный текст, в этой копии мы будем производить тегирование слов
         StringBuilder result = new StringBuilder(content);
         //перед обходом отсортируем по длине термина, сначала самые длинные
-        List<Map.Entry<String, TermsMap.TermProvider>> sortedTerms =
-                new ArrayList<Map.Entry<String, TermsMap.TermProvider>>(termsMap.getAll());
 
-        Collections.sort(sortedTerms, new Comparator<Map.Entry<String, TermsMap.TermProvider>>() {
-            @Override
-            public int compare(Map.Entry<String, TermsMap.TermProvider> o1, Map.Entry<String, TermsMap.TermProvider> o2) {
-                return Integer.compare(o2.getKey().length(), o1.getKey().length());
-            }
-        });
 
-        for (Map.Entry<String, TermsMap.TermProvider> entry : sortedTerms) {
+        for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
             // получаем слово связаное с термином, напрмер "времени" будет связано с термином "Время"
             String word = entry.getKey();
             // составляем условие по которому проверяем есть ли это слов в тексте

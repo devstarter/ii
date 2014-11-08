@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.*;
 
+import static java.util.Collections.sort;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
@@ -28,9 +29,10 @@ public class NewAliasesMap implements TermsMap {
 
     private Map<String, LinkInfo> links;
     private Map<String, TermProvider> aliasesMap;
+    private ArrayList<Map.Entry<String, TermProvider>> sortedList;
 
     @PostConstruct
-    private void load() {
+    public void load() {
         aliasesMap = new HashMap<String, TermProvider>();
 
         List<TermMorph> allTermMorphs = commonDao.getAll(TermMorph.class);
@@ -53,15 +55,18 @@ public class NewAliasesMap implements TermsMap {
         }
 
         for(TermMorph morph : allTermMorphs) {
-            String mainTermUri = null;
-            boolean hasShortDescription = false;
-            if(links.containsKey(morph.getTermUri())) {
-                final Term mainTerm = links.get(morph.getTermUri()).getMainTerm();
-                mainTermUri = mainTerm.getUri();
-                hasShortDescription = mainTerm.getShortDescription() != null;
-            }
-            aliasesMap.put(morph.getName(), new TermProviderImpl(morph.getTermUri(), mainTermUri, hasShortDescription));
+            final TermProvider termProvider = aliasesMap.get(UriGenerator.getValueFromUri(Term.class, morph.getTermUri()));
+            aliasesMap.put(morph.getName(), termProvider);
         }
+
+        // prepare sorted List by term name length, longest terms first
+        sortedList = new ArrayList<Map.Entry<String, TermsMap.TermProvider>>(aliasesMap.entrySet());
+        sort(sortedList, new Comparator<Map.Entry<String, TermsMap.TermProvider>>() {
+            @Override
+            public int compare(Map.Entry<String, TermsMap.TermProvider> o1, Map.Entry<String, TermsMap.TermProvider> o2) {
+                return Integer.compare(o2.getKey().length(), o1.getKey().length());
+            }
+        });
     }
 
     @Data
@@ -143,8 +148,8 @@ public class NewAliasesMap implements TermsMap {
     }
 
     @Override
-    public Set<Map.Entry<String, TermProvider>> getAll() {
-        return aliasesMap.entrySet();
+    public List<Map.Entry<String, TermProvider>> getAll() {
+        return sortedList;
     }
 
     @Override

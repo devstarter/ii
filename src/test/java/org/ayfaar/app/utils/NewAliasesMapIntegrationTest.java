@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.ayfaar.app.utils.TermsMap.TermProvider;
 import static org.junit.Assert.*;
@@ -30,7 +29,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetAll() {
-        Set<Map.Entry<String, TermProvider>> set = termsMap.getAll();
+        List<Map.Entry<String, TermProvider>> set = termsMap.getAll();
 
         assertTrue(set.size() > 0);
     }
@@ -103,5 +102,15 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
     public void testRA() {
         final TermProvider ra = termsMap.getTermProvider("РА");
         assertTrue(ra.getMainTermProvider().hasShortDescription());
+    }
+
+    @Test
+    public void sameTermProviders() {
+        final TermProvider morph = termsMap.getTermProvider("резонационной Активности");
+        final TermProvider origin = termsMap.getTermProvider("резонационная Активность");
+        final TermProvider abbr = termsMap.getTermProvider("РА");
+
+        assertEquals(morph, origin);
+        assertEquals(abbr.getMainTermProvider(), origin);
     }
 }

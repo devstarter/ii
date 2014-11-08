@@ -32,6 +32,7 @@ public class TermController {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
     @Autowired AliasesMap aliasesMap;
+    @Autowired NewAliasesMap newAliasesMap;
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
 
@@ -293,6 +294,6 @@ public class TermController {
 
     @RequestMapping("reload-aliases-map")
     public void reloadAliasesMap() {
-        aliasesMap.reload();
+        aliasesMap.reload(); newAliasesMap.load();
     }
 }

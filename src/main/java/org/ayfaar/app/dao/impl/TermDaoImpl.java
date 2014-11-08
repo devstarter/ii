@@ -2,7 +2,6 @@ package org.ayfaar.app.dao.impl;
 
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Term;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -43,17 +42,13 @@ public class TermDaoImpl extends AbstractHibernateDAO<Term> implements TermDao {
     @SuppressWarnings("unchecked")
     @Override
     public List<TermInfo> getAllTermInfo() {
-        List<Object[]> list = criteria()
-                .setProjection(Projections.projectionList()
-                    .add(Projections.property("name"))
-                    .add(Projections.property("shortDescription"))
-                )
+        @SuppressWarnings("JpaQlInspection") List<Object[]> list = currentSession()
+                .createQuery("select t.name, case when t.shortDescription is null then 0 else 1 end from Term t")
                 .list();
 
         List<TermInfo> termsInfo = new ArrayList<TermInfo>();
-
         for (Object[] info : list) {
-            termsInfo.add(new TermInfo((String) info[0], info[1] != null));
+            termsInfo.add(new TermInfo((String) info[0], (Integer)info[1] == 1));
         }
         return termsInfo;
     }
