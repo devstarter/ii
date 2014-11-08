@@ -99,6 +99,9 @@
 	</bean>
 
     <bean id="addAccessControlAllowOriginFilter" class="org.ayfaar.app.utils.servlet.AddAccessControlAllowOriginFilter"/>
+    
+    <bean id="тotificationListener" class="org.ayfaar.app.spring.listeners.NotificationListener"/>
+
 
     <!--<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
         <property name="caches">

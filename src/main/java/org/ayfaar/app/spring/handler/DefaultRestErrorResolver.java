@@ -1,18 +1,32 @@
 package org.ayfaar.app.spring.handler;
 
+import org.ayfaar.app.spring.events.IINotificationEvent;
+import org.ayfaar.app.spring.events.RuntimeErrorEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.web.context.request.ServletWebRequest;
 
-public class DefaultRestErrorResolver implements RestErrorResolver {
+public class DefaultRestErrorResolver implements RestErrorResolver, ApplicationEventPublisherAware {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultRestErrorResolver.class);
+    
+    private ApplicationEventPublisher publisher;
+
+	@Override
+	public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
+		this.publisher = publisher;		
+	}
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
     public BusinessError resolveError(ServletWebRequest request, Object handler, Exception ex) {
 
 //        ex.printStackTrace(System.out);
+    	RuntimeErrorEvent event = new RuntimeErrorEvent(ex.getMessage());
+    	publisher.publishEvent(event);
+    	
         logger.error("Exception", ex);
 
         if (ex instanceof NullPointerException) {
@@ -48,4 +62,5 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
         }
         return null;
     }
+    
 }
