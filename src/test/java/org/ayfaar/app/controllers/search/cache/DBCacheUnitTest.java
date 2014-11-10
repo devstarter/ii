@@ -63,7 +63,7 @@ public class DBCacheUnitTest {
      */
     @Test
     @Ignore
-    public void testPutNotMainTermStore() throws IOException {
+    public void testPutSearchResultPageForMainTerm() throws IOException {
         Term term = new Term("Душа человека");
         Term mainTerm = new Term("АСТТМАЙ-РАА-А");
         CacheKeyGenerator.SearchCacheKey key = new CacheKeyGenerator.SearchCacheKey(term.getName(), 1);
@@ -108,9 +108,6 @@ public class DBCacheUnitTest {
         verify(termsMap, times(1)).getTermProvider(term.getName());
         verify(commonDao, times(1)).save(anyObject());
     }
-
-
-
 
 
 
