@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.io.IOException;
 
-import static org.ayfaar.app.controllers.search.cache.CacheKeyGenerator.SearchCacheKey;
 import static org.ayfaar.app.controllers.search.cache.CacheKeyGenerator.ContentsCacheKey;
+import static org.ayfaar.app.controllers.search.cache.CacheKeyGenerator.SearchCacheKey;
 
 @Component
 public class DBCache extends ConcurrentMapCache {
@@ -39,16 +39,16 @@ public class DBCache extends ConcurrentMapCache {
         JsonEntity jsonEntity = null;
         if (key instanceof SearchCacheKey) {
             final TermsMap.TermProvider provider = termsMap.getTermProvider(((SearchCacheKey) key).query);
-            Term term = null;
+            String termUri = null;
             if(provider != null) {
-                term = provider.hasMainTerm() ? provider.getMainTermProvider().getTerm() : provider.getTerm();
+                termUri = provider.hasMainTerm() ? provider.getMainTermProvider().getUri() : provider.getUri();
             }
 
-            if (term != null) {
-                jsonEntity = commonDao.get(JsonEntity.class, "uri", term.getUri());
+            if (termUri != null) {
+                jsonEntity = commonDao.get(JsonEntity.class, termUri);
             }
             else {
-                //создать уведомление о том, что ищут не термин
+                //todo создать уведомление о том, что ищут не термин
             }
         } else if(key instanceof ContentsCacheKey) {
             final Category category = categoryDao.get("uri",

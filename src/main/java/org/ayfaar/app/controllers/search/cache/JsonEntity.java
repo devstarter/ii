@@ -20,7 +20,7 @@ public class JsonEntity {
     @JoinColumn(name = "uid", insertable = false, updatable = false)
     private UID uid;
 
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String jsonContent;
 
     public JsonEntity(UID uid, String jsonContent) {

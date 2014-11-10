@@ -1,13 +1,11 @@
 package org.ayfaar.app.controllers;
 
-import org.ayfaar.app.controllers.search.cache.DBCache;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.utils.UriGenerator;
-import org.ayfaar.app.utils.contents.CategoryPresentation;
 import org.ayfaar.app.utils.contents.ContentsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -34,7 +32,7 @@ public class CategoryController {
     @Cacheable("DBCache")
     @RequestMapping
     @ResponseBody
-    public CategoryPresentation getContents(@RequestParam("name") String name) {
+    public Object getContents(@RequestParam("name") String name) {
         name = UriGenerator.getValueFromUri(Category.class, name);
         return contentsHelper.createContents(name);
     }
