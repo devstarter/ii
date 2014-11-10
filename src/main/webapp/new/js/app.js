@@ -50,15 +50,20 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         var api = {
             post: function(url, data) {
                 var deferred = $q.defer();
-                $http.post(apiUrl+url, data, {
+                var cache = typeof data._cache !== 'undefined' ? data._cache : false;
+                delete data._cache;
+                $http({
+                    url: apiUrl+url,
+                    data: data,
+                    cache: cache,
+                    method: "POST",
                     headers: { 'Content-Type': undefined },
                     transformRequest: function(data, getHeaders) {
                         var headers = getHeaders();
                         headers[ "Content-type" ] = "application/x-www-form-urlencoded; charset=utf-8";
                         return( serializePost( data ) );
                     }
-                })
-                    .then(function(response){
+                }).then(function(response){
                         deferred.resolve(response.data)
                     },function(response){
                         errorService.resolve(response.error);
@@ -68,8 +73,13 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             },
             get: function(url, data, skipError) {
                 var deferred = $q.defer();
-                $http.get(apiUrl+url+serializeGet(data))
-                    .then(function(response){
+                var cache = typeof data._cache !== 'undefined' ? data._cache : false;
+                delete data._cache;
+                $http({
+                    url: apiUrl+url+serializeGet(data),
+                    method: "GET",
+                    cache: cache
+                }).then(function(response){
                         deferred.resolve(response.data)
                     },function(response){
                         if (!skipError) errorService.resolve(response.error);
@@ -79,7 +89,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             },
             item: {
                 get: function(number) {
-                    return api.get("v2/item", {number: number})
+                    return api.get("v2/item", {number: number, _cache: true})
                 },
                 getContent: function(numberOrUri) {
                     numberOrUri = numberOrUri.replace("ии:пункт:", "");
@@ -88,7 +98,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             },
             term: {
                 get: function(name) {
-                    return api.get('term/', {name: name, mark: true}, true);
+                    return api.get('term/', {name: name, mark: true, _cache: true}, true);
                 },
                 getShortDescription: function(termName) {
                     return api.get("term/get-short-description", {name: termName})
@@ -277,7 +287,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                             expanded = false;
                         } else if (primeTerm && !moreAfterPrimeTerm)  {
                             expanded = true;
-                            $element.append("&nbsp;("+primeTerm+"<a id=\"+\">...</a>)");
+                            $element.append("&nbsp;("+primeTerm+"<i><a id=\"+\"> детальнее</a></i>)");
 //                            $element.append("&nbsp;(<term id=\""+primeTerm+"\">"+primeTerm+"</term>)");
 //                            $compile($element.contents())($scope);
                         } else {
@@ -287,10 +297,10 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                                 $element.append(loadingPlaceHolder);
                                 $api.term.getShortDescription(moreAfterPrimeTerm ? primeTerm : term).then(function (shortDescription) {
                                     $element.html(originalContent + " (" + shortDescription +
-                                        "<a title=\"Перейти на детальное описание термина\">...</a>)");
+                                        "<i><a title=\"Перейти на детальное описание термина\"> детальнее</a></i>)");
                                 });
                             } else {
-                                $element.html(originalContent + " (<i>нет короткого пояснения</i>, <a>пояснить детально</a>)");
+                                $element.html(originalContent + " (нет короткого пояснения, <i>детально</i>)");
                             }
                         }
                     })

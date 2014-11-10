@@ -1,55 +1,44 @@
 function TermController($scope, $stateParams, $api, $state, analytics) {
     var pageCounter = 0, currentQuery;
-    var query = $scope.query = $stateParams.name;
+    var query = $stateParams.name;
     if (isItemNumber(query)) {
         $state.goToItem(query);
         return
     }
     query = query.replace("+", " ").trim();
     $scope.name = query;
-    loadTerm();
+    document.title = query;
+    $scope.state = $state;
 
-    function loadTerm() {
-        $scope.loading = true;
-        $api.term.get($stateParams.name).then(function (data) {
-                $scope.termFound = true;
-                for (var p in data) {
-                    $scope[p] = data[p];
-                }
-                if (data && !data.description && !data.shortDescription && !data.quotes.length && !data.related.length) {
-                    analytics.registerEmptyTerm(data.name);
-                }
-                if (data && !data.description && !data.shortDescription && !data.quotes.length) {
-                    $scope.search();
-                }
-            }, function () {
-                $scope.search();
-            })
-            ['finally'](function () {
-            $scope.loading = false;
-        });
-        document.title = query;
-    }
+    $scope.loading = true;
+
+    $api.term.get(query).then(function (data) {
+        $scope.termFound = true;
+        copyObjectTo(data, $scope);
+        if (data && !data.description && !data.shortDescription && !data.quotes.length && !data.related.length) {
+            analytics.registerEmptyTerm(data.name);
+        }
+        if (data && !data.description && !data.shortDescription && !data.quotes.length) {
+            $scope.search();
+        }
+    }, function () {
+        $scope.search();
+    })
+    ['finally'](function () {
+        $scope.loading = false;
+    });
 
     $scope.searchCallback = function() {
         return $api.search.suggestions($scope.name)
     };
     $scope.suggestionSelected = function(suggestion) {
-        $state.go("term", {name: suggestion});
+        $state.goToTerm(suggestion);
     };
 
-    $scope.updateName = function() {
-        $state.go("term", {name: $scope.name});
+    $scope.updateName = function(name) {
+        $state.goToTerm(name);
     };
 
-    /*search: function(e) {
-     var q = typeof e == "string" ? e : $scope.query;
-     ii.navigateToSearch(q);
-     },*/
-
-    /* navigateToExactTerm: function(e) {
-     ii.navigateToUri(e.data.exactMatchTerm.uri);
-     },*/
     $scope.loadNextPage = function () {
         searchInContent();
     };

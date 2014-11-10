@@ -10,7 +10,7 @@
                        typeahead-on-select="$suggestionSelected($label)" class="form-control"/>
             </td>
             <td>
-                <button class="btn btn-primary" ng-click="updateName()">Искать</button>
+                <button class="btn btn-primary" ng-click="updateName(name)">Искать</button>
             </td>
         </tr>
     </table>
@@ -70,7 +70,7 @@
                 <blockquote ng-repeat="quote in foundQuotes" ng-mouseover="quote.showControlls = true"
                             ng-mouseleave="quote.showControlls = false">
                     <div ii-bind="quote.full ? quote.full : quote.quote"></div>
-                    <cite>&mdash; <a ng-click="$state.goToItem(quote.number)">{{quote.number}}</a>
+                    <cite>&mdash; <a ng-click="state.goToItem(quote.number)">{{quote.number}}</a>
                         <span ng-show="quote.showControlls">
                             <button ng-show="termFound" class="btn btn-default btn-icon" ng-click="rateUp(quote)" title="Полезная цитата">
                                 <i class="icon-star"></i>
