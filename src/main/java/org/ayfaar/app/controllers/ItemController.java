@@ -11,10 +11,7 @@ import org.ayfaar.app.utils.AliasesMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 import static org.springframework.util.Assert.notNull;

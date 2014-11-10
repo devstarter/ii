@@ -6,17 +6,16 @@ import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.spring.Model;
-import org.ayfaar.app.utils.AliasesMap;
-import org.ayfaar.app.utils.Morpher;
-import org.ayfaar.app.utils.TermUtils;
-import org.ayfaar.app.utils.ValueObjectUtils;
+import org.ayfaar.app.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.inject.Inject;
 import java.util.*;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
 import static org.ayfaar.app.model.Link.*;
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
@@ -33,8 +32,9 @@ public class TermController {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
     @Autowired AliasesMap aliasesMap;
-    @Autowired
-    SuggestionsController searchController2;
+    @Autowired NewAliasesMap newAliasesMap;
+    @Autowired SuggestionsController searchController2;
+    @Inject TermsMarker termsMarker;
 
     /*@RequestMapping("import")
     @Model
@@ -52,13 +52,17 @@ public class TermController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @Model
-    public ModelMap get(@RequestParam("name") String termName) {
+    public ModelMap get(@RequestParam("name") String termName, @RequestParam(required = false) boolean mark) {
         Term term = termDao.getByName(termName);
         notNull(term, "Термин не найден");
-        return get(term);
+        return get(term, mark);
     }
 
     public ModelMap get(Term term) {
+        return get(term, false);
+    }
+
+    public ModelMap get(Term term, boolean mark) {
         String termName = term.getName();
         Term alias = null;
         if (!aliasesMap.get(termName).getTerm().getUri().equals(term.getUri())) {
@@ -91,7 +95,7 @@ public class TermController {
                     ? link.getUid2()
                     : link.getUid1();
             if (link.getQuote() != null || source instanceof Item) {
-                quotes.add(getQuote(link, source));
+                quotes.add(getQuote(link, source, mark));
             } else if (ABBREVIATION.equals(link.getType()) || ALIAS.equals(link.getType())) {
                 aliases.add(source);
             } else if (CODE.equals(link.getType())) {
@@ -113,7 +117,7 @@ public class TermController {
                         ? link.getUid2()
                         : link.getUid1();
                 if (link.getQuote() != null || source instanceof Item) {
-                    quotes.add(getQuote(link, source));
+                    quotes.add(getQuote(link, source, mark));
                 } else if (ABBREVIATION.equals(link.getType()) || ALIAS.equals(link.getType()) || CODE.equals(link.getType())) {
                     // Синонимы синонимов :) по идее их не должно быть, но если вдруг...
                     // как минимум один есть и этот наш основной термин
@@ -137,6 +141,12 @@ public class TermController {
         modelMap.put("related", toPlainObjectWithoutContent(related));
         modelMap.put("aliases", toPlainObjectWithoutContent(aliases));
 
+        if (mark) {
+            for (String p : asList("description", "shortDescription")) {
+                modelMap.put(p, termsMarker.mark((String) modelMap.get(p)));
+            }
+        }
+
         return modelMap;
     }
 
@@ -149,9 +159,11 @@ public class TermController {
         });
     }
 
-    private ModelMap getQuote(Link link, UID source) {
+    private ModelMap getQuote(Link link, UID source, boolean mark) {
         ModelMap map = new ModelMap();
-        map.put("quote", link.getQuote() != null ? link.getQuote() : ((Item) source).getContent());
+        String quote = link.getQuote() != null ? link.getQuote() : ((Item) source).getContent();
+        if (mark) quote = termsMarker.mark(quote);
+        map.put("quote", quote);
         map.put("uri", source.getUri());
         return map;
     }
@@ -282,6 +294,6 @@ public class TermController {
 
     @RequestMapping("reload-aliases-map")
     public void reloadAliasesMap() {
-        aliasesMap.reload();
+        aliasesMap.reload(); newAliasesMap.load();
     }
 }

@@ -18,6 +18,19 @@ term {
     color: rgb(3, 86, 151);
     cursor: pointer;
 }
+.trim-info {
+    max-width: 350px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 15px;
+    position: relative;
+}
+.navbar {
+    -webkit-box-shadow: 0 3px 3px rgba(0,0,0,0.175);
+    box-shadow: 0 3px 3px rgba(0,0,0,0.175);
+}
 .btn-icon {
     padding: 3px 8px 1px;
     /*font-size: 1.5em;*/
@@ -29,7 +42,7 @@ blockquote>cite {
 }
 
 body {
-    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Trebuchet MS', sans-serif;
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Trebuchet MS', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: #00006d;
 }
 

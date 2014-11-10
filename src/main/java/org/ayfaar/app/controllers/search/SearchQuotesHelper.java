@@ -2,8 +2,10 @@ package org.ayfaar.app.controllers.search;
 
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.RegExpUtils;
+import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +23,8 @@ public class SearchQuotesHelper {
     private static final List<String> directSpeech = Arrays.asList(". –", "! –", "? –", ". -", "! -", "? -");
     private static final List<Character> openQuoteBracketHyphen = Arrays.asList('«', '(', '-');
     private static final List<String> punctual = Arrays.asList(".", "?", "!", ":", ";");
+
+    @Inject TermsMarker termsMarker;
 
     public List<Quote> createQuotes(List<Item> foundedItems, List<String> allPossibleSearchQueries) {
         List<Quote> quotes = new ArrayList<Quote>();
@@ -63,7 +67,7 @@ public class SearchQuotesHelper {
             String textQuote = createTextQuote(phrases, leftPart, rightPart);
             Quote quote = new Quote();
             quote.setNumber(item.getNumber());
-            quote.setQuote(textQuote);
+            quote.setQuote(termsMarker.mark(textQuote));
             quotes.add(quote);
         }
         return quotes;

@@ -50,15 +50,20 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         var api = {
             post: function(url, data) {
                 var deferred = $q.defer();
-                $http.post(apiUrl+url, data, {
+                var cache = typeof data._cache !== 'undefined' ? data._cache : false;
+                delete data._cache;
+                $http({
+                    url: apiUrl+url,
+                    data: data,
+                    cache: cache,
+                    method: "POST",
                     headers: { 'Content-Type': undefined },
                     transformRequest: function(data, getHeaders) {
                         var headers = getHeaders();
                         headers[ "Content-type" ] = "application/x-www-form-urlencoded; charset=utf-8";
                         return( serializePost( data ) );
                     }
-                })
-                    .then(function(response){
+                }).then(function(response){
                         deferred.resolve(response.data)
                     },function(response){
                         errorService.resolve(response.error);
@@ -68,8 +73,13 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             },
             get: function(url, data, skipError) {
                 var deferred = $q.defer();
-                $http.get(apiUrl+url+serializeGet(data))
-                    .then(function(response){
+                var cache = typeof data._cache !== 'undefined' ? data._cache : false;
+                delete data._cache;
+                $http({
+                    url: apiUrl+url+serializeGet(data),
+                    method: "GET",
+                    cache: cache
+                }).then(function(response){
                         deferred.resolve(response.data)
                     },function(response){
                         if (!skipError) errorService.resolve(response.error);
@@ -79,12 +89,16 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             },
             item: {
                 get: function(number) {
-                    return api.get("v2/item", {number: number})
+                    return api.get("v2/item", {number: number, _cache: true})
+                },
+                getContent: function(numberOrUri) {
+                    numberOrUri = numberOrUri.replace("ии:пункт:", "");
+                    return api.get("v2/item/"+numberOrUri+"/content")
                 }
             },
             term: {
                 get: function(name) {
-                    return api.get('term/', {name: name}, true);
+                    return api.get('term/', {name: name, mark: true, _cache: true}, true);
                 },
                 getShortDescription: function(termName) {
                     return api.get("term/get-short-description", {name: termName})
@@ -244,7 +258,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                     return $api.get("suggestions/"+query)
                 };
                 originalScope.$suggestionSelected = function(suggestion) {
-                    $state.go("term", {name: suggestion});
+                    $state.goToTerm(suggestion);
                 };
             }
         };
@@ -273,7 +287,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                             expanded = false;
                         } else if (primeTerm && !moreAfterPrimeTerm)  {
                             expanded = true;
-                            $element.append("&nbsp;("+primeTerm+"<a id=\"+\">...</a>)");
+                            $element.append("&nbsp;("+primeTerm+"<i><a id=\"+\"> детальнее</a></i>)");
 //                            $element.append("&nbsp;(<term id=\""+primeTerm+"\">"+primeTerm+"</term>)");
 //                            $compile($element.contents())($scope);
                         } else {
@@ -283,10 +297,10 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                                 $element.append(loadingPlaceHolder);
                                 $api.term.getShortDescription(moreAfterPrimeTerm ? primeTerm : term).then(function (shortDescription) {
                                     $element.html(originalContent + " (" + shortDescription +
-                                        "<a title=\"Перейти на детальное описание термина\">...</a>)");
+                                        "<i><a title=\"Перейти на детальное описание термина\"> детальнее</a></i>)");
                                 });
                             } else {
-                                $element.html(originalContent + " (<i>нет короткого пояснения</i>, <a>пояснить детально</a>)");
+                                $element.html(originalContent + " (нет короткого пояснения, <i>детально</i>)");
                             }
                         }
                     })
@@ -299,6 +313,10 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         return {
             link: function(scope, element, attrs) {
                 scope.$watch(attrs.iiBind, function(newval) {
+                    if (!newval) {
+                        element.html(newval);
+                        return;
+                    }
                     newval = newval.replace(new RegExp("\\(([^\\)]+)\\)","gm"), "<bracket>$1</bracket>");
                     element.html(newval);
                     $compile(element.contents())(scope);
@@ -327,6 +345,30 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             }
         }
     })
+    .controller("HeaderController", function($scope, $state, $stateParams) {
+        var body = angular.element(document);//.find('body');
+
+        $scope.alert = function(e) {
+            alert(e);
+        };
+        body.bind('mouseup', function(e) {
+            var text = getSelectedText();
+            if (text) {
+                $scope.state = $state.current.name+$stateParams.number;
+                $scope.text = text;
+                $scope.$apply();
+            }
+        });
+
+        function getSelectedText() {
+            if (window.getSelection) {
+                return window.getSelection().toString();
+            } else if (document.selection) {
+                return document.selection.createRange().text;
+            }
+            return null;
+        }
+    })
     .run(function($state, entityService){
         var originStateGo = $state.go;
         $state.go = function(to, params, options) {
@@ -349,7 +391,26 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         };
         $state.goToTerm = function(name) {
             originStateGo.bind($state)("term", {name: name})
-        }
+        };
+    })
+    .filter('cut', function () {
+        return function (value, wordwise, max, tail) {
+            if (!value) return '';
+
+            max = parseInt(max, 10);
+            if (!max) return value;
+            if (value.length <= max) return value;
+
+            value = value.substr(0, max);
+            if (wordwise) {
+                var lastspace = value.lastIndexOf(' ');
+                if (lastspace != -1) {
+                    value = value.substr(0, lastspace);
+                }
+            }
+
+            return value + (tail || ' …');
+        };
     });
 
 Array.prototype.append = function(array){

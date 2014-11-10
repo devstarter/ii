@@ -21,4 +21,6 @@ public interface LinkDao extends BasicCrudDao<Link> {
     List<Link> getByUris(String uri1, String uri2);
 
     List<Link> get(UID uid1, UID uid2);
+
+    List<Link> getAllSynonyms();
 }
