@@ -1,6 +1,6 @@
 function TermController($scope, $stateParams, $api, $state, analytics) {
     var pageCounter = 0, currentQuery;
-    var query = $stateParams.name;
+    var query = $scope.query = $stateParams.name;
     if (isItemNumber(query)) {
         $state.goToItem(query);
         return

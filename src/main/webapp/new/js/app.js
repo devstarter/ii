@@ -16,17 +16,17 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 templateUrl: "partials/article.html"
             })
             .state('item', {
-                url: "/item/:number",
+                url: "/i/:number",
                 templateUrl: "partials/item.html",
                 controller: ItemController
             })
             .state('term', {
-                url: "/term/:name",
+                url: "/t/:name",
                 templateUrl: "partials/term.html",
                 controller: TermController
             })
             .state('category', {
-                url: "/cat/:name",
+                url: "/c/:name",
                 templateUrl: "partials/category.html",
                 controller: CategoryController
             });
@@ -50,8 +50,8 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         var api = {
             post: function(url, data) {
                 var deferred = $q.defer();
-                var cache = typeof data._cache !== 'undefined' ? data._cache : false;
-                delete data._cache;
+                var cache = data && typeof data._cache !== 'undefined' ? data._cache : false;
+                if (data) delete data._cache;
                 $http({
                     url: apiUrl+url,
                     data: data,
@@ -73,8 +73,8 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             },
             get: function(url, data, skipError) {
                 var deferred = $q.defer();
-                var cache = typeof data._cache !== 'undefined' ? data._cache : false;
-                delete data._cache;
+                var cache = data && typeof data._cache !== 'undefined' ? data._cache : false;
+                if (data) delete data._cache;
                 $http({
                     url: apiUrl+url+serializeGet(data),
                     method: "GET",
@@ -101,7 +101,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                     return api.get('term/', {name: name, mark: true, _cache: true}, true);
                 },
                 getShortDescription: function(termName) {
-                    return api.get("term/get-short-description", {name: termName})
+                    return api.get("term/get-short-description", {name: termName, _cache: true})
                 }
             },
             category: {
@@ -287,7 +287,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                             expanded = false;
                         } else if (primeTerm && !moreAfterPrimeTerm)  {
                             expanded = true;
-                            $element.append("&nbsp;("+primeTerm+"<i><a id=\"+\"> детальнее</a></i>)");
+                            $element.append("&nbsp;("+primeTerm+" <i><a id=\"+\">детальнее</a></i>)");
 //                            $element.append("&nbsp;(<term id=\""+primeTerm+"\">"+primeTerm+"</term>)");
 //                            $compile($element.contents())($scope);
                         } else {
@@ -297,10 +297,10 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                                 $element.append(loadingPlaceHolder);
                                 $api.term.getShortDescription(moreAfterPrimeTerm ? primeTerm : term).then(function (shortDescription) {
                                     $element.html(originalContent + " (" + shortDescription +
-                                        "<i><a title=\"Перейти на детальное описание термина\"> детальнее</a></i>)");
+                                        " <i><a title=\"Перейти на детальное описание термина\">детальнее</a></i>)");
                                 });
                             } else {
-                                $element.html(originalContent + " (нет короткого пояснения, <i>детально</i>)");
+                                $element.html(originalContent + " (нет короткого пояснения, <i><a>детально</a></i>)");
                             }
                         }
                     })
