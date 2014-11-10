@@ -3,6 +3,8 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.controllers.search.SearchCache;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
+import org.ayfaar.app.controllers.search.cache.JsonEntity;
+import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.dao.TermMorphDao;
 import org.ayfaar.app.model.Term;
@@ -11,6 +13,7 @@ import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.Transformer;
 import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,6 +37,7 @@ import static org.mockito.Mockito.*;
 public class NewSearchControllerUnitTest {
 
     @Mock SearchDao searchDao;
+    @Mock CommonDao commonDao;
     @Mock TermMorphDao termMorphDao;
     @Mock SearchCache cache;
     @Mock SearchQuotesHelper handleItems;
@@ -60,7 +64,7 @@ public class NewSearchControllerUnitTest {
         when(searchDao.findInItems(morphs, 0, PAGE_SIZE+1, null)).thenReturn(items);
         when(items.size()).thenReturn(21);
 
-        SearchResultPage page = controller.search(q, 0, null);
+        SearchResultPage page = (SearchResultPage) controller.search(q, 0, null);
         assertTrue(page.isHasMore());
         verify(searchDao, only()).findInItems(anyList(), anyInt(), anyInt(), anyString());
         verify(items).remove(20);

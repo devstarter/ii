@@ -2,9 +2,9 @@ package org.ayfaar.app.controllers;
 
 import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.controllers.search.Quote;
-import org.ayfaar.app.controllers.search.SearchCache;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
+import org.ayfaar.app.controllers.search.cache.DBCache;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.dao.TermMorphDao;
@@ -13,6 +13,7 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.utils.AliasesMap;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,27 +46,23 @@ public class NewSearchController {
     private LinkDao linkDao;
 
     @Inject
-    protected SearchCache cache;
-
+    protected DBCache cache;
 
     /**
      * Поиск будет производить только по содержимому Item
      *
      * @param pageNumber номер страницы
      */
+    @Cacheable("DBCache")
     @RequestMapping
     @ResponseBody
-    public SearchResultPage search(@RequestParam String query,
+    // возвращаем Object чтобы можно было вернуть закешированный json или SearchResultPage
+    public Object search(@RequestParam String query,
                                    @RequestParam Integer pageNumber,
                                    @RequestParam(required = false) String fromItemNumber) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         query = prepareQuery(query);
 
-        // 2. Проверяем есть ли кеш, если да возвращаем его
-        Object cacheKey = cache.generateKey(query, pageNumber, fromItemNumber);
-        if (cache.has(cacheKey)) {
-            return cache.get(cacheKey);
-        }
         SearchResultPage page = new SearchResultPage();
         page.setHasMore(false);
 
@@ -110,8 +107,6 @@ public class NewSearchController {
         List<Quote> quotes = handleItems.createQuotes(foundItems, searchQueries);
         page.setQuotes(quotes);
 
-        // 6. Сохранение в кеше
-        cache.put(cacheKey, page);
         // 7. Вернуть результат
         return page;
     }
@@ -152,6 +147,6 @@ public class NewSearchController {
 
     @RequestMapping("clean")
     public void cleanCache() {
-        cache.clean();
+        cache.clear();
     }
 }
