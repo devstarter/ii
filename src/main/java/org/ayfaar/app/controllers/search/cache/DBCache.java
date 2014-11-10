@@ -6,7 +6,7 @@ import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.UID;
 import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
-import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.utils.TermsMap;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleValueWrapper;
@@ -21,14 +21,13 @@ import static org.ayfaar.app.controllers.search.cache.CacheKeyGenerator.Contents
 @Component
 public class DBCache extends ConcurrentMapCache {
     @Inject CustomObjectMapper objectMapper;
-    @Inject AliasesMap aliasesMap;
+    @Inject TermsMap termsMap;
     @Inject CommonDao commonDao;
     @Inject CategoryDao categoryDao;
 
     public DBCache() {
         super("DBCache");
     }
-
 
     @Override
     public ValueWrapper get(Object key) {
@@ -39,15 +38,23 @@ public class DBCache extends ConcurrentMapCache {
 
         JsonEntity jsonEntity = null;
         if (key instanceof SearchCacheKey) {
-            final Term term = aliasesMap.getTerm(((SearchCacheKey) key).query);
+            final TermsMap.TermProvider provider = termsMap.getTermProvider(((SearchCacheKey) key).query);
+            Term term = null;
+            if(provider != null) {
+                term = provider.hasMainTerm() ? provider.getMainTermProvider().getTerm() : provider.getTerm();
+            }
+
             if (term != null) {
-                jsonEntity = commonDao.get(JsonEntity.class, "uid", term);
+                jsonEntity = commonDao.get(JsonEntity.class, "uri", term.getUri());
+            }
+            else {
+                //создать уведомление о том, что ищут не термин
             }
         } else if(key instanceof ContentsCacheKey) {
             final Category category = categoryDao.get("uri",
                     UriGenerator.generate(Category.class, ((ContentsCacheKey) key).categoryName));
             if(category != null) {
-                jsonEntity = commonDao.get(JsonEntity.class, "uid", category);
+                jsonEntity = commonDao.get(JsonEntity.class, "uri", category.getUri());
             }
         }
 
@@ -61,29 +68,25 @@ public class DBCache extends ConcurrentMapCache {
     @Override
     public void put(Object key, Object value) {
         String json;
-        String name = "";
         UID uid = null;
 
-        if(value instanceof String) {
-            json = (String)value;
-        }
-        else {
-            try {
-                json = objectMapper.writeValueAsString(value);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            json = (value instanceof String) ? (String)value : objectMapper.writeValueAsString(value);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         if (key instanceof SearchCacheKey) {
-            name = ((SearchCacheKey) key).query;
-            uid = aliasesMap.getTerm(name);
+            TermsMap.TermProvider provider = termsMap.getTermProvider(((SearchCacheKey) key).query);
+            if(provider != null) {
+                uid = provider.hasMainTerm() ? provider.getMainTermProvider().getTerm() : provider.getTerm();
+            }
         } else if(key instanceof ContentsCacheKey) {
-            name = ((ContentsCacheKey) key).categoryName;
+            String name = ((ContentsCacheKey) key).categoryName;
             uid = commonDao.get(UID.class, UriGenerator.generate(Category.class, name));
         }
         if(uid != null) {
-            commonDao.save(new JsonEntity(name, uid, json));
+            commonDao.save(new JsonEntity(uid, json));
         }
         super.put(key, json);
     }

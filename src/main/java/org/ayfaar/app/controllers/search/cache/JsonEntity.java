@@ -12,19 +12,19 @@ import javax.persistence.*;
 @Entity
 @Table(name= "cache")
 public class JsonEntity {
-    /**
-     * по идее это поле нам не нужно, так как поиск в базе осуществляется по uid, я его использую просто как id
-     */
     @Id
-    @Column(unique = true)
-    private String name;
+    @Column(name = "uid")
+    private String uri;
+
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "uid", insertable = false, updatable = false)
     private UID uid;
+
     @Column(name = "content")
     private String jsonContent;
 
-    public JsonEntity(String name, UID uid, String jsonContent) {
-        this.name = name;
+    public JsonEntity(UID uid, String jsonContent) {
+        this.uri = uid.getUri();
         this.uid = uid;
         this.jsonContent = jsonContent;
     }
