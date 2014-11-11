@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name= "cache")
-public class JsonEntity {
+public class CacheEntity {
     @Id
     @Column(name = "uid")
     private String uri;
@@ -23,7 +23,7 @@ public class JsonEntity {
     @Column(name = "content", columnDefinition = "TEXT")
     private String jsonContent;
 
-    public JsonEntity(UID uid, String jsonContent) {
+    public CacheEntity(UID uid, String jsonContent) {
         this.uri = uid.getUri();
         this.uid = uid;
         this.jsonContent = jsonContent;

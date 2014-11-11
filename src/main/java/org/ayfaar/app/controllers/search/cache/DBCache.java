@@ -33,31 +33,33 @@ public class DBCache extends ConcurrentMapCache {
             return value;
         }
 
-        JsonEntity jsonEntity = null;
+        CacheEntity cacheEntity = null;
         if (key instanceof SearchCacheKey) {
-            final TermsMap.TermProvider provider = termsMap.getTermProvider(((SearchCacheKey) key).query);
-            String termUri = null;
-            if(provider != null) {
-                termUri = provider.hasMainTerm() ? provider.getMainTermProvider().getUri() : provider.getUri();
-            }
+            SearchCacheKey searchKey = (SearchCacheKey) key;
+            if (searchKey.page == 0) {
+                final TermsMap.TermProvider provider = termsMap.getTermProvider(searchKey.query);
+                String termUri = null;
+                if (provider != null) {
+                    termUri = provider.hasMainTerm() ? provider.getMainTermProvider().getUri() : provider.getUri();
+                }
 
-            if (termUri != null) {
-                jsonEntity = commonDao.get(JsonEntity.class, termUri);
-            }
-            else {
-                //todo создать уведомление о том, что ищут не термин
+                if (termUri != null) {
+                    cacheEntity = commonDao.get(CacheEntity.class, termUri);
+                } else {
+                    //todo создать уведомление о том, что ищут не термин
+                }
             }
         } else if(key instanceof ContentsCacheKey) {
             final Category category = categoryDao.get("uri",
                     UriGenerator.generate(Category.class, ((ContentsCacheKey) key).categoryName));
             if(category != null) {
-                jsonEntity = commonDao.get(JsonEntity.class, "uri", category.getUri());
+                cacheEntity = commonDao.get(CacheEntity.class, "uri", category.getUri());
             }
         }
 
-        if (jsonEntity != null) {
-            put(key, jsonEntity.getJsonContent());
-            value = new SimpleValueWrapper(jsonEntity.getJsonContent());
+        if (cacheEntity != null) {
+            put(key, cacheEntity.getJsonContent());
+            value = new SimpleValueWrapper(cacheEntity.getJsonContent());
         }
         return value;
     }
@@ -73,9 +75,9 @@ public class DBCache extends ConcurrentMapCache {
             throw new RuntimeException(e);
         }
 
-        if (key instanceof SearchCacheKey) {
+        if (key instanceof SearchCacheKey && ((SearchCacheKey) key).page == 0) {
             TermsMap.TermProvider provider = termsMap.getTermProvider(((SearchCacheKey) key).query);
-            if(provider != null && ((SearchCacheKey) key).page == 1) {
+            if(provider != null && ((SearchCacheKey) key).page == 0) {
                 uid = provider.hasMainTerm() ? provider.getMainTermProvider().getTerm() : provider.getTerm();
             }
         } else if(key instanceof ContentsCacheKey) {
@@ -83,7 +85,7 @@ public class DBCache extends ConcurrentMapCache {
             uid = commonDao.get(UID.class, UriGenerator.generate(Category.class, name));
         }
         if(uid != null) {
-            commonDao.save(new JsonEntity(uid, json));
+            commonDao.save(new CacheEntity(uid, json));
         }
         super.put(key, json);
     }

@@ -22,8 +22,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cache.Cache;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.ayfaar.app.utils.TermsMap.TermProvider;
 import static org.mockito.Matchers.*;
@@ -51,7 +49,7 @@ public class DBCacheUnitTest {
     @Test
     public void testPutNotTermStore() throws IOException {
         String termName = "Вектор";
-        SearchCacheKey key = new SearchCacheKey(termName, 1);
+        SearchCacheKey key = new SearchCacheKey(termName, 0);
         SearchResultPage page = new SearchResultPage();
 
         dbCache.put(key, page);
@@ -96,7 +94,7 @@ public class DBCacheUnitTest {
     public void testPutSearchResultPageWhenMainTermIsNull() throws IOException {
         Term term = new Term("Амплификационные Поток");
 
-        SearchCacheKey key = new SearchCacheKey(term.getName(), 1);
+        SearchCacheKey key = new SearchCacheKey(term.getName(), 0);
         SearchResultPage page = new SearchResultPage();
 
         String uri = UriGenerator.generate(Term.class, "Амплификационные Поток");
@@ -128,7 +126,7 @@ public class DBCacheUnitTest {
         dbCache.put(key, page);
         Cache.ValueWrapper value = dbCache.get(key);
 
-        verify(commonDao, never()).get(JsonEntity.class, "uri", term.getUri());
+        verify(commonDao, never()).get(CacheEntity.class, "uri", term.getUri());
         assertNotNull(value);
     }
 
@@ -139,7 +137,7 @@ public class DBCacheUnitTest {
     public void testGettingSearchResultPageFromCacheInDatabase() {
         Term term = new Term("АСТТМАЙ-РАА-А");
         term.setUri(UriGenerator.generate(Term.class, term.getName()));
-        SearchCacheKey key = new SearchCacheKey(term.getName(), 1);
+        SearchCacheKey key = new SearchCacheKey(term.getName(), 0);
         String uri = UriGenerator.generate(Term.class, term.getName());
         TermProvider provider = aliasesMap.new TermProviderImpl(uri, null, false);
 
@@ -149,7 +147,7 @@ public class DBCacheUnitTest {
 
         dbCache.get(key);
 
-        verify(commonDao, times(1)).get(JsonEntity.class, term.getUri());
+        verify(commonDao, times(1)).get(CacheEntity.class, term.getUri());
     }
 
     /**
@@ -164,6 +162,6 @@ public class DBCacheUnitTest {
         when(categoryDao.get("uri", UriGenerator.generate(Category.class, category.getName()))).thenReturn(category);
         dbCache.get(key);
 
-        verify(commonDao, times(1)).get(JsonEntity.class, "uri", category.getUri());
+        verify(commonDao, times(1)).get(CacheEntity.class, "uri", category.getUri());
     }
 }

@@ -56,7 +56,7 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
         }
     };
     $scope.expand = function(quote) {
-        $api.item.getContent(quote.uri)
+        $api.item.getContent(quote.uri ? quote.uri : quote.number)
             .then(function(r){
                 quote.full = r;
             })
