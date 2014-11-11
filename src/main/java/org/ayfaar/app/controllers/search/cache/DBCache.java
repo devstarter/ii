@@ -3,7 +3,6 @@ package org.ayfaar.app.controllers.search.cache;
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Category;
-import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.UID;
 import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
 import org.ayfaar.app.utils.TermsMap;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.io.IOException;
 
-import static org.ayfaar.app.controllers.search.cache.CacheKeyGenerator.ContentsCacheKey;
-import static org.ayfaar.app.controllers.search.cache.CacheKeyGenerator.SearchCacheKey;
 
 @Component
 public class DBCache extends ConcurrentMapCache {
@@ -78,7 +75,7 @@ public class DBCache extends ConcurrentMapCache {
 
         if (key instanceof SearchCacheKey) {
             TermsMap.TermProvider provider = termsMap.getTermProvider(((SearchCacheKey) key).query);
-            if(provider != null) {
+            if(provider != null && ((SearchCacheKey) key).page == 1) {
                 uid = provider.hasMainTerm() ? provider.getMainTermProvider().getTerm() : provider.getTerm();
             }
         } else if(key instanceof ContentsCacheKey) {
