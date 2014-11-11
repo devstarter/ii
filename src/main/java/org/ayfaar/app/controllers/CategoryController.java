@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers;
 
+import org.ayfaar.app.annotations.ContentsCache;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
@@ -29,7 +30,7 @@ public class CategoryController {
     @Autowired ItemDao itemDao;
     @Autowired ContentsHelper contentsHelper;
 
-    @Cacheable("DBCache")
+    @ContentsCache
     @RequestMapping
     @ResponseBody
     public Object getContents(@RequestParam("name") String name) {

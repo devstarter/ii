@@ -22,6 +22,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cache.Cache;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.ayfaar.app.utils.TermsMap.TermProvider;
 import static org.mockito.Matchers.*;
@@ -49,7 +51,7 @@ public class DBCacheUnitTest {
     @Test
     public void testPutNotTermStore() throws IOException {
         String termName = "Вектор";
-        CacheKeyGenerator.SearchCacheKey key = new CacheKeyGenerator.SearchCacheKey(termName, 1);
+        SearchCacheKey key = new SearchCacheKey(termName, 1);
         SearchResultPage page = new SearchResultPage();
 
         dbCache.put(key, page);
@@ -66,7 +68,7 @@ public class DBCacheUnitTest {
     public void testPutSearchResultPageForMainTerm() throws IOException {
         Term term = new Term("Душа человека");
         Term mainTerm = new Term("АСТТМАЙ-РАА-А");
-        CacheKeyGenerator.SearchCacheKey key = new CacheKeyGenerator.SearchCacheKey(term.getName(), 1);
+        SearchCacheKey key = new SearchCacheKey(term.getName(), 1);
         SearchResultPage page = new SearchResultPage();
 
         TermProvider provider = aliasesMap.new TermProviderImpl(UriGenerator.generate(Term.class, term.getName()),
@@ -76,6 +78,7 @@ public class DBCacheUnitTest {
 
         when(termsMap.getTermProvider(term.getName())).thenReturn(provider);
 
+        aliasesMap.load();
         dbCache.put(key, page);
 
 
@@ -93,7 +96,7 @@ public class DBCacheUnitTest {
     public void testPutSearchResultPageWhenMainTermIsNull() throws IOException {
         Term term = new Term("Амплификационные Поток");
 
-        CacheKeyGenerator.SearchCacheKey key = new CacheKeyGenerator.SearchCacheKey(term.getName(), 1);
+        SearchCacheKey key = new SearchCacheKey(term.getName(), 1);
         SearchResultPage page = new SearchResultPage();
 
         String uri = UriGenerator.generate(Term.class, "Амплификационные Поток");
@@ -117,7 +120,7 @@ public class DBCacheUnitTest {
     @Test
     public void testGettingSearchResultPageFromCacheInMemory() throws IOException {
         Term term = new Term("Миру");
-        CacheKeyGenerator.SearchCacheKey key = new CacheKeyGenerator.SearchCacheKey(term.getName(), 1);
+        SearchCacheKey key = new SearchCacheKey(term.getName(), 1);
         SearchResultPage page = new SearchResultPage();
 
         when(termsMap.getTerm(term.getName())).thenReturn(term);
@@ -136,7 +139,7 @@ public class DBCacheUnitTest {
     public void testGettingSearchResultPageFromCacheInDatabase() {
         Term term = new Term("АСТТМАЙ-РАА-А");
         term.setUri(UriGenerator.generate(Term.class, term.getName()));
-        CacheKeyGenerator.SearchCacheKey key = new CacheKeyGenerator.SearchCacheKey(term.getName(), 1);
+        SearchCacheKey key = new SearchCacheKey(term.getName(), 1);
         String uri = UriGenerator.generate(Term.class, term.getName());
         TermProvider provider = aliasesMap.new TermProviderImpl(uri, null, false);
 
@@ -146,7 +149,7 @@ public class DBCacheUnitTest {
 
         dbCache.get(key);
 
-        verify(commonDao, times(1)).get(JsonEntity.class, "uri", term.getUri());
+        verify(commonDao, times(1)).get(JsonEntity.class, term.getUri());
     }
 
     /**
@@ -156,7 +159,7 @@ public class DBCacheUnitTest {
     public void testGettingCategoryPresentationFromCacheInDatabase() {
         Category category = new Category("БДК / Раздел III");
         category.setUri(UriGenerator.generate(Category.class, "БДК / Раздел III"));
-        CacheKeyGenerator.ContentsCacheKey key = new CacheKeyGenerator.ContentsCacheKey(category.getName());
+        ContentsCacheKey key = new ContentsCacheKey(category.getName());
 
         when(categoryDao.get("uri", UriGenerator.generate(Category.class, category.getName()))).thenReturn(category);
         dbCache.get(key);

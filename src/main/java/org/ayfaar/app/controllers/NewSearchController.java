@@ -1,6 +1,7 @@
 package org.ayfaar.app.controllers;
 
 import net.sf.cglib.core.Transformer;
+import org.ayfaar.app.annotations.SearchResultCache;
 import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
@@ -13,7 +14,6 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.utils.AliasesMap;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,7 +53,7 @@ public class NewSearchController {
      *
      * @param pageNumber номер страницы
      */
-    @Cacheable("DBCache")
+    @SearchResultCache
     @RequestMapping
     @ResponseBody
     // возвращаем Object чтобы можно было вернуть закешированный json или SearchResultPage
