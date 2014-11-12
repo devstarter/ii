@@ -8,9 +8,7 @@ import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.dao.TermMorphDao;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
-import org.ayfaar.app.utils.AliasesMap;
-import org.ayfaar.app.utils.Transformer;
-import org.ayfaar.app.utils.UriGenerator;
+import org.ayfaar.app.utils.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +22,7 @@ import org.mockito.stubbing.Answer;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.ayfaar.app.utils.TermsMap.TermProvider;
 import static org.ayfaar.app.controllers.NewSearchController.PAGE_SIZE;
 import static org.ayfaar.app.utils.CollectionUtils.transform;
 import static org.junit.Assert.assertEquals;
@@ -39,7 +38,8 @@ public class NewSearchControllerUnitTest {
     @Mock TermMorphDao termMorphDao;
     @Mock SearchCache cache;
     @Mock SearchQuotesHelper handleItems;
-    @Mock AliasesMap aliasesMap;
+    //@Mock AliasesMap aliasesMap;
+    @Mock TermsMap termsMap;
     @InjectMocks @Spy
     NewSearchController controller;
 
@@ -51,9 +51,11 @@ public class NewSearchControllerUnitTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testHasMore() {
+        NewAliasesMap aliasesMap = new NewAliasesMap();
         String q = "время";
-        Term term = new Term(q);
-        when(aliasesMap.getTerm(q)).thenReturn(term);
+        TermProvider provider = aliasesMap.new TermProviderImpl(q, null, false);
+
+        when(termsMap.getTermProvider(q)).thenReturn(provider);
 
         List<String> morphs = asList(q);
         when(controller.getAllMorphs(anyList())).thenReturn(morphs);
@@ -80,12 +82,14 @@ public class NewSearchControllerUnitTest {
     public void testGetAllMorphs() {
         final String t1 = "Трансгрессионная диверсификация";
         List<String> termNames = asList(t1, "Ирркогликтивная сингуляция");
-        List<Term> terms = transform(termNames, new Transformer() {
+
+        final NewAliasesMap map = new NewAliasesMap();
+        List<TermProvider> providers = transform(termNames, new Transformer() {
             @Override
             public Object transform(Object value) {
-                Term term = new Term((String) value);
-                term.setUri(UriGenerator.generate(term));
-                return term;
+                TermProvider provider = map.new TermProviderImpl(
+                        UriGenerator.generate(Term.class, (String) value), null, false);
+                return provider;
             }
         });
 
@@ -97,12 +101,11 @@ public class NewSearchControllerUnitTest {
                 return asList(new TermMorph(name+1, uri), new TermMorph(name+2, uri));
             }
         });
-        List<String> morphs = controller.getAllMorphs(terms);
+        List<String> morphs = controller.getAllMorphs(providers);
         verify(termMorphDao, times(2)).getList(anyString(), anyString());
         assertEquals(6, morphs.size());
         assertTrue(morphs.contains(t1));
         assertTrue(morphs.contains(t1 + 1));
         assertTrue(morphs.contains(t1 + 2));
-
     }
 }

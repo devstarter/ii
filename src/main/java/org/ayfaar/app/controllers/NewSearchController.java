@@ -6,14 +6,11 @@ import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.controllers.search.cache.DBCache;
-import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.dao.TermMorphDao;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.model.Link;
-import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
-import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.utils.TermsMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +20,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.ayfaar.app.utils.TermsMap.TermProvider;
 import static java.util.Arrays.asList;
 import static net.sf.cglib.core.CollectionUtils.transform;
 
@@ -37,13 +35,10 @@ public class NewSearchController {
     private SearchDao searchDao;
 
     @Inject
-    private AliasesMap aliasesMap;
+    private TermsMap termsMap;
 
     @Inject
     private TermMorphDao termMorphDao;
-
-    @Inject
-    private LinkDao linkDao;
 
     @Inject
     protected DBCache cache;
@@ -67,22 +62,22 @@ public class NewSearchController {
         page.setHasMore(false);
 
         // 3. Определить термин ли это
-        Term term = aliasesMap.getTerm(query);
+        TermProvider provider = termsMap.getTermProvider(query);
         // 3.1. Если да, Получить все синониме термина
         List<Item> foundItems;
-        // указывает сколько результатов поиска нужно пропустиьб, то есть когда ищем следующую страницу
+        // указывает сколько результатов поиска нужно пропустить, то есть когда ищем следующую страницу
         int skipResults = pageNumber*PAGE_SIZE;
 
         List<String> searchQueries = null;
-        if (term != null) {
+        if (provider != null) {
             // 3.2. Получить все падежи по всем терминам
-            searchQueries = getAllMorphs(term);
+            searchQueries = getAllMorphs(provider);
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
             if (foundItems.size() < PAGE_SIZE) {
                 // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
-                List<Term> aliases = getAllAliases(term);
+                List<TermProvider> aliases = getAllAliases(provider);
                 // Если у термина вообще есть синонимы:
                 if (!aliases.isEmpty()) {
                     List<String> aliasesSearchQueries = getAllMorphs(aliases);
@@ -111,16 +106,17 @@ public class NewSearchController {
         return page;
     }
 
-    List<String> getAllMorphs(Term term) {
-        return getAllMorphs(asList(term));
+    List<String> getAllMorphs(TermProvider provider) {
+        return getAllMorphs(asList(provider));
     }
 
-    List<String> getAllMorphs(List<Term> terms) {
+    List<String> getAllMorphs(List<TermProvider> providers) {
         List<String> allWordsModes = new ArrayList<String>();
         List<TermMorph> morphs = new ArrayList<TermMorph>();
-        for (Term term : terms) {
-            morphs.addAll(termMorphDao.getList("termUri", term.getUri()));
-            allWordsModes.add(term.getName());
+
+        for (TermProvider provider : providers) {
+            morphs.addAll(termMorphDao.getList("termUri", provider.getUri()));
+            allWordsModes.add(provider.getName());
         }
         //noinspection unchecked
         allWordsModes.addAll(transform(morphs, new Transformer() {
@@ -132,10 +128,14 @@ public class NewSearchController {
         return allWordsModes;
     }
 
-    List<Term> getAllAliases(Term term) {
-        List<Term> aliases = new ArrayList<Term>();
-        for (Link link : linkDao.getAliases(term.getUri())) {
-            aliases.add((Term) link.getUid2());
+    List<TermProvider> getAllAliases(TermProvider provider) {
+        List<TermProvider> aliases = new ArrayList<TermProvider>();
+        TermProvider code = provider.getCode();
+
+        aliases.addAll(provider.getAliases());
+        aliases.addAll(provider.getAbbreviations());
+        if(code != null) {
+            aliases.add(provider.getCode());
         }
         return aliases;
     }
