@@ -1,15 +1,12 @@
 package org.ayfaar.app.controllers;
 
-import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.annotations.SearchResultCache;
 import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.controllers.search.cache.DBCache;
 import org.ayfaar.app.dao.SearchDao;
-import org.ayfaar.app.dao.TermMorphDao;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.utils.TermsMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +19,6 @@ import java.util.List;
 
 import static org.ayfaar.app.utils.TermsMap.TermProvider;
 import static java.util.Arrays.asList;
-import static net.sf.cglib.core.CollectionUtils.transform;
 
 @Controller
 @RequestMapping("api/v2/search")
@@ -36,9 +32,6 @@ public class NewSearchController {
 
     @Inject
     private TermsMap termsMap;
-
-    @Inject
-    private TermMorphDao termMorphDao;
 
     @Inject
     protected DBCache cache;
@@ -71,7 +64,7 @@ public class NewSearchController {
         List<String> searchQueries = null;
         if (provider != null) {
             // 3.2. Получить все падежи по всем терминам
-            searchQueries = getAllMorphs(provider);
+            searchQueries = provider.getMorphs();
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
@@ -106,26 +99,13 @@ public class NewSearchController {
         return page;
     }
 
-    List<String> getAllMorphs(TermProvider provider) {
-        return getAllMorphs(asList(provider));
-    }
-
     List<String> getAllMorphs(List<TermProvider> providers) {
-        List<String> allWordsModes = new ArrayList<String>();
-        List<TermMorph> morphs = new ArrayList<TermMorph>();
+        List<String> morphs = new ArrayList<String>();
 
-        for (TermProvider provider : providers) {
-            morphs.addAll(termMorphDao.getList("termUri", provider.getUri()));
-            allWordsModes.add(provider.getName());
+        for(TermProvider provider : providers) {
+            morphs.addAll(provider.getMorphs());
         }
-        //noinspection unchecked
-        allWordsModes.addAll(transform(morphs, new Transformer() {
-            @Override
-            public Object transform(Object value) {
-                return ((TermMorph) value).getName();
-            }
-        }));
-        return allWordsModes;
+        return morphs;
     }
 
     List<TermProvider> getAllAliases(TermProvider provider) {

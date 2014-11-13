@@ -113,4 +113,12 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
         assertEquals(morph, origin);
         assertEquals(abbr.getMainTermProvider(), origin);
     }
+
+    @Test
+    public void testGetMorphs() {
+        TermProvider provider = termsMap.getTermProvider("Время");
+        List<String> morphs = provider.getMorphs();
+
+        assertEquals(8, morphs.size());
+    }
 }

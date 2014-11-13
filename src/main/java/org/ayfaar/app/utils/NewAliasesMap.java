@@ -121,6 +121,16 @@ public class NewAliasesMap implements TermsMap {
             return hasMainTerm() ? aliasesMap.get(getValueFromUri(Term.class, mainTermUri).toLowerCase()) : null;
         }
 
+        public List<String> getMorphs() {
+            List<String> morphs = new ArrayList<String>();
+            for (Map.Entry<String, TermProvider> map : aliasesMap.entrySet()) {
+                if(map.getValue().getUri().equals(getUri())) {
+                    morphs.add(map.getKey());
+                }
+            }
+            return morphs;
+        }
+
         public Byte getType() {
             return links.get(uri) != null ? links.get(uri).getType() : null;
         }
