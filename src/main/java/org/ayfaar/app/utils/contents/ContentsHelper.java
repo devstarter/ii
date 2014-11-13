@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.ayfaar.app.utils.StringUtils.trim;
+import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
 public class ContentsHelper {
@@ -32,12 +33,19 @@ public class ContentsHelper {
         Category previous = categoryDao.get("next", UriGenerator.generate(Category.class, categoryName));
 
         String previousCategory = previous != null ? previous.getName() : null;
-        String nextCategory = category.getNext() != null ?
-                UriGenerator.getValueFromUri(Category.class, category.getNext()) : null;
+        String nextCategory = category.getNext() != null ? getValueFromUri(Category.class, category.getNext()) : null;
 
-        return new CategoryPresentation(extractCategoryName(category.getName()), category.getUri(),
-                category.getDescription(), previousCategory, nextCategory,
-                createParentPresentation(getParents(category)), createChildrenPresentation(getChildren(category), 0));
+        if(category.isParagraph()) {
+            return new CategoryPresentation(category.getName(), category.getUri(),
+                    trim(category.getDescription()), previousCategory, nextCategory,
+                    createParentPresentation(getParents(category)),
+                    getParagraphSubCategory(getItems(category), 1));
+        } else {
+            return new CategoryPresentation(extractCategoryName(category.getName()), category.getUri(),
+                    category.getDescription(), previousCategory, nextCategory,
+                    createParentPresentation(getParents(category)),
+                    createChildrenPresentation(getChildren(category), 0));
+        }
     }
 
     private List<CategoryPresentation> createChildrenPresentation(List<Category> categories, int count) {

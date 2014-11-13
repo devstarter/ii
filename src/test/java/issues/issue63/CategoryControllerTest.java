@@ -4,12 +4,17 @@ package issues.issue63;
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
 import org.ayfaar.app.utils.UriGenerator;
 import org.ayfaar.app.utils.contents.CategoryPresentation;
 import org.ayfaar.app.utils.contents.ContentsHelper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -69,6 +74,23 @@ public class CategoryControllerTest extends IntegrationTest {
         assertEquals(UriGenerator.generate(Item.class, "10.11155"), items.get(0).getUri());
         assertEquals("10.11170", items.get(15).getName());
         assertNull(items.get(0).getChildren());
+    }
+
+    @Test
+    public void testCreateContentsForParagraph() {
+        String paragraphName = "Параграф 10.1.2.3";
+        CategoryPresentation presentation = contentsHelper.createContents(paragraphName);
+        List<CategoryPresentation> items = presentation.getChildren();
+
+        assertEquals("Параграф 10.1.2.3", presentation.getName());
+        assertEquals(UriGenerator.generate(Category.class, paragraphName), presentation.getUri());
+        assertNotNull(presentation.getChildren());
+        assertEquals(10, items.size());
+        assertEquals("10.10131", items.get(0).getName());
+        assertEquals("10.10140", items.get(9).getName());
+        assertEquals("Параграф 10.1.3.1", presentation.getNext());
+        assertEquals("Параграф 10.1.2.2", presentation.getPrevious());
+        assertNotNull(presentation.getParents());
     }
 
     @Test
