@@ -1,21 +1,15 @@
 package org.ayfaar.app.controllers;
 
-import org.ayfaar.app.model.Term;
-import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.utils.TermsMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Collections;
-import java.util.Comparator;
 
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
@@ -24,13 +18,12 @@ import static java.util.regex.Pattern.*;
 @Controller
 @RequestMapping("api/suggestions")
 public class SuggestionsController{
-    @Autowired AliasesMap aliasesMap;
+    @Autowired TermsMap termsMap;
 
     public static final int MAX_SUGGESTIONS = 7;
 
     @RequestMapping("{q}")
     @ResponseBody
-
     public List<String> suggestions(@PathVariable String q) {
 
         Queue<String> queriesQueue = new LinkedList<String>(asList(
@@ -57,13 +50,13 @@ public class SuggestionsController{
         List<String> terms = new ArrayList<String>();
         Pattern pattern = Pattern.compile(query,CASE_INSENSITIVE + UNICODE_CASE);
 
-        for (Term term : aliasesMap.getAllTerms()) {
-            Matcher matcher = pattern.matcher(term.getName().toLowerCase());
-            if(matcher.find() && !suggestions.contains(term.getName())) {
-                terms.add(term.getName());
+        for (Map.Entry<String, TermsMap.TermProvider> map: termsMap.getAll()) {
+            Matcher matcher = pattern.matcher(map.getValue().getName());
+            String providerName = map.getValue().getName();
+            if(matcher.find() && !suggestions.contains(providerName) && !terms.contains(providerName)) {
+                terms.add(map.getValue().getName());
             }
         }
         return terms;
     }
-
 }
