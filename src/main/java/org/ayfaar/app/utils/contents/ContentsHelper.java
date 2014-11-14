@@ -62,11 +62,8 @@ public class ContentsHelper {
                         createChildrenPresentation(getChildren(category), count)));
 
             } else {
-                List<Item> items = getItems(category);
-                CategoryPresentation presentation = new CategoryPresentation(category.getName(),
-                        category.getUri(), trim(category.getDescription()), getParagraphSubCategory(items, count));
-
-                childrenPresentations.add(presentation);
+                childrenPresentations.add(new CategoryPresentation(category.getName(), category.getUri(),
+                        trim(category.getDescription()), null));
             }
         }
 
