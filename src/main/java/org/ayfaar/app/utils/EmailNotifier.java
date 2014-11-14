@@ -80,8 +80,8 @@ public class EmailNotifier {
             @Override
             public void run() {
                 mailSender.send(message);
-                eventPublisher.publishEvent(new EmailNotifierEvent(this, message));
             }
         });
+        eventPublisher.publishEvent(new EmailNotifierEvent(this, message));
     }
 }

@@ -9,17 +9,12 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 public class NotificationListenerTest {
 
+
     @Test
-    public void listenerTest(){
+    public void listenerTest() {
 
         ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
-
-
-
-
         DefaultRestErrorResolver p = ctx.getBean(DefaultRestErrorResolver.class);
-
-        System.out.println(p.tell());
-
+       // p.tell();
     }
 }

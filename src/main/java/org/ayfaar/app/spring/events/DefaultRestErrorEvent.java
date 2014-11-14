@@ -11,8 +11,6 @@ public class DefaultRestErrorEvent extends BasicPushEvent {
     public DefaultRestErrorEvent(DefaultRestErrorResolver defaultRestErrorResolver, Exception ex) {
         super(defaultRestErrorResolver);
         this.ex = ex;
-
-        System.out.println(ex);
     }
 
     public Exception getEx() {

@@ -9,6 +9,9 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import java.util.Calendar;
+import java.util.Date;
+
 @Component
 public class DefaultRestErrorResolver implements RestErrorResolver {
 
@@ -57,9 +60,9 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
         }
         return null;
     }
-
-    public String tell(){
-        eventPublisher.publishEvent(new DefaultRestErrorEvent(this,new Exception("my test ex")));
-        return "12234534";
+/*test
+    public void tell(){
+        eventPublisher.publishEvent(new DefaultRestErrorEvent(this,new Exception("my test ex: " + new java.util.Date ())));
     }
+    */
 }
