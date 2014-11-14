@@ -5,7 +5,6 @@ import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.controllers.search.cache.DBCache;
 import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
-import org.ayfaar.app.utils.contents.CategoryPresentation;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -64,7 +63,7 @@ public class NewSearchControllerIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void птиц() {
+    public void ptic() {
         SearchResultPage page = (SearchResultPage) controller.search("птиц", 0, null);
         assertNotNull(page);
         List<Quote> quotes = page.getQuotes();

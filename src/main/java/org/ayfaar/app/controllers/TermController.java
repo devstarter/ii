@@ -213,8 +213,8 @@ public class TermController {
                 findAliases(term, termName, "");
             }
         } else {
-            term.setShortDescription(shortDescription);
-            term.setDescription(description);
+            if (shortDescription != null && !shortDescription.isEmpty()) term.setShortDescription(shortDescription);
+            if (description != null && !description.isEmpty()) term.setDescription(description);
             termDao.save(term);
         }
 
@@ -222,6 +222,7 @@ public class TermController {
             @Override
             public void run() {
                 aliasesMap.reload();
+                newAliasesMap.load();
             }
         }).start();
 
