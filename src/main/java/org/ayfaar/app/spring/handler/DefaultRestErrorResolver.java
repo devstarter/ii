@@ -1,12 +1,20 @@
 package org.ayfaar.app.spring.handler;
 
+import org.ayfaar.app.spring.events.DefaultRestErrorEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
+@Component
 public class DefaultRestErrorResolver implements RestErrorResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultRestErrorResolver.class);
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
@@ -14,6 +22,7 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
 
 //        ex.printStackTrace(System.out);
         logger.error("Exception", ex);
+        eventPublisher.publishEvent(new DefaultRestErrorEvent(this,ex));
 
         if (ex instanceof NullPointerException) {
             String stackTrace = "";
@@ -47,5 +56,10 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
             return findInChain(className, ex.getCause());
         }
         return null;
+    }
+
+    public String tell(){
+        eventPublisher.publishEvent(new DefaultRestErrorEvent(this,new Exception("my test ex")));
+        return "12234534";
     }
 }
