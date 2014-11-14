@@ -51,12 +51,12 @@ public class NewAliasesMap implements TermsMap {
             if(links.containsKey(uri)) {
                 mainTermUri = links.get(uri).getMainTerm().getUri();
             }
-            aliasesMap.put(info.getName(), new TermProviderImpl(uri, mainTermUri, info.isHasShortDescription()));
+            aliasesMap.put(info.getName().toLowerCase(), new TermProviderImpl(uri, mainTermUri, info.isHasShortDescription()));
         }
 
         for(TermMorph morph : allTermMorphs) {
-            final TermProvider termProvider = aliasesMap.get(UriGenerator.getValueFromUri(Term.class, morph.getTermUri()));
-            aliasesMap.put(morph.getName(), termProvider);
+            final TermProvider termProvider = aliasesMap.get(getValueFromUri(Term.class, morph.getTermUri()).toLowerCase());
+            aliasesMap.put(morph.getName().toLowerCase(), termProvider);
         }
 
         // prepare sorted List by term name length, longest terms first
@@ -118,7 +118,17 @@ public class NewAliasesMap implements TermsMap {
         }
 
         public TermProvider getMainTermProvider() {
-            return hasMainTerm() ? aliasesMap.get(getValueFromUri(Term.class, mainTermUri)) : null;
+            return hasMainTerm() ? aliasesMap.get(getValueFromUri(Term.class, mainTermUri).toLowerCase()) : null;
+        }
+
+        public List<String> getMorphs() {
+            List<String> morphs = new ArrayList<String>();
+            for (Map.Entry<String, TermProvider> map : aliasesMap.entrySet()) {
+                if(map.getValue().getUri().equals(getUri())) {
+                    morphs.add(map.getKey());
+                }
+            }
+            return morphs;
         }
 
         public Byte getType() {
@@ -144,7 +154,7 @@ public class NewAliasesMap implements TermsMap {
 
     @Override
     public TermProvider getTermProvider(String name) {
-        return aliasesMap.get(name);
+        return aliasesMap.get(name.toLowerCase());
     }
 
     @Override
@@ -154,7 +164,7 @@ public class NewAliasesMap implements TermsMap {
 
     @Override
     public Term getTerm(String name) {
-        TermProvider termProvider = aliasesMap.get(name);
+        TermProvider termProvider = aliasesMap.get(name.toLowerCase());
         return termProvider != null ? termProvider.getTerm() : null;
     }
 
@@ -163,7 +173,7 @@ public class NewAliasesMap implements TermsMap {
 
         for(Map.Entry<String, LinkInfo> link : links.entrySet()) {
             if(link.getValue().getType() == type && link.getValue().getMainTerm().getName().equals(name)) {
-                providers.add(aliasesMap.get(getValueFromUri(Term.class, link.getKey())));
+                providers.add(aliasesMap.get(getValueFromUri(Term.class, link.getKey().toLowerCase())));
             }
         }
         return providers;
