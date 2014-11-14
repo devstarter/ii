@@ -78,8 +78,8 @@ public class CategoryControllerTest extends IntegrationTest {
         assertEquals(10, items.size());
         assertEquals("10.10131", items.get(0).getName());
         assertEquals("10.10140", items.get(9).getName());
-        assertEquals("Параграф 10.1.3.1", presentation.getNext());
-        assertEquals("Параграф 10.1.2.2", presentation.getPrevious());
+        assertEquals(UriGenerator.generate(Category.class, "Параграф 10.1.3.1"), presentation.getNext());
+        assertEquals(UriGenerator.generate(Category.class, "Параграф 10.1.2.2"), presentation.getPrevious());
         assertNotNull(presentation.getParents());
     }
 
@@ -101,8 +101,8 @@ public class CategoryControllerTest extends IntegrationTest {
     @Test
     public void testNextAndPreviousCategory() {
         CategoryPresentation rootCategory = contentsHelper.createContents("БДК / Раздел III / Глава 7");
-        assertEquals("БДК / Раздел III / Глава 6", rootCategory.getPrevious());
-        assertEquals("БДК / Раздел IV / Глава 1", rootCategory.getNext());
+        assertEquals(UriGenerator.generate(Category.class, "БДК / Раздел III / Глава 6"), rootCategory.getPrevious());
+        assertEquals(UriGenerator.generate(Category.class, "БДК / Раздел IV / Глава 1"), rootCategory.getNext());
     }
 
     @Test
@@ -112,8 +112,8 @@ public class CategoryControllerTest extends IntegrationTest {
         CategoryPresentation section = contentsHelper.createContents("БДК / Раздел ХVIII");
 
         assertNull(tom10Content.getPrevious());
-        assertEquals("Том 14", tom10Content.getNext());
-        assertEquals("Том 10", tom14Content.getPrevious());
+        assertEquals(UriGenerator.generate(Category.class, "Том 14"), tom10Content.getNext());
+        assertEquals(UriGenerator.generate(Category.class, "Том 10"), tom14Content.getPrevious());
         assertNull(tom14Content.getNext());
         assertNull(section.getNext());
     }
