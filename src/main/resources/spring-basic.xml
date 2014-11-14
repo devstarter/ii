@@ -75,16 +75,6 @@
         </property>
     </bean>
 
-    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-        <property name="messageConverters" ref="messageConverters"/>
-    </bean>
-
-
-    <bean class="com.pushbullet.PushbulletClient">
-        <property name="key" value="${pushbullet.key}"/>
-        <property name="restTemplate" ref="restTemplate"/>
-    </bean>
-
     <bean id="webTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
         <property name="prefix" value="/WEB-INF/templates/" />
         <property name="templateMode" value="HTML5" />

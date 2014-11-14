@@ -55,10 +55,11 @@ public class NewSearchControllerUnitTest {
         when(controller.getAllMorphs(anyList())).thenReturn(morphs);
 
         List items = mock(List.class);
-        doReturn(items).when(searchDao).findInItems(morphs, 0, PAGE_SIZE+1, null);
+        // чтобы сработал это запрос вместо реальных методов нужно проставлять Мокито мачеры
+        doReturn(items).when(searchDao).findInItems(any(List.class), anyInt(), anyInt(), anyString());
         doReturn(21).when(items).size();
 
-        aliasesMap.load();
+        aliasesMap.load(); // а зачем здесь лоад?
         SearchResultPage page = (SearchResultPage) controller.search(q, 0, null);
 
         assertTrue(page.isHasMore());
