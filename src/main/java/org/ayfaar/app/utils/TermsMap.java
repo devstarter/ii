@@ -23,6 +23,7 @@ public interface TermsMap {
         public boolean hasShortDescription();
         public TermProvider getMainTermProvider();
         public Term getTerm();
+        public List<String> getMorphs();
         public List<TermProvider> getAliases();
         public List<TermProvider> getAbbreviations();
         public TermProvider getCode();
