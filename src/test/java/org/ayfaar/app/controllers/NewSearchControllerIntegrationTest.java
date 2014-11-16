@@ -63,7 +63,7 @@ public class NewSearchControllerIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void птиц() {
+    public void ptic() {
         SearchResultPage page = (SearchResultPage) controller.search("птиц", 0, null);
         assertNotNull(page);
         List<Quote> quotes = page.getQuotes();

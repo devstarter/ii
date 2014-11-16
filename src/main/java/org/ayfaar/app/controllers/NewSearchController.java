@@ -61,7 +61,7 @@ public class NewSearchController {
         // указывает сколько результатов поиска нужно пропустить, то есть когда ищем следующую страницу
         int skipResults = pageNumber*PAGE_SIZE;
 
-        List<String> searchQueries = null;
+        List<String> searchQueries;
         if (provider != null) {
             // 3.2. Получить все падежи по всем терминам
             searchQueries = provider.getMorphs();

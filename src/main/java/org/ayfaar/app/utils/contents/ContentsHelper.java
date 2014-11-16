@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.ayfaar.app.utils.StringUtils.trim;
-import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
 public class ContentsHelper {
@@ -32,8 +31,8 @@ public class ContentsHelper {
         }
         Category previous = categoryDao.get("next", UriGenerator.generate(Category.class, categoryName));
 
-        String previousCategory = previous != null ? previous.getName() : null;
-        String nextCategory = category.getNext() != null ? getValueFromUri(Category.class, category.getNext()) : null;
+        String previousCategory = previous != null ? previous.getUri() : null;
+        String nextCategory = category.getNext() != null ? category.getNext() : null;
 
         if(category.isParagraph()) {
             return new CategoryPresentation(category.getName(), category.getUri(),
@@ -74,7 +73,10 @@ public class ContentsHelper {
         if(count >= SUBCATEGORY_COUNT) return null;
         List<CategoryPresentation> listPresentations = new ArrayList<CategoryPresentation>();
         for (Item item : items) {
-            listPresentations.add(new CategoryPresentation(item.getNumber(), item.getUri()));
+            CategoryPresentation presentation = new CategoryPresentation(item.getNumber(), item.getUri());
+            presentation.setContents(item.getContent());
+
+            listPresentations.add(presentation);
         }
         return listPresentations;
     }
