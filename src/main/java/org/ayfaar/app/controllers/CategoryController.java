@@ -1,6 +1,5 @@
 package org.ayfaar.app.controllers;
 
-import org.ayfaar.app.annotations.ContentsCache;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
@@ -9,7 +8,6 @@ import org.ayfaar.app.model.Category;
 import org.ayfaar.app.utils.UriGenerator;
 import org.ayfaar.app.utils.contents.ContentsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,7 +28,7 @@ public class CategoryController {
     @Autowired ItemDao itemDao;
     @Autowired ContentsHelper contentsHelper;
 
-    @ContentsCache
+//    @ContentsCache //fixme временно пока идёт активная работа с ним
     @RequestMapping
     @ResponseBody
     public Object getContents(@RequestParam("name") String name) {
