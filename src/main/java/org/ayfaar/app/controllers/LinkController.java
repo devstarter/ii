@@ -8,8 +8,8 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
-import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.EmailNotifier;
+import org.ayfaar.app.utils.TermsMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +31,7 @@ public class LinkController {
     @Autowired ItemDao itemDao;
     @Autowired TermController termController;
     @Autowired EmailNotifier emailNotifier;
-    @Autowired AliasesMap aliasesMap;
+    @Autowired TermsMap termsMap;
     @Autowired TermMorphDao termMorphDao;
 
     @RequestMapping(value = "addQuote", method = POST)
@@ -44,8 +44,8 @@ public class LinkController {
         }
         Term term = termDao.getByName(termName);
         if (term == null) {
-            if (aliasesMap.get(termName) != null) {
-                term = aliasesMap.get(termName).getTerm();
+            if (termsMap.getTermProvider(termName) != null) {
+                term = termsMap.getTerm(termName);
             } else {
                 term = termController.add(termName);
             }
