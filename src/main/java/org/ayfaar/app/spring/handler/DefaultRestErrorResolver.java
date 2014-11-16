@@ -60,9 +60,6 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
         }
         return null;
     }
-/*test
-    public void tell(){
-        eventPublisher.publishEvent(new DefaultRestErrorEvent(this,new Exception("my test ex: " + new java.util.Date ())));
-    }
-    */
+
+
 }

@@ -6,6 +6,8 @@ import org.ayfaar.app.spring.events.BasicPushEvent;
 import org.ayfaar.app.spring.events.DefaultRestErrorEvent;
 import org.ayfaar.app.spring.events.EmailNotifierEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +25,8 @@ public class NotificationListener implements ApplicationListener<BasicPushEvent>
 
     @Autowired
     private PushbulletClient pushbulletClient;
-    private String tag = "ii";
+    @Value("${pushbullet.channel}")
+    private String channel;
 
 
     @Override
@@ -52,7 +55,7 @@ public class NotificationListener implements ApplicationListener<BasicPushEvent>
     protected void sendToPushBulletChannel(String title, String message){
 
         registerClient(pushbulletClient);
-        pushbullet().pushes().channel(tag).note(title, message);
+        pushbullet().pushes().channel(channel).note(title, message);
 
     }
 

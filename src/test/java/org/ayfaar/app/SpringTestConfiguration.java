@@ -14,7 +14,7 @@ import javax.servlet.ServletContext;
         "classpath:database.properties",
         "classpath:debug.properties",
         "classpath:mail.properties",
-        "classpath:pushbullet.properties"
+        "classpath:app.properties"
 })
 @ImportResource({
         "classpath:hibernate.xml",

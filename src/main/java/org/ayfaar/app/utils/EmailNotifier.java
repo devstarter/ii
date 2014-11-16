@@ -82,6 +82,6 @@ public class EmailNotifier {
                 mailSender.send(message);
             }
         });
-        eventPublisher.publishEvent(new EmailNotifierEvent(this, message));
+        //eventPublisher.publishEvent(new EmailNotifierEvent(this, message));
     }
 }

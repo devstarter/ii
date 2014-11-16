@@ -102,11 +102,7 @@
 
     <!--pushbullet-->
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-        <property name="messageConverters">
-            <list>
-                <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
-            </list>
-        </property>
+        <property name="messageConverters" ref="messageConverters"/>
     </bean>
 
     <bean class="com.pushbullet.PushbulletClient">
