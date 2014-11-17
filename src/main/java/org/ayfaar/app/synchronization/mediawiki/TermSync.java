@@ -5,7 +5,6 @@ import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.UID;
-import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.TermsMap;
 import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +28,6 @@ public class TermSync extends EntitySynchronizer<Term> {
     MediaWikiBotHelper mediaWikiBotHelper;
     @Autowired
     TermController termController;
-    @Autowired
-    AliasesMap aliasesMap;
     @Autowired
     TermsMap termsMap;
     @Autowired
