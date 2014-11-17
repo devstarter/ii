@@ -73,7 +73,10 @@ public class ContentsHelper {
         if(count >= SUBCATEGORY_COUNT) return null;
         List<CategoryPresentation> listPresentations = new ArrayList<CategoryPresentation>();
         for (Item item : items) {
-            listPresentations.add(new CategoryPresentation(item.getNumber(), item.getUri()));
+            CategoryPresentation presentation = new CategoryPresentation(item.getNumber(), item.getUri());
+            presentation.setContents(item.getContent());
+
+            listPresentations.add(presentation);
         }
         return listPresentations;
     }
