@@ -2,7 +2,6 @@ package org.ayfaar.app.utils;
 
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.spring.events.EmailNotifierEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -19,8 +18,6 @@ public class EmailNotifier {
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired JavaMailSender mailSender;
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
 
     public void newQuoteLink(String termName, String itemNumber, String quote, Integer linkId) {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -82,6 +79,5 @@ public class EmailNotifier {
                 mailSender.send(message);
             }
         });
-        //eventPublisher.publishEvent(new EmailNotifierEvent(this, message));
     }
 }

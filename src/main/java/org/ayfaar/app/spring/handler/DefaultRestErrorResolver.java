@@ -25,21 +25,22 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
 
 //        ex.printStackTrace(System.out);
         logger.error("Exception", ex);
-        eventPublisher.publishEvent(new DefaultRestErrorEvent(this,ex));
 
         if (ex instanceof NullPointerException) {
             String stackTrace = "";
             for (StackTraceElement element : ex.getStackTrace()) {
                 stackTrace += "\n" + element.toString();
             }
+            eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception, UNDEFINED:",ex.toString() + "\n" + stackTrace));
             return new BusinessError("UNDEFINED", ex.toString(), stackTrace);
         }
 
         Throwable mySQLIntegrityConstraintViolationException = findInChain("com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException", ex);
         if (mySQLIntegrityConstraintViolationException != null) {
+            eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception:",mySQLIntegrityConstraintViolationException.getMessage() + "\n" + ex.getMessage()));
             return new BusinessError(mySQLIntegrityConstraintViolationException.getMessage(), ex.getMessage());
         }
-
+        eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception:",ex.toString() + "\n" + ex.getMessage()));
         return new BusinessError(ex.toString(), ex.getMessage());
     }
 
@@ -60,6 +61,5 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
         }
         return null;
     }
-
 
 }

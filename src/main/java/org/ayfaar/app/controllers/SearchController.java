@@ -6,11 +6,13 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.spring.Model;
+import org.ayfaar.app.spring.events.RateEvent;
 import org.ayfaar.app.utils.AliasesMap;
 import org.ayfaar.app.utils.Content;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +39,7 @@ public class SearchController {
     @Autowired CommonDao commonDao;
     @Autowired TermMorphDao termMorphDao;
     @Autowired EmailNotifier notifier;
+    @Autowired ApplicationEventPublisher eventPublisher;
 
     private Map<String, List<ModelMap>> searchInContentCatch = new HashMap<String, List<ModelMap>>();
 
@@ -224,7 +227,8 @@ public class SearchController {
                     possibleDuplication = true;
                 }
             }
-            notifier.rate(term, item, quote, link != null ? link.getLinkId() : null);
+            //notifier.rate(term, item, quote, link != null ? link.getLinkId() : null);
+            eventPublisher.publishEvent(new RateEvent(term, item, quote, link != null ? link.getLinkId() : null));
         }
     }
 

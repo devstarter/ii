@@ -7,13 +7,12 @@ import org.ayfaar.app.spring.handler.DefaultRestErrorResolver;
  */
 public class DefaultRestErrorEvent extends BasicPushEvent {
 
-    private Exception ex;
-    public DefaultRestErrorEvent(DefaultRestErrorResolver defaultRestErrorResolver, Exception ex) {
-        super(defaultRestErrorResolver);
-        this.ex = ex;
+
+    public DefaultRestErrorEvent(String title, String message) {
+        super();
+        this.title = title;
+        this.message = message;
     }
 
-    public Exception getEx() {
-        return ex;
-    }
+
 }

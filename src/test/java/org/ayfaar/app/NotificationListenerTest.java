@@ -2,6 +2,7 @@ package org.ayfaar.app;
 
 
 import org.ayfaar.app.spring.handler.DefaultRestErrorResolver;
+import org.ayfaar.app.synchronization.evernote.EvernoteSync;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -15,6 +16,7 @@ public class NotificationListenerTest {
 
         ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
         DefaultRestErrorResolver p = ctx.getBean(DefaultRestErrorResolver.class);
-       // p.tell();
+        //EvernoteSync p = ctx.getBean(EvernoteSync.class);
+        //p.tell();
     }
 }
