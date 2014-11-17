@@ -186,8 +186,8 @@ public class NewAliasesMap implements TermsMap {
         Set<Term> contains = new HashSet<Term>();
         content = content.toLowerCase();
 
-        for (Map.Entry<String, TermProvider> entry : aliasesMap.entrySet()) {
-            String key = entry.getKey().toLowerCase();
+        for (Map.Entry<String, TermProvider> entry : sortedList) {
+            String key = entry.getKey();
             Matcher matcher = compile("((" + RegExpUtils.W + ")|^)" + key
                     + "((" + RegExpUtils.W + ")|$)", Pattern.UNICODE_CHARACTER_CLASS)
                     .matcher(content);
