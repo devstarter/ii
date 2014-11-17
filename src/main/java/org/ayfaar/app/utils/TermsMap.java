@@ -16,6 +16,7 @@ public interface TermsMap {
     public List<Map.Entry<String, TermProvider>> getAll();
     public TermProvider getTermProvider(String name);
     public Term getTerm(String name);
+    public List<Term> findTermsInside(String content);
 
     public interface TermProvider {
         public String getName();

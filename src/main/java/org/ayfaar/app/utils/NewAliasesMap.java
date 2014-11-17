@@ -14,8 +14,11 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.Collections.sort;
+import static java.util.regex.Pattern.compile;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
@@ -177,5 +180,30 @@ public class NewAliasesMap implements TermsMap {
             }
         }
         return providers;
+    }
+
+    public List<Term> findTermsInside(String content) {
+        Set<Term> contains = new HashSet<Term>();
+        content = content.toLowerCase();
+
+        for (Map.Entry<String, TermProvider> entry : aliasesMap.entrySet()) {
+            String key = entry.getKey().toLowerCase();
+            Matcher matcher = compile("((" + RegExpUtils.W + ")|^)" + key
+                    + "((" + RegExpUtils.W + ")|$)", Pattern.UNICODE_CHARACTER_CLASS)
+                    .matcher(content);
+            if (matcher.find()) {
+                contains.add(entry.getValue().getTerm());
+                content = content.replaceAll(key, "");
+            }
+        }
+
+        List<Term> sorted = new ArrayList<Term>(contains);
+        sort(sorted, new Comparator<Term>() {
+            @Override
+            public int compare(Term o1, Term o2) {
+                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+            }
+        });
+        return sorted;
     }
 }
