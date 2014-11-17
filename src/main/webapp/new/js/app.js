@@ -9,7 +9,10 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             .state('home', {
                 url: "/home",
                 templateUrl: "partials/home.html",
-                controller: HomeController
+                controller: HomeController,
+                onEnter: function($rootScope){
+                    $rootScope.$broadcast('home-state-entered');
+                }
             })
             .state('article', {
                 url: "/a/:id",
@@ -345,8 +348,40 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             }
         }
     })
-    .controller("HeaderController", function($scope, $state, $stateParams) {
-        var body = angular.element(document);//.find('body');
+    .factory('focus', function($timeout) {
+        return function(id) {
+            // timeout makes sure that is invoked after any other event has been triggered.
+            // e.g. click events that need to run before the focus or
+            // inputs elements that are in a disabled state but are enabled when those events
+            // are triggered.
+            $timeout(function() {
+                var element = document.getElementById(id);
+                if(element)
+                    element.focus();
+            });
+        };
+    })
+    .directive("iiHeader", function($rootScope, focus) {
+        return {
+            scope: {},
+            templateUrl: "partials/header.html",
+            link: function(scope, element, attrs) {
+                scope.visible = true;
+                scope.focus = focus;
+                $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
+                    if (toState.name != "home") {
+                        scope.visible = true;
+                    }
+                });
+                $rootScope.$on('home-state-entered', function() {
+                    scope.visible = false;
+                })
+            }
+        };
+    })
+    .controller("HeaderController", function() {
+
+        /*var body = angular.element(document);//.find('body');
 
         $scope.alert = function(e) {
             alert(e);
@@ -367,7 +402,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 return document.selection.createRange().text;
             }
             return null;
-        }
+        }*/
     })
     .run(function($state, entityService){
         var originStateGo = $state.go;

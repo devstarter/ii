@@ -77,10 +77,10 @@ public class CategoryControllerTest extends IntegrationTest {
         assertNotNull(presentation.getChildren());
         assertEquals(10, items.size());
         assertEquals("10.10131", items.get(0).getName());
-        assertNotNull(items.get(0).getContents());
-        assertTrue(items.get(0).getContents().startsWith("Так обычному «человеку» очень сложно представить себе,"));
+        assertNotNull(items.get(0).getContent());
+        assertTrue(items.get(0).getContent().startsWith("Так обычному «человеку» очень сложно представить себе,"));
         assertEquals("10.10140", items.get(9).getName());
-        assertTrue(items.get(9).getContents().startsWith("А это означает, что с помощью сосредоточенного внимания,"));
+        assertTrue(items.get(9).getContent().startsWith("А это означает, что с помощью сосредоточенного внимания,"));
         assertEquals(UriGenerator.generate(Category.class, "Параграф 10.1.3.1"), presentation.getNext());
         assertEquals(UriGenerator.generate(Category.class, "Параграф 10.1.2.2"), presentation.getPrevious());
         assertNotNull(presentation.getParents());

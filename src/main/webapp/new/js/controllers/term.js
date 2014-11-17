@@ -35,10 +35,6 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
         $state.goToTerm(suggestion);
     };
 
-    $scope.updateName = function(name) {
-        $state.goToTerm(name);
-    };
-
     $scope.loadNextPage = function () {
         searchInContent();
     };
@@ -56,10 +52,14 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
         }
     };
     $scope.expand = function(quote) {
+        quote.loadingFull = true;
         $api.item.getContent(quote.uri ? quote.uri : quote.number)
             .then(function(r){
                 quote.full = r;
             })
+            ['finally'](function () {
+                quote.loadingFull = false;
+            });
     };
 
     $scope.navigate = function(entity) {
