@@ -4,7 +4,7 @@ import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.utils.TermsMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import static org.ayfaar.app.model.Category.PARAGRAPH_SIGN;
 @Component
 public class ItemSync extends EntitySynchronizer<Item> {
 
-    @Autowired AliasesMap aliasesMap;
+    @Autowired TermsMap termsMap;
     @Autowired CommonDao commonDao;
     @Autowired CategoryDao categoryDao;
     @Autowired MediaWikiBotHelper mediaWikiBotHelper;
