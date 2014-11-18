@@ -72,6 +72,15 @@ public class NewAliasesMap implements TermsMap {
         });
     }
 
+    public void reload() {
+        load();
+    }
+
+    @Override
+    public void put(String name, TermProvider provider) {
+        aliasesMap.put(name, provider);
+    }
+
     @Data
     private class LinkInfo {
         private byte type;

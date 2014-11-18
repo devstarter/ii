@@ -31,8 +31,8 @@ public class TermController {
     @Autowired CommonDao commonDao;
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
-    @Autowired AliasesMap aliasesMap;
-    @Autowired NewAliasesMap newAliasesMap;
+    @Autowired TermsMap termsMap;
+    @Autowired NewAliasesMap aliasesMap;
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
 
@@ -65,9 +65,9 @@ public class TermController {
     public ModelMap get(Term term, boolean mark) {
         String termName = term.getName();
         Term alias = null;
-        if (!aliasesMap.get(termName).getTerm().getUri().equals(term.getUri())) {
+        if (!termsMap.getTermProvider(termName).getUri().equals(term.getUri())) {
             alias = term;
-            term = aliasesMap.get(termName).getTerm();
+            term = termsMap.getTerm(termName);
         }
 
         // может быть аббравиатурой, сокращением, кодом или синонимов
@@ -221,8 +221,7 @@ public class TermController {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                aliasesMap.reload();
-                newAliasesMap.load();
+                termsMap.reload();
             }
         }).start();
 
@@ -242,12 +241,15 @@ public class TermController {
                     String alias = prefix+morph.text;
                     if (morph != null && !alias.isEmpty()
                             && !alias.equals(primeTerm.getName())) {
-
                         if (!aliases.contains(alias)) {
                             TermMorph termMorph = commonDao.get(TermMorph.class, alias);
                             if (termMorph == null) {
                                 commonDao.save(new TermMorph(alias, primeTerm.getUri()));
-                                aliasesMap.put(alias, primeTerm);
+
+                                TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
+                                        primeTerm.getUri(), null, primeTerm.getShortDescription() != null);
+
+                                termsMap.put(alias, provider);
                                 log.info("Alias added: "+alias);
                             }
                             aliases.add(alias);
@@ -284,7 +286,7 @@ public class TermController {
     @RequestMapping("get-short-description")
     @ResponseBody
     public String getShortDescription(@RequestParam String name) {
-        return aliasesMap.getTerm(name).getShortDescription();
+        return termsMap.getTerm(name).getShortDescription();
     }
 
     @RequestMapping("remove/{name}")
@@ -295,6 +297,6 @@ public class TermController {
 
     @RequestMapping("reload-aliases-map")
     public void reloadAliasesMap() {
-        aliasesMap.reload(); newAliasesMap.load();
+        termsMap.reload();
     }
 }

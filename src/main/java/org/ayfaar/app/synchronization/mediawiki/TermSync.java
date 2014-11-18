@@ -6,7 +6,6 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.UID;
 import org.ayfaar.app.utils.TermsMap;
-import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
@@ -30,8 +29,6 @@ public class TermSync extends EntitySynchronizer<Term> {
     TermController termController;
     @Autowired
     TermsMap termsMap;
-    @Autowired
-    TermsMarker termsMarker;
     @Autowired
     LinkDao linkDao;
     @Autowired SyncUtils syncUtils;
