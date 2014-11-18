@@ -8,9 +8,12 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
+import org.ayfaar.app.spring.events.NewLinkEvent;
+import org.ayfaar.app.spring.events.NewQuoteLinkEvent;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.ayfaar.app.utils.TermsMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +36,8 @@ public class LinkController {
     @Autowired EmailNotifier emailNotifier;
     @Autowired TermsMap termsMap;
     @Autowired TermMorphDao termMorphDao;
+    @Autowired ApplicationEventPublisher eventPublisher;
+
 
     @RequestMapping(value = "addQuote", method = POST)
     @ResponseBody
@@ -53,7 +58,8 @@ public class LinkController {
         Item item = itemDao.getByNumber(itemNumber);
         Link link = linkDao.save(new Link(term, item, quote.isEmpty() ? null : quote));
 
-        emailNotifier.newQuoteLink(term.getName(), itemNumber, quote, link.getLinkId());
+        //emailNotifier.newQuoteLink(term.getName(), itemNumber, quote, link.getLinkId());
+        eventPublisher.publishEvent(new NewQuoteLinkEvent(term.getName(), itemNumber, quote, link.getLinkId()));
 
         return link.getLinkId();
     }
@@ -78,7 +84,8 @@ public class LinkController {
         }
         Link link = linkDao.save(new Link(primTerm, aliasTerm, type));
 
-        emailNotifier.newLink(term, alias, link.getLinkId());
+        //emailNotifier.newLink(term, alias, link.getLinkId());
+        eventPublisher.publishEvent(new NewLinkEvent(term, alias, link.getLinkId()));
 
         return link.getLinkId();
     }
