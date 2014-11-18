@@ -7,7 +7,7 @@
                typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
                typeahead-on-select="expanded = false;$suggestionSelected($label)">
         <span class="input-group-btn">
-          <button class="btn btn-primary" ng-click="expanded = false;$suggestionSelected($label);">Искать</button>
+          <button class="btn btn-primary" ng-click="$suggestionSelected(query);expanded = false;">Искать</button>
         </span>
     </div>
 </div>

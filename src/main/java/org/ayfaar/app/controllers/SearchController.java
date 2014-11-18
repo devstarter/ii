@@ -6,7 +6,7 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.spring.Model;
-import org.ayfaar.app.spring.events.RateEvent;
+import org.ayfaar.app.events.RateEvent;
 import org.ayfaar.app.utils.Content;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.ayfaar.app.utils.TermsMap;

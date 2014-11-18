@@ -11,8 +11,8 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.Model;
-import org.ayfaar.app.spring.events.NewLinkEvent;
-import org.ayfaar.app.spring.events.NewQuoteLinkEvent;
+import org.ayfaar.app.events.NewLinkEvent;
+import org.ayfaar.app.events.NewQuoteLinkEvent;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -86,7 +86,7 @@ public class EvernoteSync {
             Link link = linkDao.save(new Link(mainTerm, term, relatedTerms.getType()));
 
             //emailNotifier.newLink(mainTermName, termName, link.getLinkId());
-            eventPublisher.publishEvent(new NewLinkEvent(mainTermName, termName, link.getLinkId()));
+            eventPublisher.publishEvent(new NewLinkEvent(mainTermName, termName, link));
         }
         bot.removeNote(relatedTerms.getGuid());
     }

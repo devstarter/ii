@@ -1,16 +1,12 @@
 package org.ayfaar.app.spring.handler;
 
-import org.ayfaar.app.spring.events.DefaultRestErrorEvent;
+import org.ayfaar.app.events.DefaultRestErrorEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
-
-import java.util.Calendar;
-import java.util.Date;
 
 @Component
 public class DefaultRestErrorResolver implements RestErrorResolver {
@@ -40,7 +36,7 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
             eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception:",mySQLIntegrityConstraintViolationException.getMessage() + "\n" + ex.getMessage()));
             return new BusinessError(mySQLIntegrityConstraintViolationException.getMessage(), ex.getMessage());
         }
-        eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception:",ex.toString() + "\n" + ex.getMessage()));
+        eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception", ex.toString()));
         return new BusinessError(ex.toString(), ex.getMessage());
     }
 

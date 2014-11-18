@@ -361,7 +361,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             });
         };
     })
-    .directive("iiHeader", function($rootScope, focus) {
+    .directive("iiHeader", function($rootScope, focus, $state) {
         return {
             scope: {},
             templateUrl: "partials/header.html",

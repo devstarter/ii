@@ -5,10 +5,12 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.UID;
 import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
+import org.ayfaar.app.events.SimplePushEvent;
 import org.ayfaar.app.utils.TermsMap;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleValueWrapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -21,6 +23,7 @@ public class DBCache extends ConcurrentMapCache {
     @Inject TermsMap termsMap;
     @Inject CommonDao commonDao;
     @Inject CategoryDao categoryDao;
+    @Inject ApplicationEventPublisher eventPublisher;
 
     public DBCache() {
         super("DBCache");
@@ -46,8 +49,10 @@ public class DBCache extends ConcurrentMapCache {
                 if (termUri != null) {
                     cacheEntity = commonDao.get(CacheEntity.class, termUri);
                 } else {
-                    //todo создать уведомление о том, что ищут не термин
+                    eventPublisher.publishEvent(new SimplePushEvent("Поиск не термиа: "+searchKey.query));
                 }
+            } else {
+                eventPublisher.publishEvent(new SimplePushEvent("Поиск "+searchKey.page+" страници по запросу "+searchKey.query));
             }
         } else if(key instanceof ContentsCacheKey) {
             final Category category = categoryDao.get("uri",

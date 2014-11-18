@@ -1,7 +1,7 @@
 package org.ayfaar.app;
 
 
-import org.ayfaar.app.spring.events.BasicPushEvent;
+import org.ayfaar.app.events.BasicPushEvent;
 import org.ayfaar.app.spring.listeners.NotificationListener;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;

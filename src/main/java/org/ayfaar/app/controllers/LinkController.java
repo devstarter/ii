@@ -8,8 +8,8 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
-import org.ayfaar.app.spring.events.NewLinkEvent;
-import org.ayfaar.app.spring.events.NewQuoteLinkEvent;
+import org.ayfaar.app.events.NewLinkEvent;
+import org.ayfaar.app.events.NewQuoteLinkEvent;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.ayfaar.app.utils.TermsMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,7 @@ public class LinkController {
         Link link = linkDao.save(new Link(primTerm, aliasTerm, type));
 
         //emailNotifier.newLink(term, alias, link.getLinkId());
-        eventPublisher.publishEvent(new NewLinkEvent(term, alias, link.getLinkId()));
+        eventPublisher.publishEvent(new NewLinkEvent(term, alias, link));
 
         return link.getLinkId();
     }
