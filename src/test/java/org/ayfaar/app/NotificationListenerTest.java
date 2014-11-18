@@ -1,22 +1,27 @@
 package org.ayfaar.app;
 
 
-import org.ayfaar.app.spring.handler.DefaultRestErrorResolver;
-import org.ayfaar.app.synchronization.evernote.EvernoteSync;
+import org.ayfaar.app.spring.events.BasicPushEvent;
+import org.ayfaar.app.spring.listeners.NotificationListener;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import static org.mockito.Mockito.*;
 
 
 public class NotificationListenerTest {
 
-
     @Test
-    public void listenerTest() {
+    public void senderToPushBulletTest() {
 
         ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
-        DefaultRestErrorResolver p = ctx.getBean(DefaultRestErrorResolver.class);
-        //EvernoteSync p = ctx.getBean(EvernoteSync.class);
-        //p.tell();
+        NotificationListener listener = ctx.getBean(NotificationListener.class);
+
+        BasicPushEvent mock = mock(BasicPushEvent.class);
+        when(mock.getTitle()).thenReturn("title test");
+        when(mock.getMessage()).thenReturn("message test");
+
+        listener.onApplicationEvent(mock);
     }
+
 }
