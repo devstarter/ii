@@ -76,11 +76,6 @@ public class NewAliasesMap implements TermsMap {
         load();
     }
 
-    @Override
-    public void put(String name, TermProvider provider) {
-        aliasesMap.put(name, provider);
-    }
-
     @Data
     private class LinkInfo {
         private byte type;
@@ -191,6 +186,7 @@ public class NewAliasesMap implements TermsMap {
         return providers;
     }
 
+    @Deprecated // for old version and mediawiki sync support
     public List<Term> findTermsInside(String content) {
         Set<Term> contains = new HashSet<Term>();
         content = content.toLowerCase();

@@ -3,8 +3,7 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.dao.ArticleDao;
 import org.ayfaar.app.model.Article;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.utils.AliasesMap;
-import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.NewAliasesMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +19,7 @@ import static org.springframework.util.Assert.notNull;
 public class ArticleController {
 
     @Autowired ArticleDao articleDao;
-    @Autowired TermsMap termsMap;
+    @Autowired NewAliasesMap aliasesMap;
 
 
     @RequestMapping("{id}")
@@ -36,6 +35,6 @@ public class ArticleController {
     public List<Term> getRelatedTerms(@PathVariable Integer id) {
         Article article = articleDao.get("id", id);
         notNull(article, "Article not found");
-        return termsMap.findTermsInside(article.getName()+" "+article.getContent());
+        return aliasesMap.findTermsInside(article.getName()+" "+article.getContent());
     }
 }

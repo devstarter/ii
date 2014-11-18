@@ -249,7 +249,6 @@ public class TermController {
                                 TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
                                         primeTerm.getUri(), null, primeTerm.getShortDescription() != null);
 
-                                termsMap.put(alias, provider);
                                 log.info("Alias added: "+alias);
                             }
                             aliases.add(alias);

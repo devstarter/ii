@@ -7,6 +7,7 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.Model;
+import org.ayfaar.app.utils.NewAliasesMap;
 import org.ayfaar.app.utils.TermsMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,7 @@ public class ItemController {
     @Autowired TermDao termDao;
     @Autowired TermController termController;
     @Autowired TermsMap termsMap;
+    @Autowired NewAliasesMap aliasesMap;
 
     @RequestMapping(value = "{number}", method = POST)
     @Model
@@ -89,7 +91,7 @@ public class ItemController {
         Item item = itemDao.getByNumber(number);
         notNull(item, "Пункт не найден");
 
-        return termsMap.findTermsInside(item.getContent());
+        return aliasesMap.findTermsInside(item.getContent());
     }
 
     @RequestMapping("{number}/{term}")
