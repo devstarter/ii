@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class TermsControllerIntegrationTest  {
+public class TermsControllerUnitTest  {
     @Mock TermDao termDao;
     @Mock CommonDao commonDao;
     @Mock TermsMap termsMap;
