@@ -15,8 +15,14 @@ public class CategoryMapImpl implements CategoryMap {
         categoryMap = new HashMap<String, CategoryProvider>();
     }
 
+
     @Override
-    public CategoryProvider getCategoryProvider(String name) {
+    public CategoryProvider getProviderForCategory(String name) {
+        return null;
+    }
+
+    @Override
+    public CategoryProvider getProviderForItem(String number) {
         return null;
     }
 
