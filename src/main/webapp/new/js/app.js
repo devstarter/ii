@@ -44,6 +44,11 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 if (typeof ga !== 'undefined') {
                     ga('send', 'event', 'no-data', termName);
                 }
+            },
+            pageview: function(url) {
+                if (typeof ga !== 'undefined') {
+                    ga('send', 'pageview', url);
+                }
             }
         }
     })
@@ -404,7 +409,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             return null;
         }*/
     })
-    .run(function($state, entityService){
+    .run(function($state, entityService, $rootScope, analytics){
         var originStateGo = $state.go;
         $state.go = function(to, params, options) {
             if (to.hasOwnProperty('uri') || angular.isString(to)) {
@@ -427,6 +432,13 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         $state.goToTerm = function(name) {
             originStateGo.bind($state)("term", {name: name})
         };
+        $state.goToHome = function() {
+            originStateGo.bind($state)("home")
+        };
+
+        $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
+            analytics.pageview(location.pathname);
+        })
     })
     .filter('cut', function () {
         return function (value, wordwise, max, tail) {
