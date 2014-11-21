@@ -1,5 +1,9 @@
 function ItemController($scope, $stateParams, $state, $api) {
     $scope.number = $stateParams.number;
+    if (!$scope.number) {
+        $state.goToHome();
+        return
+    }
     document.title = $scope.number;
 
     $scope.content = "Загрузка...";

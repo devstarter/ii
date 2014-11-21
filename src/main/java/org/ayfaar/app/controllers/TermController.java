@@ -4,6 +4,7 @@ import org.apache.commons.lang.WordUtils;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
+import org.ayfaar.app.events.QuietException;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.events.NewTermEvent;
@@ -59,7 +60,7 @@ public class TermController {
     public ModelMap get(@RequestParam("name") String termName, @RequestParam(required = false) boolean mark) {
         Term term = termsMap.getTerm(termName);
         if (term == null) {
-            throw new RuntimeException(format("Термин `%s` отсутствует", termName));
+            throw new QuietException(format("Термин `%s` отсутствует", termName));
         }
         return get(term, mark);
     }

@@ -6,7 +6,7 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.spring.Model;
-import org.ayfaar.app.events.RateEvent;
+import org.ayfaar.app.events.SearchQuoteEvent;
 import org.ayfaar.app.utils.Content;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.ayfaar.app.utils.TermsMap;
@@ -228,7 +228,7 @@ public class SearchController {
                 }
             }
             //notifier.rate(term, item, quote, link != null ? link.getLinkId() : null);
-            eventPublisher.publishEvent(new RateEvent(term, item, quote, link != null ? link.getLinkId() : null));
+            eventPublisher.publishEvent(new SearchQuoteEvent(term, item, quote, link != null ? link.getLinkId() : null));
         }
     }
 }

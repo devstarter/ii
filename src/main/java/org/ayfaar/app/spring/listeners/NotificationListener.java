@@ -27,7 +27,7 @@ public class NotificationListener implements ApplicationListener<BasicPushEvent>
     @Override
     public void onApplicationEvent(final BasicPushEvent event) {
 
-        if (ctx.getParent()!=null) return;
+        if (ctx.getParent()!=null) return; // fix to avoid duplications
 
         new Thread(new Runnable() {
             @Override

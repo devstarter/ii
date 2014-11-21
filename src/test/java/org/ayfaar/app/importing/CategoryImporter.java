@@ -12,7 +12,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import java.io.FileReader;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 
 import static java.util.Arrays.asList;
 
@@ -37,26 +37,25 @@ public class CategoryImporter {
         Category glavaCat = null;
 
 //        List<String> lines = FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\paragraphs\\Параграфы, БДК, Том 10,14.utf.csv"));
-        CSVReader reader = new CSVReader(new FileReader("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\paragraphs\\Параграфы.csv"), ';');
+        CSVReader reader = new CSVReader(new FileReader("D:\\projects\\ayfaar\\ii-app\\src\\text\\содержание\\formated\\3 том.csv"), ';');
         String [] nextLine;
-        List<String> columns;
-//        List myEntries = reader.readAll();
-//        ListIterator iterator = myEntries.listIterator();
         reader.readNext(); // skip header
         while ((nextLine = reader.readNext()) != null){
-            columns = asList(nextLine);
-            String cikl = columns.get(0).trim();
-            String tom = columns.get(1).trim();
+            Iterator<String> data = asList(nextLine).iterator();
+            String cikl = data.next().trim();
+            String tom = data.next().trim();
             int tomNumber = Integer.valueOf(tom.replace("Том ", "").trim());
-            String codeRazdela = columns.get(2).trim();
-            String uniqCodeRazdela = columns.get(3).trim();
-            String nameRazdela = columns.get(4).trim();
-            String codeGlavy = columns.get(6).trim();
-            String uniqCodeGlavy = columns.get(7).trim();
-            String nameGlavy = columns.get(8).trim();
-            String paragraphNumber = columns.get(9).trim();
-            String paragraphDescription = columns.get(10).trim();
-            String[] items = columns.get(11).split("-");
+            String razdelName = data.next().trim();
+            String razdelCode = cikl+"/"+razdelName;
+            String razdelaDesc = data.next().trim();
+            String glavaFull = data.next().trim();
+            final int i = glavaFull.indexOf(". ");
+            String glavaName = glavaFull.substring(0, i - 1);
+            String glavaCode = razdelCode+"/"+glavaName;
+            String glavaDesc = glavaFull.substring(i);
+            String paragraphNumber = data.next().trim();
+            String paragraphDescription = data.next().trim();
+            String[] items = data.next().split("-");
 
             String item = items[0];
             if (!item.contains(".")) {
@@ -72,8 +71,8 @@ public class CategoryImporter {
 
             typeCat = getCat(cikl, typeCat, null);
             tomCat = getCat(tom, tomCat, typeCat);
-            razdelCat = getCat(uniqCodeRazdela, nameRazdela, razdelCat, tomCat);
-            glavaCat = getCat(uniqCodeGlavy, nameGlavy, glavaCat, razdelCat);
+            razdelCat = getCat(razdelCode, razdelaDesc, razdelCat, tomCat);
+            glavaCat = getCat(glavaCode, glavaDesc, glavaCat, razdelCat);
 
             if (typeCat.getStart() == null) {
                 typeCat.setStart(tomCat.getUri());

@@ -1,6 +1,7 @@
 package org.ayfaar.app.spring.handler;
 
 import org.ayfaar.app.events.DefaultRestErrorEvent;
+import org.ayfaar.app.events.QuietException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,9 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
             eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception:",mySQLIntegrityConstraintViolationException.getMessage() + "\n" + ex.getMessage()));
             return new BusinessError(mySQLIntegrityConstraintViolationException.getMessage(), ex.getMessage());
         }
-        eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception", ex.toString()));
+        if (!(ex instanceof QuietException)) {
+            eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception", ex.toString()));
+        }
         return new BusinessError(ex.toString(), ex.getMessage());
     }
 
