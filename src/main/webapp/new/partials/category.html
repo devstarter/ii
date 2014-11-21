@@ -1,1 +1,18 @@
 <h1>{{name}}</h1>
+
+<div class="block loading" ng-show="loading">Загрузка терминов...</div>
+<ul><!--  ng-show="children.length" -->
+<li ng-Repeat='child in children'><span  ii-ref='child' class="btn btn-link">{{child.name}} {{child.description}}</span>  <!--ng-hide??-->
+    <ul>
+        <li ng-Repeat='subchild in child.children'  ii-ref='subchild' class="btn btn-link">
+            {{subchild.name}} {{subchild.description}} <!--URI:{{subchild.uri}}...-->
+        </li>
+    </ul>
+    
+</li>
+</ul>
+
+
+<div ng-hide="children.length">
+    
+</div>
