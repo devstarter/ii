@@ -399,7 +399,7 @@
 
         <repository>
             <id>pushbullet.java-mvn-repo</id>
-            <url>https://raw.github.com/Pas8sion/pushbullet.java/mvn-repo/</url>
+            <url>https://raw.github.com/devstarter/pushbullet.java/mvn-repo/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
