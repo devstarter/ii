@@ -8,23 +8,19 @@ import java.util.List;
 
 public interface CategoryMap {
     public CategoryProvider getProviderForCategory(String name);
-
-    /**
-     * Возможно категории не нужны вообще, для построения содержания должно хватить провайдеров
-     */
+    public CategoryProvider getProviderByItemNumber(String number);
     public Category getCategory(String name);
-
-    /**
-     * Не уверен нужен ли тут этот метод или выполнять это в ContentsHelper
-     */
     public List<CategoryProvider> getParents(String name);
 
     public interface CategoryProvider {
+        public Category getCategory();
+        public CategoryProvider getNext();
         public String getUri();
         public String getParentUri();
-        public String getNext();
-        public String getStart();
-        public Category getCategory();
+        public String getDescription();
+        public boolean isParagraph();
+        public boolean isTom();
+        public boolean isCikl();
         public List<CategoryProvider> getChildren();
         public CategoryProvider getParent();
     }

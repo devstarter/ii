@@ -1,9 +1,7 @@
 package org.ayfaar.app.utils;
 
-import lombok.Getter;
-import org.ayfaar.app.controllers.ItemController;
+
 import org.ayfaar.app.dao.CategoryDao;
-import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,38 +20,34 @@ public class CategoryMapImpl implements CategoryMap {
     @Autowired
     private CategoryDao categoryDao;
 
-    @Autowired
-    private ItemDao itemDao;
-
     private Map<String, CategoryProvider> categoryMap;
+    private List<Paragraph> paragraphs;
 
     @PostConstruct
     public void load() {
         categoryMap = new HashMap<String, CategoryProvider>();
-        List<Category> categories = categoryDao.getAll();
+        paragraphs = new ArrayList<Paragraph>();
 
+        List<Category> categories = categoryDao.getAll();
         for(Category category : categories) {
-            categoryMap.put(category.getName(),
-                    new CategoryProviderImpl(category.getUri(), category.getParent(), category.getStart(), category.getNext()));
-            if(category.isParagraph()) {
-                addProvidersForItems(category);
+            CategoryProvider provider = new CategoryProviderImpl(category);
+            categoryMap.put(category.getName(), provider);
+            if(provider.isParagraph()) {
+                paragraphs.add(new Paragraph(category.getName(),
+                        convertItemNumber(category.getStart()), convertItemNumber(category.getEnd())));
             }
         }
     }
 
-    private void addProvidersForItems(Category category) {
-        Item currentItem = itemDao.get(category.getStart());
-        String itemNumber = currentItem.getNumber();
+    private class Paragraph {
+        private String name;
+        private double start;
+        private double end;
 
-        String endNumber = category.getEnd() != null ? getValueFromUri(Item.class, category.getEnd()): itemNumber;
-
-        categoryMap.put(itemNumber, new CategoryProviderImpl(
-                currentItem.getUri(), category.getUri(), currentItem.getUri(), ItemController.getNext(itemNumber)));
-        while(!itemNumber.equals(endNumber)) {
-            itemNumber = ItemController.getNext(itemNumber);
-            categoryMap.put(itemNumber, new CategoryProviderImpl(
-                    UriGenerator.generate(Item.class, itemNumber), category.getUri(), currentItem.getUri(),
-                                          ItemController.getNext(itemNumber)));
+        private Paragraph(String name, double start, double end) {
+            this.name = name;
+            this.start = start;
+            this.end = end;
         }
     }
 
@@ -62,24 +56,28 @@ public class CategoryMapImpl implements CategoryMap {
         return categoryMap.get(name);
     }
 
-
-    /**
-     * Возможно категории не нужны вообще, для построения содержания должно хватить провайдеров
-     */
     @Override
-    public Category getCategory(String name) {
-      /*  CategoryProvider provider = categoryMap.get(name);
-        //boolean isItem = false
-        if(!provider.getUri().startsWith("ии:пункт:")) {
-            return provider.getCategory();
+    public CategoryProvider getProviderByItemNumber(String number) {
+        CategoryProvider provider = null;
+        double itemNumber = convertItemNumber(UriGenerator.generate(Item.class, number));
+
+        for(Paragraph p : paragraphs) {
+            if(itemNumber >= p.start && itemNumber <= p.end) {
+                provider = categoryMap.get(p.name);
+            } else if(p.end == 0.0){
+                if(itemNumber == p.start) {
+                    provider = categoryMap.get(p.name);
+                }
+            }
         }
-        */
-        return null;
+        return provider;
     }
 
-    /**
-     * Не уверен нужен ли тут этот метод или выполнять это в ContentsHelper
-     */
+    @Override
+    public Category getCategory(String name) {
+        return getProviderForCategory(name).getCategory();
+    }
+
     @Override
     public List<CategoryProvider> getParents(String name) {
         List<CategoryProvider> parents = new ArrayList<CategoryProvider>();
@@ -94,40 +92,63 @@ public class CategoryMapImpl implements CategoryMap {
     }
 
     public class CategoryProviderImpl implements CategoryProvider {
-        @Getter
-        private String uri;
-        @Getter
-        private String parentUri;
-        @Getter
-        private String start;
-        @Getter
-        private String next;
+        private Category category;
 
-        public CategoryProviderImpl(String uri, String parentUri, String start, String next) {
-            this.uri = uri;
-            this.parentUri = parentUri;
-            this.start = start;
-            this.next = next;
+        public CategoryProviderImpl(Category category) {
+            this.category = category;
         }
 
         @Override
         public Category getCategory() {
-            return categoryDao.get("uri", uri);
+            return category;
+        }
+
+        @Override
+        public String getUri() {
+            return category.getUri();
+        }
+
+        @Override
+        public String getParentUri() {
+            return category.getParent();
+        }
+
+        @Override
+        public String getDescription() {
+            return category.getDescription();
+        }
+
+        @Override
+        public CategoryProvider getNext() {
+            String next = category.getNext();
+            return next != null ? categoryMap.get(getValueFromUri(Category.class, next)) : null;
+        }
+
+        @Override
+        public boolean isParagraph() {
+            return category.getName().indexOf(Category.PARAGRAPH_NAME) == 0;
+        }
+
+        @Override
+        public boolean isTom() {
+            return category.getName().indexOf(Category.TOM_NAME) == 0;
+        }
+
+        @Override
+        public boolean isCikl() {
+            return category.getName().equals("БДК") || category.getName().equals("Основы");
         }
 
         @Override
         public List<CategoryProvider> getChildren() {
             List<CategoryProvider> children = new ArrayList<CategoryProvider>();
-            if (start != null) {
-                Class clazz = getCategory().isParagraph() ? Item.class : Category.class;
-                CategoryProvider child = categoryMap.get(getValueFromUri(clazz, start));
-
+            if (category.getStart() != null) {
+                CategoryProvider child = categoryMap.get(getValueFromUri(Category.class, category.getStart()));
                 if (child != null) {
                     children.add(child);
-
                     while (child.getNext() != null) {
-                        child = categoryMap.get(getValueFromUri(clazz, child.getNext()));
-                        if (!child.getParentUri().equals(uri))
+                        child = child.getNext();
+                        if (!child.getParentUri().equals(getUri()))
                             break;
                         children.add(child);
                     }
@@ -138,7 +159,13 @@ public class CategoryMapImpl implements CategoryMap {
 
         @Override
         public CategoryProvider getParent() {
+            String parentUri = category.getParent();
             return parentUri != null ? categoryMap.get(getValueFromUri(Category.class, parentUri)) : null;
         }
     }
+
+    private double convertItemNumber(String value) {
+        return value != null ? Double.parseDouble(getValueFromUri(Item.class, value)) : 0.0;
+    }
 }
+
