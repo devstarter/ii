@@ -36,7 +36,7 @@ public class CategoryMapImplIntegrationTest extends IntegrationTest{
     }
 
     @Test
-    public void testGetParent() {
+    public void testGetParentForParagraph() {
         CategoryMap.CategoryProvider provider = categoryMap.getProviderForCategory("Параграф 10.1.1.1");
         CategoryMap.CategoryProvider parent = provider.getParent();
 
@@ -44,7 +44,15 @@ public class CategoryMapImplIntegrationTest extends IntegrationTest{
     }
 
     @Test
-    public void testGetParents() {
+    public void testGetParentForItem() {
+        CategoryMap.CategoryProvider provider = categoryMap.getProviderForCategory("10.10006");
+        CategoryMap.CategoryProvider parent = provider.getParent();
+
+        assertEquals(UriGenerator.generate(Category.class, "Параграф 10.1.1.1"), parent.getUri());
+    }
+
+    @Test
+    public void testGetParentsFotParagraph() {
         List<CategoryMap.CategoryProvider> parents = categoryMap.getParents("Параграф 10.1.1.1");
 
         assertEquals(4, parents.size());
@@ -52,5 +60,17 @@ public class CategoryMapImplIntegrationTest extends IntegrationTest{
         assertEquals(UriGenerator.generate(Category.class, "БДК / Раздел I"), parents.get(1).getUri());
         assertEquals(UriGenerator.generate(Category.class, "Том 10"), parents.get(2).getUri());
         assertEquals(UriGenerator.generate(Category.class, "БДК"), parents.get(3).getUri());
+    }
+
+    @Test
+    public void testGetParentsForItem() {
+        List<CategoryMap.CategoryProvider> parents = categoryMap.getParents("10.10006");
+
+        assertEquals(5, parents.size());
+        assertEquals(UriGenerator.generate(Category.class, "Параграф 10.1.1.1"), parents.get(0).getUri());
+        assertEquals(UriGenerator.generate(Category.class, "БДК / Раздел I / Глава 1"), parents.get(1).getUri());
+        assertEquals(UriGenerator.generate(Category.class, "БДК / Раздел I"), parents.get(2).getUri());
+        assertEquals(UriGenerator.generate(Category.class, "Том 10"), parents.get(3).getUri());
+        assertEquals(UriGenerator.generate(Category.class, "БДК"), parents.get(4).getUri());
     }
 }

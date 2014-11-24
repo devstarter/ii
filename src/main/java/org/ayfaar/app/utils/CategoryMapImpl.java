@@ -138,8 +138,7 @@ public class CategoryMapImpl implements CategoryMap {
 
         @Override
         public CategoryProvider getParent() {
-            Category category = getCategory();
-            return category.getParent() != null ? categoryMap.get(getValueFromUri(Category.class, parentUri)) : null;
+            return parentUri != null ? categoryMap.get(getValueFromUri(Category.class, parentUri)) : null;
         }
     }
 }

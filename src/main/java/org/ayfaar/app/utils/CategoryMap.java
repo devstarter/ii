@@ -20,11 +20,11 @@ public interface CategoryMap {
     public List<CategoryProvider> getParents(String name);
 
     public interface CategoryProvider {
-        public Category getCategory();
         public String getUri();
         public String getParentUri();
         public String getNext();
         public String getStart();
+        public Category getCategory();
         public List<CategoryProvider> getChildren();
         public CategoryProvider getParent();
     }
