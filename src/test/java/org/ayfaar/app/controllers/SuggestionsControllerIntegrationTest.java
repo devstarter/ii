@@ -1,7 +1,6 @@
 package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.IntegrationTest;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -10,7 +9,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Ignore
+
 public class SuggestionsControllerIntegrationTest extends IntegrationTest {
     @Inject
     SuggestionsController searchController;
@@ -23,11 +22,11 @@ public class SuggestionsControllerIntegrationTest extends IntegrationTest {
         // тест последовательности
         assertTrue(suggestions.get(0).toLowerCase().indexOf(query) == 0); // Галактическая Сущность
         assertTrue(suggestions.get(1).toLowerCase().indexOf(query) == 0); // Галактическая Странник
-        assertTrue(suggestions.get(2).toLowerCase().indexOf(query) == 0); // Галактический УЛУУГУМА-Дезинтеграционный Луч АИЙ-ЙЯ
-        assertTrue(suggestions.get(3).toLowerCase().indexOf(query) > 0); // Звёздно-Галактическая Форма
-        assertTrue(suggestions.get(4).toLowerCase().indexOf(query) > 0); // Вселенский Межгалактический Диапазон
-        assertTrue(suggestions.get(5).toLowerCase().indexOf(query) > 0); // Межгалактические Комплекс-Планы
-        assertTrue(suggestions.get(6).toLowerCase().indexOf(query) > 0); // Межгалактический Астральный Комплекс-План
+        assertTrue(suggestions.get(2).toLowerCase().indexOf(query) > 0); // Звёздно-Галактическая Форма
+        assertTrue(suggestions.get(3).toLowerCase().indexOf(query) > 0); // Межгалактический Трансмутационный Комплекс-План
+        assertTrue(suggestions.get(4).toLowerCase().indexOf(query) > 0); // Межгалактический Дезинтеграционный Комплекс-План
+        assertTrue(suggestions.get(5).toLowerCase().indexOf(query) == 0); // Галактический УЛУУГУМА-Дезинтеграционный Луч АИЙ-ЙЯ
+        assertTrue(suggestions.get(6).toLowerCase().indexOf(query) > 0); // Межгалактический ССМИИЙСМАА-А-Фокусирующий Луч АИЙ-ЙЯ
     }
 
     /**
@@ -39,13 +38,12 @@ public class SuggestionsControllerIntegrationTest extends IntegrationTest {
         String query = "ссс";
         List<String> suggestions = searchController.suggestions(query);
         assertEquals(7, suggestions.size());
-        assertEquals("АИЙС-ССС", suggestions.get(5));
-        assertEquals("Амициссимное ССС-Состояние", suggestions.get(6));
+        assertEquals("Амициссимное ССС-Состояние", suggestions.get(5));
+        assertEquals("синтетическое Самосознание ССС-Сущности", suggestions.get(6));
     }
 
     @Test
     public void testLowerUpperCase() {
-
         List<String> suggestionsUpper = searchController.suggestions("НН");
         List<String> suggestionsLower = searchController.suggestions("нн");
 
@@ -54,6 +52,5 @@ public class SuggestionsControllerIntegrationTest extends IntegrationTest {
         for (int i = 0; i < suggestionsLower.size() && suggestionsLower.size()==suggestionsUpper.size(); i++) {
             assertEquals(suggestionsLower.get(i), suggestionsUpper.get(i));
         }
-
     }
 }

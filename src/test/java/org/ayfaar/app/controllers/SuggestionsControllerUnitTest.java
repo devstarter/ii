@@ -1,8 +1,7 @@
 package org.ayfaar.app.controllers;
 
-import net.sf.cglib.core.Transformer;
-import org.ayfaar.app.model.Term;
-import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.utils.NewAliasesMap;
+import org.ayfaar.app.utils.TermsMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -10,28 +9,32 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static net.sf.cglib.core.CollectionUtils.transform;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.ayfaar.app.utils.TermsMap.TermProvider;
 
 
 @SuppressWarnings("unchecked")
 @RunWith(MockitoJUnitRunner.class)
 public class SuggestionsControllerUnitTest {
-    @Mock AliasesMap aliasesMap;
+    @Mock TermsMap termsMap;
+    @Mock NewAliasesMap aliasesMap;
 
     @InjectMocks
-    SuggestionsController controller = new SuggestionsController();
+    SuggestionsController controller;
 
     @Test
     public void testSequence() {
         String q = "a";
         List<String> fakeTerms = asList("a", "1 a", "bterfd", "b-aaaa", "aa", "242a424");
 
-        Mockito.when(aliasesMap.getAllTerms()).thenReturn(transform(fakeTerms, transformer));
+        Mockito.when(termsMap.getAll()).thenReturn(transform(fakeTerms));
 
         List<String> suggestions = controller.suggestions(q);
 
@@ -43,7 +46,6 @@ public class SuggestionsControllerUnitTest {
         assertEquals("242a424", suggestions.get(4));
     }
 
-
     @Test
     public void testMaxSize() {
         String q = "гал";
@@ -51,7 +53,7 @@ public class SuggestionsControllerUnitTest {
                                         "Звёздно-Галактическая Форма", "Вселенский Межгалактический Диапазон", "Межгалактический",
                                         "Межгалактические Комплекс-Планы", "Межгалактический Астральный Комплекс-План", "Галактика");
 
-        Mockito.when(aliasesMap.getAllTerms()).thenReturn(transform(fakeTerms, transformer));
+        Mockito.when(termsMap.getAll()).thenReturn(transform(fakeTerms));
 
         List<String> suggestions = controller.suggestions(q);
         assertTrue(suggestions.size() <= SuggestionsController.MAX_SUGGESTIONS);
@@ -65,7 +67,7 @@ public class SuggestionsControllerUnitTest {
         String q = "aa";
         List<String> fakeTerms = asList("aabbcc", "242aa424", "aa", "aabb", "aab");
 
-        Mockito.when(aliasesMap.getAllTerms()).thenReturn(transform(fakeTerms, transformer));
+        Mockito.when(termsMap.getAll()).thenReturn(transform(fakeTerms));
 
         List<String> suggestions = controller.suggestions(q);
 
@@ -77,10 +79,11 @@ public class SuggestionsControllerUnitTest {
         assertEquals("242aa424", suggestions.get(4));
     }
 
-    private static final Transformer transformer = new Transformer() {
-        @Override
-        public Object transform(Object value) {
-            return new Term((String) value);
+    private List<Map.Entry<String, TermProvider>> transform(List<String> fakeTerms) {
+        Map<String, TermsMap.TermProvider> map = new HashMap<String, TermsMap.TermProvider>();
+        for(int i = 0; i < fakeTerms.size(); i++) {
+            map.put(fakeTerms.get(i), aliasesMap.new TermProviderImpl(fakeTerms.get(i), null, false));
         }
-    };
+        return new ArrayList<Map.Entry<String, TermProvider>>(map.entrySet());
+    }
 }

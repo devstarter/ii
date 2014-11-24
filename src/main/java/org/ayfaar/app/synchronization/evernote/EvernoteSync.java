@@ -11,8 +11,11 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.Model;
+import org.ayfaar.app.events.NewLinkEvent;
+import org.ayfaar.app.events.NewQuoteLinkEvent;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +33,7 @@ public class EvernoteSync {
     @Autowired CommonDao commonDao;
     @Autowired TermController termController;
     @Autowired EmailNotifier emailNotifier;
+    @Autowired ApplicationEventPublisher eventPublisher;
 
     @RequestMapping("sync")
     @Scheduled(fixedDelay = 300000, initialDelay = 60000) // after each 5 min
@@ -81,7 +85,8 @@ public class EvernoteSync {
             }
             Link link = linkDao.save(new Link(mainTerm, term, relatedTerms.getType()));
 
-            emailNotifier.newLink(mainTermName, termName, link.getLinkId());
+            //emailNotifier.newLink(mainTermName, termName, link.getLinkId());
+            eventPublisher.publishEvent(new NewLinkEvent(mainTermName, termName, link));
         }
         bot.removeNote(relatedTerms.getGuid());
     }
@@ -119,8 +124,9 @@ public class EvernoteSync {
 
             Link link = linkDao.save(new Link(term, item, potentialLink.getQuote()));
 
-            emailNotifier.newQuoteLink(termName, potentialLink.getItem(),
-                    potentialLink.getQuote(), link.getLinkId());
+            //emailNotifier.newQuoteLink(termName, potentialLink.getItem(),
+            //        potentialLink.getQuote(), link.getLinkId());
+            eventPublisher.publishEvent(new NewQuoteLinkEvent(termName, potentialLink.getItem(),potentialLink.getQuote(), link.getLinkId()));
         }
         bot.removeNote(potentialLink.getGuid());
     }

@@ -16,9 +16,11 @@ public class TermsMarkerIntegrationTest extends IntegrationTest {
     @Ignore // эти тести очень дорогие в поддержке
     public void test() {
 
-       final String text = "Например, Формо-Творцы АДД-МАДД-ФЛУЙФ-Уровня, организующие высшие ГЛЭИИЙО-реальности";
-        final String expected = "Например, <term id=\"Формо-Творец\">Формо-Творцы</term> " +
-                "АДД-МАДД-ФЛУЙФ-Уровня, организующие высшие <term id=\"ГЛЭИИЙО\">ГЛЭИИЙО</term>-реальности";
+        final String text = "Например, Формо-Творцы АДД-МАДД-ФЛУЙФ-Уровня, организующие высшие ГЛЭИИЙО-реальности";
+        //final String expected = "Например, <term id=\"Формо-Творец\">Формо-Творцы</term> " +
+        //        "АДД-МАДД-ФЛУЙФ-Уровня, организующие высшие <term id=\"ГЛЭИИЙО\">ГЛЭИИЙО</term>-реальности";
+        final String expected = "Например, <term id=\"Формо-Творец\">Формо-Творцы</term> АДД-МАДД-ФЛУЙФ-Уровня, " +
+                "организующие высшие <term id=\"ГЛЭИИЙО\">ГЛЭИИЙО</term>-<term id=\"реальность\">реальности</term>";
         final String actual = termsMarker.mark(text);
         assertEquals(expected, actual);
 
@@ -47,6 +49,18 @@ public class TermsMarkerIntegrationTest extends IntegrationTest {
         final String expected6 = " Качеств <term id=\"ВСЕ-Любовь-ВСЕ-Мудрость\">ВСЕ-Любовь-ВСЕ-Мудрость</term> и <term id=\"ВСЕ-Воля-ВСЕ-Разума\">ВСЕ-Воля-ВСЕ-Разума</term> в ";
         final String actual6 = termsMarker.mark(text6);
         assertEquals(expected6, actual6);
+
+
+        //2.0382
+        final String text7 = "Вся эта симультанно, Вся эта -симультанно,";
+        final String expected7 = "Вся эта <term id=\"Симультанно\" has-short-description=\"true\">симультанно</term>, Вся эта -<term id=\"Симультанно\" has-short-description=\"true\">симультанно</term>,";
+        final String actual7 = termsMarker.mark(text7);
+        assertEquals(expected7, actual7);
+
+        final String text8 = "организующие ГЛЭИИЙО-мерность) имеют";
+        final String expected8 = "организующие <term id=\"ГЛЭИИЙО-мерность\">ГЛЭИИЙО-мерность</term>) имеют";
+        final String actual8 = termsMarker.mark(text8);
+        assertEquals(expected8, actual8);
 
     }
 }

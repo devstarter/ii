@@ -14,7 +14,7 @@
                            http://www.springframework.org/schema/cache/spring-cache.xsd">
 
 
-    <context:component-scan base-package="org.ayfaar.app.spring.converter"/>
+    <context:component-scan base-package="org.ayfaar.app"/> <!--.spring.converter"/>-->
 
     <mvc:annotation-driven />
 
@@ -105,6 +105,16 @@
 	</bean>
 
     <bean id="addAccessControlAllowOriginFilter" class="org.ayfaar.app.utils.servlet.AddAccessControlAllowOriginFilter"/>
+
+    <!--pushbullet-->
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <property name="messageConverters" ref="messageConverters"/>
+    </bean>
+
+    <bean class="com.pushbullet.PushbulletClient">
+        <property name="key" value="${pushbullet.key}"/>
+        <property name="restTemplate" ref="restTemplate"/>
+    </bean>
 
     <!--<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
         <property name="caches">

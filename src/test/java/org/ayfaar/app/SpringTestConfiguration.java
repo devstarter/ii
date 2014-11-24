@@ -13,7 +13,8 @@ import javax.servlet.ServletContext;
 @PropertySource({
         "classpath:database.properties",
         "classpath:debug.properties",
-        "classpath:mail.properties"
+        "classpath:mail.properties",
+        "classpath:app.properties"
 })
 @ImportResource({
         "classpath:hibernate.xml",

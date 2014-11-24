@@ -74,7 +74,7 @@ public class ContentsHelper {
         List<CategoryPresentation> listPresentations = new ArrayList<CategoryPresentation>();
         for (Item item : items) {
             CategoryPresentation presentation = new CategoryPresentation(item.getNumber(), item.getUri());
-            presentation.setContents(item.getContent());
+            presentation.setContent(item.getContent());
 
             listPresentations.add(presentation);
         }

@@ -1,19 +1,5 @@
 <div class="term">
     <span ng-hide="editMode" class="current-term-title">{{name}}</span>
-    <a ng-hide="editMode" class="btn" ng-click="editMode = true">изменить</a>
-    <table ng-show="editMode" class="full-width">
-        <tr>
-            <td class="full-width">
-                <input type="text" ng-model="name" placeholder="Введите термин или фразу"
-                       ii-lookup
-                       typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
-                       typeahead-on-select="$suggestionSelected($label)" class="form-control"/>
-            </td>
-            <td>
-                <button class="btn btn-primary" ng-click="updateName(name)">Искать</button>
-            </td>
-        </tr>
-    </table>
 
     <div class="block loading" ng-show="loading">Загрузка...</div>
     <div ng-hide="loading && termFound">
@@ -35,11 +21,12 @@
             <div ii-bind="quote.full ? quote.full : quote.quote"></div>
             <cite>&mdash; <span><entity ng-model="quote"/></span>
                 <span ng-show="quote.showControlls">
-                    <button ng-hide="quote.full" class="btn btn-default btn-icon" ng-click="expand(quote)"
+                    <button ng-hide="quote.full || quote.loadingFull" class="btn btn-default btn-icon" ng-click="expand(quote)"
                             title="Показать весь пункт">
                         <i class="icon-maximize"></i>
                     </button>
                 </span>
+                <span ng-show="quote.loadingFull">Загрузка...</span>
             </cite>
         </blockquote>
         <span ng-show="related.length">Также связан с</span>
@@ -58,7 +45,7 @@
             <h3>Статьи из 9 тома</h3>
             <button class="btn btn-link" ng-repeat="article in articles" ng-click="navigate(article)">{{article.name}}</button>
         </div>
-        <div class="block loading" style="padding: 50px;" ng-show="loadingContents">
+        <div class="block loading" ng-show="loadingContents">
             <img src="images/ajax-loader.gif"/> Поиск по содержимому (может занять около минуты)...
         </div>
         <div ng-hide="loadingContents">

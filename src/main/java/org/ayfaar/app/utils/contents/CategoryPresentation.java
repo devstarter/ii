@@ -13,7 +13,7 @@ public class CategoryPresentation {
     private String name;
     private String uri;
     private String description;
-    private String contents;
+    private String content;
     private String previous;
     private String next;
     private List<CategoryPresentation> parents;

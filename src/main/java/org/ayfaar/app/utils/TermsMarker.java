@@ -39,7 +39,8 @@ public class TermsMarker {
             // получаем слово связаное с термином, напрмер "времени" будет связано с термином "Время"
             String word = entry.getKey();
             // составляем условие по которому проверяем есть ли это слов в тексте
-            Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|\\-])|^)(" + word
+            //Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|\\-])|^)(" + word
+            Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|])|^)(" + word
                     + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|])|$)", UNICODE_CHARACTER_CLASS | UNICODE_CASE | CASE_INSENSITIVE);
             Matcher contentMatcher = pattern.matcher(content);
             // если есть:

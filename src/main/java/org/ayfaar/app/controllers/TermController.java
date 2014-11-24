@@ -6,8 +6,11 @@ import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.spring.Model;
+import org.ayfaar.app.events.NewTermEvent;
+import org.ayfaar.app.events.TermUpdatedEvent;
 import org.ayfaar.app.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +18,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.util.*;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
 import static org.ayfaar.app.model.Link.*;
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
-import static org.springframework.util.Assert.notNull;
 
 @Controller
 @RequestMapping("api/term")
@@ -31,10 +34,11 @@ public class TermController {
     @Autowired CommonDao commonDao;
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
-    @Autowired AliasesMap aliasesMap;
-    @Autowired NewAliasesMap newAliasesMap;
+    @Autowired TermsMap termsMap;
+    @Autowired NewAliasesMap aliasesMap;
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
+    @Inject ApplicationEventPublisher publisher;
 
     /*@RequestMapping("import")
     @Model
@@ -53,8 +57,10 @@ public class TermController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @Model
     public ModelMap get(@RequestParam("name") String termName, @RequestParam(required = false) boolean mark) {
-        Term term = termDao.getByName(termName);
-        notNull(term, "Термин не найден");
+        Term term = termsMap.getTerm(termName);
+        if (term == null) {
+            throw new RuntimeException(format("Термин `%s` отсутствует", termName));
+        }
         return get(term, mark);
     }
 
@@ -65,9 +71,9 @@ public class TermController {
     public ModelMap get(Term term, boolean mark) {
         String termName = term.getName();
         Term alias = null;
-        if (!aliasesMap.get(termName).getTerm().getUri().equals(term.getUri())) {
+        if (!termsMap.getTermProvider(termName).getUri().equals(term.getUri())) {
             alias = term;
-            term = aliasesMap.get(termName).getTerm();
+            term = termsMap.getTerm(termName);
         }
 
         // может быть аббравиатурой, сокращением, кодом или синонимов
@@ -203,7 +209,7 @@ public class TermController {
         if (term == null) {
             term = termDao.save(new Term(name, shortDescription, description));
             String termName = term.getName();
-            log.info("Added: "+ termName);
+            log.info("Added: " + termName);
             if (TermUtils.isComposite(termName)) {
                 String target = TermUtils.getNonCosmicCodePart(termName);
                 if (target != null) {
@@ -212,17 +218,27 @@ public class TermController {
             } else if (!TermUtils.isCosmicCode(termName)) {
                 findAliases(term, termName, "");
             }
+            publisher.publishEvent(new NewTermEvent(term));
         } else {
-            if (shortDescription != null && !shortDescription.isEmpty()) term.setShortDescription(shortDescription);
-            if (description != null && !description.isEmpty()) term.setDescription(description);
+            String oldShortDescription = null;
+            if (shortDescription != null && !shortDescription.isEmpty()) {
+                oldShortDescription = term.getShortDescription();
+                term.setShortDescription(shortDescription);
+            }
+            String oldDescription = null;
+            if (description != null && !description.isEmpty()) {
+                oldDescription = term.getDescription();
+                term.setDescription(description);
+            }
             termDao.save(term);
+            publisher.publishEvent(new TermUpdatedEvent(term, oldShortDescription, oldDescription));
         }
+
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                aliasesMap.reload();
-                newAliasesMap.load();
+                termsMap.reload();
             }
         }).start();
 
@@ -242,12 +258,14 @@ public class TermController {
                     String alias = prefix+morph.text;
                     if (morph != null && !alias.isEmpty()
                             && !alias.equals(primeTerm.getName())) {
-
                         if (!aliases.contains(alias)) {
                             TermMorph termMorph = commonDao.get(TermMorph.class, alias);
                             if (termMorph == null) {
                                 commonDao.save(new TermMorph(alias, primeTerm.getUri()));
-                                aliasesMap.put(alias, primeTerm);
+
+                                TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
+                                        primeTerm.getUri(), null, primeTerm.getShortDescription() != null);
+
                                 log.info("Alias added: "+alias);
                             }
                             aliases.add(alias);
@@ -284,7 +302,7 @@ public class TermController {
     @RequestMapping("get-short-description")
     @ResponseBody
     public String getShortDescription(@RequestParam String name) {
-        return aliasesMap.getTerm(name).getShortDescription();
+        return termsMap.getTerm(name).getShortDescription();
     }
 
     @RequestMapping("remove/{name}")
@@ -295,6 +313,6 @@ public class TermController {
 
     @RequestMapping("reload-aliases-map")
     public void reloadAliasesMap() {
-        aliasesMap.reload(); newAliasesMap.load();
+        termsMap.reload();
     }
 }

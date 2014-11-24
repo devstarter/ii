@@ -8,9 +8,12 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
-import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.events.NewLinkEvent;
+import org.ayfaar.app.events.NewQuoteLinkEvent;
 import org.ayfaar.app.utils.EmailNotifier;
+import org.ayfaar.app.utils.TermsMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +34,10 @@ public class LinkController {
     @Autowired ItemDao itemDao;
     @Autowired TermController termController;
     @Autowired EmailNotifier emailNotifier;
-    @Autowired AliasesMap aliasesMap;
+    @Autowired TermsMap termsMap;
     @Autowired TermMorphDao termMorphDao;
+    @Autowired ApplicationEventPublisher eventPublisher;
+
 
     @RequestMapping(value = "addQuote", method = POST)
     @ResponseBody
@@ -44,8 +49,8 @@ public class LinkController {
         }
         Term term = termDao.getByName(termName);
         if (term == null) {
-            if (aliasesMap.get(termName) != null) {
-                term = aliasesMap.get(termName).getTerm();
+            if (termsMap.getTermProvider(termName) != null) {
+                term = termsMap.getTerm(termName);
             } else {
                 term = termController.add(termName);
             }
@@ -53,7 +58,8 @@ public class LinkController {
         Item item = itemDao.getByNumber(itemNumber);
         Link link = linkDao.save(new Link(term, item, quote.isEmpty() ? null : quote));
 
-        emailNotifier.newQuoteLink(term.getName(), itemNumber, quote, link.getLinkId());
+        //emailNotifier.newQuoteLink(term.getName(), itemNumber, quote, link.getLinkId());
+        eventPublisher.publishEvent(new NewQuoteLinkEvent(term.getName(), itemNumber, quote, link.getLinkId()));
 
         return link.getLinkId();
     }
@@ -78,7 +84,8 @@ public class LinkController {
         }
         Link link = linkDao.save(new Link(primTerm, aliasTerm, type));
 
-        emailNotifier.newLink(term, alias, link.getLinkId());
+        //emailNotifier.newLink(term, alias, link.getLinkId());
+        eventPublisher.publishEvent(new NewLinkEvent(term, alias, link));
 
         return link.getLinkId();
     }
