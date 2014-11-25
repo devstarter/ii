@@ -9,6 +9,7 @@ import java.util.List;
 public interface CategoryMap {
     public CategoryProvider getProviderForCategory(String name);
     public CategoryProvider getProviderByItemNumber(String number);
+    public String getParagraphUriByItemNumber(String number);
     public Category getCategory(String name);
 
     public interface CategoryProvider {
