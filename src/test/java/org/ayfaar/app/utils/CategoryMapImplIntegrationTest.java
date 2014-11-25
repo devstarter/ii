@@ -34,7 +34,8 @@ public class CategoryMapImplIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetParentsFotParagraph() {
-        List<CategoryMap.CategoryProvider> parents = categoryMap.getParents("Параграф 10.1.1.1");
+        CategoryMap.CategoryProvider provider = categoryMap.getProviderForCategory("Параграф 10.1.1.1");
+        List<CategoryMap.CategoryProvider> parents = provider.getParents("Параграф 10.1.1.1");
 
         assertEquals(4, parents.size());
         assertEquals(UriGenerator.generate(Category.class, "БДК / Раздел I / Глава 1"), parents.get(0).getUri());

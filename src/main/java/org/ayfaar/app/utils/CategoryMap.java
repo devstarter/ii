@@ -10,7 +10,6 @@ public interface CategoryMap {
     public CategoryProvider getProviderForCategory(String name);
     public CategoryProvider getProviderByItemNumber(String number);
     public Category getCategory(String name);
-    public List<CategoryProvider> getParents(String name);
 
     public interface CategoryProvider {
         public Category getCategory();
@@ -23,5 +22,6 @@ public interface CategoryMap {
         public boolean isCikl();
         public List<CategoryProvider> getChildren();
         public CategoryProvider getParent();
+        public List<CategoryProvider> getParents(String name);
     }
 }

@@ -78,19 +78,6 @@ public class CategoryMapImpl implements CategoryMap {
         return getProviderForCategory(name).getCategory();
     }
 
-    @Override
-    public List<CategoryProvider> getParents(String name) {
-        List<CategoryProvider> parents = new ArrayList<CategoryProvider>();
-        CategoryProvider provider = categoryMap.get(name);
-
-        CategoryProvider parent = provider.getParent();
-        if(parent != null) {
-            parents.add(parent);
-            parents.addAll(getParents(getValueFromUri(Category.class, parent.getUri())));
-        }
-        return parents;
-    }
-
     public class CategoryProviderImpl implements CategoryProvider {
         private Category category;
 
@@ -161,6 +148,19 @@ public class CategoryMapImpl implements CategoryMap {
         public CategoryProvider getParent() {
             String parentUri = category.getParent();
             return parentUri != null ? categoryMap.get(getValueFromUri(Category.class, parentUri)) : null;
+        }
+
+        @Override
+        public List<CategoryProvider> getParents(String name) {
+            List<CategoryProvider> parents = new ArrayList<CategoryProvider>();
+            CategoryProvider provider = categoryMap.get(name);
+
+            CategoryProvider parent = provider.getParent();
+            if(parent != null) {
+                parents.add(parent);
+                parents.addAll(getParents(getValueFromUri(Category.class, parent.getUri())));
+            }
+            return parents;
         }
     }
 
