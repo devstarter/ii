@@ -53,10 +53,4 @@ public class CategoryMapImplIntegrationTest extends IntegrationTest{
         provider = categoryMap.getProviderByItemNumber("14.15598");
         assertEquals(UriGenerator.generate(Category.class, "Параграф 14.16.2.4"), provider.getUri());
     }
-
-    @Test
-    public void testGetParagraphUriByItemNumber() {
-        String uri = categoryMap.getParagraphUriByItemNumber("10.10134");
-        assertEquals(UriGenerator.generate(Category.class, "Параграф 10.1.2.3"), uri);
-    }
 }

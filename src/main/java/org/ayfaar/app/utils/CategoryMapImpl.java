@@ -74,11 +74,6 @@ public class CategoryMapImpl implements CategoryMap {
     }
 
     @Override
-    public String getParagraphUriByItemNumber(String number) {
-        return getProviderByItemNumber(number).getUri();
-    }
-
-    @Override
     public Category getCategory(String name) {
         return getProviderForCategory(name).getCategory();
     }
