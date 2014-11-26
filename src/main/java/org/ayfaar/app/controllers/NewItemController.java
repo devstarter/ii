@@ -1,7 +1,6 @@
 package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.ItemDao;
-import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.CategoryMap;
 import org.ayfaar.app.utils.TermsMarker;
@@ -18,7 +17,6 @@ import java.util.List;
 
 import static org.ayfaar.app.controllers.ItemController.getPrev;
 import static org.ayfaar.app.utils.UriGenerator.generate;
-import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 import static org.springframework.util.Assert.notNull;
 import static org.ayfaar.app.utils.CategoryMap.CategoryProvider;
 
@@ -39,14 +37,14 @@ public class NewItemController {
         String markedContent = termsMarker.mark(item.getContent());
 
         return new ItemPresentation(item, markedContent, generate(Item.class, getPrev(item.getNumber())));
-}
+    }
 
     private class ItemPresentation {
         public final String number;
         public final String content;
         public final String next;
         public final String previous;
-        public final List<String> parents;
+        public final List<ParentPresentation> parents;
 
         public ItemPresentation(Item item, String content, String previous) {
             this.content = content;
@@ -57,6 +55,15 @@ public class NewItemController {
         }
     }
 
+    private class ParentPresentation {
+        public final String name;
+        public final String uri;
+
+        public ParentPresentation(String name, String uri) {
+            this.name = name;
+            this.uri = uri;
+        }
+    }
 
     @RequestMapping("{number}/content")
     @ResponseBody
@@ -68,19 +75,14 @@ public class NewItemController {
         return null;
     }
 
-    private List<String> getParents(String number) {
-        List<String> parents = new ArrayList<String>();
-        CategoryProvider provider = categoryMap.getProviderByItemNumber(number);
+     private List<ParentPresentation> getParents(String number) {
+         List<ParentPresentation> parents = new ArrayList<ParentPresentation>();
+         CategoryProvider provider = categoryMap.getProviderByItemNumber(number);
 
-        parents.add(extractCategoryName(provider.getUri()));
-        for(CategoryProvider parent : provider.getParents(getValueFromUri(Category.class, provider.getUri()))) {
-            parents.add(extractCategoryName(parent.getUri()));
-        }
-        return parents;
-    }
-
-    private String extractCategoryName(String uri) {
-        String[] names = uri.split("/|:");
-        return names[names.length-1].trim();
+         parents.add(new ParentPresentation(provider.extractCategoryName(), provider.getUri()));
+         for(CategoryProvider parent : provider.getParents()) {
+             parents.add(new ParentPresentation(parent.extractCategoryName(), parent.getUri()));
+         }
+         return parents;
     }
 }

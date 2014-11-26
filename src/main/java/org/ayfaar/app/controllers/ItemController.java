@@ -3,7 +3,6 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.TermDao;
-import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
@@ -16,11 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
-import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -55,7 +50,6 @@ public class ItemController {
         Item item = itemDao.getByNumber(number);
         notNull(item, "Item not found");
         ModelMap modelMap = (ModelMap) getModelMap(item);
-        modelMap.put("parents", getParents(item.getNumber()));
 //        modelMap.put("linkedTerms", getLinkedTerms(item));
         Item next = itemDao.get(item.getNext());
         if (next !=  null) {
@@ -125,21 +119,5 @@ public class ItemController {
         }
 
         return commonDao.save(new Link(item, termObj, weight));
-    }
-
-    private List<String> getParents(String number) {
-        List<String> parents = new ArrayList<String>();
-        CategoryMap.CategoryProvider provider = categoryMap.getProviderByItemNumber(number);
-
-        parents.add(extractCategoryName(provider.getUri()));
-        for(CategoryMap.CategoryProvider parent : provider.getParents(getValueFromUri(Category.class, provider.getUri()))) {
-            parents.add(extractCategoryName(parent.getUri()));
-        }
-        return parents;
-    }
-
-    private String extractCategoryName(String uri) {
-        String[] names = uri.split("/|:");
-        return names[names.length-1].trim();
     }
 }

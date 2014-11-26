@@ -22,6 +22,7 @@ public interface CategoryMap {
         public boolean isCikl();
         public List<CategoryProvider> getChildren();
         public CategoryProvider getParent();
-        public List<CategoryProvider> getParents(String name);
+        public List<CategoryProvider> getParents();
+        public String extractCategoryName();
     }
 }
