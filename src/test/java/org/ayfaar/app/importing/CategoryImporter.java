@@ -39,7 +39,7 @@ public class CategoryImporter {
 //        List<String> lines = FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\paragraphs\\Параграфы, БДК, Том 10,14.utf.csv"));
         CSVReader reader = new CSVReader(new FileReader("D:\\projects\\ayfaar\\ii-app\\src\\text\\содержание\\formated\\3 том.csv"), ';');
         String [] nextLine;
-        reader.readNext(); // skip header
+//        reader.readNext(); // skip header
         while ((nextLine = reader.readNext()) != null){
             Iterator<String> data = asList(nextLine).iterator();
             String cikl = data.next().trim();
@@ -50,9 +50,9 @@ public class CategoryImporter {
             String razdelaDesc = data.next().trim();
             String glavaFull = data.next().trim();
             final int i = glavaFull.indexOf(". ");
-            String glavaName = glavaFull.substring(0, i - 1);
+            String glavaName = glavaFull.substring(0, i);
             String glavaCode = razdelCode+"/"+glavaName;
-            String glavaDesc = glavaFull.substring(i);
+            String glavaDesc = glavaFull.substring(i+2);
             String paragraphNumber = data.next().trim();
             String paragraphDescription = data.next().trim();
             String[] items = data.next().split("-");
@@ -88,7 +88,7 @@ public class CategoryImporter {
             }
 
             Category prevParagraphCat = paragraphCat;
-            String paragraphName = "Параграф "+paragraphNumber;
+            String paragraphName = "параграф:"+paragraphNumber;
             paragraphCat = commonDao.get(Category.class, "name", paragraphName);
             if (paragraphCat == null) {
                 paragraphCat = new Category(paragraphName, glavaCat.getUri());
@@ -128,6 +128,7 @@ public class CategoryImporter {
 //        if (split.length > 1) {
 //            categoryDescription = split[1];
 //        }
+        categoryUniqCode = categoryUniqCode.replace(" ", " ");// fix strange spaces with code 160 instead 32 for general
         Category category = categoriesMap.get(categoryUniqCode);
         if (category == null) {
             category = commonDao.get(Category.class, "name", categoryUniqCode);
@@ -135,6 +136,7 @@ public class CategoryImporter {
                 if (description != null) {
                     description = description.trim();
                 }
+                System.out.println("new "+categoryUniqCode);
                 category = commonDao.save(new Category(categoryUniqCode, description, parent != null ? parent.getUri() : null));
             }
             categoriesMap.put(categoryUniqCode, category);

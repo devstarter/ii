@@ -28,6 +28,11 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 templateUrl: "partials/term.html",
                 controller: TermController
             })
+            .state('paragraph', {
+                url: "/p/:number",
+                templateUrl: "partials/paragraph.html",
+                controller: ParagraphController
+            })
             .state('category', {
                 url: "/c/*name",
                 templateUrl: "partials/category.html",
@@ -114,7 +119,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             },
             category: {
                 get: function(name) {
-                    return api.get('category', {name: name});
+                    return api.get('category', {name: name, _cache: true});
                 }
             },
             search: {
@@ -217,6 +222,8 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                         return uri.replace("ии:термин:", "");
                     case 'item':
                         return uri.replace("ии:пункт:", "");
+                    case 'paragraph':
+                        return uri.replace("категория:параграф:", "");
                     case 'category':
                         return uri.replace("категория:", "");
                 }
@@ -227,6 +234,9 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 }
                 if (uri.indexOf("ии:пункт:") === 0) {
                     return 'item'
+                }
+                if (uri.indexOf("категория:параграф:") === 0) {
+                    return 'paragraph'
                 }
                 if (uri.indexOf("категория:") === 0) {
                     return 'category'
@@ -437,7 +447,10 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                         return;
                     case "category":
                         originStateGo.bind($state)("category", {name: entityService.getName(uri)});
-                        return;    
+                        return;
+                    case "paragraph":
+                        originStateGo.bind($state)("paragraph", {number: entityService.getName(uri)});
+                        return;
                 }
             } else {
                 originStateGo.bind($state)(to, params, options)

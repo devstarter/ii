@@ -10,7 +10,7 @@ import static java.lang.String.format;
 public class NewLinkEvent extends BasicPushEvent {
     public NewLinkEvent(String term, String alias, Link link) {
         super();
-        title = format("Создана связь %s терминой %s + %s", link.getType() != null ? link.getType() : "", term, alias);
+        title = format("Создана связь %s терминов %s + %s", link.getType() != null ? link.getType() : "", term, alias);
         message = getUrlToTerm(term) + " " + getUrlToTerm(alias)
                 + "\n\nудалить: " + getRemoveLink(link.getLinkId());
     }

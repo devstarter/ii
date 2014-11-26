@@ -4,6 +4,7 @@ import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,6 +13,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+@Ignore
 public class ContentsHelperTest extends IntegrationTest {
     @Autowired
     private ContentsHelper contentsHelper;

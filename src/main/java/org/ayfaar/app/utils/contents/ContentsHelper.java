@@ -5,6 +5,7 @@ import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.TermsMarker;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.ayfaar.app.utils.StringUtils.trim;
 
 @Component
@@ -22,12 +24,15 @@ public class ContentsHelper {
     @Autowired
     private ItemDao itemDao;
 
+    @Autowired
+    private TermsMarker marker;
+
     private final int SUBCATEGORY_COUNT = 2;
 
     public CategoryPresentation createContents(String categoryName) {
         Category category = categoryDao.get("name", categoryName);
         if (category == null) {
-            throw new RuntimeException("Category not found");
+            throw new RuntimeException(format("Category `%s` not found", categoryName));
         }
         Category previous = categoryDao.get("next", UriGenerator.generate(Category.class, categoryName));
 
@@ -35,13 +40,13 @@ public class ContentsHelper {
         String nextCategory = category.getNext() != null ? category.getNext() : null;
 
         if(category.isParagraph()) {
-            return new CategoryPresentation(category.getName(), category.getUri(),
-                    trim(category.getDescription()), previousCategory, nextCategory,
+            return new CategoryPresentation(category.getName().replace(Category.PARAGRAPH_NAME, ""), category.getUri(),
+                    marker.mark(trim(category.getDescription())), previousCategory, nextCategory,
                     createParentPresentation(getParents(category)),
                     getParagraphSubCategory(getItems(category), 1));
         } else {
             return new CategoryPresentation(extractCategoryName(category.getName()), category.getUri(),
-                    category.getDescription(), previousCategory, nextCategory,
+                    marker.mark(trim(category.getDescription())), previousCategory, nextCategory,
                     createParentPresentation(getParents(category)),
                     createChildrenPresentation(getChildren(category), 0));
         }
@@ -61,8 +66,8 @@ public class ContentsHelper {
                         createChildrenPresentation(getChildren(category), count)));
 
             } else {
-                childrenPresentations.add(new CategoryPresentation(category.getName(), category.getUri(),
-                        trim(category.getDescription()), null));
+                childrenPresentations.add(new CategoryPresentation(category.getName().replace(Category.PARAGRAPH_NAME, ""),
+                        category.getUri(), trim(category.getDescription()), null));
             }
         }
 
@@ -74,7 +79,7 @@ public class ContentsHelper {
         List<CategoryPresentation> listPresentations = new ArrayList<CategoryPresentation>();
         for (Item item : items) {
             CategoryPresentation presentation = new CategoryPresentation(item.getNumber(), item.getUri());
-            presentation.setContent(item.getContent());
+            presentation.setContent(marker.mark(item.getContent()));
 
             listPresentations.add(presentation);
         }

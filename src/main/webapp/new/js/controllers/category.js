@@ -1,19 +1,14 @@
 function CategoryController($scope, $stateParams, $api, $state) {
 
     $scope.name = $stateParams.name;
-    // запрос на получение категории
+    document.title = $scope.name;
     $scope.loading = true;
-    
-    $api.category.get($scope.name).then(function(caterory){
-        // категория получена, копируем её поля в скоп для доступа к ним в category.html
-        $scope.loading = false;    
-        copyObjectTo(caterory, $scope);
-        //console.log($scope);
+
+    $api.category.get($scope.name).then(function(category){
+        $scope.loading = false;
+        copyObjectTo(category, $scope);
+        document.title = $scope.name;
     });
-    
-    $scope.navigate = function(entity) {
-        //$state.go(entity);
-    };
 }
 
     

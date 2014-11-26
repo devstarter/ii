@@ -2,10 +2,10 @@ package org.ayfaar.app.controllers.search.cache;
 
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.CommonDao;
+import org.ayfaar.app.events.SearchEvent;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.UID;
 import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
-import org.ayfaar.app.events.SimplePushEvent;
 import org.ayfaar.app.utils.TermsMap;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -39,6 +39,7 @@ public class DBCache extends ConcurrentMapCache {
         CacheEntity cacheEntity = null;
         if (key instanceof SearchCacheKey) {
             SearchCacheKey searchKey = (SearchCacheKey) key;
+            boolean isTerm = false;
             if (searchKey.page == 0) {
                 final TermsMap.TermProvider provider = termsMap.getTermProvider(searchKey.query);
                 String termUri = null;
@@ -48,12 +49,11 @@ public class DBCache extends ConcurrentMapCache {
 
                 if (termUri != null) {
                     cacheEntity = commonDao.get(CacheEntity.class, termUri);
-                } else {
-                    eventPublisher.publishEvent(new SimplePushEvent("Поиск не термиа: "+searchKey.query));
+                    isTerm = true;
                 }
-            } else {
-                eventPublisher.publishEvent(new SimplePushEvent("Поиск "+searchKey.page+" страници по запросу "+searchKey.query));
             }
+            eventPublisher.publishEvent(new SearchEvent(searchKey, isTerm));
+
         } else if(key instanceof ContentsCacheKey) {
             final Category category = categoryDao.get("uri",
                     UriGenerator.generate(Category.class, ((ContentsCacheKey) key).categoryName));

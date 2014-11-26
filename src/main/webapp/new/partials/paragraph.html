@@ -1,0 +1,10 @@
+<h1>&sect; {{number}}</h1>
+
+<div class="block loading" ng-show="loading">Загрузка...</div>
+<p ii-bind="description"></p>
+<p ng-repeat='child in children'>
+    <a href ii-ref='child'>{{child.name}}.</a>
+    <span ii-bind="child.content"></span>
+</p>
+<a ii-ref="next" ng-show="next" class="btn btn-link">Следующий параграф →</a>
+
