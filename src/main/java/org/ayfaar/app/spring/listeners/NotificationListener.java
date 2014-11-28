@@ -3,6 +3,7 @@ package org.ayfaar.app.spring.listeners;
 
 import com.pushbullet.PushbulletClient;
 import org.ayfaar.app.events.BasicPushEvent;
+import org.ayfaar.app.events.SearchEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -32,7 +33,11 @@ public class NotificationListener implements ApplicationListener<BasicPushEvent>
         new Thread(new Runnable() {
             @Override
             public void run() {
-                pushbullet(pushbulletClient).pushes().channel(channel).note(event.getTitle(), event.getMessage());
+                if(event instanceof SearchEvent){
+                    pushbullet(pushbulletClient).pushes().channel(channel).link(event.getTitle(), event.getMessage(), ((SearchEvent)event).getUrl());
+                }else {
+                    pushbullet(pushbulletClient).pushes().channel(channel).note(event.getTitle(), event.getMessage());
+                }
             }
         }).start();
     }
