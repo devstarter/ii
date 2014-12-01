@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
@@ -21,6 +20,7 @@ import static java.util.regex.Pattern.*;
 public class SuggestionsController{
     @Autowired TermsMap termsMap;
 
+    private List<String> brackets = Arrays.asList("(", ")", "[", "]", "{", "}");
     public static final int MAX_SUGGESTIONS = 7;
 
     /**
@@ -30,6 +30,7 @@ public class SuggestionsController{
     @RequestMapping("{q:.+}")
     @ResponseBody
     public List<String> suggestions(@PathVariable String q) {
+        q = checkBrackets(q);
         Queue<String> queriesQueue = new LinkedList<String>(asList(
                 "^"+q,
                 "[\\s\\-]" + q,
@@ -62,5 +63,14 @@ public class SuggestionsController{
             }
         }
         return terms;
+    }
+
+    private String checkBrackets(String query) {
+        for(String bracket : brackets) {
+            if(query.contains(bracket)) {
+                query = query.replace(bracket, "\\" + bracket);
+            }
+        }
+        return query;
     }
 }
