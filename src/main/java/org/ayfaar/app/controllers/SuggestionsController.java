@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
@@ -22,10 +23,13 @@ public class SuggestionsController{
 
     public static final int MAX_SUGGESTIONS = 7;
 
-    @RequestMapping("{q}")
+    /**
+     * the syntax is {variable_name:regular_expression}
+     * variable named q, which value will be matched using regex .+
+     */
+    @RequestMapping("{q:.+}")
     @ResponseBody
     public List<String> suggestions(@PathVariable String q) {
-
         Queue<String> queriesQueue = new LinkedList<String>(asList(
                 "^"+q,
                 "[\\s\\-]" + q,
