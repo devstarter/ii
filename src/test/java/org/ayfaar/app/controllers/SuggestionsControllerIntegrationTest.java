@@ -53,4 +53,14 @@ public class SuggestionsControllerIntegrationTest extends IntegrationTest {
             assertEquals(suggestionsLower.get(i), suggestionsUpper.get(i));
         }
     }
+
+    @Test
+    public void testSuggestionsWhenQueryContainsDot() {
+        assertEquals(0, searchController.suggestions("2.0001").size());
+    }
+
+    @Test
+    public void test() {
+        assertEquals(0, searchController.suggestions("унго-ссвооун)").size());
+    }
 }
