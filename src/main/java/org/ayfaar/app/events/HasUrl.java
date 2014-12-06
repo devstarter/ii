@@ -1,5 +1,5 @@
 package org.ayfaar.app.events;
 
-public interface TermUrl {
+public interface HasUrl {
     String getUrl();
 }

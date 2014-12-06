@@ -346,8 +346,6 @@
             <groupId>com.pushbullet</groupId>
             <artifactId>pushbullet-api</artifactId>
             <version>1.1-SNAPSHOT</version>
-           <!-- <scope>system</scope>
-            <systemPath>${basedir}/lib/pushbullet-api-1.0-SNAPSHOT.jar</systemPath>-->
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>

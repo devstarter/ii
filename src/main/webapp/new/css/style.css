@@ -36,6 +36,9 @@ body {
         font-size: 200%;
         padding: 5px;
     }
+    .home {
+        padding-top: 10px;
+    }
 }
 .highlite {
     font-weight: bold;
@@ -91,6 +94,7 @@ blockquote {
 .home {
     margin: 0 auto;
     max-width: 500px;
+    padding-top: 50px;
 }
 .home h1 {
     text-align: center;
