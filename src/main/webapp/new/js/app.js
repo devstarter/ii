@@ -19,9 +19,14 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 templateUrl: "partials/article.html"
             })
             .state('item', {
-                url: "/i/:number",
+                url: "/i/{number:\\d+\\.\\d+}",
                 templateUrl: "partials/item.html",
                 controller: ItemController
+            })
+            .state('item-range', {
+                url: "/i/:from-:to",
+                templateUrl: "partials/item-range.html",
+                controller: ItemRangeController
             })
             .state('term', {
                 url: "/t/:name",
@@ -103,6 +108,9 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             item: {
                 get: function(number) {
                     return api.get("v2/item", {number: number, _cache: true})
+                },
+                getRange: function(from, to) {
+                    return api.get("v2/item/range", {from: from, to: to, _cache: true})
                 },
                 getContent: function(numberOrUri) {
                     numberOrUri = numberOrUri.replace("ии:пункт:", "");
@@ -390,13 +398,26 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             });
         };
     })
-    .directive("iiHeader", function($rootScope, focus, $state) {
+    .directive("iiHeader", function($rootScope, focus, $state, $timeout) {
         return {
             scope: {},
             templateUrl: "partials/header.html",
             link: function(scope, element, attrs) {
                 scope.visible = true;
-                scope.focus = focus;
+                scope.expand = function() {
+                    scope.expanded = true;
+                    focus('search-input');
+                    scope.query = getSelectedText();
+                };
+                scope.search = function() {
+                    scope.$suggestionSelected(scope.query);
+                    scope.expanded = false;
+                };
+                scope.closeWithDelay = function() {
+                    $timeout(function(){
+                        scope.expanded = false;
+                    }, 5000, true);
+                };
                 $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
                     if (toState.name != "home") {
                         scope.visible = true;
@@ -407,6 +428,11 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 })
             }
         };
+    })
+    .directive('parents', function() {
+        return {
+            template: '<span ng-repeat="parent in parents" ii-ref="parent"><span class="btn btn-link">{{parent.name}}</span>{{$last ? "" : "/"}}</span>'
+        }
     })
     .controller("HeaderController", function() {
 
@@ -503,4 +529,12 @@ function copyObjectTo(from, to) {
 
 function isItemNumber(s) {
     return s.match("\\d+\\.\\d+");
+}
+function getSelectedText() {
+    if (window.getSelection) {
+        return window.getSelection().toString();
+    } else if (document.selection) {
+        return document.selection.createRange().text;
+    }
+    return null;
 }

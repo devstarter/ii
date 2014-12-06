@@ -1,3 +1,10 @@
+.icon-search {
+    padding: 0;
+    position: relative;
+}
+[ii-ref] {
+    cursor: pointer;
+}
 li {
     list-style-type: none;
 }
@@ -5,6 +12,7 @@ header {
     max-width: 650px;
     margin: 0 auto;
     text-align: right;
+    /*padding-right: 35px;*/
 }
 .icon-search {
     font-size: 150%;
