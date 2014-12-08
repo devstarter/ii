@@ -5,7 +5,6 @@ import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.events.SearchEvent;
 import org.ayfaar.app.model.Category;
-import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.UID;
 import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
 import org.ayfaar.app.utils.TermsMap;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.List;
 
 
 @Component
@@ -97,47 +95,5 @@ public class DBCache extends ConcurrentMapCache {
             commonDao.save(new CacheEntity(uid, json));
         }
         super.put(key, json);
-    }
-
-    public void update() {
-        termsMap.reload();
-
-        List<CacheEntity> cache = commonDao.getAll(CacheEntity.class);
-        for (CacheEntity c : cache) {
-            if(c.getUri().startsWith(UriGenerator.generate(Term.class, ""))) {
-                update(c.getUri());
-            }
-        }
-    }
-
-    public void update(String uri) {
-        searchController.search(UriGenerator.getValueFromUri(Term.class, uri), 0, null);
-    }
-
-    public void cleanAll() {
-        super.clear();
-
-        List<CacheEntity> cache = commonDao.getAll(CacheEntity.class);
-        for (CacheEntity c : cache) {
-            commonDao.remove(c);
-        }
-    }
-
-    public void cleanByUri(String uri) {
-        super.evict(uri);
-        commonDao.remove(CacheEntity.class, uri);
-    }
-
-    /**
-     * получает сгенерированный uri для термина или категории (UriGenerator.generate(Term.class, ""))
-     */
-    public void cleanSearchResultOrContents(String uri) {
-        List<CacheEntity> cache = commonDao.getAll(CacheEntity.class);
-        for (CacheEntity c : cache) {
-            if(c.getUri().startsWith(uri)) {
-                super.evict(c.getUri());
-                commonDao.remove(c);
-            }
-        }
     }
 }

@@ -1,8 +1,6 @@
 package org.ayfaar.app.controllers.search.cache;
 
 
-import net.sf.cglib.core.CollectionUtils;
-import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.dao.CategoryDao;
@@ -25,10 +23,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cache.Cache;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
-import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
+
 import static org.ayfaar.app.utils.TermsMap.TermProvider;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -48,9 +44,6 @@ public class DBCacheUnitTest {
     @InjectMocks
     @Spy
     NewAliasesMap aliasesMap;
-
-    @Mock
-    NewSearchController searchController;
 
     /**
      * проверяем что-бы не сохранялось в базу если это не термин
@@ -172,28 +165,5 @@ public class DBCacheUnitTest {
         dbCache.get(key);
 
         verify(commonDao, times(1)).get(CacheEntity.class, "uri", category.getUri());
-    }
-
-    @Test
-    public void testUpdate() {
-        List<String> fakeCache = Arrays.asList(UriGenerator.generate(Term.class, "Амплификационный Вектор"),
-                UriGenerator.generate(Term.class, "Время"), UriGenerator.generate(Term.class, "АСТТМАЙ-РАА-А"));
-
-        when(commonDao.getAll(CacheEntity.class)).thenReturn(CollectionUtils.transform(fakeCache, new Transformer() {
-            @Override
-            public Object transform(Object value) {
-                Term term = new Term((String)value);
-                term.setUri(UriGenerator.generate(Term.class, (String)value));
-                return new CacheEntity(term, null);
-            }
-        }));
-
-        dbCache.update();
-
-        verify(termsMap, times(1)).reload();
-        verify(commonDao, times(1)).getAll(CacheEntity.class);
-
-        verify(dbCache, times(3)).update(anyString());
-        verify(searchController, times(3)).search(getValueFromUri(Term.class, anyString()), eq(0), anyString());
     }
 }
