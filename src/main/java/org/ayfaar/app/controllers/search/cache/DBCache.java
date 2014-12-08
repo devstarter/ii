@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.net.URI;
 
 
 @Component
@@ -94,4 +95,13 @@ public class DBCache extends ConcurrentMapCache {
         }
         super.put(key, json);
     }
+
+    public void clearAll(){
+        super.clear();
+    }
+
+    public void clearByURI(URI uri){
+        super.evict(uri.toString());
+    }
+
 }
