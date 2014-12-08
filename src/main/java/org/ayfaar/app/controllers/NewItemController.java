@@ -2,6 +2,7 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.CategoryMap;
 import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,42 +12,89 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.inject.Inject;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.lang.String.format;
 import static org.ayfaar.app.controllers.ItemController.getPrev;
 import static org.ayfaar.app.utils.UriGenerator.generate;
 import static org.springframework.util.Assert.notNull;
+import static org.ayfaar.app.utils.CategoryMap.CategoryProvider;
 
 @Controller
 @RequestMapping("api/v2/item")
 public class NewItemController {
 
+    private static final int MAXIMUM_RANGE_SIZE = 50;
     @Inject ItemDao itemDao;
     @Inject TermsMarker termsMarker;
+    @Inject CategoryMap categoryMap;
 
     @RequestMapping
     @ResponseBody
     public ItemPresentation get(@RequestParam String number) {
         Item item = itemDao.getByNumber(number);
-        notNull(item, "Item not found");
+        notNull(item, format("Item `%s` not found", number));
 
         String markedContent = termsMarker.mark(item.getContent());
 
         return new ItemPresentation(item, markedContent, generate(Item.class, getPrev(item.getNumber())));
-}
+    }
+
+    @RequestMapping("range")
+    @ResponseBody
+    public List<ItemPresentation> get(@RequestParam String from, @RequestParam String to) {
+        Item item = itemDao.getByNumber(from);
+        notNull(item, format("Item `%s` not found", from));
+        List<ItemPresentation> items = new ArrayList<ItemPresentation>();
+
+        final ItemPresentation itemPresentation = new ItemPresentation(item, termsMarker.mark(item.getContent()));
+        itemPresentation.parents = getParents(item.getNumber());
+        items.add(itemPresentation);
+
+        while (!item.getNumber().equals(to)) {
+            item = itemDao.get(item.getNext());
+            items.add(new ItemPresentation(item, termsMarker.mark(item.getContent())));
+            if (items.size() > MAXIMUM_RANGE_SIZE) {
+                throw new RuntimeException("Maximum range size reached");
+            }
+        }
+
+        return items;
+    }
 
     private class ItemPresentation {
         public final String number;
         public final String content;
-        public final String next;
-        public final String previous;
+        public String uri;
+        public String next;
+        public String previous;
+        public List<ParentPresentation> parents;
 
         public ItemPresentation(Item item, String content, String previous) {
             this.content = content;
             this.previous = previous;
             number = item.getNumber();
             next = item.getNext();
+            parents = getParents(item.getNumber());
+        }
+
+        public ItemPresentation(Item item, String content) {
+            this.uri = item.getUri();
+            this.number = item.getNumber();
+            this.content = content;
         }
     }
 
+    private class ParentPresentation {
+        public final String name;
+        public final String uri;
+
+        public ParentPresentation(String name, String uri) {
+            this.name = name;
+            this.uri = uri;
+        }
+    }
 
     @RequestMapping("{number}/content")
     @ResponseBody
@@ -56,5 +104,17 @@ public class NewItemController {
             return termsMarker.mark(item.getContent());
         }
         return null;
+    }
+
+     private List<ParentPresentation> getParents(String number) {
+         List<ParentPresentation> parents = new ArrayList<ParentPresentation>();
+         CategoryProvider provider = categoryMap.getProviderByItemNumber(number);
+         if (provider != null) {
+             parents.add(new ParentPresentation(provider.extractCategoryName(), provider.getUri()));
+             for (CategoryProvider parent : provider.getParents()) {
+                 parents.add(new ParentPresentation(parent.extractCategoryName(), parent.getUri()));
+             }
+         }
+         return parents;
     }
 }

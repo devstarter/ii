@@ -7,12 +7,14 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.Model;
+import org.ayfaar.app.utils.CategoryMap;
 import org.ayfaar.app.utils.NewAliasesMap;
 import org.ayfaar.app.utils.TermsMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+
 
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 import static org.springframework.util.Assert.notNull;
@@ -28,6 +30,7 @@ public class ItemController {
     @Autowired TermController termController;
     @Autowired TermsMap termsMap;
     @Autowired NewAliasesMap aliasesMap;
+    @Autowired CategoryMap categoryMap;
 
     @RequestMapping(value = "{number}", method = POST)
     @Model
