@@ -80,37 +80,4 @@ public class DBCacheIntegrationTest extends IntegrationTest {
         String json = (String)dbCache.get(key).get();
         assertEquals(expectedJson, json);
     }
-
-    @Test
-    public void testClean() {
-        dbCache.cleanAll();
-
-        assertEquals(0, commonDao.getAll(CacheEntity.class).size());
-    }
-
-    @Test
-    public void testCleanByUri() {
-        String uri = UriGenerator.generate(Term.class, "Время");
-        dbCache.cleanByUri(uri);
-
-        assertNull(commonDao.get(CacheEntity.class, uri));
-    }
-
-    @Test
-    public void testCleanSearchResultOrContentsForSearchResult() {
-        String uri = UriGenerator.generate(Term.class, "");
-        dbCache.cleanSearchResultOrContents(uri);
-
-        List<CacheEntity> list = commonDao.getLike(CacheEntity.class, "uri", (uri + "%"), 20);
-        assertEquals(0, list.size());
-    }
-
-    @Test
-    public void testCleanSearchResultOrContentsForContents() {
-        String uri = UriGenerator.generate(Category.class, "");
-        dbCache.cleanSearchResultOrContents(uri);
-
-        List<CacheEntity> list = commonDao.getLike(CacheEntity.class, "uri", (uri + "%"), 20);
-        assertEquals(0, list.size());
-    }
 }
