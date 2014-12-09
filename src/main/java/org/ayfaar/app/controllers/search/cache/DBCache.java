@@ -1,6 +1,5 @@
 package org.ayfaar.app.controllers.search.cache;
 
-import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.events.SearchEvent;
@@ -25,7 +24,6 @@ public class DBCache extends ConcurrentMapCache {
     @Inject CommonDao commonDao;
     @Inject CategoryDao categoryDao;
     @Inject ApplicationEventPublisher eventPublisher;
-    @Inject NewSearchController searchController;
 
     public DBCache() {
         super("DBCache");

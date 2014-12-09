@@ -4,10 +4,6 @@ package org.ayfaar.app.controllers.search.cache;
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.controllers.search.SearchResultPage;
-import org.ayfaar.app.dao.CommonDao;
-import org.ayfaar.app.model.Category;
-import org.ayfaar.app.model.Term;
-import org.ayfaar.app.utils.UriGenerator;
 import org.ayfaar.app.utils.contents.CategoryPresentation;
 import org.ayfaar.app.utils.contents.ContentsHelper;
 import org.junit.Ignore;
@@ -15,10 +11,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 
 public class DBCacheIntegrationTest extends IntegrationTest {
@@ -29,7 +22,7 @@ public class DBCacheIntegrationTest extends IntegrationTest {
     @Autowired
     private ContentsHelper contentsHelper;
     @Autowired
-    private CommonDao commonDao;
+    private CacheUpdater cacheUpdater;
 
     @Test
     public void testPutSearchResultPage() {
@@ -51,10 +44,10 @@ public class DBCacheIntegrationTest extends IntegrationTest {
 
     @Test
     public void testPutCategoryPresentation() {
-        CategoryPresentation contents = contentsHelper.createContents("БДК / Раздел III");
-        ContentsCacheKey key = new ContentsCacheKey("БДК / Раздел III");
-        /*CategoryPresentation contents = contentsHelper.createContents("БДК / Раздел III / Глава 2");
-        CacheKeyGenerator.ContentsCacheKey key = new CacheKeyGenerator.ContentsCacheKey("БДК / Раздел III / Глава 2");*/
+        /*CategoryPresentation contents = contentsHelper.createContents("Основы/Раздел V");
+        ContentsCacheKey key = new ContentsCacheKey("Основы/Раздел V");*/
+        CategoryPresentation contents = contentsHelper.createContents("Основы/Раздел ХII/Глава 5");
+        ContentsCacheKey key = new ContentsCacheKey("Основы/Раздел ХII/Глава 5");
 
         dbCache.put(key, contents);
     }
