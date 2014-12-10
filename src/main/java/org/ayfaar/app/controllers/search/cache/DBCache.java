@@ -90,6 +90,7 @@ public class DBCache extends ConcurrentMapCache {
             String name = ((ContentsCacheKey) key).categoryName;
             uid = commonDao.get(UID.class, UriGenerator.generate(Category.class, name));
         }
+
         if(uid != null) {
             commonDao.save(new CacheEntity(uid, json));
         }
@@ -100,8 +101,11 @@ public class DBCache extends ConcurrentMapCache {
         super.clear();
     }
 
-    public void clearByURI(URI uri){
-        super.evict(uri);
+    public void clearByURI(String uri){
+
+        SearchCacheKey searchKey = new SearchCacheKey(uri,0);
+        super.evict(searchKey);
     }
+
 
 }
