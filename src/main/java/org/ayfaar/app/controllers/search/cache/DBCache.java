@@ -83,7 +83,7 @@ public class DBCache extends ConcurrentMapCache {
 
         if (key instanceof SearchCacheKey && ((SearchCacheKey) key).page == 0) {
             TermsMap.TermProvider provider = termsMap.getTermProvider(((SearchCacheKey) key).query);
-            if(provider != null && ((SearchCacheKey) key).page == 0) {
+            if(provider != null) {
                 uid = provider.hasMainTerm() ? provider.getMainTermProvider().getTerm() : provider.getTerm();
             }
         } else if(key instanceof ContentsCacheKey) {
@@ -101,7 +101,7 @@ public class DBCache extends ConcurrentMapCache {
     }
 
     public void clearByURI(URI uri){
-        super.evict(uri.toString());
+        super.evict(uri);
     }
 
 }
