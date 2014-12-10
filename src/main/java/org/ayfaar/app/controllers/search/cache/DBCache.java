@@ -12,6 +12,9 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleValueWrapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -19,6 +22,8 @@ import java.net.URI;
 
 
 @Component
+@Controller
+@RequestMapping("api/dbcache")
 public class DBCache extends ConcurrentMapCache {
     @Inject CustomObjectMapper objectMapper;
     @Inject TermsMap termsMap;
@@ -97,11 +102,13 @@ public class DBCache extends ConcurrentMapCache {
         super.put(key, json);
     }
 
+    @RequestMapping("clear")
     public void clearAll(){
         super.clear();
     }
 
-    public void clearByURI(String uri){
+    @RequestMapping("clearby/{uri}")
+    public void clearByURI(@PathVariable String uri){
         SearchCacheKey searchKey = new SearchCacheKey(uri,0);
         super.evict(searchKey);
     }

@@ -3,6 +3,7 @@ package org.ayfaar.app.controllers.search.cache;
 
 import org.ayfaar.app.dao.CommonDao;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.inject.Inject;
@@ -24,7 +25,8 @@ public class CacheTable {
         }
     }
 
-    public  void clearByURI(String uri){
+    @RequestMapping("clearby/{uri}")
+    public  void clearByURI(@PathVariable String uri){
 
         commonDao.remove(CacheEntity.class,uri);
     }
