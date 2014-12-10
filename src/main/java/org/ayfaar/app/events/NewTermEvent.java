@@ -2,7 +2,7 @@ package org.ayfaar.app.events;
 
 import org.ayfaar.app.model.Term;
 
-public class NewTermEvent extends BasicPushEvent {
+public class NewTermEvent extends PushEvent {
     public NewTermEvent(Term term) {
         super();
         title = "Новый термин: "+term.getName();

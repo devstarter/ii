@@ -8,13 +8,13 @@ import java.net.URLEncoder;
 /**
  * Created by Pas8sion on 09.11.2014.
  */
-public abstract class BasicPushEvent extends ApplicationEvent {
+public abstract class PushEvent extends ApplicationEvent {
     public static final String BASE_URL = "http://ii.ayfaar.org";
 
     protected String title;
     protected String message;
 
-    public BasicPushEvent() {
+    public PushEvent() {
         super("ii event");
     }
 
@@ -32,7 +32,7 @@ public abstract class BasicPushEvent extends ApplicationEvent {
 
     protected String getUrlToTerm(String term) {
         try {
-            return BASE_URL+"/new/t/"+ URLEncoder.encode(term, "UTF-8");
+            return BASE_URL+"/new/"+ URLEncoder.encode(term, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
