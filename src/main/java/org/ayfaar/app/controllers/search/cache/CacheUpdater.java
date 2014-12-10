@@ -4,8 +4,7 @@ import org.ayfaar.app.controllers.CategoryController;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
-import org.ayfaar.app.dao.TermDao;
-import org.ayfaar.app.dao.impl.TermDaoImpl;
+import org.ayfaar.app.events.SimplePushEvent;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
@@ -13,7 +12,7 @@ import org.ayfaar.app.utils.TermsMap;
 import org.ayfaar.app.utils.TermsMarker;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -33,13 +32,20 @@ public class CacheUpdater {
     private TermsMap termsMap;
     @Autowired
     private TermsMarker termsMarker;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Scheduled(cron="0 0 3 * * ?")
     public void update() {
-        termsMap.reload();
+        long start = System.currentTimeMillis();
 
+        termsMap.reload();
         updateCacheSearchResult();
         updateItemContent();
+
+        long end = System.currentTimeMillis();
+
+        eventPublisher.publishEvent(new SimplePushEvent("update cache", getUpdatingTime(start, end)));
     }
 
     private void updateCacheSearchResult() {
@@ -53,6 +59,9 @@ public class CacheUpdater {
         }
     }
 
+    /**
+     * идея оказалась неудачной, метод будет выполняться часа 2
+     */
     void updateItemContent() {
         List<Item> items = itemDao.getAll();
         for(Item item : items) {
@@ -72,5 +81,9 @@ public class CacheUpdater {
         } else if(uri.startsWith(UriGenerator.generate(Category.class, ""))) {
             categoryController.getContents(UriGenerator.getValueFromUri(Category.class, uri));
         }
+    }
+
+    private String getUpdatingTime(long start, long end) {
+        return String.format("cache updated %d minutes", (end - start)/1000/60);
     }
 }

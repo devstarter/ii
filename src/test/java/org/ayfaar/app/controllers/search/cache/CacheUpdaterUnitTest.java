@@ -7,7 +7,6 @@ import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.model.Term;
 import org.ayfaar.app.utils.TermsMap;
 import org.ayfaar.app.utils.TermsMarker;
 import org.ayfaar.app.utils.UriGenerator;
@@ -21,10 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

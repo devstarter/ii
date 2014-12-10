@@ -7,7 +7,7 @@
         http://www.springframework.org/schema/task
         http://www.springframework.org/schema/task/spring-task.xsd">
 
-
+    <!-- separate config uses for invocation @Scheduled only 1 time -->
     <task:annotation-driven />
 
 </beans>
