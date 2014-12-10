@@ -102,7 +102,6 @@ public class DBCache extends ConcurrentMapCache {
     }
 
     public void clearByURI(String uri){
-
         SearchCacheKey searchKey = new SearchCacheKey(uri,0);
         super.evict(searchKey);
     }
