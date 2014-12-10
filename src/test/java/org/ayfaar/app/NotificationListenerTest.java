@@ -1,7 +1,7 @@
 package org.ayfaar.app;
 
 
-import org.ayfaar.app.events.BasicPushEvent;
+import org.ayfaar.app.events.PushEvent;
 import org.ayfaar.app.spring.listeners.NotificationListener;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -17,7 +17,7 @@ public class NotificationListenerTest {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
         NotificationListener listener = ctx.getBean(NotificationListener.class);
 
-        BasicPushEvent mock = mock(BasicPushEvent.class);
+        PushEvent mock = mock(PushEvent.class);
         when(mock.getTitle()).thenReturn("title test");
         when(mock.getMessage()).thenReturn("message test");
 
