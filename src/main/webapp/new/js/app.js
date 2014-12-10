@@ -2,12 +2,12 @@
 var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     .config(function($locationProvider, $urlRouterProvider, $stateProvider, config) {
         if (config.useHtml5Mode) $locationProvider.html5Mode(true).hashPrefix('!');
-        $urlRouterProvider.otherwise("home");
+        $urlRouterProvider.otherwise("@");
         //
 //        // Now set up the states
         $stateProvider
             .state('home', {
-                url: "/home",
+                url: "/@",
                 templateUrl: "partials/home.html",
                 controller: HomeController,
                 onEnter: function($rootScope){
@@ -19,22 +19,17 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 templateUrl: "partials/article.html"
             })
             .state('item', {
-                url: "/i/{number:\\d+\\.\\d+}",
+                url: "/{number:\\d+\\.\\d+}",
                 templateUrl: "partials/item.html",
                 controller: ItemController
             })
             .state('item-range', {
-                url: "/i/:from-:to",
+                url: "/{from:\\d+\\.\\d+}-{to:\\d+\\.\\d+}",
                 templateUrl: "partials/item-range.html",
                 controller: ItemRangeController
             })
-            .state('term', {
-                url: "/t/:name",
-                templateUrl: "partials/term.html",
-                controller: TermController
-            })
             .state('paragraph', {
-                url: "/p/:number",
+                url: "/{number:\\d+\\.\\d+\\.\\d+\\.\\d+}",
                 templateUrl: "partials/paragraph.html",
                 controller: ParagraphController
             })
@@ -42,6 +37,11 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 url: "/c/*name",
                 templateUrl: "partials/category.html",
                 controller: CategoryController
+            })
+            .state('term', {
+                url: "/:name",
+                templateUrl: "partials/term.html",
+                controller: TermController
             });
 
 //        window.encodeURIComponent = function(arg) {
@@ -528,7 +528,7 @@ function copyObjectTo(from, to) {
 }
 
 function isItemNumber(s) {
-    return s.match("\\d+\\.\\d+");
+    return s.match("^\\d+\\.\\d+$");
 }
 function getSelectedText() {
     if (window.getSelection) {
