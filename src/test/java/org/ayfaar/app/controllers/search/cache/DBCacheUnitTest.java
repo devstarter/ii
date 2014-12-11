@@ -21,6 +21,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cache.Cache;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.io.IOException;
 
@@ -38,6 +40,7 @@ public class DBCacheUnitTest {
     @Mock TermsMap termsMap;
     @Mock TermDao termDao;
     @Mock LinkDao linkDao;
+    @Mock ApplicationEventPublisher eventPublisher;
     @InjectMocks
     @Spy
     DBCache dbCache;
@@ -165,5 +168,35 @@ public class DBCacheUnitTest {
         dbCache.get(key);
 
         verify(commonDao, times(1)).get(CacheEntity.class, "uri", category.getUri());
+    }
+
+    @Test
+    public void testInvocationEventPublisherOnlyForNotTerm() {
+        Term term = new Term("АСТТМАЙ-РАА-А");
+        term.setUri(UriGenerator.generate(Term.class, term.getName()));
+        SearchCacheKey key = new SearchCacheKey(term.getName(), 0);
+
+        when(termsMap.getTermProvider(term.getName())).thenReturn(null);
+
+        dbCache.get(key);
+
+        verify(eventPublisher, times(1)).publishEvent(any(ApplicationEvent.class));
+    }
+
+    @Test
+    public void testNotInvocationEventPublisherForTerm() {
+        Term term = new Term("АСТТМАЙ-РАА-А");
+        term.setUri(UriGenerator.generate(Term.class, term.getName()));
+        SearchCacheKey key = new SearchCacheKey(term.getName(), 0);
+        String uri = UriGenerator.generate(Term.class, term.getName());
+        TermProvider provider = aliasesMap.new TermProviderImpl(uri, null, false);
+
+        when(termsMap.getTermProvider(term.getName())).thenReturn(provider);
+        when(provider.getTerm()).thenReturn(term);
+
+        dbCache.get(key);
+
+        verify(eventPublisher, never()).publishEvent(any(ApplicationEvent.class));
+
     }
 }

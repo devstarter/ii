@@ -6,7 +6,8 @@ import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
-import org.ayfaar.app.model.Item;
+import org.ayfaar.app.events.SimplePushEvent;
+import org.ayfaar.app.model.Term;
 import org.ayfaar.app.utils.TermsMap;
 import org.ayfaar.app.utils.TermsMarker;
 import org.ayfaar.app.utils.UriGenerator;
@@ -16,10 +17,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -30,33 +33,33 @@ public class CacheUpdaterUnitTest {
     @Mock ItemDao itemDao;
     @Mock TermsMarker termsMarker;
     @Mock NewSearchController searchController;
+    @Mock ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     @Spy
     CacheUpdater cacheUpdater;
 
-
     @Test
-    public void testUpdateItemContent() {
-        List<String> fakeItems = Arrays.asList("content1", "content2", "content3");
-        List<String> markedItems = Arrays.asList("<term>content1</term>", "</term>content2</term>", "<term>content3</term>");
+    public void testUpdate() {
+        List<String> fakeCache = Arrays.asList(UriGenerator.generate(Term.class, "Амплификационный Вектор"),
+        UriGenerator.generate(Term.class, "Время"), UriGenerator.generate(Term.class, "АСТТМАЙ-РАА-А"));
 
-        when(itemDao.getAll()).thenReturn(CollectionUtils.transform(fakeItems, new Transformer() {
-            @Override
-            public Object transform(Object value) {
-                Item item = new Item();
-                item.setUri(UriGenerator.generate(Item.class, (String) value));
-                item.setContent((String) value);
-                return item;
-            }
+        String uri = UriGenerator.generate(Term.class, "");
+
+        when(commonDao.getLike(CacheEntity.class, "uri", (uri + "%"), Integer.MAX_VALUE)).thenReturn(CollectionUtils.transform(fakeCache, new Transformer() {
+        @Override
+        public Object transform(Object value) {
+            Term term = new Term((String) value);
+            term.setUri(UriGenerator.generate(Term.class, (String) value));
+            return new CacheEntity(term, null);
+        }
         }));
 
-        when(termsMarker.mark(fakeItems.get(0))).thenReturn(markedItems.get(0));
+        cacheUpdater.update();
 
-        cacheUpdater.updateItemContent();
-
-        verify(itemDao, times(1)).getAll();
-        verify(termsMarker, times(3)).mark(anyString());
-        verify(itemDao, times(3)).save(any(Item.class));
+        verify(termsMap, times(1)).reload();
+        verify(commonDao, times(1)).getLike(CacheEntity.class, "uri", (uri + "%"), Integer.MAX_VALUE);
+        verify(searchController, times(3)).search(getValueFromUri(Term.class, anyString()), eq(0), anyString());
+        verify(eventPublisher, times(1)).publishEvent(any(SimplePushEvent.class));
     }
 }
