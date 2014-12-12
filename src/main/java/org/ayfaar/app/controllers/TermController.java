@@ -236,7 +236,6 @@ public class TermController {
             publisher.publishEvent(new TermUpdatedEvent(term, oldShortDescription, oldDescription));
         }
 
-        itemsUpdater.updateContent(term.getName());
 
         new Thread(new Runnable() {
             @Override
