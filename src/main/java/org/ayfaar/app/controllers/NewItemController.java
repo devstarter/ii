@@ -56,7 +56,7 @@ public class NewItemController {
             item = itemDao.get(item.getNext());
             items.add(new ItemPresentation(item, termsMarker.mark(item.getContent())));
             if (items.size() > MAXIMUM_RANGE_SIZE) {
-                throw new RuntimeException("Maximum range size reached");
+                throw new RuntimeException(format("Maximum range size reached (from %s to %s)", from, to));
             }
         }
 

@@ -6,7 +6,7 @@ package org.ayfaar.app.events;
 public class NewQuoteLinkEvent extends LinkPushEvent {
     public NewQuoteLinkEvent(String termName, String itemNumber, String quote, Integer linkId) {
         super();
-        title = "Создана связь (" + termName + " + " + itemNumber + ")";
+        title = "Связь " + termName + " + " + itemNumber;
         url = getUrlToTerm(termName);
         message = quote + "\nlink id: " + linkId + " " + getRemoveLink(linkId);
     }

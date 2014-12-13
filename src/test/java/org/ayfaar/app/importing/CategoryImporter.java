@@ -37,12 +37,12 @@ public class CategoryImporter {
         Category glavaCat = null;
 
 //        List<String> lines = FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\paragraphs\\Параграфы, БДК, Том 10,14.utf.csv"));
-        CSVReader reader = new CSVReader(new FileReader("D:\\projects\\ayfaar\\ii-app\\src\\text\\содержание\\formated\\3 том.csv"), ';');
+        CSVReader reader = new CSVReader(new FileReader("D:\\projects\\ayfaar\\ii-app\\src\\text\\содержание\\formated\\14 том.csv"), ';');
         String [] nextLine;
 //        reader.readNext(); // skip header
         while ((nextLine = reader.readNext()) != null){
             Iterator<String> data = asList(nextLine).iterator();
-            String cikl = data.next().trim();
+            String cikl = data.next().trim().replace("\uFEFF", "");
             String tom = data.next().trim();
             int tomNumber = Integer.valueOf(tom.replace("Том ", "").trim());
             String razdelName = data.next().trim();

@@ -1,17 +1,13 @@
-<h1>{{name}}</h1>
-
+<h1 class="inline">{{name}}</h1>
+<span parents></span>
 <div class="block loading" ng-show="loading">Загрузка...</div>
 <p ii-bind="description"></p>
-<ul>
-    <li ng-repeat='child in children'>
-        <span ii-ref='child'>
-            <a href ii-ref="child" class="btn btn-link">{{child.name}}</a> {{child.description}}
-        </span>
-        <ul>
-            <li ng-repeat='subchild in child.children' style="white-space: normal; text-align: left">
-                <a href ii-ref="subchild" class="btn btn-link">{{subchild.name}}</a> {{subchild.description}}
-            </li>
-        </ul>
 
-    </li>
-</ul>
+<div ng-repeat='child in children' ng-style="{'padding-bottom': child.children ? '50px' : 0}" >
+    <h2 ii-ref='child'>{{child.name}}</h2>
+    {{child.description}}
+    <div ng-repeat='subchild in child.children'>
+        <h3 ii-ref='subchild'>{{subchild.name}}</h3>
+        {{subchild.description}}
+    </div>
+</div>
