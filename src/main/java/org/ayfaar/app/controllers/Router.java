@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 
@@ -33,8 +34,10 @@ public class Router {
 
     @RequestMapping("/new/**")
     @ResponseBody
-    public Object returnNewIndex(HttpServletRequest request) throws IOException {
+    public Object returnNewIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String index = "new/index.html";
+        String url = "/login";
+        redirectStrategy.sendRedirect(request,response, url);
         String path = request.getServletContext().getRealPath(index);
         if (path == null) {
             path = jbossDir+"app-deployments/current/repo/src/main/webapp/"+index;
