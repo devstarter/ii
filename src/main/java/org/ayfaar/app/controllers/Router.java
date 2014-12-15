@@ -36,10 +36,8 @@ public class Router {
     @ResponseBody
     public Object returnNewIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String index = "new/index.html";
-        int startOfNew =  request.getRequestURL().indexOf("/new");
-        String currentURL = request.getRequestURL().substring(startOfNew);
 
-        if (currentURL.matches("/new/.*/")) {
+        if (request.getRequestURL().toString().matches("/new/.*/")) {
             String url = "/new" +
                     request.getRequestURL()
                             .substring(request
