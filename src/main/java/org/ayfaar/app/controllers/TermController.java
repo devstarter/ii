@@ -40,6 +40,7 @@ public class TermController {
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
     @Inject ApplicationEventPublisher publisher;
+    @Inject ItemsUpdater itemsUpdater;
 
     /*@RequestMapping("import")
     @Model
@@ -263,9 +264,6 @@ public class TermController {
                             TermMorph termMorph = commonDao.get(TermMorph.class, alias);
                             if (termMorph == null) {
                                 commonDao.save(new TermMorph(alias, primeTerm.getUri()));
-
-                                TermsMap.TermProvider provider = aliasesMap.new TermProviderImpl(
-                                        primeTerm.getUri(), null, primeTerm.getShortDescription() != null);
 
                                 log.info("Alias added: "+alias);
                             }

@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 
-@Ignore
+
 public class DBCacheIntegrationTest extends IntegrationTest {
     @Autowired
     private DBCache dbCache;
@@ -21,22 +21,22 @@ public class DBCacheIntegrationTest extends IntegrationTest {
     private NewSearchController searchController;
     @Autowired
     private ContentsHelper contentsHelper;
+    @Autowired
+    private CacheUpdater cacheUpdater;
 
     @Test
     public void testPutSearchResultPage() {
-        SearchCacheKey key = new SearchCacheKey("Время", 4);
-        SearchResultPage page = (SearchResultPage)searchController.search("Время", 0, null);
-        /*CacheKeyGenerator.SearchCacheKey key = new CacheKeyGenerator.SearchCacheKey("Душа человека", 1);
-        SearchResultPage page = (SearchResultPage)searchController.search("Душа человека", 0, null);*/
-        /*CacheKeyGenerator.SearchCacheKey key = new CacheKeyGenerator.SearchCacheKey("АСТТМАЙ-РАА-А", 1);
-        SearchResultPage page = (SearchResultPage)searchController.search("АСТТМАЙ-РАА-А", 0, null);*/
+       /* SearchCacheKey key = new SearchCacheKey("Время", 4);
+        SearchResultPage page = (SearchResultPage)searchController.search("Время", 0, null);*/
+        SearchCacheKey key = new SearchCacheKey("АСТТМАЙ-РАА-А", 1);
+        SearchResultPage page = (SearchResultPage)searchController.search("АСТТМАЙ-РАА-А", 0, null);
         /*CacheKeyGenerator.SearchCacheKey key = new CacheKeyGenerator.SearchCacheKey("Миру", 1);
         SearchResultPage page = (SearchResultPage)searchController.search("Миру", 0, null);*/
-        /*CacheKeyGenerator.SearchCacheKey key = new CacheKeyGenerator.SearchCacheKey("АССМААИЙЯАА-ССМ-АА", 1);
+        /*SearchCacheKey key = new SearchCacheKey("АССМААИЙЯАА-ССМ-АА", 1);
         SearchResultPage page = (SearchResultPage)searchController.search("АССМААИЙЯАА-ССМ-АА", 0, null);*/
         /*CacheKeyGenerator.SearchCacheKey key = new CacheKeyGenerator.SearchCacheKey("Рис.", 1);
         SearchResultPage page = (SearchResultPage)searchController.search("Рис.", 0, null);*/
-        /*CacheKeyGenerator.SearchCacheKey key = new CacheKeyGenerator.SearchCacheKey("Амплификационные Поток", 1);
+        /*SearchCacheKey key = new SearchCacheKey("Амплификационные Поток", 1);
         SearchResultPage page = (SearchResultPage)searchController.search("Амплификационные Поток", 0, null);*/
         dbCache.put(key, page);
 
@@ -44,10 +44,10 @@ public class DBCacheIntegrationTest extends IntegrationTest {
 
     @Test
     public void testPutCategoryPresentation() {
-        CategoryPresentation contents = contentsHelper.createContents("БДК / Раздел III");
-        ContentsCacheKey key = new ContentsCacheKey("БДК / Раздел III");
-        /*CategoryPresentation contents = contentsHelper.createContents("БДК / Раздел III / Глава 2");
-        CacheKeyGenerator.ContentsCacheKey key = new CacheKeyGenerator.ContentsCacheKey("БДК / Раздел III / Глава 2");*/
+        /*CategoryPresentation contents = contentsHelper.createContents("Основы/Раздел V");
+        ContentsCacheKey key = new ContentsCacheKey("Основы/Раздел V");*/
+        CategoryPresentation contents = contentsHelper.createContents("Основы/Раздел ХII/Глава 5");
+        ContentsCacheKey key = new ContentsCacheKey("Основы/Раздел ХII/Глава 5");
 
         dbCache.put(key, contents);
     }
