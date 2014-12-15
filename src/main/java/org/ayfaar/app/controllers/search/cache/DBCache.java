@@ -52,7 +52,9 @@ public class DBCache extends ConcurrentMapCache {
                     isTerm = true;
                 }
             }
-            eventPublisher.publishEvent(new SearchEvent(searchKey, isTerm));
+            if(!isTerm) {
+                eventPublisher.publishEvent(new SearchEvent(searchKey, isTerm));
+            }
 
         } else if(key instanceof ContentsCacheKey) {
             final Category category = categoryDao.get("uri",

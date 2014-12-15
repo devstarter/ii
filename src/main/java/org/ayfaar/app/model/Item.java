@@ -20,6 +20,8 @@ public class Item extends UID {
     private String number;
     @Column(columnDefinition = "TEXT")
     private String content;
+    @Column(columnDefinition = "TEXT")
+    private String taggedContent;
 //    @Column(columnDefinition = "TEXT")
 //    private String wiki;
     private String next;

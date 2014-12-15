@@ -13,7 +13,6 @@
                            http://www.springframework.org/schema/cache
                            http://www.springframework.org/schema/cache/spring-cache.xsd">
 
-
     <context:component-scan base-package="org.ayfaar.app"/> <!--.spring.converter"/>-->
 
     <mvc:annotation-driven />
