@@ -23,4 +23,6 @@ public interface LinkDao extends BasicCrudDao<Link> {
     List<Link> get(UID uid1, UID uid2);
 
     List<Link> getAllSynonyms();
+
+    List<Link> findInQuotes(List<String> aliases);
 }

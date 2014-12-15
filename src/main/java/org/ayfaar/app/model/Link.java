@@ -32,6 +32,8 @@ public class Link {
     private String source;
     @Column(columnDefinition = "TEXT")
     private String quote;
+    @Column(columnDefinition = "TEXT")
+    private String taggedQuote;
 
     @ManyToOne
     private UID uid1;
