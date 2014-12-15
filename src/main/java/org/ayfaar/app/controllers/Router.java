@@ -36,7 +36,7 @@ public class Router {
     @ResponseBody
     public Object returnNewIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String index = "new/index.html";
-        String url = "/login";
+        String url = request.getRequestURL().substring(request.getRequestURL().lastIndexOf("/"));
         redirectStrategy.sendRedirect(request,response, url);
         String path = request.getServletContext().getRealPath(index);
         if (path == null) {
