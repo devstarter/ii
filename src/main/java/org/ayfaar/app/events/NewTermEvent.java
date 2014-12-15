@@ -5,8 +5,7 @@ import org.ayfaar.app.model.Term;
 public class NewTermEvent extends TermPushEvent {
 
     public NewTermEvent(Term term) {
-        super();
-        name = term.getName();
+        super(term.getName());
         title = "Новый термин: "+term.getName();
         message = term.getShortDescription() + "\n\n" + term.getDescription();
     }
