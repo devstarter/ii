@@ -1,8 +1,7 @@
 package org.ayfaar.app.spring.listeners;
 
-import org.ayfaar.app.events.NewTermEvent;
 import org.ayfaar.app.events.PushEvent;
-import org.ayfaar.app.events.TermUpdatedEvent;
+import org.ayfaar.app.events.TermPushEvent;
 import org.ayfaar.app.utils.ItemsUpdater;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -20,15 +19,9 @@ public class TermListener implements ApplicationListener<PushEvent> {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String termName = "";
-
-                if(event instanceof NewTermEvent){
-                    termName = event.getTitle().replace("Новый термин: ", "");
-                }else if(event instanceof TermUpdatedEvent){
-                    termName = event.getTitle().replace("Обновлён термин: ", "");
+                if(event instanceof TermPushEvent) {
+                    itemsUpdater.updateContent(((TermPushEvent)event).getName());
                 }
-
-                itemsUpdater.updateContent(termName);
             }
         }).start();
     }

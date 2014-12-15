@@ -20,7 +20,6 @@ public class ItemsUpdater {
 
     public void updateContent(String name) {
         List<String> terms = termMorphDao.getAllMorphs(name);
-
         update(itemDao.findInContent(terms));
     }
 
@@ -30,7 +29,7 @@ public class ItemsUpdater {
 
     private void update(List<Item> items) {
         for (Item item : items) {
-            item.setContent(termsMarker.mark(item.getContent()));
+            item.setTaggedContent(termsMarker.mark(item.getContent()));
             itemDao.save(item);
         }
     }
