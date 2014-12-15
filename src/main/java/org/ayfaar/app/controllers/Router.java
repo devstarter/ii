@@ -36,8 +36,18 @@ public class Router {
     @ResponseBody
     public Object returnNewIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String index = "new/index.html";
-        String url = request.getRequestURL().substring(request.getRequestURL().lastIndexOf("/"));
-        redirectStrategy.sendRedirect(request,response, url);
+        int startOfNew =  request.getRequestURL().indexOf("/new");
+        String currentURL = request.getRequestURL().substring(startOfNew);
+
+        if (currentURL.matches("/new/.*/")) {
+            String url = "/new" +
+                    request.getRequestURL()
+                            .substring(request
+                                    .getRequestURL()
+                                    .lastIndexOf("/"));
+            redirectStrategy.sendRedirect(request,response, url);
+        }
+
         String path = request.getServletContext().getRealPath(index);
         if (path == null) {
             path = jbossDir+"app-deployments/current/repo/src/main/webapp/"+index;
