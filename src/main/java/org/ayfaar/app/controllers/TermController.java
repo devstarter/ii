@@ -4,11 +4,11 @@ import org.apache.commons.lang.WordUtils;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
+import org.ayfaar.app.events.NewTermEvent;
 import org.ayfaar.app.events.QuietException;
+import org.ayfaar.app.events.TermUpdatedEvent;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.spring.Model;
-import org.ayfaar.app.events.NewTermEvent;
-import org.ayfaar.app.events.TermUpdatedEvent;
 import org.ayfaar.app.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,11 +20,9 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
 import static org.ayfaar.app.model.Link.*;
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
-import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 
 @Controller
 @RequestMapping("api/term")
@@ -36,18 +34,12 @@ public class TermController {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
     @Autowired TermsMap termsMap;
-    @Autowired NewAliasesMap aliasesMap;
+    @Autowired
+    TermsMapImpl aliasesMap;
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
     @Inject ApplicationEventPublisher publisher;
 
-    /*@RequestMapping("import")
-    @Model
-    public void _import() throws ParserConfigurationException, SAXException, IOException {
-        for (Termin termin : commonDao.getAll(Termin.class)) {
-            add(termin.getName());
-        }
-    }*/
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     @Model
@@ -58,36 +50,30 @@ public class TermController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @Model
     public ModelMap get(@RequestParam("name") String termName, @RequestParam(required = false) boolean mark) {
-        Term term = termsMap.getTerm(termName);
-        if (term == null) {
+        TermsMap.TermProvider provider = termsMap.getTermProvider(termName);
+        if (provider == null) {
             throw new QuietException(format("Термин `%s` отсутствует", termName));
         }
-        return get(term, mark);
-    }
 
-    public ModelMap get(Term term) {
-        return get(term, false);
-    }
-
-    public ModelMap get(Term term, boolean mark) {
-        String termName = term.getName();
-        Term alias = null;
-        if (!termsMap.getTermProvider(termName).getUri().equals(term.getUri())) {
-            alias = term;
-            term = termsMap.getTerm(termName);
+        TermsMap.TermProvider alias;
+        if (provider.hasMainTerm()) {
+            alias = provider;
+            provider = provider.getMainTermProvider();
         }
 
-        // может быть аббравиатурой, сокращением, кодом или синонимов
-        Link _link = linkDao.getForAbbreviationOrAliasOrCode(term.getUri());
-        if (_link != null && _link.getUid1() instanceof Term) {
-            alias = term;
-            term = (Term) _link.getUid1();
+        ModelMap modelMap = new ModelMap();//(ModelMap) getModelMap(term);
+
+        Term term = provider.getTerm();
+
+        modelMap.put("uri", term.getUri());
+        modelMap.put("name", term.getName());
+        if (mark) {
+            modelMap.put("shortDescription", term.getTaggedShortDescription());
+            modelMap.put("description", term.getTaggedDescription());
+        } else {
+            modelMap.put("shortDescription", term.getShortDescription());
+            modelMap.put("description", term.getDescription());
         }
-//        }
-
-        ModelMap modelMap = (ModelMap) getModelMap(term);
-
-        modelMap.put("from", alias);
 
         // LINKS
 
@@ -148,12 +134,6 @@ public class TermController {
         modelMap.put("related", toPlainObjectWithoutContent(related));
         modelMap.put("aliases", toPlainObjectWithoutContent(aliases));
 
-        if (mark) {
-            for (String p : asList("description", "shortDescription")) {
-                modelMap.put(p, termsMarker.mark((String) modelMap.get(p)));
-            }
-        }
-
         return modelMap;
     }
 
@@ -169,7 +149,9 @@ public class TermController {
     private ModelMap getQuote(Link link, UID source, boolean mark) {
         ModelMap map = new ModelMap();
         String quote = link.getQuote() != null ? link.getQuote() : ((Item) source).getContent();
-        if (mark) quote = termsMarker.mark(quote);
+        if (mark) {
+            quote = link.getTaggedQuote() != null ? link.getTaggedQuote() : ((Item) source).getTaggedContent();
+        }
         map.put("quote", quote);
         map.put("uri", source.getUri());
         return map;

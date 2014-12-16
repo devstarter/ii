@@ -1,7 +1,6 @@
 package org.ayfaar.app.controllers.search.cache;
 
 
-import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.CommonDao;
@@ -10,7 +9,7 @@ import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
-import org.ayfaar.app.utils.NewAliasesMap;
+import org.ayfaar.app.utils.TermsMapImpl;
 import org.ayfaar.app.utils.TermsMap;
 import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Ignore;
@@ -46,7 +45,7 @@ public class DBCacheUnitTest {
     DBCache dbCache;
     @InjectMocks
     @Spy
-    NewAliasesMap aliasesMap;
+    TermsMapImpl aliasesMap;
 
     /**
      * проверяем что-бы не сохранялось в базу если это не термин

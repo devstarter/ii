@@ -36,7 +36,7 @@ public class NewSearchControllerUnitTest {
     @InjectMocks @Spy
     NewSearchController controller;
     @InjectMocks @Spy
-    NewAliasesMap aliasesMap;
+    TermsMapImpl aliasesMap;
 
 
     @Before

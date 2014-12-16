@@ -1,6 +1,6 @@
 package org.ayfaar.app.controllers;
 
-import org.ayfaar.app.utils.NewAliasesMap;
+import org.ayfaar.app.utils.TermsMapImpl;
 import org.ayfaar.app.utils.TermsMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +24,8 @@ import static org.ayfaar.app.utils.TermsMap.TermProvider;
 @RunWith(MockitoJUnitRunner.class)
 public class SuggestionsControllerUnitTest {
     @Mock TermsMap termsMap;
-    @Mock NewAliasesMap aliasesMap;
+    @Mock
+    TermsMapImpl aliasesMap;
 
     @InjectMocks
     SuggestionsController controller;

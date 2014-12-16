@@ -22,7 +22,7 @@ import static java.util.regex.Pattern.compile;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
-public class NewAliasesMap implements TermsMap {
+public class TermsMapImpl implements TermsMap {
     @Autowired
     private CommonDao commonDao;
     @Autowired

@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 
 public class NewAliasesMapIntegrationTest extends IntegrationTest{
     @Autowired
-    private NewAliasesMap aliasesMap;
+    private TermsMapImpl aliasesMap;
     @Autowired
     private TermsMap termsMap;
 

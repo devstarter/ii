@@ -56,11 +56,11 @@ public class SuggestionsController{
         List<String> terms = new ArrayList<String>();
         Pattern pattern = Pattern.compile(query,CASE_INSENSITIVE + UNICODE_CASE);
 
-        for (Map.Entry<String, TermsMap.TermProvider> map: termsMap.getAll()) {
-            Matcher matcher = pattern.matcher(map.getValue().getName());
-            String providerName = map.getValue().getName();
+        for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
+            Matcher matcher = pattern.matcher(entry.getValue().getName());
+            String providerName = entry.getValue().getName();
             if(matcher.find() && !suggestions.contains(providerName) && !terms.contains(providerName)) {
-                terms.add(map.getValue().getName());
+                terms.add(entry.getValue().getName());
             }
         }
         Collections.reverse(terms);

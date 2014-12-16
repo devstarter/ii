@@ -8,7 +8,7 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.CategoryMap;
-import org.ayfaar.app.utils.NewAliasesMap;
+import org.ayfaar.app.utils.TermsMapImpl;
 import org.ayfaar.app.utils.TermsMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,7 +29,8 @@ public class ItemController {
     @Autowired TermDao termDao;
     @Autowired TermController termController;
     @Autowired TermsMap termsMap;
-    @Autowired NewAliasesMap aliasesMap;
+    @Autowired
+    TermsMapImpl aliasesMap;
     @Autowired CategoryMap categoryMap;
 
     @RequestMapping(value = "{number}", method = POST)
