@@ -18,15 +18,16 @@ public class SuggestionsControllerIntegrationTest extends IntegrationTest {
     public void test1() {
         String query = "гал";
         List<String> suggestions = searchController.suggestions(query);
+
         assertEquals(7, suggestions.size());
         // тест последовательности
-        assertTrue(suggestions.get(0).toLowerCase().indexOf(query) == 0); // Галактическая Сущность
-        assertTrue(suggestions.get(1).toLowerCase().indexOf(query) == 0); // Галактическая Странник
-        assertTrue(suggestions.get(2).toLowerCase().indexOf(query) > 0); // Звёздно-Галактическая Форма
-        assertTrue(suggestions.get(3).toLowerCase().indexOf(query) > 0); // Межгалактический Трансмутационный Комплекс-План
-        assertTrue(suggestions.get(4).toLowerCase().indexOf(query) > 0); // Межгалактический Дезинтеграционный Комплекс-План
-        assertTrue(suggestions.get(5).toLowerCase().indexOf(query) == 0); // Галактический УЛУУГУМА-Дезинтеграционный Луч АИЙ-ЙЯ
-        assertTrue(suggestions.get(6).toLowerCase().indexOf(query) > 0); // Межгалактический ССМИИЙСМАА-А-Фокусирующий Луч АИЙ-ЙЯ
+        assertTrue(suggestions.get(0).toLowerCase().indexOf(query) > 0); // ПИНГАЛА
+        assertTrue(suggestions.get(1).toLowerCase().indexOf(query) > 0); // СВААГАЛИ
+        assertTrue(suggestions.get(2).toLowerCase().indexOf(query) == 0); // Галактическая Сущность
+        assertTrue(suggestions.get(3).toLowerCase().indexOf(query) == 0); // Галактический Странник
+        assertTrue(suggestions.get(4).toLowerCase().indexOf(query) > 0); // Звёздно-Галактическая Форма
+        assertTrue(suggestions.get(5).toLowerCase().indexOf(query) > 0); // Межгалактические Комплекс-Планы
+        assertTrue(suggestions.get(6).toLowerCase().indexOf(query) == 0); // Галактический УЛУУГУМА-Дезинтеграционный Луч АИЙ-ЙЯ
     }
 
     /**
@@ -37,9 +38,10 @@ public class SuggestionsControllerIntegrationTest extends IntegrationTest {
     public void test2() {
         String query = "ссс";
         List<String> suggestions = searchController.suggestions(query);
+
         assertEquals(7, suggestions.size());
-        assertEquals("Амициссимное ССС-Состояние", suggestions.get(5));
-        assertEquals("синтетическое Самосознание ССС-Сущности", suggestions.get(6));
+        assertEquals("СССВ-УУИЙ-СССВ", suggestions.get(5));
+        assertEquals("ССС-ЮИЙЙ-ЙЙ-ССС", suggestions.get(6));
     }
 
     @Test
@@ -60,7 +62,7 @@ public class SuggestionsControllerIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void test() {
+    public void testSuggestionsWhenQueryContainsBracket() {
         assertEquals(0, searchController.suggestions("унго-ссвооун)").size());
     }
 }
