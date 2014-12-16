@@ -40,7 +40,6 @@ public class TermController {
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
     @Inject ApplicationEventPublisher publisher;
-    @Inject ItemsUpdater itemsUpdater;
 
     /*@RequestMapping("import")
     @Model

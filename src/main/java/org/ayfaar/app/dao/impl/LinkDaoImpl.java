@@ -1,14 +1,10 @@
 package org.ayfaar.app.dao.impl;
 
 import org.ayfaar.app.dao.LinkDao;
-import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.UID;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -116,18 +112,5 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
     @Override
     public List<Link> getAllSynonyms() {
         return  criteria().add(in("type", new Byte[]{Link.ABBREVIATION, Link.ALIAS, Link.CODE})).list();
-    }
-
-    @Override
-    public List<Link> findInQuotes(List<String> aliases) {
-        Criteria criteria = criteria();
-        Disjunction disjunction = Restrictions.disjunction();
-
-        for (String alias : aliases) {
-            disjunction.add(like("quote", alias, MatchMode.ANYWHERE));
-        }
-        criteria.add(disjunction);
-
-        return criteria.list();
     }
 }
