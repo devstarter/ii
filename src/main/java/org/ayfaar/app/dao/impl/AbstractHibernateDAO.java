@@ -176,6 +176,19 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
     }
 
     @Override
+    public List<E> getLike(String property, @NotNull List<String> values, MatchMode matchMode) {
+        Criteria criteria = criteria();
+        Disjunction disjunction = Restrictions.disjunction();
+
+        for (String alias : values) {
+            disjunction.add(like(property, alias, matchMode));
+        }
+        criteria.add(disjunction);
+
+        return criteria.list();
+    }
+
+    @Override
     public List<E> getByRegexp(String property, String regexp) {
         return criteria()
                 .add(regexp(property, regexp))
