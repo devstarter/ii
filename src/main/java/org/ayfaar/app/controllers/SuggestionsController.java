@@ -48,6 +48,7 @@ public class SuggestionsController{
                 return Integer.valueOf(o1.length()).compareTo(o2.length());
             }
         });
+
         return suggestions;
     }
 
@@ -62,6 +63,8 @@ public class SuggestionsController{
                 terms.add(map.getValue().getName());
             }
         }
+        Collections.reverse(terms);
+
         return terms;
     }
 
