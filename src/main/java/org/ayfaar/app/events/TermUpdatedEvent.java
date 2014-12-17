@@ -10,4 +10,8 @@ public class TermUpdatedEvent extends TermPushEvent {
         message = "Предыдущий вариант:\n" + oldShortDescription +"\n\n" + oldDescription;
         url = getUrlToTerm(term.getName());
     }
+
+    public TermUpdatedEvent(Term term) {
+        this(term, null, null);
+    }
 }

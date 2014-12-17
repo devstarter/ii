@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers.search.cache;
 
+import org.apache.commons.lang.time.DurationFormatUtils;
 import org.ayfaar.app.controllers.CategoryController;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.dao.CommonDao;
@@ -36,8 +37,8 @@ public class CacheUpdater {
         updateCacheSearchResult();
 
         long end = System.currentTimeMillis();
-
-        eventPublisher.publishEvent(new SimplePushEvent("update cache", getUpdatingTime(start, end)));
+        final String duration = DurationFormatUtils.formatDuration(end - start, "HH:mm:ss");
+        eventPublisher.publishEvent(new SimplePushEvent("Кеш обновлён за "+duration));
     }
 
     private void updateCacheSearchResult() {
@@ -59,9 +60,5 @@ public class CacheUpdater {
         } else if(uri.startsWith(UriGenerator.generate(Category.class, ""))) {
             categoryController.getContents(UriGenerator.getValueFromUri(Category.class, uri));
         }
-    }
-
-    private String getUpdatingTime(long start, long end) {
-        return String.format("cache updated %d seconds", (end - start)/1000);
     }
 }

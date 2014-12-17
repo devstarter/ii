@@ -4,6 +4,7 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.dao.TermMorphDao;
+import org.ayfaar.app.events.TermUpdatedEvent;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
@@ -76,6 +77,8 @@ public class LinkController {
         if (type != null && type == 0) {
             // Morph
             termMorphDao.save(new TermMorph(alias, primTerm.getUri()));
+            // need it to start tagging update for this term and all morph aliases
+            eventPublisher.publishEvent(new TermUpdatedEvent(primTerm));
             return 1;
         }
         Term aliasTerm = termDao.getByName(alias);
