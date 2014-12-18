@@ -26,6 +26,9 @@
     <script>
         app.constant('config', {useHtml5Mode: true, apiUrl: "/api/"});
     </script>
+
+    <script src="js/oauth/oauth.js"></script>
+    <script src="js/oauth/doors.js"></script>
 </head>
 
 <body ng-app="app">
@@ -63,5 +66,11 @@
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     ga('create', 'UA-51463207-1', 'ayfaar.org');
 </script>
+
+
+<input type="button" onclick="enterThroughFacebook()" value="Войти через Facebook"/>
+<input type="button" onclick="enterThroughGitHub()" value="Войти через GitHub"/>
+
+
 </body>
 </html>

@@ -515,10 +515,10 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             return value + (tail || ' …');
         };
     });
-
+/* test comment for oauthio ?
 Array.prototype.append = function(array){
     this.push.apply(this, array)
-};
+};*/
 function copyObjectTo(from, to) {
     for (var p in from) {
         if (from.hasOwnProperty(p)) {
