@@ -221,7 +221,8 @@ public class SearchController {
             if (term != null && item != null) {
                 final List<Link> links = linkDao.get(term, item);
                 if (links.size() == 0) {
-                    link = new Link(term, item, quote, "search");
+                    link = new Link(term, item, quote);
+                    link.setSource("search");
                     linkDao.save(link);
                 } else {
                     possibleDuplication = true;

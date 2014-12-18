@@ -13,6 +13,7 @@ import org.ayfaar.app.events.NewLinkEvent;
 import org.ayfaar.app.events.NewQuoteLinkEvent;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
@@ -37,6 +38,7 @@ public class LinkController {
     @Autowired EmailNotifier emailNotifier;
     @Autowired TermsMap termsMap;
     @Autowired TermMorphDao termMorphDao;
+    @Autowired TermsMarker termsMarker;
     @Autowired ApplicationEventPublisher eventPublisher;
 
 
@@ -57,7 +59,9 @@ public class LinkController {
             }
         }
         Item item = itemDao.getByNumber(itemNumber);
-        Link link = linkDao.save(new Link(term, item, quote.isEmpty() ? null : quote));
+        Link link = linkDao.save(new Link(term, item,
+                quote.isEmpty() ? null : quote,
+                quote.isEmpty() ? null : termsMarker.mark(quote)));
 
         //emailNotifier.newQuoteLink(term.getName(), itemNumber, quote, link.getLinkId());
         eventPublisher.publishEvent(new NewQuoteLinkEvent(term.getName(), itemNumber, quote, link.getLinkId()));
