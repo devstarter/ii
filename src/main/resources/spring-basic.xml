@@ -124,4 +124,15 @@
         </property>
     </bean>-->
     <bean id="cacheManager" class="org.ayfaar.app.controllers.search.cache.DBCacheManager" />
+
+    <!--for testing classes with @Scope("request")-->
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="request">
+                    <bean class="org.springframework.context.support.SimpleThreadScope"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
 </beans>
