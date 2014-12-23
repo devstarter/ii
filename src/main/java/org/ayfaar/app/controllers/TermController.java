@@ -34,8 +34,7 @@ public class TermController {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
     @Autowired TermsMap termsMap;
-    @Autowired
-    TermsMapImpl aliasesMap;
+    @Autowired TermsMapImpl aliasesMap;
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
     @Inject ApplicationEventPublisher publisher;
@@ -55,9 +54,7 @@ public class TermController {
             throw new QuietException(format("Термин `%s` отсутствует", termName));
         }
 
-        TermsMap.TermProvider alias;
         if (provider.hasMainTerm()) {
-            alias = provider;
             provider = provider.getMainTermProvider();
         }
 

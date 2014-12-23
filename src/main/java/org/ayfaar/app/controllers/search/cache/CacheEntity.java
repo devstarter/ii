@@ -21,11 +21,11 @@ public class CacheEntity {
     private UID uid;
 
     @Column(name = "content", columnDefinition = "TEXT")
-    private String jsonContent;
+    private String content;
 
-    public CacheEntity(UID uid, String jsonContent) {
+    public CacheEntity(UID uid, String content) {
         this.uri = uid.getUri();
         this.uid = uid;
-        this.jsonContent = jsonContent;
+        this.content = content;
     }
 }
