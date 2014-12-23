@@ -129,4 +129,8 @@ public class NewSearchController {
     public void cleanCache() {
         cache.clear();
     }
+
+    public Object searchWithoutCache(String query, Integer pageNumber, String fromItemNumber) {
+        return search(query, pageNumber, fromItemNumber);
+    }
 }

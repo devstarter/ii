@@ -19,6 +19,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class CacheUpdaterUnitTest {
     CacheUpdater cacheUpdater;
 
     @Test
-    public void testUpdate() {
+    public void testUpdate() throws IOException {
         List<String> fakeCache = Arrays.asList(UriGenerator.generate(Term.class, "Амплификационный Вектор"),
         UriGenerator.generate(Term.class, "Время"), UriGenerator.generate(Term.class, "АСТТМАЙ-РАА-А"));
 

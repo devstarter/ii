@@ -65,8 +65,8 @@ public class DBCache extends ConcurrentMapCache {
         }
 
         if (cacheEntity != null) {
-            put(key, cacheEntity.getJsonContent());
-            value = new SimpleValueWrapper(cacheEntity.getJsonContent());
+            put(key, cacheEntity.getContent());
+            value = new SimpleValueWrapper(cacheEntity.getContent());
         }
         return value;
     }
