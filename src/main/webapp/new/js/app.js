@@ -357,6 +357,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                         element.html(newval);
                         return;
                     }
+                    newval = newval.replace(/(?:\r\n|\r|\n)/g, '<br />');
                     newval = newval.replace(new RegExp("\\(([^\\)]+)\\)","gm"), "<bracket>$1</bracket>");
                     element.html(newval);
                     $compile(element.contents())(scope);
