@@ -17,7 +17,7 @@
                            http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <context:component-scan base-package="org.ayfaar.app"/> <!--.spring.converter"/>-->
-    <!--scoped-proxy="interfaces"-->
+
     <mvc:annotation-driven />
 
     <cache:annotation-driven cache-manager="cacheManager" />
@@ -128,7 +128,18 @@
     </bean>-->
     <bean id="cacheManager" class="org.ayfaar.app.controllers.search.cache.DBCacheManager" />
 
-    <bean id="log" class="org.ayfaar.app.utils.MethodSignatureLogger" scope="request">
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="customScope">
+                    <bean class="org.springframework.context.support.SimpleThreadScope"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="loggerAspect" class="org.ayfaar.app.spring.aspects.LoggerAspect" scope="customScope">
         <aop:scoped-proxy/>
     </bean>
+
 </beans>

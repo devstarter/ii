@@ -2,7 +2,8 @@ package org.ayfaar.app.spring.handler;
 
 import org.ayfaar.app.events.DefaultRestErrorEvent;
 import org.ayfaar.app.events.QuietException;
-import org.ayfaar.app.utils.MethodSignatureLogger;
+import org.ayfaar.app.spring.aspects.LoggerAspect;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,8 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
     @Autowired
-    private MethodSignatureLogger signatureLogger;
+    private LoggerAspect loggerAspect;
+
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
@@ -48,9 +50,11 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
         }
 
         String methodSignatureLog = "";
-        for(MethodSignatureLogger.MethodProvider provider : signatureLogger.getLog()) {
-            methodSignatureLog += "METHOD'S SIGNATURE: " + provider.getMethodSignature();
-            methodSignatureLog += "\nMETHOD'S PARAMETERS: " + Arrays.toString(provider.getParams());
+        for(LoggerAspect.MethodProvider provider : loggerAspect.getLog()) {
+            methodSignatureLog += "\nMETHOD'S SIGNATURE: " + provider.getMethodSignature();
+            if(provider.getParams() != null) {
+                methodSignatureLog += "\nMETHOD'S PARAMETERS: " + Arrays.toString(provider.getParams());
+            }
         }
         eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception", ex.toString()+"\n"+methodSignatureLog));
 
