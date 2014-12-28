@@ -10,6 +10,7 @@ import org.ayfaar.app.events.SearchQuoteEvent;
 import org.ayfaar.app.utils.Content;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermsMarker;
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -40,6 +41,7 @@ public class SearchController {
     @Autowired TermMorphDao termMorphDao;
     @Autowired EmailNotifier notifier;
     @Autowired ApplicationEventPublisher eventPublisher;
+    @Autowired TermsMarker termsMarker;
 
     private Map<String, List<ModelMap>> searchInContentCatch = new HashMap<String, List<ModelMap>>();
 
@@ -221,7 +223,7 @@ public class SearchController {
             if (term != null && item != null) {
                 final List<Link> links = linkDao.get(term, item);
                 if (links.size() == 0) {
-                    link = new Link(term, item, quote);
+                    link = new Link(term, item, quote, termsMarker.mark(quote));
                     link.setSource("search");
                     linkDao.save(link);
                 } else {
