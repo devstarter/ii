@@ -20,7 +20,7 @@ import static java.util.regex.Pattern.*;
 public class SuggestionsController{
     @Autowired TermsMap termsMap;
 
-    private List<String> brackets = Arrays.asList("(", ")", "[", "]", "{", "}");
+    private List<String> escapeChars = Arrays.asList("(", ")", "[", "]", "{", "}", "*");
     public static final int MAX_SUGGESTIONS = 7;
 
     /**
@@ -30,7 +30,7 @@ public class SuggestionsController{
     @RequestMapping("{q:.+}")
     @ResponseBody
     public List<String> suggestions(@PathVariable String q) {
-        q = checkBrackets(q);
+        q = escapeRegexp(q);
         Queue<String> queriesQueue = new LinkedList<String>(asList(
                 "^"+q,
                 "[\\s\\-]" + q,
@@ -68,8 +68,8 @@ public class SuggestionsController{
         return terms;
     }
 
-    private String checkBrackets(String query) {
-        for(String bracket : brackets) {
+    private String escapeRegexp(String query) {
+        for(String bracket : escapeChars) {
             if(query.contains(bracket)) {
                 query = query.replace(bracket, "\\" + bracket);
             }

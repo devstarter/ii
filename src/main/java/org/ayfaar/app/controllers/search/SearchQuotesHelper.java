@@ -31,6 +31,8 @@ public class SearchQuotesHelper {
         String forLeftPart = "([\\.\\?!]*)([^\\.\\?!]*)(<strong>)";
         String forRightPart = "<strong>[^\\.\\?!]+[\\.\\?!]*</strong>[^\\.\\?!]*[\\.\\?!]*";
         String regexp = join(allPossibleSearchQueries, "|");
+        regexp = regexp.replace("*", "["+RegExpUtils.w+"]*");
+
 
         for (Item item : foundedItems) {
             String content = "";
@@ -65,9 +67,14 @@ public class SearchQuotesHelper {
             rightPart = cutSentence(rightPart, 0, MAX_WORDS_ON_BOUNDARIES + 1, "right", last);
 
             String textQuote = createTextQuote(phrases, leftPart, rightPart);
+            if (textQuote.isEmpty()) {
+                textQuote = item.getTaggedContent();
+            } else {
+                textQuote = termsMarker.mark(textQuote);
+            }
             Quote quote = new Quote();
             quote.setNumber(item.getNumber());
-            quote.setQuote(termsMarker.mark(textQuote));
+            quote.setQuote(textQuote);
             quotes.add(quote);
         }
         return quotes;
