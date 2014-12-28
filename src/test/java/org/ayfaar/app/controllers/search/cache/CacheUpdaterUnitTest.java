@@ -8,6 +8,7 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.events.SimplePushEvent;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
 import org.ayfaar.app.utils.TermsMap;
 import org.ayfaar.app.utils.TermsMarker;
 import org.ayfaar.app.utils.UriGenerator;
@@ -35,6 +36,7 @@ public class CacheUpdaterUnitTest {
     @Mock TermsMarker termsMarker;
     @Mock NewSearchController searchController;
     @Mock ApplicationEventPublisher eventPublisher;
+    @Mock CustomObjectMapper objectMapper;
 
     @InjectMocks
     @Spy
@@ -47,7 +49,8 @@ public class CacheUpdaterUnitTest {
 
         String uri = UriGenerator.generate(Term.class, "");
 
-        when(commonDao.getLike(CacheEntity.class, "uri", (uri + "%"), Integer.MAX_VALUE)).thenReturn(CollectionUtils.transform(fakeCache, new Transformer() {
+        when(commonDao.getLike(CacheEntity.class, "uri", (uri + "%"), Integer.MAX_VALUE))
+                .thenReturn(CollectionUtils.transform(fakeCache, new Transformer() {
         @Override
         public Object transform(Object value) {
             Term term = new Term((String) value);
@@ -56,11 +59,14 @@ public class CacheUpdaterUnitTest {
         }
         }));
 
+        when(objectMapper.writeValueAsString(anyObject())).thenReturn("fakeSearchResult");
+
         cacheUpdater.update();
 
         verify(termsMap, times(1)).reload();
         verify(commonDao, times(1)).getLike(CacheEntity.class, "uri", (uri + "%"), Integer.MAX_VALUE);
-        verify(searchController, times(3)).search(getValueFromUri(Term.class, anyString()), eq(0), anyString());
+        verify(searchController, times(3)).searchWithoutCache(getValueFromUri(Term.class, anyString()), eq(0), anyString());
         verify(eventPublisher, times(1)).publishEvent(any(SimplePushEvent.class));
+        verify(commonDao, times(3)).save(anyObject());
     }
 }
