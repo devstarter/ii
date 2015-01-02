@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers;
 
+import org.ayfaar.app.utils.RegExpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 public class Router {
@@ -37,6 +40,16 @@ public class Router {
     public Object returnNewIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String index = "new/index.html";
         String path = request.getServletContext().getRealPath(index);
+
+        String regexp = "/new/((t|p|i)/)" + "[" + RegExpUtils.w + "]+";
+        Pattern pattern = Pattern.compile(regexp);
+        Matcher matcher = pattern.matcher(request.getRequestURI());
+
+        if(matcher.find()) {
+            String newPath = request.getRequestURI().replace(matcher.group(1), "");
+            response.sendRedirect(newPath);
+        }
+
         if (path == null) {
             path = jbossDir+"app-deployments/current/repo/src/main/webapp/"+index;
         }
