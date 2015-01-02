@@ -157,4 +157,26 @@
         margin: 30px 0;
         border-radius: 5px;
     }
+    .btn-group .btn {
+        margin: 0;
+    }
 </style>
+
+<script type="text/ng-template" id="search-contribute-form.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Помощь проекту</h3>
+    </div>
+    <div class="modal-body">
+        <input id="search-input" ng-model="term" type="text" class="form-control"
+               ii-lookup
+               typeahead="suggestion for suggestion in $getSuggestions($viewValue)"/>
+        <textarea class="full-width form-control" ng-model="text" style="margin-top: 10px; min-height: 100px"></textarea>
+    </div>
+    <div class="modal-footer btn-group">
+        <button class="btn btn-default" ng-click="quote()">Цитата</button>
+        <button class="btn btn-default" ng-click="link(1)" style="margin: 0">Синоним</button>
+        <button class="btn btn-default" ng-click="link(2)" style="margin: 0">Сокращение</button>
+        <button class="btn btn-default" ng-click="link(4)" style="margin: 0">Космический Код</button>
+        <button class="btn btn-default" ng-click="link(0)" style="margin: 0">Скланённый</button>
+    </div>
+</script>

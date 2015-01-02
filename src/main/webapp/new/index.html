@@ -29,29 +29,6 @@
 </head>
 
 <body ng-app="app">
-<!--<header ng-show="text" class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController">
-        <span tooltip="{{text}}" title="{{text}}" class="navbar-brand trim-info">{{text}}</span>
-        <div class="input-group" style="padding: 10px;">
-            <input ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
-                   ii-lookup
-                   typeahead="suggestion for suggestion in $getSuggestions($viewValue)">
-                <span class="input-group-btn" dropdown>
-                        <button type="button" class="btn btn-primary">Action {{state}}</button>
-                        <button type="button" class="btn btn-primary dropdown-toggle">
-                            <span class="caret"></span>
-                            <span class="sr-only">Split button!</span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Цитировать</a></li>
-                            <li class="divider"></li>
-                            <li><a ng-click="alert(1)">Связать с термином</a></li>
-                            <li><a href="#">Синоним</a></li>
-                            <li><a href="#">Другой падеж</a></li>
-                            <li><a href="#">Другая форма</a></li>
-                        </ul>
-                </span>
-        </div>
-</header>-->
 <header ii-header></header>
 
 <div ui-view></div>
@@ -62,6 +39,24 @@
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     ga('create', 'UA-51463207-1', 'ayfaar.org');
+</script>
+<script type="text/ng-template" id="contribute-form.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Помощь проекту</h3>
+    </div>
+    <div class="modal-body">
+        <input id="search-input" ng-model="term" type="text" class="form-control"
+               ii-lookup placeholder="Введите термин" required
+               typeahead="suggestion for suggestion in $getSuggestions($viewValue)"/>
+        <textarea class="full-width form-control" ng-model="text" style="margin-top: 10px; min-height: 100px"></textarea>
+    </div>
+    <div class="modal-footer btn-group">
+        <button class="btn btn-default" ng-click="quote()">Цитата</button>
+        <button class="btn btn-default" ng-click="link(1)" style="margin: 0">Синоним</button>
+        <button class="btn btn-default" ng-click="link(2)" style="margin: 0">Сокращение</button>
+        <button class="btn btn-default" ng-click="link(4)" style="margin: 0">Космический Код</button>
+        <button class="btn btn-default" ng-click="link(0)" style="margin: 0">Скланённый</button>
+    </div>
 </script>
 </body>
 </html>

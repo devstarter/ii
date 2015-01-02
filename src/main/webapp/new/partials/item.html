@@ -1,7 +1,10 @@
 <a ng-click="goPrev()" class="btn btn-link item-link">←</a>
 <h1 class="item-number">{{number}}</h1>
 <a ng-click="goNext()" class="btn btn-link item-link">→</a>
-<div ii-bind="content"></div>
+<div>
+    <span ii-bind="content"></span>
+    <button ng-show="content" class="btn btn-default btn-icon" uri="uri" contribute-button></button>
+</div>
 <br/>
 <p parents></p>
 

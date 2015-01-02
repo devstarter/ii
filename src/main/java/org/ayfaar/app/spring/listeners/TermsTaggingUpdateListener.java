@@ -2,6 +2,7 @@ package org.ayfaar.app.spring.listeners;
 
 import org.ayfaar.app.events.PushEvent;
 import org.ayfaar.app.events.TermPushEvent;
+import org.ayfaar.app.events.TermUpdatedEvent;
 import org.ayfaar.app.utils.TermsTaggingUpdater;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -19,7 +20,11 @@ public class TermsTaggingUpdateListener implements ApplicationListener<PushEvent
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    taggingUpdater.update(((TermPushEvent) event).getName());
+                    if (event instanceof TermUpdatedEvent && ((TermUpdatedEvent)event).morphAlias != null) {
+                        taggingUpdater.updateSingle(((TermUpdatedEvent)event).morphAlias);
+                    } else {
+                        taggingUpdater.update(((TermPushEvent) event).getName());
+                    }
                 }
             }).start();
         }

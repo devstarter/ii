@@ -1,4 +1,4 @@
-function TermController($scope, $stateParams, $api, $state, analytics) {
+function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
     var pageCounter = 0, currentQuery;
     var query = $scope.query = $stateParams.name;
     if (!query) {
@@ -43,6 +43,35 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
         searchInContent();
     };
     $scope.rateUp = function (item) {
+        if(getSelectionText()) {
+            var modalInstance = $modal.open({
+                templateUrl: 'search-contribute-form.html',
+                controller: function ($scope, $modalInstance) {
+                    $scope.text = getSelectionText();
+                    $scope.term = query;
+                    $scope.quote = function() {
+                        var data = {
+                            uri: "ии:пункт:" + item.number,
+                            query: $scope.term
+                        };
+                        var quote = getSelectionText() || (item.full ? null : item.quote);
+                        if (quote) data.quote = quote;
+                        $api.post("search/rate/+", data).then(function(){
+                            $modalInstance.close();
+                            rateComplete();
+                        });
+                    };
+                    $scope.link = function(type) {
+                        if (!$scope.term || !$scope.text) return;
+                        return $api.term.link($scope.term, $scope.text, type).then(function(){
+                            $modalInstance.close();
+                        });
+                    }
+                }
+            });
+            return;
+        }
+
         if (confirm("Цитата будет помечена как помогающая понять этот термин, вы согласны?")) {
             var data = {
                 uri: "ии:пункт:" + item.number,
@@ -117,15 +146,5 @@ function TermController($scope, $stateParams, $api, $state, analytics) {
 
     function rateComplete() {
         alert("Ваш голос учтён, благодарим за помощь! :)")
-    }
-
-    function getSelectionText() {
-        var text = "";
-        if (window.getSelection) {
-            text = window.getSelection().toString();
-        } else if (document.selection && document.selection.type != "Control") {
-            text = document.selection.createRange().text;
-        }
-        return text;
     }
 }

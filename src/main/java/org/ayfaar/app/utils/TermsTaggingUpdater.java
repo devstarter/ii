@@ -86,4 +86,13 @@ public class TermsTaggingUpdater {
 //            }
         }
     }
+
+    public void updateSingle(String morphAlias) {
+        long time = System.currentTimeMillis();
+        updateItems(itemDao.getLike("content", morphAlias, MatchMode.ANYWHERE));
+        updateLinks(linkDao.getLike("quote", morphAlias, MatchMode.ANYWHERE));
+
+        final String duration = DurationFormatUtils.formatDuration(System.currentTimeMillis() - time, "HH:mm:ss");
+        publisher.publishEvent(new SimplePushEvent(format("Тегирование для %s завершено за %s", morphAlias, duration)));
+    }
 }

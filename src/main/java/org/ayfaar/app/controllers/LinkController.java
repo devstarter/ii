@@ -82,7 +82,7 @@ public class LinkController {
             // Morph
             termMorphDao.save(new TermMorph(alias, primTerm.getUri()));
             // need it to start tagging update for this term and all morph aliases
-            eventPublisher.publishEvent(new TermUpdatedEvent(primTerm));
+            eventPublisher.publishEvent(new TermUpdatedEvent(primTerm, alias));
             return 1;
         }
         Term aliasTerm = termDao.getByName(alias);

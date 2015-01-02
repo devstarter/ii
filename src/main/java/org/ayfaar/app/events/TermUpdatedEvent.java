@@ -4,6 +4,8 @@ import org.ayfaar.app.model.Term;
 
 public class TermUpdatedEvent extends TermPushEvent {
 
+    public String morphAlias;
+
     public TermUpdatedEvent(Term term, String oldShortDescription, String oldDescription) {
         super(term.getName());
         title = "Обновлён термин: " +term.getName();
@@ -13,5 +15,10 @@ public class TermUpdatedEvent extends TermPushEvent {
 
     public TermUpdatedEvent(Term term) {
         this(term, null, null);
+    }
+
+    public TermUpdatedEvent(Term term, String morphAlias) {
+        this(term);
+        this.morphAlias = morphAlias;
     }
 }

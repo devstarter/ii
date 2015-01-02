@@ -118,6 +118,9 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 }
             },
             term: {
+                link: function(term1, term2, type) {
+                    return api.post("link/addAlias", {term1: term1, term2: term2, type: type});
+                },
                 get: function(name) {
                     return api.get('term/', {name: name, mark: true, _cache: true}, true);
                 },
@@ -141,7 +144,10 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                     })
                 },
                 suggestions: function(query) {
-                    return api.get("suggestions/"+query);
+                    return api.get("suggestions/"+query)
+                },
+                quote: function(uri, term, quote) {
+                    return api.post("search/rate/+", {uri: uri, query: term, quote: quote})
                 }
             }
         };
@@ -365,6 +371,42 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             }
         };
     })
+    .directive("contributeButton", function($modal, $api) {
+        return {
+            template: '<i class="icon-star"></i>',
+            scope: {
+                uri: "="
+            },
+            link: function(scope, element, attrs) {
+                element.bind('click', function(e) {
+                    if (!getSelectionText()) {
+                        alert("Выберете текст");
+                    } else
+                    $modal.open({
+                        templateUrl: 'contribute-form.html',
+                        controller: function ($scope, $modalInstance) {
+                            $scope.text = getSelectionText();
+                            $scope.quote = function () {
+                                if (!$scope.term) {
+                                    alert("Укажите термин");
+                                    return;
+                                }
+                                $api.search.quote(scope.uri, $scope.term, $scope.text).then(function () {
+                                    $modalInstance.close();
+                                });
+                            };
+                            $scope.link = function (type) {
+                                if (!$scope.term || !$scope.text) return;
+                                return $api.term.link($scope.term, $scope.text, type).then(function () {
+                                    $modalInstance.close();
+                                });
+                            }
+                        }
+                    });
+                })
+            }
+        }
+    })
     .directive("bracket", function($compile) {
         return {
             restrict: 'E',
@@ -415,8 +457,9 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                     scope.expanded = false;
                 };
                 scope.closeWithDelay = function() {
+                    scope.focused = false;
                     $timeout(function(){
-                        scope.expanded = false;
+                        if (!scope.focused) scope.expanded = false;
                     }, 5000, true);
                 };
                 $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
@@ -538,4 +581,13 @@ function getSelectedText() {
         return document.selection.createRange().text;
     }
     return null;
+}
+function getSelectionText() {
+    var text = "";
+    if (window.getSelection) {
+        text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+        text = document.selection.createRange().text;
+    }
+    return text;
 }

@@ -67,6 +67,7 @@ public class NewItemController {
         public List<ParentPresentation> parents;
 
         public ItemPresentation(Item item, String previous) {
+            this.uri = item.getUri();
             this.content = item.getTaggedContent();
             this.previous = previous;
             number = item.getNumber();

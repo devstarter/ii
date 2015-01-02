@@ -6,6 +6,7 @@
 <p ng-repeat='child in children'>
     <a href ii-ref='child'>{{child.name}}</a>.
     <span ii-bind="child.content"></span>
+    <button class="btn btn-default btn-icon" uri="child.uri" contribute-button></button>
 </p>
 <a ii-ref="next" ng-show="next" class="btn btn-default">Следующий параграф →</a>
 
