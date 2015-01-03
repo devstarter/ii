@@ -41,8 +41,7 @@ public class Router {
         String index = "new/index.html";
         String path = request.getServletContext().getRealPath(index);
 
-        String regexp = "/new/((t|p|i)/)" + "[" + RegExpUtils.w + "]+";
-        Pattern pattern = Pattern.compile(regexp);
+        Pattern pattern = Pattern.compile("/new/((t|p|i)/).*");
         Matcher matcher = pattern.matcher(request.getRequestURI());
 
         if(matcher.find()) {
