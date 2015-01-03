@@ -39,6 +39,16 @@ public class Router {
     @ResponseBody
     public Object returnNewIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String index = "new/index.html";
+
+        if (request.getRequestURL().toString().matches("/new/.*/")) {
+            String url = "/new" +
+                    request.getRequestURL()
+                            .substring(request
+                                    .getRequestURL()
+                                    .lastIndexOf("/"));
+            redirectStrategy.sendRedirect(request,response, url);
+        }
+
         String path = request.getServletContext().getRealPath(index);
 
         String regexp = "/new/((t|p|i)/)" + "[" + RegExpUtils.w + "]+";
