@@ -38,17 +38,17 @@ public class SearchQuotesHelper {
             String content = "";
             Pattern pattern = Pattern.compile("(^" + regexp + ")|(" + RegExpUtils.W + "+" + regexp + RegExpUtils.W +
                     "+)|(" + regexp + "$)", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-            Matcher matcher = pattern.matcher(item.getContent());
+            Matcher matcher = pattern.matcher(item.getTaggedContent());
 
             if (matcher.find()) {
                 if(punctual.contains(regexp.substring(regexp.length()-1))) {
                     String lastCharacter = regexp.substring(regexp.length()-1);
                     String newRegexp = lastCharacter.equals(".") || lastCharacter.equals("?") ?
                             regexp.substring(0, regexp.length()-1) + "\\" + lastCharacter : regexp;
-                    content = item.getContent().replaceAll("(?iu)(" + newRegexp + ")", "<strong>$1</strong>");
+                    content = item.getTaggedContent().replaceAll("(?iu)(" + newRegexp + ")", "<strong>$1</strong>");
                 }
                 else {
-                    content = item.getContent().replaceAll("(?iu)\\b(" + regexp + ")\\b", "<strong>$1</strong>");
+                    content = item.getTaggedContent().replaceAll("(?iu)\\b(" + regexp + ")\\b", "<strong>$1</strong>");
                 }
             }
 
@@ -69,9 +69,9 @@ public class SearchQuotesHelper {
             String textQuote = createTextQuote(phrases, leftPart, rightPart);
             if (textQuote.isEmpty()) {
                 textQuote = item.getTaggedContent();
-            } else {
+            } /*else {
                 textQuote = termsMarker.mark(textQuote);
-            }
+            }*/
             Quote quote = new Quote();
             quote.setNumber(item.getNumber());
             quote.setQuote(textQuote);

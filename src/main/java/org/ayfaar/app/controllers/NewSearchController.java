@@ -81,6 +81,7 @@ public class NewSearchController {
             }
         } else {
             // 4. Поиск фразы (не термин)
+            query = query.replace("!", "");
             searchQueries = asList(query.replace("*", "%"));
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
             searchQueries = asList(query.replace("%", ""));

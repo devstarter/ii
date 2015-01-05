@@ -3,6 +3,7 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.CategoryMap;
+import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,7 @@ public class NewItemController {
     private static final int MAXIMUM_RANGE_SIZE = 50;
     @Inject ItemDao itemDao;
     @Inject CategoryMap categoryMap;
+    @Inject TermsMarker termsMarker;
 
     @RequestMapping
     @ResponseBody
@@ -97,6 +99,15 @@ public class NewItemController {
             return item.getTaggedContent();
         }
         return null;
+    }
+
+    @RequestMapping("{number}/mark")
+    public void reindex(@PathVariable String number) {
+        Item item = itemDao.getByNumber(number);
+        if (item != null) {
+            item.setTaggedContent(termsMarker.mark(item.getContent()));
+            itemDao.save(item);
+        }
     }
 
      private List<ParentPresentation> getParents(String number) {

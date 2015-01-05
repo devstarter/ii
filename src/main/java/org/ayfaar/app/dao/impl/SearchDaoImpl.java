@@ -3,8 +3,9 @@ package org.ayfaar.app.dao.impl;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         Criteria criteria = criteria();
         Disjunction disjunction = Restrictions.disjunction();
 
-        if(fromItemNumber != null) {
+        /*if(fromItemNumber != null) {
             final String columnName = "number";
             String op = ">=";
             criteria.add(new SimpleExpression(columnName, fromItemNumber, op) {
@@ -37,7 +38,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
                     return String.format("CAST(%s as DECIMAL(10,6))%s?", columnName, getOp());
                 }
             });
-        }
+        }*/
 
         for (String alias : aliases) {
             for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»', '-'}) {
@@ -49,7 +50,7 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         }
 
         criteria.add(disjunction).setMaxResults(limit).setFirstResult(skip);
-        criteria.addOrder(Order.asc("orderIndex"));
+//        criteria.addOrder(Order.asc("orderIndex"));
 
         return criteria.list();
     }
