@@ -102,7 +102,7 @@ public class NewItemController {
     }
 
     @RequestMapping("{number}/mark")
-    public void reindex(@PathVariable String number) {
+    public void mark(@PathVariable String number) {
         Item item = itemDao.getByNumber(number);
         if (item != null) {
             item.setTaggedContent(termsMarker.mark(item.getContent()));

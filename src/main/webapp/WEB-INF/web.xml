@@ -20,14 +20,14 @@
     <filter-mapping>
         <filter-name>default</filter-name>
         <url-pattern>/css/*</url-pattern>
-        <url-pattern>/new/css/*</url-pattern>
+        <url-pattern>/old/css/*</url-pattern>
+        <url-pattern>/old/js/*</url-pattern>
+        <url-pattern>/old/lib/*</url-pattern>
+        <url-pattern>/old/images/*</url-pattern>
         <url-pattern>/js/*</url-pattern>
-        <url-pattern>/new/js/*</url-pattern>
         <url-pattern>/libs/*</url-pattern>
-        <url-pattern>/new/lib/*</url-pattern>
         <url-pattern>/uploading/*</url-pattern>
         <url-pattern>/images/*</url-pattern>
-        <url-pattern>/new/images/*</url-pattern>
         <url-pattern>*.html</url-pattern>
         <url-pattern>*.js</url-pattern>
         <url-pattern>*.css</url-pattern>

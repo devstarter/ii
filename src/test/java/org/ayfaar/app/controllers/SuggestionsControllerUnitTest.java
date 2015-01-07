@@ -82,9 +82,15 @@ public class SuggestionsControllerUnitTest {
 
     private List<Map.Entry<String, TermProvider>> transform(List<String> fakeTerms) {
         Map<String, TermsMap.TermProvider> map = new HashMap<String, TermsMap.TermProvider>();
-        for(int i = 0; i < fakeTerms.size(); i++) {
-            map.put(fakeTerms.get(i), aliasesMap.new TermProviderImpl(fakeTerms.get(i), null, false));
+        for (String fakeTerm : fakeTerms) {
+            map.put(fakeTerm, aliasesMap.new TermProviderImpl(fakeTerm, null, false));
         }
         return new ArrayList<Map.Entry<String, TermProvider>>(map.entrySet());
+    }
+
+    @Test
+    public void duplicationsTest() {
+        final String actual = SuggestionsController.addDuplications("abc efg 123");
+        assertEquals("a+b+c+ e+f+g+ 123", actual);
     }
 }

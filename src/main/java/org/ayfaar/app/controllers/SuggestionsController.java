@@ -13,14 +13,15 @@ import java.util.regex.Pattern;
 
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
-import static java.util.regex.Pattern.*;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+import static java.util.regex.Pattern.UNICODE_CASE;
 
 @Controller
 @RequestMapping("api/suggestions")
-public class SuggestionsController{
+public class SuggestionsController {
     @Autowired TermsMap termsMap;
 
-    private List<String> escapeChars = Arrays.asList("(", ")", "[", "]", "{", "}", "*");
+    private List<String> escapeChars = Arrays.asList("(", ")", "[", "]", "{", "}");
     public static final int MAX_SUGGESTIONS = 7;
 
     /**
@@ -30,7 +31,10 @@ public class SuggestionsController{
     @RequestMapping("{q:.+}")
     @ResponseBody
     public List<String> suggestions(@PathVariable String q) {
+        q = q.replace("*", ".*");
+        q = q.replaceAll("\\s+", ".*");
         q = escapeRegexp(q);
+        q = addDuplications(q);
         Queue<String> queriesQueue = new LinkedList<String>(asList(
                 "^"+q,
                 "[\\s\\-]" + q,
@@ -50,6 +54,10 @@ public class SuggestionsController{
         });
 
         return suggestions;
+    }
+
+    protected static String addDuplications(String q) {
+        return q.replaceAll("([A-Za-zА-Яа-яЁё])", "$1+");
     }
 
     public List<String> getSuggestedTerms(String query, List<String> suggestions) {

@@ -22,10 +22,10 @@ public class Router {
     @Value("${OPENSHIFT_HOMEDIR}")
     private String jbossDir;
 
-    @RequestMapping("/")
+    @RequestMapping("/old")
     @ResponseBody
     public Object returnIndex(HttpServletRequest request) throws IOException {
-        String index = "index.html";
+        String index = "old/index.html";
         String path = request.getServletContext().getRealPath(index);
         if (path == null) {
             path = jbossDir+"app-deployments/current/repo/src/main/webapp/"+index;
@@ -33,18 +33,22 @@ public class Router {
         return new FileSystemResource(path);
     }
 
-    @RequestMapping("/new/**")
+    @RequestMapping("/**")
     @ResponseBody
     public Object returnNewIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String index = "new/index.html";
+        String index = "index.html";
         String path = request.getServletContext().getRealPath(index);
 
-        String regexp = "/new/(([tpi]|item|term)/).*";
+        String regexp = "/new/(([tpi]|item|term)/)?.*";
         Pattern pattern = Pattern.compile(regexp);
         Matcher matcher = pattern.matcher(request.getRequestURI());
 
         if(matcher.find()) {
-            String newPath = request.getRequestURI().replace(matcher.group(1), "");
+            String newPath = request.getRequestURI();
+            newPath = newPath.replace("new/", "");
+            if (matcher.group(1) != null) {
+                newPath = newPath.replace(matcher.group(1), "");
+            }
             response.sendRedirect(newPath);
         }
 

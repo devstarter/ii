@@ -2,52 +2,37 @@
 <html lang="ru">
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <base href="/" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../images/favicon.ico" rel="shortcut icon">
+    <title>ИИ</title>
 
-    <title>Интерактивная Ииссиидиология</title>
-    <!--<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,bold,italic" rel="stylesheet" type="text/css" />-->
-    <!--<link href="css/font/font-awesome.min.css" rel="stylesheet" type="text/css" />-->
-	<link href="images/favicon.ico" rel="shortcut icon">
-
-    <script src="libs/kendo/js/jquery.min.js"></script>
-    <!--<script src="libs/jquery/jquery.history.min.js"></script>-->
-    <script src="libs/jquery/jquery.touchwipe.min.js"></script>
-
-    <link href="libs/kendo/styles/kendo.common.min.css" rel="stylesheet" type="text/css" />
-    <link href="libs/kendo/styles/kendo.blueopal.min.css" rel="stylesheet" type="text/css" />
-    <script src="libs/kendo/kendo.custom.min.js"></script>
-    <!--<script src="libs/kendo/kendo.plugins.js"></script>-->
-    <script src="libs/ensure.min.js"></script>
-
-    <!--<script src="libs/noty/jquery.noty.js"></script>-->
-    <!--<script src="libs/noty/layouts/topCenter.js"></script>-->
-    <!--<script src="libs/noty/layouts/center.js"></script>-->
-    <!--<script src="libs/noty/themes/default.js"></script>-->
-
-    <script src="libs/nprogress/nprogress.min.js"></script>
-    <link href="libs/nprogress/nprogress.css" rel="stylesheet" type="text/css" />
-
-    <script src="js/start.js"></script>
-    <!--<script src="js/term.js"></script>-->
-    <!--<script src="js/item.js"></script>-->
-    <script src="js/search.js"></script>
-    <!--<script src="js/auxiliary.js"></script>-->
+    <link href="lib/bootstrap/css/bootstrap.css" type="text/css" rel="stylesheet">
+    <link href="css/style.css" type="text/css" rel="stylesheet">
     <link href="css/icons/style.css" rel="stylesheet" type="text/css" />
-    <link href="css/styles.css" rel="stylesheet" type="text/css" />
+
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/angular/angular-sanitize.min.js"></script>
+    <script src="lib/angular-ui-router.min.js"></script>
+    <script src="lib/ui-bootstrap/ui-bootstrap-0.11.2.min.js"></script>
+
+    <script src="js/controllers/item.js"></script>
+    <script src="js/controllers/home.js"></script>
+    <script src="js/controllers/term.js"></script>
+    <script src="js/controllers/category.js"></script>
+    <script src="js/controllers/paragraph.js"></script>
+    <script src="js/controllers/item-range.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        app.constant('config', {useHtml5Mode: true, apiUrl: "/api/"});
+    </script>
 </head>
-<body>
-<!-- <span style="color: grey;font-size: 1.5em;">ИИССИИДИОЛОГИЯ</span> -->
-<header style="display: none;clear: both">
-    <div>
-        <button class="grey" onclick="window.history.back();false">←Назад</button>
-        <span style="margin: 5px">
-        <input class="search-box" style="float:right;width: 340px;-webkit-box-shadow: none;
-            box-shadow: none;padding: 0;" placeholder="Поиск" />
-        </span>
-    </div>
-</header>
-<div id="content">
-</div>
+
+<body ng-app="app">
+<header ii-header></header>
+
+<div ui-view></div>
+
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -55,14 +40,23 @@
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     ga('create', 'UA-51463207-1', 'ayfaar.org');
 </script>
-<!--<script type="text/javascript">-->
-    <!--var _urq = _urq || [];-->
-    <!--_urq.push(['initSite', '1783942e-e99b-4490-a7e2-d2c6efcf8ceb']);-->
-    <!--(function() {-->
-        <!--var ur = document.createElement('script'); ur.type = 'text/javascript'; ur.async = true;-->
-        <!--ur.src = ('https:' == document.location.protocol ? 'https://cdn.userreport.com/userreport.js' : 'http://cdn.userreport.com/userreport.js');-->
-        <!--var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ur, s);-->
-    <!--})();-->
-<!--</script>-->
+<script type="text/ng-template" id="contribute-form.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Помощь проекту</h3>
+    </div>
+    <div class="modal-body">
+        <input id="search-input" ng-model="term" type="text" class="form-control"
+               ii-lookup placeholder="Введите термин" required
+               typeahead="suggestion for suggestion in $getSuggestions($viewValue)"/>
+        <textarea class="full-width form-control" ng-model="text" style="margin-top: 10px; min-height: 100px"></textarea>
+    </div>
+    <div class="modal-footer btn-group">
+        <button class="btn btn-default" ng-click="quote()">Цитата</button>
+        <button class="btn btn-default" ng-click="link(1)" style="margin: 0">Синоним</button>
+        <button class="btn btn-default" ng-click="link(2)" style="margin: 0">Сокращение</button>
+        <button class="btn btn-default" ng-click="link(4)" style="margin: 0">Космический Код</button>
+        <button class="btn btn-default" ng-click="link(0)" style="margin: 0">Скланённый</button>
+    </div>
+</script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 ﻿var ii = {
-    apiUrl: "api/",
+    apiUrl: "/api/",
     error: function (text) {
         noty({text: text, type: 'error', layout: 'topCenter', timeout: 3000});
     },
