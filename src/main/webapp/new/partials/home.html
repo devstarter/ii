@@ -5,27 +5,24 @@
     <h1>Интерактивная Ииссиидиология</h1>
     <div>
         Поиск пунктов, терминов, словосочетаний в материалах:
-        <table class="full-width">
-            <tr>
-                <td class="full-width">
-                    <live-search fetch-data="searchCallback"
-                                 fetch-delay="777"
-                                 selected="suggestionSelected"
-                                 ng-model="query"
-                                 class="form-control full-width"></live-search>
-                </td>
-                <td>
-                    <button class="btn btn-primary" ng-click="search()">Искать</button>
-                </td>
-            </tr>
-        </table>
-        Примеры поиска: <a href="#?птиц*">птиц*</a>, <a href="#?НАСМ">НАСМ</a>, <a href="#?10.10176">10.10176</a>
+        <div class="input-group">
+            <input ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
+                   ii-lookup
+                   typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
+                   typeahead-on-select="$suggestionSelected($label)">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" ng-click="search(query)">Искать</button>
+            </span>
+        </div>
+        <a href="c/Содержание" class="btn btn-link">Содержание</a>
     </div>
     <div class="footer">
-        <a class="btn" href="https://www.youtube.com/watch?v=6oZJHu1dEnQ" target="_blank">
+        <!--<a class="btn" href="https://www.youtube.com/watch?v=6oZJHu1dEnQ" target="_blank">
             <img src="https://cdn3.iconfinder.com/data/icons/linecons-free-vector-icons-pack/32/video-16.png"/>
             Видео гид</a>
-        <a class="btn" href="#1.0001">Начать чтение</a>
-        <a class="btn" href="#about">О проекте</a>
+        <a class="btn" href="item/1.0001">Начать чтение</a>
+        <a class="btn" href="../#about">О проекте</a>-->
+        <div>Эта версия работает в режиме тестирования. Для возврата на более стабильную версию проследуйте по <a href="/">ссылке</a>.
+        При обнаруженнии любых ошибок прошу сообщать по Skype: <a href="skype:iu3116">iu3116</a> или Email: <a href="mailto:sllouyssgort@gmail.com">email</a></div>
     </div>
 </div>

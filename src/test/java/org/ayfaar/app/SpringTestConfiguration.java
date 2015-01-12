@@ -12,7 +12,9 @@ import javax.servlet.ServletContext;
 @ComponentScan(basePackages = "org.ayfaar.app")
 @PropertySource({
         "classpath:database.properties",
-        "classpath:debug.properties"
+        "classpath:debug.properties",
+        "classpath:mail.properties",
+        "classpath:app.properties"
 })
 @ImportResource({
         "classpath:hibernate.xml",

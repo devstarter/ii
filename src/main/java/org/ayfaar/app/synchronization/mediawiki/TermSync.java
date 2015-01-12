@@ -5,7 +5,7 @@ import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.UID;
-import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.utils.TermsMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
@@ -28,7 +28,7 @@ public class TermSync extends EntitySynchronizer<Term> {
     @Autowired
     TermController termController;
     @Autowired
-    AliasesMap aliasesMap;
+    TermsMap termsMap;
     @Autowired
     LinkDao linkDao;
     @Autowired SyncUtils syncUtils;
@@ -120,7 +120,7 @@ public class TermSync extends EntitySynchronizer<Term> {
 
     public String markTerms(String content) {
         String result = content;
-        for (Map.Entry<String, AliasesMap.Proxy> entry : aliasesMap.entrySet()) {
+        for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
             String key = entry.getKey();
             Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|\\-])|^)(" + key
                     + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|])|$)", UNICODE_CHARACTER_CLASS | UNICODE_CASE | CASE_INSENSITIVE);
@@ -148,6 +148,4 @@ public class TermSync extends EntitySynchronizer<Term> {
         }
         return result;
     }
-
-
 }

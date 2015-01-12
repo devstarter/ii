@@ -1,1 +1,18 @@
-<h1>{{number}}</h1>
+<a ng-click="goPrev()" class="btn btn-link item-link">←</a>
+<h1 class="item-number">{{number}}</h1>
+<a ng-click="goNext()" class="btn btn-link item-link">→</a>
+<div>
+    <span ii-bind="content"></span>
+    <button ng-show="content" class="btn btn-default btn-icon" uri="uri" contribute-button></button>
+</div>
+<br/>
+<p parents></p>
+
+<style type="text/css">
+    .item-number {
+        display: inline;
+    }
+    .item-link {
+        font-size: 3em;
+    }
+</style>

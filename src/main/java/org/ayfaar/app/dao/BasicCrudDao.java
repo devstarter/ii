@@ -63,6 +63,8 @@ public interface BasicCrudDao<E> {
 
     List<E> getLike(String property, @NotNull String value, MatchMode matchMode, int limit);
 
+    List<E> getLike(String property, @NotNull List<String> values, MatchMode matchMode);
+
     /**
      * SQL: ...WHERE <property> REGEXP <regexp>
      *

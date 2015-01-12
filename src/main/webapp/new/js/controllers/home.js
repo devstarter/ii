@@ -1,13 +1,7 @@
-function HomeController($scope, $api, $log, $state) {
-    $scope.searchCallback = function() {
-        return $api.get("v2/search/suggestions/"+$scope.query)
-    };
-    $scope.suggestionSelected = function(suggestion) {
-        $state.go("term", {name: suggestion});
-    };
-    $scope.search = function() {
-        if ($scope.query) {
-            $state.go("search", {query: $scope.query});
+function HomeController($scope, $state) {
+    $scope.search = function(query) {
+        if (query) {
+            $state.goToTerm(query);
         }
     };
 }

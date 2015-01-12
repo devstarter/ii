@@ -160,10 +160,10 @@
 <body>
     <div class="panel add-quote">
         <h3>Связать термин с пунктом</h3>
-        <input placeholder="Термин" class="term"/>
-        <input placeholder="Пункт" class="item"/>
+        <input placeholder="Термин" class="term" id="sdfsdf"/>
+        <input type="number" placeholder="Пункт" class="item" id="ghjfhj"/>
         <br/>
-        <textarea placeholder="Цитата (не обязательно)" class="quote k-input"></textarea>
+        <textarea placeholder="Цитата (не обязательно)" class="quote k-input" id="hjrtrd"></textarea>
         <div class="controls">
             <button onclick="sendAddQuote()" class="k-button">Добавить цитату</button>
             <button onclick="resetAddQuote()" class="k-button">Обнулить</button>
@@ -187,12 +187,15 @@
         <h3>Добавить термин</h3>
         <input placeholder="Термин" class="term"/>
         <br/>
-        <textarea placeholder="Короткое описание" class="short k-input"></textarea>
+        <textarea placeholder="Короткое описание" class="short quote k-input" style="height: 75px"></textarea>
         <br/>
-        <textarea placeholder="Описание" class="long k-input"></textarea>
+        <textarea placeholder="Описание" class="long quote k-input"></textarea>
         <div class="controls">
             <button onclick="sendAddTerm()" class="k-button">Добавить термин</button>
         </div>
+    </div>
+    <div class="panel">
+        <a href="/api/v2/search/clean">clean cache (new search)</a>
     </div>
 </body>
 </html>
