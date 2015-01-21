@@ -122,8 +122,12 @@ public class NewSearchController {
     }
 
     private String prepareQuery(String query) {
-        // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
-        return query != null ? query.toLowerCase().trim() : null;
+        if (query != null) {
+            query = query.replace("Обсуждение:", "");
+            query = query.replace("_", " ");
+            query = query.toLowerCase().trim();
+        }
+        return  query;
     }
 
     @RequestMapping("clean")

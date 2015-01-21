@@ -5,9 +5,6 @@ import org.springframework.context.ApplicationEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-/**
- * Created by Pas8sion on 09.11.2014.
- */
 public abstract class PushEvent extends ApplicationEvent {
     public static final String BASE_URL = "http://ii.ayfaar.org";
 
@@ -32,7 +29,7 @@ public abstract class PushEvent extends ApplicationEvent {
 
     protected String getUrlToTerm(String term) {
         try {
-            return BASE_URL+"/new/"+ URLEncoder.encode(term, "UTF-8");
+            return BASE_URL+"/"+ URLEncoder.encode(term, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

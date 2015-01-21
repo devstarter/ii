@@ -13,12 +13,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TermsTaggingUpdateListener implements ApplicationListener<PushEvent> {
-    @Autowired
-    private TermsTaggingUpdater taggingUpdater;
-    @Autowired
-    private ApplicationContext ctx;
-    @Autowired
-    private AsyncTaskExecutor taskExecutor;
+    @Autowired TermsTaggingUpdater taggingUpdater;
+    @Autowired ApplicationContext ctx;
+    @Autowired AsyncTaskExecutor taskExecutor;
 
     @Override
     public void onApplicationEvent(final PushEvent event) {

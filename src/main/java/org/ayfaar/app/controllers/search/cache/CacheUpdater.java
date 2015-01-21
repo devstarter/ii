@@ -13,8 +13,6 @@ import org.ayfaar.app.utils.TermsMap;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -22,7 +20,6 @@ import java.util.List;
 
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
-@Component
 public class CacheUpdater {
     @Autowired
     private NewSearchController searchController;
@@ -37,7 +34,7 @@ public class CacheUpdater {
     @Inject
     CustomObjectMapper objectMapper;
 
-    @Scheduled(cron="0 0 19 * * ?") // это 3 по Москве, так как время сервера в EST, таблица соответствия http://www.worldtimebuddy.com/?qm=1&lid=5,703448,524901&h=5&date=2014-12-28&sln=19-20
+//    @Scheduled(cron="0 0 19 * * ?") // это 3 по Москве, так как время сервера в EST, таблица соответствия http://www.worldtimebuddy.com/?qm=1&lid=5,703448,524901&h=5&date=2014-12-28&sln=19-20
     public void update() throws IOException {
         long start = System.currentTimeMillis();
 

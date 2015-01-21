@@ -188,6 +188,10 @@ public class TermController {
         Term term = termDao.getByName(name);
         if (term == null) {
             term = termDao.save(new Term(name, shortDescription, description));
+            if (shortDescription != null)
+                term.setTaggedShortDescription(termsMarker.mark(shortDescription));
+            if (description != null)
+                term.setTaggedDescription(termsMarker.mark(description));
             String termName = term.getName();
             log.info("Added: " + termName);
             if (TermUtils.isComposite(termName)) {
@@ -204,11 +208,13 @@ public class TermController {
             if (shortDescription != null && !shortDescription.isEmpty()) {
                 oldShortDescription = term.getShortDescription();
                 term.setShortDescription(shortDescription);
+                term.setTaggedShortDescription(termsMarker.mark(shortDescription));
             }
             String oldDescription = null;
             if (description != null && !description.isEmpty()) {
                 oldDescription = term.getDescription();
                 term.setDescription(description);
+                term.setTaggedDescription(termsMarker.mark(description));
             }
             termDao.save(term);
             publisher.publishEvent(new TermUpdatedEvent(term, oldShortDescription, oldDescription));

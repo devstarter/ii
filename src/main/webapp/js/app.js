@@ -1,7 +1,7 @@
 var hash = window.location.hash;
 if (hash) {
     window.location.hash = '';
-    window.location.pathname = window.location.pathname + hash.replace("#", "");
+    window.location.pathname = window.location.pathname + hash.replace("#?", "").replace("#", "");
 }
 var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     .config(function($locationProvider, $urlRouterProvider, $stateProvider, config) {

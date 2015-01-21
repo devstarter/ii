@@ -52,8 +52,8 @@ public class DBCache extends ConcurrentMapCache {
                     isTerm = true;
                 }
             }
-            if(!isTerm) {
-                eventPublisher.publishEvent(new SearchEvent(searchKey, isTerm));
+            if (!isTerm && searchKey.query.indexOf("Обсуждение:") != 0) {
+                eventPublisher.publishEvent(new SearchEvent(searchKey));
             }
 
         } else if(key instanceof ContentsCacheKey) {

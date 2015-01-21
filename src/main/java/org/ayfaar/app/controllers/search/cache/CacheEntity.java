@@ -20,7 +20,7 @@ public class CacheEntity {
     @JoinColumn(name = "uid", insertable = false, updatable = false)
     private UID uid;
 
-    @Column(name = "content", columnDefinition = "TEXT")
+    @Column(name = "content", columnDefinition = "MEDIUMTEXT")
     private String content;
 
     public CacheEntity(UID uid, String content) {

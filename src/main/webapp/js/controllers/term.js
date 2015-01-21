@@ -9,7 +9,7 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
         $state.goToItem(query);
         return
     }
-    query = query.replace("+", " ").trim();
+    query = query.replace("+", " ").replace("_", " ").replace("Обсуждение:", "").trim();
     $scope.name = query;
     document.title = query;
     $scope.state = $state;

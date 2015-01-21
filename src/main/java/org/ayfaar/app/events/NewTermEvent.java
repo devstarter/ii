@@ -7,6 +7,7 @@ public class NewTermEvent extends TermPushEvent {
     public NewTermEvent(Term term) {
         super(term.getName());
         title = "Новый термин: "+term.getName();
-        message = term.getShortDescription() + "\n\n" + term.getDescription();
+        if (term.getShortDescription() != null || term.getDescription() != null)
+            message = term.getShortDescription() + "\n\n" + term.getDescription();
     }
 }
