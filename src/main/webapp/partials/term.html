@@ -59,11 +59,11 @@
                     <div ii-bind="quote.full ? quote.full : quote.quote"></div>
                     <cite>&mdash; <a ng-click="state.goToItem(quote.number)">{{quote.number}}</a>
                         <span ng-show="quote.showControlls">
-                            <button ng-show="termFound" class="btn btn-default btn-icon" ng-click="rateUp(quote)" title="Полезная цитата">
+                            <button ng-show="termFound" class="btn btn-default btn-icon" ng-click="rateUp(quote)" title="Привязать цитату к термину" tooltip-placement="bottom" tooltip="Привязать цитату к термину">
                                 <i class="icon-star"></i>
                             </button>
                             <button ng-hide="quote.full" class="btn btn-default btn-icon" ng-click="expand(quote)"
-                                    title="Показать весь пункт">
+                                    title="Показать весь пункт" tooltip-placement="bottom" tooltip="Показать весь пункт">
                                 <i class="icon-maximize"></i>
                             </button>
                         </span>

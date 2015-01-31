@@ -9,6 +9,11 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
         $state.goToItem(query);
         return
     }
+    if (isItemRange(query)) {
+        var items = query.split("-");
+        $state.goToItemRange(items[0], items[1]);
+        return
+    }
     query = query.replace("+", " ").replace("_", " ").replace("Обсуждение:", "").trim();
     $scope.name = query;
     document.title = query;
@@ -72,7 +77,7 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
             return;
         }
 
-        if (confirm("Цитата будет помечена как помогающая понять этот термин, вы согласны?")) {
+        if (confirm("Вы можете принять участие в полезном наполнении этого сайта. Добавить в список избранных цитат для этого термина?")) {
             var data = {
                 uri: "ии:пункт:" + item.number,
                 query: $scope.query

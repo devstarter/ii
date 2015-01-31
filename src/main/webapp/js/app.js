@@ -533,6 +533,9 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         $state.goToItem = function(number) {
             originStateGo.bind($state)("item", {number: number})
         };
+        $state.goToItemRange = function(from, to) {
+            originStateGo.bind($state)("item-range", {from: from, to: to})
+        };
         $state.goToTerm = function(name) {
             originStateGo.bind($state)("term", {name: name})
         };
@@ -577,6 +580,9 @@ function copyObjectTo(from, to) {
 
 function isItemNumber(s) {
     return s.match("^\\d+\\.\\d+$");
+}
+function isItemRange(s) {
+    return s.match("^\\d+\\.\\d+-\\d+\\.\\d+$");
 }
 function getSelectedText() {
     if (window.getSelection) {
