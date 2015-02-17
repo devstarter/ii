@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.regex.Pattern.*;
 import static org.ayfaar.app.utils.RegExpUtils.w;
 import static org.ayfaar.app.utils.TermUtils.isCosmicCode;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
@@ -202,6 +203,17 @@ public class SearchController {
 
             if (!has) terms.add(prime);
         }
+
+        for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
+            String word = entry.getKey();
+            pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|])|^)(" + word
+                    + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|])|$)", UNICODE_CHARACTER_CLASS | UNICODE_CASE | CASE_INSENSITIVE);
+            Matcher contentMatcher = pattern.matcher(query);
+            if (contentMatcher.find()) {
+                terms.add(entry.getValue().getTerm());
+            }
+        }
+
         ModelMap modelMap = new ModelMap();
         modelMap.put("terms", terms);
         modelMap.put("articles", articleDao.getLike("name", query, MatchMode.ANYWHERE));
