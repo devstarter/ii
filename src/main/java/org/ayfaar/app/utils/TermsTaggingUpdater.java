@@ -61,11 +61,7 @@ public class TermsTaggingUpdater {
 
     private void updateItems(List<Item> items) {
         for (Item item : items) {
-//            if (item.getTaggedContent() == null) {
-                item.setTaggedContent(termsMarker.mark(item.getContent()));
-                itemDao.save(item);
-//                System.out.println(item.getNumber());
-//            }
+            update(item);
         }
     }
 
@@ -94,5 +90,10 @@ public class TermsTaggingUpdater {
 
         final String duration = DurationFormatUtils.formatDuration(System.currentTimeMillis() - time, "HH:mm:ss");
         publisher.publishEvent(new SimplePushEvent(format("Тегирование для %s завершено за %s", morphAlias, duration)));
+    }
+
+    public void update(Item item) {
+        item.setTaggedContent(termsMarker.mark(item.getContent()));
+        itemDao.save(item);
     }
 }

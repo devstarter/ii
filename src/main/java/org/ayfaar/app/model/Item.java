@@ -16,7 +16,7 @@ import static java.lang.Float.parseFloat;
 @Uri(nameSpace = "ии:пункт:", field = "number")
 public class Item extends UID {
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String number;
     @Column(columnDefinition = "TEXT")
     private String content;
