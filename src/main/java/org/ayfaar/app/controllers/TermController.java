@@ -49,6 +49,7 @@ public class TermController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @Model
     public ModelMap get(@RequestParam("name") String termName, @RequestParam(required = false) boolean mark) {
+        termName = termName.replace("_", " ");
         TermsMap.TermProvider provider = termsMap.getTermProvider(termName);
         if (provider == null) {
             throw new QuietException(format("Термин `%s` отсутствует", termName));
