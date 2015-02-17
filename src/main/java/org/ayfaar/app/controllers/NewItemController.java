@@ -1,9 +1,13 @@
 package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.ItemDao;
+import org.ayfaar.app.events.SimplePushEvent;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.CategoryMap;
 import org.ayfaar.app.utils.TermsMarker;
+import org.ayfaar.app.utils.TermsTaggingUpdater;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,12 +32,27 @@ public class NewItemController {
     @Inject ItemDao itemDao;
     @Inject CategoryMap categoryMap;
     @Inject TermsMarker termsMarker;
+    @Inject AsyncTaskExecutor taskExecutor;
+    @Inject TermsTaggingUpdater taggingUpdater;
+    @Inject ApplicationEventPublisher eventPublisher;
 
     @RequestMapping
     @ResponseBody
     public ItemPresentation get(@RequestParam String number) {
-        Item item = itemDao.getByNumber(number);
+        final Item item = itemDao.getByNumber(number);
         notNull(item, format("Item `%s` not found", number));
+
+        if (item.getNext() != null) {
+            taskExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    final Item nextItem = itemDao.get(item.getNext());
+//                    eventPublisher.publishEvent(new SimplePushEvent(nextItem.getNumber()+" start tagging"));
+                    taggingUpdater.update(nextItem);
+                    eventPublisher.publishEvent(new SimplePushEvent(nextItem.getNumber()+" tagged"));
+                }
+            });
+        }
 
         return new ItemPresentation(item, generate(Item.class, getPrev(item.getNumber())));
     }
