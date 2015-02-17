@@ -467,6 +467,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                     }, 5000, true);
                 };
                 $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
+                    scope.$root.hideLoop = false;
                     if (toState.name != "home") {
                         scope.visible = true;
                     }
@@ -481,31 +482,6 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
         return {
             template: '<span ng-repeat="parent in parents" ii-ref="parent"><span class="btn btn-link">{{parent.name}}</span>{{$last ? "" : "/"}}</span>'
         }
-    })
-    .controller("HeaderController", function() {
-
-        /*var body = angular.element(document);//.find('body');
-
-        $scope.alert = function(e) {
-            alert(e);
-        };
-        body.bind('mouseup', function(e) {
-            var text = getSelectedText();
-            if (text) {
-                $scope.state = $state.current.name+$stateParams.number;
-                $scope.text = text;
-                $scope.$apply();
-            }
-        });
-
-        function getSelectedText() {
-            if (window.getSelection) {
-                return window.getSelection().toString();
-            } else if (document.selection) {
-                return document.selection.createRange().text;
-            }
-            return null;
-        }*/
     })
     .run(function($state, entityService, $rootScope, analytics){
         var originStateGo = $state.go;

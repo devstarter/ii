@@ -7,7 +7,7 @@
         Поиск пунктов, терминов, словосочетаний в материалах:
         <div class="input-group">
             <input ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
-                   ii-lookup ng-keyup="alert(1)"
+                   ii-lookup
                    typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
                    typeahead-on-select="$suggestionSelected($label)">
             <span class="input-group-btn">

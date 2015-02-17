@@ -1,6 +1,19 @@
 <div class="term">
     <span ng-hide="editMode" class="current-term-title">{{name}}</span>
-
+    <div ng-show="editMode">
+        <div class="input-group" style="padding-top: 20px">
+            <input ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
+                   ii-lookup
+                   typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
+                   typeahead-on-select="$suggestionSelected($label)">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" ng-click="search(query)">Искать</button>
+            </span>
+        </div>
+        <span style="color:#808080">Побробуйте со звёздочкой после корня слова для учёта всех вариантов
+            окончания слова. Например "лийллусцивный" - "лийллусцивн*" (будут учтены "лийллусцивн<u>о</u>", "лийллусцивн<u>ые</u>",
+            "лийллусцивн<u>ость</u>" и т. д.</span>
+    </div>
     <div class="block loading" ng-show="loading">Загрузка...</div>
     <div ng-hide="loading && termFound">
         <span class="info" ng-show="from">Перенапраленно с: {{from.name}}</span>

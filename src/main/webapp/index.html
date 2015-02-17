@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" ng-app="app">
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <base href="/" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ metaDescription }}">
+    <meta name="keywords" content="{{ metaKeywords }}">
+
     <link href="../images/favicon.ico" rel="shortcut icon">
     <title>ИИ</title>
 
@@ -28,8 +31,8 @@
     </script>
 </head>
 
-<body ng-app="app">
-<header ii-header></header>
+<body>
+<header ii-header ng-hide="hideLoop"></header>
 
 <div ui-view></div>
 
@@ -42,7 +45,7 @@
 </script>
 <script type="text/ng-template" id="contribute-form.html">
     <div class="modal-header">
-        <h3 class="modal-title">Помощь проекту</h3>
+        <h3 class="modal-title">Панель модератора</h3>
     </div>
     <div class="modal-body">
         <input id="search-input" ng-model="term" type="text" class="form-control"
@@ -55,7 +58,7 @@
         <button class="btn btn-default" ng-click="link(1)" style="margin: 0">Синоним</button>
         <button class="btn btn-default" ng-click="link(2)" style="margin: 0">Сокращение</button>
         <button class="btn btn-default" ng-click="link(4)" style="margin: 0">Космический Код</button>
-        <button class="btn btn-default" ng-click="link(0)" style="margin: 0">Скланённый</button>
+        <button class="btn btn-default" ng-click="link(0)" style="margin: 0">Склонённый</button>
     </div>
 </script>
 </body>

@@ -30,7 +30,20 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
         if (data && !data.description && !data.shortDescription && !data.quotes.length) {
             $scope.search();
         }
+        if (data.description || data.shortDescription) {
+            var d = (data.shortDescription ? data.shortDescription+"\n" : "")
+                +(data.description ? data.description : "");
+            $scope.$root.metaDescription = d.trim();
+        }
+        var keywords = '';
+        for(i in data.related) {
+            keywords += ","+ data.related[i].name;
+        }
+        $scope.$root.metaKeywords = keywords;
+        $scope.$root.hideLoop = false;
     }, function () {
+        $scope.editMode = true;
+        $scope.$root.hideLoop = true;
         $scope.search();
     })
     ['finally'](function () {
@@ -104,7 +117,11 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
         $state.go(entity);
     };
 
-    $scope.search = function() {
+    $scope.search = function(newQuery) {
+        if (newQuery) {
+            $state.goToTerm(newQuery);
+            return;
+        }
         if (currentQuery == query) {
             return;
         }
