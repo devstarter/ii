@@ -25,7 +25,8 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             })
             .state('article', {
                 url: "/a/:id",
-                templateUrl: "partials/article.html"
+                templateUrl: "partials/article.html",
+                controller: ArticleController
             })
             .state('item', {
                 url: "/{number:\\d+\\.\\d+}",
@@ -145,6 +146,11 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                     return api.get('category', {name: name, _cache: true});
                 }
             },
+            article: {
+                get: function(id) {
+                    return api.get('article/'+id, {_cache: true});
+                }
+            },
             search: {
                 term: function(query) {
                     return api.get("search/term", {query: query})
@@ -252,6 +258,8 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                         return uri.replace("категория:параграф:", "");
                     case 'category':
                         return uri.replace("категория:", "");
+                    case 'article':
+                        return uri.replace("статья:", "");
                 }
             },
             getType: function(uri) {
@@ -268,6 +276,9 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 if (uri.indexOf("категория:") === 0) {
                     return 'category'
                 }
+                if (uri.indexOf("статья:") === 0) {
+                    return 'article'
+                }
             }
         };
         return service;
@@ -283,7 +294,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                     var entity = $scope[$attr.ngModel];
 //                    var uiSref = "term({name:'"+name+"'})";
 //                    $attr.$set('uiSref', uiSref);
-                    $element.append(entityService.getName(entity));
+                    $element.append(entity.hasOwnProperty("name") ? entity.name : entityService.getName(entity));
                     $element.bind('click', function() {
                         $state.go(entity)
                     })
@@ -514,6 +525,9 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                         return;
                     case "paragraph":
                         originStateGo.bind($state)("paragraph", {number: entityService.getName(uri)});
+                        return;
+                    case "article":
+                        originStateGo.bind($state)("article", {id: entityService.getName(uri)});
                         return;
                 }
             } else {

@@ -4,6 +4,7 @@ import org.ayfaar.app.dao.ArticleDao;
 import org.ayfaar.app.model.Article;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.utils.TermsMapImpl;
+import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,15 +20,15 @@ import static org.springframework.util.Assert.notNull;
 public class ArticleController {
 
     @Autowired ArticleDao articleDao;
-    @Autowired
-    TermsMapImpl aliasesMap;
-
+    @Autowired TermsMapImpl aliasesMap;
+    @Autowired TermsMarker termsMarker;
 
     @RequestMapping("{id}")
     @ResponseBody
     public Article get(@PathVariable Integer id) {
         Article article = articleDao.get("id", id);
         notNull(article, "Article not found");
+        article.setContent(termsMarker.mark(article.getContent()));
         return article;
     }
 
