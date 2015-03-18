@@ -49,7 +49,7 @@ public class NewItemController {
                     final Item nextItem = itemDao.get(item.getNext());
 //                    eventPublisher.publishEvent(new SimplePushEvent(nextItem.getNumber()+" start tagging"));
                     taggingUpdater.update(nextItem);
-                    eventPublisher.publishEvent(new SimplePushEvent(nextItem.getNumber()+" tagged"));
+//                    eventPublisher.publishEvent(new SimplePushEvent(nextItem.getNumber()+" tagged"));
                 }
             });
         }

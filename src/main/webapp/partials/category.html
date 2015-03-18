@@ -4,10 +4,10 @@
 <p ii-bind="description"></p>
 
 <div ng-repeat='child in children' ng-style="{'padding-bottom': child.children ? '50px' : 0}" >
-    <h2 ii-ref='child'>{{child.name}}</h2>
+    <h2 ii-ref='child'>{{child._label}}</h2>
     {{child.description}}
-    <div ng-repeat='subchild in child.children'>
-        <h3 ii-ref='subchild'>{{subchild.name}}</h3>
+    <div ng-repeat='subchild in child.children' style="padding-left: 30px;">
+        <h3 ii-ref='subchild'>{{subchild._label}}</h3>
         {{subchild.description}}
     </div>
 </div>

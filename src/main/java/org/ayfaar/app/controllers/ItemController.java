@@ -29,8 +29,7 @@ public class ItemController {
     @Autowired TermDao termDao;
     @Autowired TermController termController;
     @Autowired TermsMap termsMap;
-    @Autowired
-    TermsMapImpl aliasesMap;
+    @Autowired TermsMapImpl aliasesMap;
     @Autowired CategoryMap categoryMap;
 
     @RequestMapping(value = "{number}", method = POST)

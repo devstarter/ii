@@ -3,7 +3,6 @@ package org.ayfaar.app.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,7 +17,6 @@ import java.util.regex.Pattern;
 @Controller
 public class Router {
     @Autowired ServletContext context;
-    private final DefaultRedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     @Value("${OPENSHIFT_HOMEDIR}")
     private String jbossDir;
 
@@ -28,7 +26,7 @@ public class Router {
         String index = "old/index.html";
         String path = request.getServletContext().getRealPath(index);
         if (path == null) {
-            path = jbossDir+"app-deployments/current/repo/src/main/webapp/"+index;
+            path = jbossDir+"app-root/runtime/repo/src/main/webapp/"+index;
         }
         return new FileSystemResource(path);
     }
@@ -45,7 +43,7 @@ public class Router {
         }
         String regexp = "/new/(([tpi]|item|term)/)?.*";
         Pattern pattern = Pattern.compile(regexp);
-        Matcher matcher = pattern.matcher(request.getRequestURI());
+        Matcher matcher = pattern.matcher(url);
 
         if(matcher.find()) {
             String newPath = url;
@@ -54,6 +52,12 @@ public class Router {
                 newPath = newPath.replace(matcher.group(1), "");
             }
             response.sendRedirect(newPath);
+            return null;
+        }
+
+        matcher = Pattern.compile("index\\.php\\?option=com_search&searchword=(.*)").matcher(url+"?"+request.getQueryString());
+        if (matcher.find()) {
+            response.sendRedirect(matcher.group(1));
             return null;
         }
         //

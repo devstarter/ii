@@ -1,3 +1,7 @@
+term:hover {
+    border-bottom: 2px dotted #035697;
+    text-decoration: none;
+}
 .modal-footer {
     width: 100%;
 }

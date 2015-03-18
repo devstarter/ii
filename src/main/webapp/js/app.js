@@ -18,6 +18,11 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                     $rootScope.$broadcast('home-state-entered');
                 }
             })
+            .state('tagger', {
+                url: "/tagger",
+                templateUrl: "partials/tagger.html",
+                controller: TaggerController
+            })
             .state('article', {
                 url: "/a/:id",
                 templateUrl: "partials/article.html"
@@ -130,6 +135,9 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 },
                 getShortDescription: function(termName) {
                     return api.get("term/get-short-description", {name: termName, _cache: true})
+                },
+                getTermsInText: function(text) {
+                    return api.post("v2/term/get-terms-in-text", {text: text})
                 }
             },
             category: {
@@ -247,6 +255,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 }
             },
             getType: function(uri) {
+                uri = uri.hasOwnProperty("uri") ? uri.uri : uri;
                 if (uri.indexOf("ии:термин:") === 0) {
                     return 'term'
                 }
@@ -304,11 +313,15 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             }
         };
     })
-    .directive('iiRef', function($state) {
+    .directive('iiRef', function($state, entityService) {
         return {
             link: function (scope, element, attrs, modelCtrl) {
+                var obj = scope[attrs.iiRef];
+                if (!obj) return;
+                var label = obj.hasOwnProperty("name") ? obj.name : entityService.getName(obj);
+                obj._label = entityService.getType(obj) == 'paragraph' ? '§' + label : label;
                 element.bind('click', function() {
-                    $state.go(scope[attrs.iiRef])
+                    $state.go(obj)
                 })
             }
         };
@@ -478,9 +491,10 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             }
         };
     })
-    .directive('parents', function() {
+    .directive('parents', function(entityService) {
         return {
-            template: '<span ng-repeat="parent in parents" ii-ref="parent"><span class="btn btn-link">{{parent.name}}</span>{{$last ? "" : "/"}}</span>'
+            template: '<span ng-repeat="parent in parents" ii-ref="parent">' +
+                    '<span class="btn btn-link">{{parent._label}}</span>{{$last ? "" : "/"}}</span>'
         }
     })
     .run(function($state, entityService, $rootScope, analytics){

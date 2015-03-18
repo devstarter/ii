@@ -30,11 +30,11 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
         if (data && !data.description && !data.shortDescription && !data.quotes.length) {
             $scope.search();
         }
-        if (data.description || data.shortDescription) {
-            var d = (data.shortDescription ? data.shortDescription+"\n" : "")
-                +(data.description ? data.description : "");
-            $scope.$root.metaDescription = d.trim();
-        }
+
+        var metaDescription = (data.shortDescription ? data.shortDescription+"\n" : "")
+            +(data.description ? data.description : "");
+        $scope.$root.metaDescription = metaDescription.trim();
+
         var keywords = '';
         for(i in data.related) {
             keywords += ","+ data.related[i].name;
