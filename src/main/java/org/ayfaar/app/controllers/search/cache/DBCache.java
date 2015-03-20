@@ -52,7 +52,7 @@ public class DBCache extends ConcurrentMapCache {
                     isTerm = true;
                 }
             }
-            if (!isTerm && searchKey.query.indexOf("Обсуждение:") != 0) {
+            if (!isTerm && searchKey.query.indexOf("Обсуждение:") != 0 && searchKey.query.indexOf("_") != 0) {
                 eventPublisher.publishEvent(new SearchEvent(searchKey));
             }
 

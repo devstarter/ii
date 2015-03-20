@@ -11,4 +11,15 @@ public class StringUtils {
         }
         return text.trim();
     }
+
+    public static String trim(String text, String subjectToTrim) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        if (text.endsWith(subjectToTrim)) {
+            final int i = text.lastIndexOf(subjectToTrim);
+            return text.substring(0, i);
+        }
+        return text;
+    }
 }

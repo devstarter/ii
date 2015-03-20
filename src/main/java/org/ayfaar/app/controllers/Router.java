@@ -65,7 +65,7 @@ public class Router {
         String index = "index.html";
         String path = request.getServletContext().getRealPath(index);
         if (path == null) {
-            path = jbossDir+"app-deployments/current/repo/src/main/webapp/"+index;
+            path = jbossDir+"app-root/runtime/repo/src/main/webapp/"+index;
         }
         return new FileSystemResource(path);
     }

@@ -157,6 +157,11 @@ public class TermsMapImpl implements TermsMap {
         public boolean isCode() {
             return Link.CODE.equals(getType());
         }
+
+        @Override
+        public boolean hasCode() {
+            return !getListProviders(Link.CODE, getName()).isEmpty();
+        }
     }
 
     @Override

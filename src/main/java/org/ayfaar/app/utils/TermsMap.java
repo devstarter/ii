@@ -33,5 +33,6 @@ public interface TermsMap {
         boolean isAbbreviation();
         boolean isAlias();
         boolean isCode();
+        boolean hasCode();
     }
 }
