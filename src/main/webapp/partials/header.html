@@ -1,0 +1,15 @@
+<div ng-show="visible">
+    <a class="icon-search btn btn-link" ng-hide="expanded" ng-click="expand()"></a>
+    <div class="input-group" ng-show="expanded">
+        <input id="search-input" ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
+               ii-lookup ng-blur="closeWithDelay()"
+               typeahead-append-to-body="true" ng-focus="focused = true"
+               typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
+               typeahead-on-select="expanded = false;$suggestionSelected($label)"/>
+        <span class="input-group-btn">
+          <button class="btn btn-primary" ng-click="search()"><i class="icon-search"></i></button>
+        </span>
+    </div>
+</div>
+    <!--<aside ng-show="expanded">
+    </aside>-->

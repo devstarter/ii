@@ -3,7 +3,7 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.dao.ArticleDao;
 import org.ayfaar.app.model.Article;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.utils.TermsMapImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,11 +15,12 @@ import java.util.List;
 import static org.springframework.util.Assert.notNull;
 
 @Controller
-@RequestMapping("article")
+@RequestMapping("api/article")
 public class ArticleController {
 
     @Autowired ArticleDao articleDao;
-    @Autowired AliasesMap aliasesMap;
+    @Autowired
+    TermsMapImpl aliasesMap;
 
 
     @RequestMapping("{id}")

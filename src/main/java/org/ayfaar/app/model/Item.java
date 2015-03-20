@@ -1,32 +1,41 @@
 package org.ayfaar.app.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.ayfaar.app.annotations.Uri;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 
+import static java.lang.Float.parseFloat;
+
 @Entity
 @PrimaryKeyJoinColumn(name="uri")
-//@Audited
+@Setter @Getter
 @Uri(nameSpace = "ии:пункт:", field = "number")
-public class Item extends UID implements Comparable<Item>{
+public class Item extends UID {
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String number;
     @Column(columnDefinition = "TEXT")
     private String content;
     @Column(columnDefinition = "TEXT")
-    private String wiki;
+    private String taggedContent;
+//    @Column(columnDefinition = "TEXT")
+//    private String wiki;
     private String next;
+    // field for optimization order operation on database
+    private Float orderIndex;
 
     public Item(String number, String content) {
-        this.number = number;
+        this(number);
         this.content = content;
     }
 
     public Item(String number) {
         this.number = number;
+        orderIndex = parseFloat(number);
     }
 
     public Item() {
@@ -36,44 +45,10 @@ public class Item extends UID implements Comparable<Item>{
         return s.matches("^\\d\\d?\\.\\d{4}\\d?$");
     }
 
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getNext() {
-        return next;
-    }
-
-    public void setNext(String next) {
-        this.next = next;
-    }
-
-    public String getWiki() {
-        return wiki;
-    }
-
-    public void setWiki(String wiki) {
-        this.wiki = wiki;
-    }
-
-    @Override
-    public int compareTo(Item that) {
-        double itemNumber1 = Double.parseDouble(this.getNumber());
-        double itemNumber2 = Double.parseDouble(that.getNumber());
-
-        return (itemNumber1 == itemNumber2) ? 0 : (itemNumber1 > itemNumber2) ? 1 : -1;
-
-    }
+    /*
+    order index sql:
+    ALTER TABLE `item` ADD COLUMN `order_index` DECIMAL(10,5) NULL DEFAULT NULL AFTER `next`;
+	update item set order_index = cast(number as decimal(10, 5));
+	ALTER TABLE `item` ADD INDEX `order_index` (`order_index`);
+     */
 }
