@@ -6,8 +6,10 @@ import org.ayfaar.app.controllers.search.SearchQuotesHelper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.controllers.search.cache.DBCache;
 import org.ayfaar.app.dao.SearchDao;
+import org.ayfaar.app.events.LinkPushEvent;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.TermsMap;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,24 +19,18 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ayfaar.app.utils.TermsMap.TermProvider;
 import static java.util.Arrays.asList;
+import static org.ayfaar.app.utils.TermsMap.TermProvider;
 
 @Controller
 @RequestMapping("api/v2/search")
 public class NewSearchController {
     public static final int PAGE_SIZE = 20;
-    @Inject
-    private SearchQuotesHelper handleItems;
-
-    @Inject
-    private SearchDao searchDao;
-
-    @Inject
-    private TermsMap termsMap;
-
-    @Inject
-    protected DBCache cache;
+    @Inject SearchQuotesHelper handleItems;
+    @Inject SearchDao searchDao;
+    @Inject TermsMap termsMap;
+    @Inject DBCache cache;
+    @Inject ApplicationEventPublisher eventPublisher;
 
     /**
      * Поиск будет производить только по содержимому Item
@@ -78,6 +74,9 @@ public class NewSearchController {
                             PAGE_SIZE - foundItems.size() + 1, fromItemNumber));
                     searchQueries.addAll(aliasesSearchQueries);
                 }
+            }
+            if (foundItems.isEmpty()) {
+                eventPublisher.publishEvent(new LinkPushEvent("Не найдено - "+provider.getName(), provider.getName()));
             }
         } else {
             // 4. Поиск фразы (не термин)
