@@ -66,6 +66,14 @@ public class TermController {
         modelMap.put("uri", term.getUri());
         modelMap.put("name", term.getName());
         if (mark) {
+            if (term.getTaggedShortDescription() == null && term.getShortDescription() != null) {
+                term.setTaggedShortDescription(termsMarker.mark(term.getShortDescription()));
+                termDao.save(term);
+            }
+            if (term.getTaggedDescription() == null && term.getDescription() != null) {
+                term.setTaggedDescription(termsMarker.mark(term.getDescription()));
+                termDao.save(term);
+            }
             modelMap.put("shortDescription", term.getTaggedShortDescription());
             modelMap.put("description", term.getTaggedDescription());
         } else {
