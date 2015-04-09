@@ -57,7 +57,7 @@ public class Router {
 
         matcher = Pattern.compile("index\\.php\\?option=com_search&searchword=(.*)").matcher(url+"?"+request.getQueryString());
         if (matcher.find()) {
-            response.sendRedirect(matcher.group(1));
+            response.sendRedirect(matcher.group(1).replace("+", "%20"));
             return null;
         }
         //

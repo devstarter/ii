@@ -2,8 +2,10 @@ package org.ayfaar.app.dao.impl;
 
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
+import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 
 
 @SuppressWarnings("unchecked")
@@ -16,6 +18,11 @@ public class ItemDaoImpl extends AbstractHibernateDAO<Item> implements ItemDao {
     @Override
     public Item getByNumber(String number) {
         return get("number", number);
+    }
+
+    @Override
+    public List<String> getAllNumbers() {
+        return criteria().setProjection(Projections.property("number")).list();
     }
 
     /*@Override
