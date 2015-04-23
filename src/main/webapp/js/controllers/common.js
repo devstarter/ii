@@ -44,7 +44,7 @@ function ItemRangeController($scope, $stateParams, $api) {
 
     $scope.from = $stateParams.from;
     $scope.to = $stateParams.to;
-    document.title = $scope.from+"-"+$scope.to;
+    document.title = "Абзацы " + $scope.from+" - "+$scope.to;
     $scope.loading = true;
 
     $api.item.getRange($scope.from, $scope.to)
@@ -60,6 +60,9 @@ function ParagraphController($scope, $stateParams, $api, $state) {
     $scope.number = $stateParams.number;
     document.title = "§"+$scope.number;
     $scope.loading = true;
+    $scope.goNext = function() {
+        $state.go($scope.next);
+    }
 
     $api.category.get("параграф:"+$scope.number)
         .then(function(paragrapg){

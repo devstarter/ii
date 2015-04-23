@@ -34,7 +34,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 controller: ItemController
             })
             .state('item-range', {
-                url: "/{from:\\d+\\.\\d+}-{to:\\d+\\.\\d+}",
+                url: "/{from:\\d+\\.\\d+}\\s*-\\s*{to:\\d+\\.\\d+}",
                 templateUrl: "partials/item-range.html",
                 controller: ItemRangeController
             })
