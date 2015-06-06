@@ -329,6 +329,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             link: function (scope, element, attrs, modelCtrl) {
                 var obj = scope[attrs.iiRef];
                 if (!obj) return;
+                element.attr('href', getUrl(obj));
                 var label = obj.hasOwnProperty("name") ? obj.name : entityService.getName(obj);
                 obj._label = entityService.getType(obj) == 'paragraph' ? '§' + label : label;
                 element.bind('click', function() {
@@ -342,7 +343,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             restrict: 'E',
             compile : function(element, attr, linker) {
                 return function ($scope, $element, $attr) {
-                    var term = $attr.id;
+                    var term = $attr.id.replace(" ", "").replace("<strong>", "").replace("</strong>", "");
                     var primeTerm = $attr.title;
                     var originalContent = $element.html();
                     var expanded;
@@ -353,7 +354,8 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                         var moreAfterPrimeTerm = e.target.id == "+";
 
                         if (more && !moreAfterPrimeTerm) {
-                            $state.goToTerm(term);
+                            window.open(term, '_blank');
+                            //$state.goToTerm(term);
                             return;
                         }
                         if (expanded && !moreAfterPrimeTerm) {
@@ -504,8 +506,8 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
     })
     .directive('parents', function(entityService) {
         return {
-            template: '<span ng-repeat="parent in parents" ii-ref="parent">' +
-                    '<span class="btn btn-link">{{parent._label}}</span>{{$last ? "" : "/"}}</span>'
+            template: '<span ng-repeat="parent in parents">' +
+                    '<a class="btn btn-link" ii-ref="parent">{{parent._label}}</a>{{$last ? "" : "/"}}</span>'
         }
     })
     .run(function($state, entityService, $rootScope, analytics){
@@ -580,6 +582,15 @@ function copyObjectTo(from, to) {
             to[p] = from[p];
         }
     }
+}
+function getUrl(uri) {
+    var url = uri.hasOwnProperty("uri") ? uri.uri : uri;
+    url = url.replace("статья:", "a/");
+    url = url.replace("категория:", "c/");
+    url = url.replace("категория:параграф:", "");
+    url = url.replace("ии:термин:", "");
+    url = url.replace("ии:пункт:", "");
+    return url;
 }
 
 function isItemNumber(s) {

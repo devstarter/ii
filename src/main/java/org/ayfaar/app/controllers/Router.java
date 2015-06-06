@@ -60,6 +60,12 @@ public class Router {
             response.sendRedirect(matcher.group(1).replace("+", "%20"));
             return null;
         }
+
+        matcher = Pattern.compile("/[^:]+:([^:]+)$").matcher(url);
+        if (matcher.find()) {
+            response.sendRedirect(matcher.group(1));
+            return null;
+        }
         //
 
         String index = "index.html";

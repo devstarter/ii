@@ -32,7 +32,7 @@
         <blockquote ng-repeat="quote in quotes" ng-mouseover="quote.showControlls = true"
                     ng-mouseleave="quote.showControlls = false">
             <div ii-bind="quote.full ? quote.full : quote.quote"></div>
-            <cite>&mdash; <span><entity ng-model="quote"/></span>
+            <cite>&mdash; <a ii-ref="quote">{{quote._label}}</a>
                 <span ng-show="quote.showControlls">
                     <button ng-hide="quote.full || quote.loadingFull" class="btn btn-default btn-icon" ng-click="expand(quote)"
                             title="Показать весь пункт">
@@ -43,7 +43,7 @@
             </cite>
         </blockquote>
         <span ng-show="related.length">Также связан с</span>
-        <entity ng-model="link" ng-repeat="link in related" class="related-btn btn btn-link"/>
+        <a ii-ref="link" ng-repeat="link in related" class="related-btn btn btn-link">{{link._label}}</a>
     </div>
     <a ng-hide="foundQuotes || loadingContents || loadingTerms" class="search btn btn-primary" ng-click="search()">
         <i class="icon-search"></i> Искать упоминания в томах
@@ -70,7 +70,7 @@
                 <blockquote ng-repeat="quote in foundQuotes" ng-mouseover="quote.showControlls = true"
                             ng-mouseleave="quote.showControlls = false">
                     <div ii-bind="quote.full ? quote.full : quote.quote"></div>
-                    <cite>&mdash; <a ng-click="state.goToItem(quote.number)">{{quote.number}}</a>
+                    <cite>&mdash; <a ii-ref="quote">{{quote._label}}</a>
                         <span ng-show="quote.showControlls">
                             <button ng-show="termFound" class="btn btn-default btn-icon" ng-click="rateUp(quote)" title="Привязать цитату к термину" tooltip-placement="bottom" tooltip="Привязать цитату к термину">
                                 <i class="icon-star"></i>

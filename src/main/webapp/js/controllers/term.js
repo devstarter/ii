@@ -144,6 +144,9 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
     function searchInContent() {
         $api.search.content($scope.query, pageCounter).then(function (r) {
             pageCounter++;
+            for(var i in r.quotes) {
+                r.quotes[i].uri = "ии:пункт:"+r.quotes[i].number;
+            }
             $scope.foundQuotes = $scope.foundQuotes ? $scope.foundQuotes.concat(r.quotes) : r.quotes;
             if ($scope.foundQuotes.length == 0) {
                 // no result
