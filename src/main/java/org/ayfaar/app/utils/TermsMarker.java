@@ -40,8 +40,8 @@ public class TermsMarker {
             String word = entry.getKey();
             // составляем условие по которому проверяем есть ли это слов в тексте
             //Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|\\-])|^)(" + word
-            Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|])|^)(" + word
-                    + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|])|$)", UNICODE_CHARACTER_CLASS | UNICODE_CASE | CASE_INSENSITIVE);
+            Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|])|^)(около|слабо|не|анти|разно|дву|внутри|пост|меж|мощно|взаимо|внутри|не)?("
+                    + word + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|])|$)", UNICODE_CHARACTER_CLASS | UNICODE_CASE | CASE_INSENSITIVE);
             Matcher contentMatcher = pattern.matcher(content);
             // если есть:
             if (contentMatcher.find()) {
@@ -60,7 +60,8 @@ public class TermsMarker {
                     }
                     // сохраняем найденое слово из текста так как оно может быть в разных регистрах,
                     // например с большой буквы, или полностью большими буквами
-                    String foundWord = matcher.group(3);
+                    String wordPrefix = matcher.group(3);
+                    String foundWord = matcher.group(4);
                     String charBefore = matcher.group(2) != null ? matcher.group(2) : "";
                     String charAfter = matcher.group(5) != null ? matcher.group(5) : "";
                     // формируем маску для тегирования, title="%s" это дополнительное требования, не описывал ещё в задаче
@@ -74,8 +75,9 @@ public class TermsMarker {
                     String attributes = hasShortDescription ? " has-short-description=\"true\"" : "";
                     attributes += termProvider.hasMainTerm() ?  format(" title=\"%s\"", mainTermProvider.getName()) : "";
 
-                    String replacer = format("%s<term id=\"%s\"%s>%s</term>%s",
+                    String replacer = format("%s%s<term id=\"%s\"%s>%s</term>%s",
                             charBefore,
+                            wordPrefix,
                             hasMainTerm ? mainTermProvider.getName() : termProvider.getName(),
                             attributes,
                             foundWord,
