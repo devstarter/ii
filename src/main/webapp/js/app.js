@@ -343,7 +343,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             restrict: 'E',
             compile : function(element, attr, linker) {
                 return function ($scope, $element, $attr) {
-                    var term = $attr.id.replace(" ", "").replace("<strong>", "").replace("</strong>", "");
+                    var term = $attr.id.replace("<strong>", "").replace("</strong>", "").trim();
                     var primeTerm = $attr.title;
                     var originalContent = $element.html();
                     var expanded;

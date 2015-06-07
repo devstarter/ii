@@ -77,7 +77,7 @@ public class TermsMarker {
 
                     String replacer = format("%s%s<term id=\"%s\"%s>%s</term>%s",
                             charBefore,
-                            wordPrefix,
+                            wordPrefix == null ? "" : wordPrefix,
                             hasMainTerm ? mainTermProvider.getName() : termProvider.getName(),
                             attributes,
                             foundWord,
