@@ -1,7 +1,6 @@
 package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.ItemDao;
-import org.ayfaar.app.events.SimplePushEvent;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.CategoryMap;
 import org.ayfaar.app.utils.TermsMarker;
@@ -28,7 +27,7 @@ import static org.springframework.util.Assert.notNull;
 @RequestMapping("api/v2/item")
 public class NewItemController {
 
-    private static final int MAXIMUM_RANGE_SIZE = 50;
+    private static final int MAXIMUM_RANGE_SIZE = 200;
     @Inject ItemDao itemDao;
     @Inject CategoryMap categoryMap;
     @Inject TermsMarker termsMarker;
@@ -47,14 +46,23 @@ public class NewItemController {
                 @Override
                 public void run() {
                     final Item nextItem = itemDao.get(item.getNext());
-//                    eventPublisher.publishEvent(new SimplePushEvent(nextItem.getNumber()+" start tagging"));
                     taggingUpdater.update(nextItem);
-//                    eventPublisher.publishEvent(new SimplePushEvent(nextItem.getNumber()+" tagged"));
                 }
             });
         }
 
-        return new ItemPresentation(item, generate(Item.class, getPrev(item.getNumber())));
+        return new ItemPresentation(item, generate(Item.class, getPrev(item.getNumber())), true);
+    }
+
+    @RequestMapping("{number}/{more}more")
+    @ResponseBody
+    public List<ItemPresentation> getMore(@PathVariable String number, @PathVariable Integer more) {
+        List<ItemPresentation> presentations = new ArrayList<ItemPresentation>();
+
+        for (Item item : itemDao.getNext(number, more)) {
+            presentations.add(new ItemPresentation(item));
+        }
+        return presentations;
     }
 
     @RequestMapping("range")
@@ -62,15 +70,17 @@ public class NewItemController {
     public List<ItemPresentation> get(@RequestParam String from, @RequestParam String to) {
         Item item = itemDao.getByNumber(from);
         notNull(item, format("Item `%s` not found", from));
+        notNull(itemDao.getByNumber(to), format("Item `%s` not found", to));
+
         List<ItemPresentation> items = new ArrayList<ItemPresentation>();
 
         final ItemPresentation itemPresentation = new ItemPresentation(item);
-        itemPresentation.parents = getParents(item.getNumber());
+//        itemPresentation.parents = getParents(item.getNumber());
         items.add(itemPresentation);
 
         while (!item.getNumber().equals(to)) {
             item = itemDao.get(item.getNext());
-            items.add(new ItemPresentation(item, item.getTaggedContent()));
+            items.add(new ItemPresentation(item));
             if (items.size() > MAXIMUM_RANGE_SIZE) {
                 throw new RuntimeException(format("Maximum range size reached (from %s to %s)", from, to));
             }
@@ -87,16 +97,16 @@ public class NewItemController {
         public String previous;
         public List<ParentPresentation> parents;
 
-        public ItemPresentation(Item item, String previous) {
+        public ItemPresentation(Item item, String previous, Boolean loadParents) {
             this.uri = item.getUri();
             this.content = item.getTaggedContent();
             this.previous = previous;
             number = item.getNumber();
             next = item.getNext();
-            parents = getParents(item.getNumber());
+            parents = loadParents ? getParents(item.getNumber()) : null;
         }
         public ItemPresentation(Item item) {
-            this(item, null);
+            this(item, null, false);
         }
     }
 

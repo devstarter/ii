@@ -10,5 +10,7 @@ public interface ItemDao extends BasicCrudDao<Item> {
 
     List<String> getAllNumbers();
 
+    List<Item> getNext(String number, Integer more);
+
 //    List<Item> find(String query);
 }

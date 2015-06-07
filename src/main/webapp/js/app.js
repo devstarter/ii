@@ -324,10 +324,11 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             }
         };
     })
-    .directive('iiRef', function($state, entityService) {
+    .directive('iiRef', function($state, entityService, $parse) {
         return {
             link: function (scope, element, attrs, modelCtrl) {
-                var obj = scope[attrs.iiRef];
+                var getter = $parse(attrs.iiRef);
+                var obj = getter(scope);//[attrs.iiRef];
                 if (!obj) return;
                 element.attr('href', getUrl(obj));
                 var label = obj.hasOwnProperty("name") ? obj.name : entityService.getName(obj);

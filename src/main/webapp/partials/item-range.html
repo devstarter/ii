@@ -4,5 +4,8 @@
 <p ng-repeat='item in items'>
     <a href ii-ref='item'>{{item.number}}</a>.
     <span ii-bind="item.content"></span>
+    <a ng-show="$last" class="btn btn-primary" ii-ref="item.next" style="display: table; color: white; margin-top: 10px">
+        Продолжить чтение >
+    </a>
 </p>
 
