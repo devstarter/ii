@@ -3,4 +3,8 @@ debug.properties
 target
 /II.rar
 /src/test/test.iml
+<<<<<<< HEAD
 /.idea
+=======
+/.idea
+>>>>>>> 080cd17ae17b68b4cec6512498198d8332690c7c
