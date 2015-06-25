@@ -3,18 +3,23 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:cache="http://www.springframework.org/schema/cache"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/mvc
                            http://www.springframework.org/schema/mvc/spring-mvc.xsd
                            http://www.springframework.org/schema/context
-                           http://www.springframework.org/schema/context/spring-context.xsd">
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/cache
+                           http://www.springframework.org/schema/cache/spring-cache.xsd">
 
-
-    <context:component-scan base-package="org.ayfaar.app.spring.converter"/>
+    <context:component-scan base-package="org.ayfaar.app"/> <!--.spring.converter"/>-->
 
     <mvc:annotation-driven />
-    <!--<cache:annotation-driven />-->
+
+    <cache:annotation-driven cache-manager="cacheManager" />
+
+    <mvc:resources mapping="/css/**" location="/css/" />
 
     <mvc:interceptors>
         <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
@@ -84,9 +89,31 @@
         </property>
     </bean>
 
-    <bean class="org.springframework.mail.javamail.JavaMailSenderImpl"/>
+    <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" >
+		<property name="host" value="smtp.gmail.com" />
+		<property name="port" value="587" />
+		<property name="username" value="${mail.user}" />
+		<property name="password" value="${mail.password}" />
+	 
+		<property name="javaMailProperties">
+		   <props>
+				  <prop key="mail.smtp.auth">true</prop>
+				  <prop key="mail.smtp.starttls.enable">true</prop>
+			   </props>
+		</property>
+	</bean>
 
     <bean id="addAccessControlAllowOriginFilter" class="org.ayfaar.app.utils.servlet.AddAccessControlAllowOriginFilter"/>
+
+    <!--pushbullet-->
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <property name="messageConverters" ref="messageConverters"/>
+    </bean>
+
+    <bean class="com.pushbullet.PushbulletClient">
+        <property name="key" value="${pushbullet.key}"/>
+        <property name="restTemplate" ref="restTemplate"/>
+    </bean>
 
     <!--<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
         <property name="caches">
@@ -96,4 +123,9 @@
             </set>
         </property>
     </bean>-->
+    <bean id="cacheManager" class="org.ayfaar.app.controllers.search.cache.DBCacheManager" />
+
+    <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+        <property name="poolSize" value="2"/>
+    </bean>
 </beans>
