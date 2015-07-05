@@ -8,9 +8,9 @@
         http://www.springframework.org/schema/task/spring-task.xsd">
 
     <task:annotation-driven />
-    <!--<task:scheduled-tasks>-->
-        <!--обновлять кеш спустя сутки со старта и через сутки после каждого завершения обновления-->
-        <!--<task:scheduled ref="cacheUpdater" method="update" fixed-delay="86400000" initial-delay="86400000"/>-->
-    <!--</task:scheduled-tasks>-->
+    <task:scheduled-tasks>
+        <!--обновлять кеш спустя час со старта и через неделю после каждого завершения обновления-->
+        <task:scheduled ref="cacheUpdater" method="update" fixed-delay="604800000" initial-delay="360000"/>
+    </task:scheduled-tasks>
     <bean id="cacheUpdater" class="org.ayfaar.app.controllers.search.cache.CacheUpdater"/>
 </beans>

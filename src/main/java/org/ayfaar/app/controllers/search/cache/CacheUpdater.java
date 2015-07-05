@@ -20,6 +20,7 @@ import java.util.List;
 
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
+//@Component
 public class CacheUpdater {
     @Autowired
     private NewSearchController searchController;

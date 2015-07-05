@@ -52,7 +52,7 @@
         <div class="block loading" ng-show="loadingTerms">Загрузка терминов...</div>
         <div ng-show="terms.length">
             <h3>В названиях терминов</h3>
-            <button class="btn btn-link" ng-repeat="term in terms" ng-click="navigate(term)">{{term.name}}</button>
+            <button class="btn btn-link" ng-repeat="term in terms" ng-click="navigate(term.name)">{{term.name}}</button>
         </div>
         <div ng-show="articles.length">
             <h3>Статьи из 9 тома</h3>

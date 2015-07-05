@@ -113,8 +113,9 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
             });
     };
 
-    $scope.navigate = function(entity) {
-        $state.go(entity);
+    $scope.navigate = function(termName) {
+        window.open(termName, '_blank');
+        //$state.go(entity);
     };
 
     $scope.search = function(newQuery) {

@@ -29,7 +29,7 @@ public class TermsMarker {
     public String mark(String content) {
         if (content == null || content.isEmpty()) return content;
 
-        content = content.replace("–","-");
+        content = content.replace("–","-").replace("—","-");
         // копируем исходный текст, в этой копии мы будем производить тегирование слов
         StringBuilder result = new StringBuilder(content);
         //перед обходом отсортируем по длине термина, сначала самые длинные
@@ -40,7 +40,7 @@ public class TermsMarker {
             String word = entry.getKey();
             // составляем условие по которому проверяем есть ли это слов в тексте
             //Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|\\-])|^)(" + word
-            Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|])|^)(около|слабо|не|анти|разно|дву|внутри|пост|меж|мощно|взаимо|внутри|не)?("
+            Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|])|^)(около|слабо|высоко|не|анти|разно|дву|внутри|пост|меж|мощно|взаимо|внутри|не)?("
                     + word + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|])|$)", UNICODE_CHARACTER_CLASS | UNICODE_CASE | CASE_INSENSITIVE);
             Matcher contentMatcher = pattern.matcher(content);
             // если есть:

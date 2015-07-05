@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class NewSearchController {
     @Inject TermsMap termsMap;
     @Inject DBCache cache;
     @Inject ApplicationEventPublisher eventPublisher;
+//    @Inject CacheUpdater cacheUpdater;
 
     /**
      * Поиск будет производить только по содержимому Item
@@ -129,9 +131,14 @@ public class NewSearchController {
         return  query;
     }
 
-    @RequestMapping("clean")
+    @RequestMapping("cache/clean")
     public void cleanCache() {
         cache.clear();
+    }
+
+    @RequestMapping("cache/update")
+    public void updateCache() throws IOException {
+//        cacheUpdater.update();
     }
 
     public Object searchWithoutCache(String query, Integer pageNumber, String fromItemNumber) {
