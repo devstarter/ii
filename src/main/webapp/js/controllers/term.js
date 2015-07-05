@@ -143,7 +143,7 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
     };
 
     function searchInContent() {
-        $api.search.content($scope.query, pageCounter).then(function (r) {
+        $api.search.content($scope.query, $scope.startSearchFrom, pageCounter).then(function (r) {
             pageCounter++;
             for(var i in r.quotes) {
                 r.quotes[i].uri = "ии:пункт:"+r.quotes[i].number;
@@ -172,5 +172,11 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
 
     function rateComplete() {
         alert("Ваш голос учтён, благодарим за помощь! :)")
+    }
+
+    $scope.advancedSearch = function() {
+        $scope.foundQuotes = [];
+        $scope.loadingContents = true;
+        searchInContent();
     }
 }

@@ -44,8 +44,8 @@ public class NewSearchController {
     @ResponseBody
     // возвращаем Object чтобы можно было вернуть закешированный json или SearchResultPage
     public Object search(@RequestParam String query,
-                                   @RequestParam Integer pageNumber,
-                                   @RequestParam(required = false) String fromItemNumber) {
+                         @RequestParam Integer pageNumber,
+                         @RequestParam(required = false) String startFrom) {
         // 1. Очищаем введённую фразу от лишних пробелов по краям и переводим в нижний регистр
         query = prepareQuery(query);
 
@@ -65,18 +65,11 @@ public class NewSearchController {
             searchQueries = provider.getMorphs();
             // 4. Произвести поиск
             // 4.1. Сначала поискать совпадение термина в различных падежах
-            foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
-            if (foundItems.size() < PAGE_SIZE) {
-                // 4.2. Если количества не достаточно для заполнения страницы то поискать по синонимам
-                List<TermProvider> aliases = getAllAliases(provider);
-                // Если у термина вообще есть синонимы:
-                if (!aliases.isEmpty()) {
-                    List<String> aliasesSearchQueries = getAllMorphs(aliases);
-                    foundItems.addAll(searchDao.findInItems(aliasesSearchQueries, skipResults,
-                            PAGE_SIZE - foundItems.size() + 1, fromItemNumber));
-                    searchQueries.addAll(aliasesSearchQueries);
-                }
-            }
+            List<TermProvider> aliases = getAllAliases(provider);
+            List<String> aliasesSearchQueries = getAllMorphs(aliases);
+            searchQueries.addAll(aliasesSearchQueries);
+            foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, startFrom);
+
             if (foundItems.isEmpty()) {
                 eventPublisher.publishEvent(new LinkPushEvent("Не найдено - "+provider.getName(), provider.getName()));
             }
@@ -84,7 +77,7 @@ public class NewSearchController {
             // 4. Поиск фразы (не термин)
             query = query.replace("!", "");
             searchQueries = asList(query.replace("*", "%"));
-            foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, fromItemNumber);
+            foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, startFrom);
             searchQueries = asList(query.replace("%", ""));
         }
 

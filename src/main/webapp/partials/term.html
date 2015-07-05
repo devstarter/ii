@@ -66,7 +66,15 @@
                 Упоминаний в текстах томов не найденны, подкорректируйте фразу.
             </div>
             <div ng-show="foundQuotes.length">
-                <h3>Цитаты из томов</h3>
+                <span class="h3" style="display: inline-block;">Цитаты из томов</span>
+                <a class="btn" ng-class="{'btn-link': !showAdvancedSearch, 'btn-success': showAdvancedSearch}" ng-click="showAdvancedSearch = !showAdvancedSearch">Расширенный поиск</a>
+                <div ng-show="showAdvancedSearch" class="advanced-search-block">
+                    <label style="font-weight: normal">
+                        Начать поиск со следующего абзаца или тома:
+                        <input class="form-control" style="display: inline; width: 100px" ng-model="startSearchFrom"/>
+                        <a class="btn btn-primary" ng-click="advancedSearch()">Обновить</a>
+                    </label>
+                </div>
                 <blockquote ng-repeat="quote in foundQuotes" ng-mouseover="quote.showControlls = true"
                             ng-mouseleave="quote.showControlls = false">
                     <div ii-bind="quote.full ? quote.full : quote.quote"></div>
@@ -172,6 +180,12 @@
     }
     .btn-group .btn {
         margin: 0;
+    }
+    .advanced-search-block {
+        margin: 20px 0px;
+        border: 2px solid rgb(238, 238, 238);
+        padding: 10px 10px 5px 10px;
+        border-radius: 5px;
     }
 </style>
 

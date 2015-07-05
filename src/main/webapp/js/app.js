@@ -155,9 +155,10 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 term: function(query) {
                     return api.get("search/term", {query: query})
                 },
-                content: function(query, page) {
+                content: function(query, startFrom, page) {
                     return api.get("v2/search", {
                         query: query,
+                        startFrom: startFrom ? startFrom : "",
                         pageNumber: page
                     })
                 },

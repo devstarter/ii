@@ -3,9 +3,8 @@ package org.ayfaar.app.dao.impl;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.HibernateException;
+import org.hibernate.criterion.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,21 +23,19 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         return hasMore;
     }
 
-    public List<Item> findInItems(List<String> aliases, int skip, int limit, String fromItemNumber) {
+    public List<Item> findInItems(List<String> aliases, int skip, int limit, String startFrom) {
         Criteria criteria = criteria();
         Disjunction disjunction = Restrictions.disjunction();
 
-        /*if(fromItemNumber != null) {
-            final String columnName = "number";
-            String op = ">=";
-            criteria.add(new SimpleExpression(columnName, fromItemNumber, op) {
+        if(startFrom != null && !startFrom.isEmpty() && !startFrom.equals("undefined")) {
+            criteria.add(new SimpleExpression("orderIndex", Float.valueOf(startFrom), ">=") {
                 @Override
                 public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery) throws HibernateException {
-                    // можно переделать для сравнения с order_index
-                    return String.format("CAST(%s as DECIMAL(10,6))%s?", columnName, getOp());
+                    return " order_index >= ?";
                 }
             });
-        }*/
+            criteria.addOrder(Order.asc("orderIndex"));
+        }
 
         for (String alias : aliases) {
             for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»', '-'}) {
@@ -50,7 +47,6 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         }
 
         criteria.add(disjunction).setMaxResults(limit).setFirstResult(skip);
-//        criteria.addOrder(Order.asc("orderIndex"));
 
         return criteria.list();
     }
