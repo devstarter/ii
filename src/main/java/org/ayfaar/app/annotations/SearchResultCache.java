@@ -11,6 +11,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({METHOD})
 @Retention(RUNTIME)
-@Cacheable(value = "DBCache", key = "new org.ayfaar.app.controllers.search.cache.SearchCacheKey(#query, #pageNumber)")
+@Cacheable(value = "DBCache", key = "new org.ayfaar.app.controllers.search.cache.SearchCacheKey(#query, #startFrom, #pageNumber)")
 public @interface SearchResultCache {
 }

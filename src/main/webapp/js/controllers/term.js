@@ -177,6 +177,7 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
     $scope.advancedSearch = function() {
         $scope.foundQuotes = [];
         $scope.loadingContents = true;
+        pageCounter = 0;
         searchInContent();
     }
 }

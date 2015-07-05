@@ -40,7 +40,7 @@ public class DBCache extends ConcurrentMapCache {
         if (key instanceof SearchCacheKey) {
             SearchCacheKey searchKey = (SearchCacheKey) key;
             boolean isTerm = false;
-            if (searchKey.page == 0) {
+            if (searchKey.page == 0 && (searchKey.startFrom == null || searchKey.startFrom.isEmpty())) {
                 final TermsMap.TermProvider provider = termsMap.getTermProvider(searchKey.query);
                 String termUri = null;
                 if (provider != null) {

@@ -53,7 +53,7 @@ public class DBCacheUnitTest {
     @Test
     public void testPutNotTermStore() throws IOException {
         String termName = "Вектор";
-        SearchCacheKey key = new SearchCacheKey(termName, 0);
+        SearchCacheKey key = new SearchCacheKey(termName, "", 0);
         SearchResultPage page = new SearchResultPage();
 
         dbCache.put(key, page);
@@ -70,7 +70,7 @@ public class DBCacheUnitTest {
     public void testPutSearchResultPageForMainTerm() throws IOException {
         Term term = new Term("Душа человека");
         Term mainTerm = new Term("АСТТМАЙ-РАА-А");
-        SearchCacheKey key = new SearchCacheKey(term.getName(), 1);
+        SearchCacheKey key = new SearchCacheKey(term.getName(), "", 1);
         SearchResultPage page = new SearchResultPage();
 
         TermProvider provider = aliasesMap.new TermProviderImpl(UriGenerator.generate(Term.class, term.getName()),
@@ -98,7 +98,7 @@ public class DBCacheUnitTest {
     public void testPutSearchResultPageWhenMainTermIsNull() throws IOException {
         Term term = new Term("Амплификационные Поток");
 
-        SearchCacheKey key = new SearchCacheKey(term.getName(), 0);
+        SearchCacheKey key = new SearchCacheKey(term.getName(), "", 0);
         SearchResultPage page = new SearchResultPage();
 
         String uri = UriGenerator.generate(Term.class, "Амплификационные Поток");
@@ -122,7 +122,7 @@ public class DBCacheUnitTest {
     @Test
     public void testGettingSearchResultPageFromCacheInMemory() throws IOException {
         Term term = new Term("Миру");
-        SearchCacheKey key = new SearchCacheKey(term.getName(), 1);
+        SearchCacheKey key = new SearchCacheKey(term.getName(), "", 1);
         SearchResultPage page = new SearchResultPage();
 
         when(termsMap.getTerm(term.getName())).thenReturn(term);
@@ -141,7 +141,7 @@ public class DBCacheUnitTest {
     public void testGettingSearchResultPageFromCacheInDatabase() {
         Term term = new Term("АСТТМАЙ-РАА-А");
         term.setUri(UriGenerator.generate(Term.class, term.getName()));
-        SearchCacheKey key = new SearchCacheKey(term.getName(), 0);
+        SearchCacheKey key = new SearchCacheKey(term.getName(), "", 0);
         String uri = UriGenerator.generate(Term.class, term.getName());
         TermProvider provider = aliasesMap.new TermProviderImpl(uri, null, false);
 
@@ -173,7 +173,7 @@ public class DBCacheUnitTest {
     public void testInvocationEventPublisherOnlyForNotTerm() {
         Term term = new Term("АСТТМАЙ-РАА-А");
         term.setUri(UriGenerator.generate(Term.class, term.getName()));
-        SearchCacheKey key = new SearchCacheKey(term.getName(), 0);
+        SearchCacheKey key = new SearchCacheKey(term.getName(), "", 0);
 
         when(termsMap.getTermProvider(term.getName())).thenReturn(null);
 
@@ -186,7 +186,7 @@ public class DBCacheUnitTest {
     public void testNotInvocationEventPublisherForTerm() {
         Term term = new Term("АСТТМАЙ-РАА-А");
         term.setUri(UriGenerator.generate(Term.class, term.getName()));
-        SearchCacheKey key = new SearchCacheKey(term.getName(), 0);
+        SearchCacheKey key = new SearchCacheKey(term.getName(), "", 0);
         String uri = UriGenerator.generate(Term.class, term.getName());
         TermProvider provider = aliasesMap.new TermProviderImpl(uri, null, false);
 

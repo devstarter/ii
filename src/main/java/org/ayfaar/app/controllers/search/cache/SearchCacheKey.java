@@ -7,5 +7,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class SearchCacheKey {
     public final String query;
+    public final String startFrom;
     public final Integer page;
 }

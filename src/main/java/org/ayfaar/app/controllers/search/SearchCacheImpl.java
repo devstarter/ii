@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class SearchCacheImpl implements SearchCache{
+public class SearchCacheImpl implements SearchCache {
     private Map<Object, SearchResultPage> cache;
 
     public SearchCacheImpl() {
