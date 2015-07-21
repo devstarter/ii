@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static org.hibernate.criterion.Restrictions.like;
+import static org.ayfaar.app.utils.LikeExpression.like;
 
 @Repository
 public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchDao {
@@ -40,9 +40,10 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
         for (String alias : aliases) {
             for (char endChar : new char[]{'?', '!', ',', '.', ' ', '"', ';', ':', ')', '»', '-'}) {
                 for (char startChar : new char[]{'-', ' ', '(', '«'})  {
-                    disjunction.add(like("content", startChar + alias + endChar, MatchMode.ANYWHERE));
+//                    disjunction.add(like("content", startChar + alias + endChar, MatchMode.ANYWHERE));
+                    disjunction.add(like("content", "%"+startChar + alias + endChar+"%", '\\'));
                 }
-                disjunction.add(like("content", alias + endChar, MatchMode.START));
+                disjunction.add(like("content", alias + endChar+"%", '\\'));
             }
         }
 
