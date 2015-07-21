@@ -106,7 +106,8 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 $http({
                     url: apiUrl+url+serializeGet(data),
                     method: "GET",
-                    cache: cache
+                    cache: cache,
+                    timeout: 300000
                 }).then(function(response){
                         deferred.resolve(response.data)
                     },function(response){

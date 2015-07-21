@@ -24,8 +24,8 @@ import java.util.List;
 
 import static org.ayfaar.app.utils.UriGenerator.generate;
 
-@Controller
-@RequestMapping("evernote")
+//@Controller
+//@RequestMapping("evernote")
 //@EnableScheduling
 public class EvernoteSync {
     @Autowired EvernoteBot bot;
