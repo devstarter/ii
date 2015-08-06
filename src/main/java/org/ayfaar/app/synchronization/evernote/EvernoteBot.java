@@ -19,13 +19,11 @@ import lombok.Data;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.ayfaar.app.model.Item;
 import org.htmlcleaner.HtmlCleaner;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component
-@Lazy
+//@Component
+//@Lazy
 public class EvernoteBot {
 //    private static final String SANDBOX_AUTH_TOKEN = "S=s1:U=8ec6c:E=14df1be8cf4:C=1469a0d60f7:P=1cd:A=en-devtoken:V=2:H=95063e0650870375ceab5794def758ce";
     private static final String AUTH_TOKEN = "S=s2:U=23b8d:E=14e070668bd:C=146af553cc3:P=1cd:A=en-devtoken:V=2:H=45afea3eecc7db1ed47916383b5a6827";

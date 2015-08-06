@@ -4,6 +4,8 @@ import org.apache.commons.io.FileUtils;
 import org.ayfaar.app.SpringTestConfiguration;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.ItemsHelper;
+import org.ayfaar.app.utils.TermsTaggingUpdater;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -21,14 +23,16 @@ public class ItemsImporter {
 //    private static String skipUntilNumber = "1.0780";
     private static boolean saveAllowed = true;
     private static ItemDao itemDao;
+    private static TermsTaggingUpdater taggingUpdater;
 
     public static void main(String[] args) throws Docx4JException, IOException {
         currentItem = null;
 
         ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
         itemDao = ctx.getBean(ItemDao.class);
+        taggingUpdater = ctx.getBean(TermsTaggingUpdater.class);
 
-        for(String line: FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\Том 15.txt"))) {
+        for(String line: FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-archive\\text\\Том 4.txt"))) {
 
             Matcher matcher = compile("(\\d+\\.\\d\\d\\d\\d+)\\.\\s(.+)").matcher(line);
             if (matcher.find()) {
@@ -55,7 +59,9 @@ public class ItemsImporter {
 //            currentItem.setUri(UriGenerator.generate(currentItem));
         }
         currentItem.setContent(currentItem.getContent().trim());
-        itemDao.save(currentItem);
+        currentItem.setContent(ItemsHelper.clean(currentItem.getContent()));
+        taggingUpdater.update(currentItem); //saved inside update
+//        itemDao.save(currentItem);
 
         if (prevItem != null) {
             prevItem.setNext(currentItem.getUri());

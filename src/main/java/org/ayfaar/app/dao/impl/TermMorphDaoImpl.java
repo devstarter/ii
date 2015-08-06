@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static org.hibernate.criterion.Restrictions.ilike;
+import static org.hibernate.criterion.Restrictions.eq;
 
 @Repository
 public class TermMorphDaoImpl extends AbstractHibernateDAO<TermMorph> implements TermMorphDao {
@@ -18,7 +18,7 @@ public class TermMorphDaoImpl extends AbstractHibernateDAO<TermMorph> implements
     @Override
     public TermMorph getByName(String name) {
         return (TermMorph) criteria()
-                .add(ilike("name", name))
+                .add(eq("name", name))
                 .uniqueResult();
     }
 

@@ -1,0 +1,22 @@
+<div class="home">
+    <div class="header">
+        <img src="images/logo.png" alt="Ииссиидиология">
+    </div>
+    <h1>Интерактивная Ииссиидиология</h1>
+    <div>
+        Поиск пунктов, терминов, словосочетаний в материалах:
+        <div class="input-group">
+            <input ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
+                   ii-lookup
+                   typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
+                   typeahead-on-select="$suggestionSelected($label)">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" ng-click="search(query)">Искать</button>
+            </span>
+        </div>
+        <span>
+            Примеры поиска: <a href tooltip-placement="bottom" tooltip='"*" означает поиск всех вариантов склонения слова, например: птицам, птицы и т.п.' ng-click="search('птиц*')">птиц*</a>, <a href tooltip-placement="bottom" tooltip="поиск упоминаний непосредственно Космического Кода в содержимом" ng-click="search('НУУ-ВВУ')">НУУ-ВВУ</a>, <a href tooltip-placement="bottom" tooltip="поиск упоминаний Ииссиидиологического термина в содержимом" ng-click="search('клекс')">клекс</a>, <a href tooltip-placement="bottom" tooltip="показать текст абзаца" ng-click="search('10.10176')">10.10176</a>, <a href tooltip-placement="bottom" tooltip="показать диапазон пунктов" ng-click="search('3.0844-3.0846')">3.0844-3.0846</a>
+        </span>
+        <a href="c/Содержание" class="btn btn-link">Содержание</a>
+    </div>
+</div>
