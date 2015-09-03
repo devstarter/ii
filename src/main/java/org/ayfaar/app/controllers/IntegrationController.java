@@ -50,7 +50,7 @@ public class IntegrationController {
             allItemNumbers = itemDao.getAllNumbers();
         }
         for (String itemNumber : allItemNumbers) {
-            Matcher matcher = compile("((" + RegExpUtils.W + ")|^)" + itemNumber + "((" + RegExpUtils.W + ")|$)", Pattern.UNICODE_CHARACTER_CLASS).matcher(text);
+            Matcher matcher = compile("((" + RegExpUtils.W + ")|^|[)" + itemNumber + "((" + RegExpUtils.W + ")|$|])", Pattern.UNICODE_CHARACTER_CLASS).matcher(text);
             if (matcher.find()) {
                 contains.put(itemNumber, itemNumber);
             }
@@ -64,6 +64,6 @@ public class IntegrationController {
             }
         });
         cache.put(cacheKey, list);
-        return list;
+        return list.isEmpty() ? "" : list;
     }
 }
