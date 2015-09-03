@@ -43,7 +43,7 @@ function jqueryLoaded() {
             for (var i in terms) {
                 var key = terms[i].key;
                 var term = terms[i].value;
-                var re = new RegExp('(<a[^<]+)?(([^A-Za-zА-Яа-я0-9Ёё\\[\\|])|^)(' + key + ')(([^A-Za-zА-Яа-я0-9Ёё\\]\\|])|$)', 'gi');
+                var re = new RegExp('(<a[^<]+)?(([^A-Za-zА-Яа-я0-9Ёё])|^|\\[|\\|)(' + key + ')(([^A-Za-zА-Яа-я0-9Ёё])|$|\\]|\\|)', 'gi');
                 html = html.replace(re, function ($0, $1, $2, $3, $4, $5) {
                     return $1 ? $0 : $2 + '<a href="' + url + term + '" target="_blank" class="ii-term">' + $4 + '</a>' + $5;
                 });
