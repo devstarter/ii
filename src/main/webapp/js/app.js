@@ -323,6 +323,11 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 originalScope.$suggestionSelected = function(suggestion) {
                     $state.goToTerm(suggestion);
                 };
+                element.bind('keyup', function(event) {
+                    if (event.keyCode == 13) {// enter
+                        originalScope.$suggestionSelected(event.target.value);
+                    }
+                })
             }
         };
     })
