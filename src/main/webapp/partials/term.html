@@ -45,7 +45,7 @@
         <span ng-show="related.length">Также связан с</span>
         <a ii-ref="link" ng-repeat="link in related" class="related-btn btn btn-link">{{link._label}}</a>
     </div>
-    <a ng-hide="foundQuotes || loadingContents || loadingTerms" class="search btn btn-primary" ng-click="search()">
+    <a ng-hide="foundQuotes.length || loadingContents || loadingTerms || noResult" class="search btn btn-primary" ng-click="search()">
         <i class="icon-search"></i> Искать упоминания в томах
     </a>
     <div id="search">
