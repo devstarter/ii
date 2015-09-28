@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.RegExpUtils;
@@ -26,6 +27,7 @@ public class IntegrationController {
 
     private List<String> allItemNumbers;
     private Map<String, List<Map.Entry<String, String>>> cache = new HashMap<String, List<Map.Entry<String, String>>>();
+    private String[] ignoreTerms = {"интеллект", "чувство", "мысль", "воля", "время", "мир", "личность", "жизнь", "ген", "молекула", "атом", "элементарный", "форма", "окружающая действительность", "днк"};
 
     @Model
     @RequestMapping
@@ -39,9 +41,11 @@ public class IntegrationController {
         // terms
         for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
             String key = entry.getKey();
+            TermsMap.TermProvider provider = entry.getValue();
+            if (ArrayUtils.contains(ignoreTerms, provider.getName().toLowerCase())) continue;
             Matcher matcher = compile("((" + RegExpUtils.W + ")|^)" + key + "((" + RegExpUtils.W + ")|$)", Pattern.UNICODE_CHARACTER_CLASS).matcher(text);
             if (matcher.find()) {
-                contains.put(key, entry.getValue().getName());
+                contains.put(key, provider.getName());
                 text = text.replaceAll(key, "");
             }
         }
