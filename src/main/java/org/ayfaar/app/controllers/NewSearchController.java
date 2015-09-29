@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers;
 
+import lombok.Data;
 import org.ayfaar.app.annotations.SearchResultCache;
 import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
@@ -8,6 +9,7 @@ import org.ayfaar.app.controllers.search.cache.DBCache;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.events.LinkPushEvent;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.CategoryMap;
 import org.ayfaar.app.utils.TermsMap;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
@@ -30,6 +32,7 @@ public class NewSearchController {
     @Inject SearchQuotesHelper handleItems;
     @Inject SearchDao searchDao;
     @Inject TermsMap termsMap;
+    @Inject CategoryMap categoryMap;
     @Inject DBCache cache;
     @Inject ApplicationEventPublisher eventPublisher;
 //    @Inject CacheUpdater cacheUpdater;
@@ -94,6 +97,27 @@ public class NewSearchController {
         return page;
     }
 
+    @RequestMapping("categories")
+    @ResponseBody
+    public Object inCategories(@RequestParam String query) {
+        TermProvider provider = termsMap.getTermProvider(query);
+        if (provider == null) return "";
+
+		List<String> searchQueries = provider.getMorphs();
+        List<TermProvider> aliases = getAllAliases(provider);
+        List<String> aliasesSearchQueries = getAllMorphs(aliases);
+        searchQueries.addAll(aliasesSearchQueries);
+		List<CategoryMap.CategoryProvider> foundCategoryProviders = categoryMap.descriptionContains(searchQueries);
+
+		List<FoundCategoryPresentation> presentations = new ArrayList<FoundCategoryPresentation>();
+		for (CategoryMap.CategoryProvider p : foundCategoryProviders) {
+			FoundCategoryPresentation presentation = new FoundCategoryPresentation(p.getPath(), p.getUri(), p.getDescription());
+			presentations.add(presentation);
+		}
+
+		return presentations;
+    }
+
     List<String> getAllMorphs(List<TermProvider> providers) {
         List<String> morphs = new ArrayList<String>();
 
@@ -137,4 +161,17 @@ public class NewSearchController {
     public Object searchWithoutCache(String query, Integer pageNumber, String fromItemNumber) {
         return search(query, pageNumber, fromItemNumber);
     }
+
+	@Data
+	private class FoundCategoryPresentation {
+		private final String path;
+		private final String uri;
+		private final String description;
+
+		public FoundCategoryPresentation(String path, String uri, String description) {
+			this.path = path;
+			this.uri = uri;
+			this.description = description;
+		}
+	}
 }

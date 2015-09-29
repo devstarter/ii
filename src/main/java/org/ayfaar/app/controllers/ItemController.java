@@ -7,18 +7,18 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.Model;
-import org.ayfaar.app.utils.CategoryMap;
-import org.ayfaar.app.utils.TermsMapImpl;
 import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermsMapImpl;
 import org.ayfaar.app.utils.TermsTaggingUpdater;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
@@ -35,7 +35,6 @@ public class ItemController {
     @Autowired TermController termController;
     @Autowired TermsMap termsMap;
     @Autowired TermsMapImpl aliasesMap;
-    @Autowired CategoryMap categoryMap;
     @Autowired TermsTaggingUpdater taggingUpdater;
 
     @RequestMapping(value = "{number}", method = POST)

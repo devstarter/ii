@@ -37,7 +37,7 @@ public class CategoryImporter {
         Category glavaCat = null;
 
 //        List<String> lines = FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\paragraphs\\Параграфы, БДК, Том 10,14.utf.csv"));
-        CSVReader reader = new CSVReader(new FileReader("D:\\projects\\ayfaar\\ii-app\\src\\text\\содержание\\formated\\14 том.csv"), ';');
+        CSVReader reader = new CSVReader(new FileReader("D:\\PROJECTS\\ayfaar\\ii-archive\\text\\paragraphs\\Параграфы, Основы, Том 1.csv"), ';');
         String [] nextLine;
 //        reader.readNext(); // skip header
         while ((nextLine = reader.readNext()) != null){
@@ -46,13 +46,12 @@ public class CategoryImporter {
             String tom = data.next().trim();
             int tomNumber = Integer.valueOf(tom.replace("Том ", "").trim());
             String razdelName = data.next().trim();
-            String razdelCode = cikl+"/"+razdelName;
+            String razdelCode = data.next().trim();
             String razdelaDesc = data.next().trim();
             String glavaFull = data.next().trim();
-            final int i = glavaFull.indexOf(". ");
-            String glavaName = glavaFull.substring(0, i);
-            String glavaCode = razdelCode+"/"+glavaName;
-            String glavaDesc = glavaFull.substring(i+2);
+            String glavaName = data.next().trim();
+            String glavaCode = data.next().trim();
+            String glavaDesc = data.next().trim();
             String paragraphNumber = data.next().trim();
             String paragraphDescription = data.next().trim();
             String[] items = data.next().split("-");

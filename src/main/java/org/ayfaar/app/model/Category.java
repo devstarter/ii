@@ -19,7 +19,7 @@ public class Category extends UID {
     public static final String PARAGRAPH_SIGN = "§";
 
     @Column(unique = true)
-    private String name;
+    private String name; //todo rename to code
     @Column(columnDefinition = "TEXT")
     private String description;
     private String parent;

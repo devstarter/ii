@@ -8,10 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
@@ -52,7 +51,7 @@ public class CategoryMapImpl implements CategoryMap {
     }
 
     @Override
-    public CategoryProvider getProviderForCategory(String name) {
+    public CategoryProvider getProviderForCategoryName(String name) {
         return categoryMap.get(name);
     }
 
@@ -75,7 +74,31 @@ public class CategoryMapImpl implements CategoryMap {
 
     @Override
     public Category getCategory(String name) {
-        return getProviderForCategory(name).getCategory();
+        return getProviderForCategoryName(name).getCategory();
+    }
+
+    @Override
+    public List<CategoryProvider> descriptionContains(List<String> searchQueries) {
+        ListIterator<String> iterator = searchQueries.listIterator();
+
+        String regexp = "";
+        while (iterator.hasNext()) {
+            String q = iterator.next();
+            regexp += "(^" + q + RegExpUtils.W + "+)|(" + RegExpUtils.W + "+" + q + RegExpUtils.W + "+)|(" + RegExpUtils.W + "+" + q + "$)";
+            if (iterator.hasNext()) regexp += "|";
+        }
+
+        Pattern pattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+        List<CategoryProvider> foundCategories = new ArrayList<CategoryProvider>();
+        for (CategoryProvider provider : categoryMap.values()) {
+			if (provider.getDescription() == null || provider.getDescription().isEmpty()) continue;
+            Matcher matcher = pattern.matcher(provider.getDescription());
+            if (matcher.find()) {
+                foundCategories.add(provider);
+            }
+        }
+
+        return foundCategories;
     }
 
     public class CategoryProviderImpl implements CategoryProvider {
@@ -126,7 +149,12 @@ public class CategoryMapImpl implements CategoryMap {
             return category.getName().equals("БДК") || category.getName().equals("Основы");
         }
 
-        @Override
+		@Override
+		public boolean isContentsRoot() {
+			return category.getName().equals("Содержание");
+		}
+
+		@Override
         public List<CategoryProvider> getChildren() {
             List<CategoryProvider> children = new ArrayList<CategoryProvider>();
             if (category.getStart() != null) {
@@ -170,7 +198,22 @@ public class CategoryMapImpl implements CategoryMap {
             String[] split = getUri().split("/|:");
             return split[split.length-1].trim();
         }
-    }
+
+		@Override
+		public String getPath() {
+			String path = "";
+			List<CategoryProvider> chain = new ArrayList<CategoryProvider>(getParents());
+			chain.add(0, this);
+			ListIterator<CategoryProvider> iterator = chain.listIterator(chain.size());
+			while (iterator.hasPrevious()) {
+				CategoryProvider provider = iterator.previous();
+				if (provider.isContentsRoot() || provider.isCikl()) continue;
+				path += provider.extractCategoryName();
+				if (iterator.hasPrevious()) path += " / ";
+			}
+			return path;
+		}
+	}
 
     private double convertItemNumber(String value) {
         return value != null ? Double.parseDouble(getValueFromUri(Item.class, value)) : 0.0;

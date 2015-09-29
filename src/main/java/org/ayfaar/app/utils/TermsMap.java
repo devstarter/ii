@@ -13,22 +13,22 @@ public interface TermsMap {
      * Возвращает термины во всех падежах и соответствующие объекты, содержащие однозначные имена
      * (обычно в именительном падеже). Например "времени" => "Время", "времён" => "Время" и т. д.
      */
-    public List<Map.Entry<String, TermProvider>> getAll();
-    public TermProvider getTermProvider(String name);
-    public Term getTerm(String name);
-    public void reload();
+    List<Map.Entry<String, TermProvider>> getAll();
+    TermProvider getTermProvider(String name);
+    Term getTerm(String name);
+    void reload();
 
-    public interface TermProvider {
-        public String getName();
-        public String getUri();
-        public boolean hasShortDescription();
-        public TermProvider getMainTermProvider();
-        public Term getTerm();
-        public List<String> getMorphs();
-        public List<TermProvider> getAliases();
-        public List<TermProvider> getAbbreviations();
-        public TermProvider getCode();
-        public Byte getType();
+    interface TermProvider {
+        String getName();
+        String getUri();
+        boolean hasShortDescription();
+        TermProvider getMainTermProvider();
+        Term getTerm();
+        List<String> getMorphs();
+        List<TermProvider> getAliases();
+        List<TermProvider> getAbbreviations();
+        TermProvider getCode();
+        Byte getType();
         boolean hasMainTerm();
         boolean isAbbreviation();
         boolean isAlias();
