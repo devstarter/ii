@@ -7,13 +7,15 @@ import java.util.List;
 
 
 public interface CategoryMap {
-    CategoryProvider getProviderForCategoryName(String name);
+    CategoryProvider getByName(String name);
     CategoryProvider getProviderByItemNumber(String number);
     Category getCategory(String name);
     List<CategoryProvider> descriptionContains(List<String> searchQueries);
     void reload();
 
-    interface CategoryProvider {
+	CategoryProvider getByUri(String uri);
+
+	interface CategoryProvider {
         Category getCategory();
         CategoryProvider getNext();
         String getUri();
@@ -28,5 +30,9 @@ public interface CategoryMap {
         List<CategoryProvider> getParents();
         String extractCategoryName();
         String getPath();
-    }
+        String getCode();
+		CategoryProvider getPrevious();
+		String getPreviousUri();
+		String getNextUri();
+	}
 }

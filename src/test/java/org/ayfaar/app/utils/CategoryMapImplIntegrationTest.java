@@ -16,7 +16,7 @@ public class CategoryMapImplIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetChildrenForSection() {
-        CategoryMap.CategoryProvider provider = categoryMap.getProviderForCategoryName("БДК/Раздел I");
+        CategoryMap.CategoryProvider provider = categoryMap.getByName("БДК/Раздел I");
         List<CategoryMap.CategoryProvider> children = provider.getChildren();
 
         assertEquals(4, children.size());
@@ -26,7 +26,7 @@ public class CategoryMapImplIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetParentForParagraph() {
-        CategoryMap.CategoryProvider provider = categoryMap.getProviderForCategoryName("параграф:10.1.1.1");
+        CategoryMap.CategoryProvider provider = categoryMap.getByName("параграф:10.1.1.1");
         CategoryMap.CategoryProvider parent = provider.getParent();
 
         assertEquals(UriGenerator.generate(Category.class, "БДК/Раздел I/Глава 1"), parent.getUri());
@@ -34,7 +34,7 @@ public class CategoryMapImplIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetParentsFotParagraph() {
-        CategoryMap.CategoryProvider provider = categoryMap.getProviderForCategoryName("параграф:10.1.1.1");
+        CategoryMap.CategoryProvider provider = categoryMap.getByName("параграф:10.1.1.1");
         List<CategoryMap.CategoryProvider> parents = provider.getParents();
 
         assertEquals(5, parents.size());

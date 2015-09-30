@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 @Ignore
 public class ContentsHelperTest extends IntegrationTest {
@@ -21,7 +20,7 @@ public class ContentsHelperTest extends IntegrationTest {
     @Autowired
     private CategoryDao categoryDao;
 
-    @Test
+/*    @Test
     public void testGetChildren() {
         List<Category> sections = contentsHelper.getChildren(categoryDao.get("name", "Том 10"));
         List<Category> chapters = contentsHelper.getChildren(categoryDao.get("name", "БДК / Раздел I"));
@@ -29,7 +28,7 @@ public class ContentsHelperTest extends IntegrationTest {
         assertEquals(6, sections.size());
         assertEquals(4, chapters.size());
         assertEquals(10, paragraphs.size());
-    }
+    }*/
 
     @Test
     public void testGetItems() {
@@ -46,7 +45,7 @@ public class ContentsHelperTest extends IntegrationTest {
         assertEquals("Глава 5", contentsHelper.extractCategoryName("БДК / Раздел IV / Глава 5"));
     }
 
-    @Test
+/*    @Test
     public void testGetParents() {
         Category category = categoryDao.get("name", "Параграф 10.1.1.6");
         List<Category> parents = contentsHelper.getParents(category);
@@ -59,5 +58,5 @@ public class ContentsHelperTest extends IntegrationTest {
         assertEquals("Раздел I", parentPresentations.get(1).getName());
         assertEquals("Том 10", parentPresentations.get(2).getName());
         assertEquals("БДК", parentPresentations.get(3).getName());
-    }
+    }*/
 }

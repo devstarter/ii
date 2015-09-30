@@ -1,12 +1,11 @@
 package org.ayfaar.app.utils.contents;
 
 import org.ayfaar.app.controllers.ItemController;
-import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.CategoryMap;
 import org.ayfaar.app.utils.TermsMarker;
-import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,55 +17,46 @@ import static org.ayfaar.app.utils.StringUtils.trim;
 
 @Component
 public class ContentsHelper {
-    @Autowired
-    private CategoryDao categoryDao;
-
-    @Autowired
-    private ItemDao itemDao;
-
-    @Autowired
-    private TermsMarker marker;
+    @Autowired ItemDao itemDao;
+    @Autowired TermsMarker marker;
+    @Autowired CategoryMap categoryMap;
 
     private final int SUBCATEGORY_COUNT = 2;
 
     public CategoryPresentation createContents(String categoryName) {
-        Category category = categoryDao.get("name", categoryName);
-        if (category == null) {
+        CategoryMap.CategoryProvider provider = categoryMap.getByName(categoryName);
+        if (provider == null) {
             throw new RuntimeException(format("Category `%s` not found", categoryName));
         }
-        Category previous = categoryDao.get("next", UriGenerator.generate(Category.class, categoryName));
 
-        String previousCategory = previous != null ? previous.getUri() : null;
-        String nextCategory = category.getNext() != null ? category.getNext() : null;
-
-        if(category.isParagraph()) {
-            return new CategoryPresentation(category.getName().replace(Category.PARAGRAPH_NAME, ""), category.getUri(),
-                    marker.mark(trim(category.getDescription())), previousCategory, nextCategory,
-                    createParentPresentation(getParents(category)),
-                    getParagraphSubCategory(getItems(category), 1));
+        if(provider.isParagraph()) {
+            return new CategoryPresentation(provider.getCode().replace(Category.PARAGRAPH_NAME, ""), provider.getUri(),
+                    marker.mark(trim(provider.getDescription())), provider.getPreviousUri(), provider.getNextUri(),
+                    createParentPresentation(provider.getParents()),
+                    getParagraphSubCategory(getItems(provider.getCategory()), 1));
         } else {
-            return new CategoryPresentation(extractCategoryName(category.getName()), category.getUri(),
-                    marker.mark(trim(category.getDescription())), previousCategory, nextCategory,
-                    createParentPresentation(getParents(category)),
-                    createChildrenPresentation(getChildren(category), 0));
+            return new CategoryPresentation(extractCategoryName(provider.getCode()), provider.getUri(),
+                    marker.mark(trim(provider.getDescription())), provider.getPreviousUri(), provider.getNextUri(),
+                    createParentPresentation(provider.getParents()),
+                    createChildrenPresentation(provider.getChildren(), 0));
         }
     }
 
-    private List<CategoryPresentation> createChildrenPresentation(List<Category> categories, int count) {
+    private List<CategoryPresentation> createChildrenPresentation(List<CategoryMap.CategoryProvider> categories, int count) {
         if(count >= SUBCATEGORY_COUNT) return null;
 
         List<CategoryPresentation> childrenPresentations = new ArrayList<CategoryPresentation>();
 
         count++;
 
-        for (Category category : categories) {
+        for (CategoryMap.CategoryProvider category : categories) {
             if (!category.isParagraph()) {
                 childrenPresentations.add(new CategoryPresentation(
-                        extractCategoryName(category.getName()), category.getUri(), category.getDescription(),
-                        createChildrenPresentation(getChildren(category), count)));
+                        extractCategoryName(category.getCode()), category.getUri(), category.getDescription(),
+                        createChildrenPresentation(category.getChildren(), count)));
 
             } else {
-                childrenPresentations.add(new CategoryPresentation(category.getName().replace(Category.PARAGRAPH_NAME, ""),
+                childrenPresentations.add(new CategoryPresentation(category.getCode().replace(Category.PARAGRAPH_NAME, ""),
                         category.getUri(), trim(category.getDescription()), null));
             }
         }
@@ -84,33 +74,6 @@ public class ContentsHelper {
             listPresentations.add(presentation);
         }
         return listPresentations;
-    }
-
-    List<Category> getChildren(Category parent) {
-        List<Category> children = new ArrayList<Category>();
-        if (parent.getStart() != null) {
-            Category child = categoryDao.get(parent.getStart());
-            if (child != null) {
-                children.add(child);
-                while (child.getNext() != null) {
-                    child = categoryDao.get(child.getNext());
-                    if (!child.getParent().equals(parent.getUri()))
-                        break;
-                    children.add(child);
-                }
-            }
-        }
-        return children;
-    }
-
-    List<Category> getParents(Category category) {
-        List<Category> parents = new ArrayList<Category>();
-        if(category.getParent() != null) {
-            Category c = categoryDao.get(category.getParent());
-            parents.add(c);
-            parents.addAll(getParents(c));
-        }
-        return parents;
     }
 
     List<Item> getItems(Category category) {
@@ -140,11 +103,11 @@ public class ContentsHelper {
      * @param categories
      * @return
      */
-    List<CategoryPresentation> createParentPresentation(List<Category> categories) {
+    List<CategoryPresentation> createParentPresentation(List<CategoryMap.CategoryProvider> categories) {
         List<CategoryPresentation> presentations = new ArrayList<CategoryPresentation>();
 
-        for(Category category : categories) {
-            presentations.add(new CategoryPresentation(extractCategoryName(category.getName()),
+        for(CategoryMap.CategoryProvider category : categories) {
+            presentations.add(new CategoryPresentation(extractCategoryName(category.getCode()),
                     category.getUri(), trim(category.getDescription())));
         }
         return presentations;

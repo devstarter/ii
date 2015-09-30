@@ -60,7 +60,6 @@ public class TermsMapImpl implements TermsMap {
                 mainTermUri = links.get(uri).getMainTerm().getUri();
             }
             aliasesMap.put(info.getName().toLowerCase(), new TermProviderImpl(uri, mainTermUri, info.isHasShortDescription()));
-			logger.info("Terms map loading finish");
         }
 
         for(TermMorph morph : allTermMorphs) {
@@ -76,6 +75,7 @@ public class TermsMapImpl implements TermsMap {
                 return Integer.compare(o2.getKey().length(), o1.getKey().length());
             }
         });
+		logger.info("Terms map loading finish");
     }
 
     public void reload() {

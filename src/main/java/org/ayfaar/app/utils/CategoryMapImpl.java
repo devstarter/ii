@@ -51,7 +51,7 @@ public class CategoryMapImpl implements CategoryMap {
     }
 
     @Override
-    public CategoryProvider getProviderForCategoryName(String name) {
+    public CategoryProvider getByName(String name) {
         return categoryMap.get(name);
     }
 
@@ -74,7 +74,7 @@ public class CategoryMapImpl implements CategoryMap {
 
     @Override
     public Category getCategory(String name) {
-        return getProviderForCategoryName(name).getCategory();
+        return getByName(name).getCategory();
     }
 
     @Override
@@ -135,8 +135,8 @@ public class CategoryMapImpl implements CategoryMap {
 
         @Override
         public CategoryProvider getNext() {
-            String next = category.getNext();
-            return next != null ? categoryMap.get(getValueFromUri(Category.class, next)) : null;
+            String nextUri = getNextUri();
+            return nextUri != null ? getByUri(nextUri) : null;
         }
 
         @Override
@@ -219,9 +219,37 @@ public class CategoryMapImpl implements CategoryMap {
 			}
 			return path;
 		}
+
+		@Override
+		public String getCode() {
+			return category.getName();
+		}
+
+		@Override
+		public String getPreviousUri() {
+			for (CategoryProvider provider : categoryMap.values())
+				if (category.getUri().equals(provider.getCategory().getNext())) return provider.getUri();
+			return null;
+		}
+
+		@Override
+		public String getNextUri() {
+			return category.getNext();
+		}
+
+		@Override
+		public CategoryProvider getPrevious() {
+			return getByUri(getPreviousUri());
+		}
 	}
 
-    private double convertItemNumber(String value) {
+	@Override
+	public CategoryProvider getByUri(String uri) {
+		if (uri == null) return null;
+		return categoryMap.get(UriGenerator.getValueFromUri(Category.class, uri));
+	}
+
+	private double convertItemNumber(String value) {
         return value != null ? Double.parseDouble(getValueFromUri(Item.class, value)) : 0.0;
     }
 }
