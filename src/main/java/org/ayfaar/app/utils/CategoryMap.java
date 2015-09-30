@@ -10,8 +10,8 @@ public interface CategoryMap {
     CategoryProvider getProviderForCategoryName(String name);
     CategoryProvider getProviderByItemNumber(String number);
     Category getCategory(String name);
-
     List<CategoryProvider> descriptionContains(List<String> searchQueries);
+    void reload();
 
     interface CategoryProvider {
         Category getCategory();

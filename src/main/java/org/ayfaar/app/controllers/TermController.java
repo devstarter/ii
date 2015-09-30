@@ -275,8 +275,6 @@ public class TermController {
         }
     }
 
-
-
     public Term getPrime(Term term) {
         return (Term) linkDao.getPrimeForAlias(term.getUri());
     }

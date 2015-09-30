@@ -9,6 +9,8 @@ import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,8 @@ import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
 public class TermsMapImpl implements TermsMap {
+    private static final Logger logger = LoggerFactory.getLogger(TermsMap.class);
+
     @Autowired
     private CommonDao commonDao;
     @Autowired
@@ -36,6 +40,7 @@ public class TermsMapImpl implements TermsMap {
 
     @PostConstruct
     public void load() {
+		logger.info("Terms map loading...");
         aliasesMap = new HashMap<String, TermProvider>();
 
         List<TermMorph> allTermMorphs = commonDao.getAll(TermMorph.class);
@@ -55,6 +60,7 @@ public class TermsMapImpl implements TermsMap {
                 mainTermUri = links.get(uri).getMainTerm().getUri();
             }
             aliasesMap.put(info.getName().toLowerCase(), new TermProviderImpl(uri, mainTermUri, info.isHasShortDescription()));
+			logger.info("Terms map loading finish");
         }
 
         for(TermMorph morph : allTermMorphs) {

@@ -101,7 +101,12 @@ public class CategoryMapImpl implements CategoryMap {
         return foundCategories;
     }
 
-    public class CategoryProviderImpl implements CategoryProvider {
+	@Override
+	public void reload() {
+		load();
+	}
+
+	public class CategoryProviderImpl implements CategoryProvider {
         private Category category;
 
         public CategoryProviderImpl(Category category) {
@@ -208,6 +213,7 @@ public class CategoryMapImpl implements CategoryMap {
 			while (iterator.hasPrevious()) {
 				CategoryProvider provider = iterator.previous();
 				if (provider.isContentsRoot() || provider.isCikl()) continue;
+				if (provider.isParagraph()) path += "§";
 				path += provider.extractCategoryName();
 				if (iterator.hasPrevious()) path += " / ";
 			}
