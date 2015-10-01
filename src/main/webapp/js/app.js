@@ -595,8 +595,8 @@ function copyObjectTo(from, to) {
 function getUrl(uri) {
     var url = uri.hasOwnProperty("uri") ? uri.uri : uri;
     url = url.replace("статья:", "a/");
-    url = url.replace("категория:", "c/");
     url = url.replace("категория:параграф:", "");
+    url = url.replace("категория:", "c/");
     url = url.replace("ии:термин:", "");
     url = url.replace("ии:пункт:", "");
     return url;

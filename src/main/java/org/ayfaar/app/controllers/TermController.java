@@ -38,6 +38,7 @@ public class TermController {
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
     @Inject ApplicationEventPublisher publisher;
+    @Inject NewSearchController searchController;
 
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
@@ -139,6 +140,7 @@ public class TermController {
         modelMap.put("quotes", quotes);
         modelMap.put("related", toPlainObjectWithoutContent(related));
         modelMap.put("aliases", toPlainObjectWithoutContent(aliases));
+        modelMap.put("categories", searchController.inCategories(termName));
 
         return modelMap;
     }

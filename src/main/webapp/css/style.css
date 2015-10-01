@@ -143,6 +143,7 @@ blockquote {
 .full-width {
     width: 100%
 }
+.pointer {cursor: pointer}
 
 /*поднять шрифт для планшета*/
 @media screen and (max-width: 767px) {

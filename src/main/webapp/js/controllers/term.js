@@ -27,7 +27,10 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
         if (data && !data.description && !data.shortDescription && !data.quotes.length && !data.related.length) {
             analytics.registerEmptyTerm(data.name);
         }
-        if (data && !data.description && !data.shortDescription && !data.quotes.length) {
+        if (data && !data.description && !data.shortDescription && !data.quotes.length && data.categories.length) {
+            $scope.showCategories = true;
+        }
+        if (data && !data.description && !data.shortDescription && !data.quotes.length && !data.categories.length) {
             $scope.search();
         }
 

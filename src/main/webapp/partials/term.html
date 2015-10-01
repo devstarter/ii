@@ -24,13 +24,16 @@
             </span>
         </span>
         <br/>
-        <div class="highlight" ng-show="shortDescription || description">
+        <div class="highlight" ng-show="shortDescription || description" style="margin-top: 0">
             <p ng-show="shortDescription" ii-bind="shortDescription" class="shortDescription"></p>
             <p ng-show="description" ii-bind="description"></p>
         </div>
+        <div class="pointer section" title="Показать" ng-click="showQuotes = !showQuotes" ng-show="quotes.length">
+            <h3>Избранные цитаты</h3> <span ng-hide="showQuotes">показать {{quotes.length}}</span>
+        </div>
         <!--<span class="info" data-bind="invisible: description">Нет короткого определения</span>-->
         <blockquote ng-repeat="quote in quotes" ng-mouseover="quote.showControlls = true"
-                    ng-mouseleave="quote.showControlls = false">
+                    ng-mouseleave="quote.showControlls = false" ng-show="showQuotes">
             <div ii-bind="quote.full ? quote.full : quote.quote"></div>
             <cite>&mdash; <a ii-ref="quote">{{quote._label}}</a>
                 <span ng-show="quote.showControlls">
@@ -42,10 +45,19 @@
                 <span ng-show="quote.loadingFull">Загрузка...</span>
             </cite>
         </blockquote>
+
+        <div class="pointer section" title="Показать" ng-click="showCategories = !showCategories" ng-show="categories.length">
+            <h3>Упоминания в содержании</h3> <span ng-hide="showCategories">показать {{categories.length}}</span>
+        </div>
+        <div ng-repeat="cat in categories" ng-show="showCategories" class="catBlock">
+            <a ii-ref="cat">{{cat.path}}</a>
+            <div ii-bind="cat.description"></div>
+        </div>
+
         <span ng-show="related.length">Также связан с</span>
         <a ii-ref="link" ng-repeat="link in related" class="related-btn btn btn-link">{{link._label}}</a>
     </div>
-    <a ng-hide="foundQuotes.length || loadingContents || loadingTerms || noResult" class="search btn btn-primary" ng-click="search()">
+    <a ng-hide="foundQuotes.length || loadingContents || loadingTerms || noResult" class="search btn btn-default" ng-click="search()">
         <i class="icon-search"></i> Искать упоминания в томах
     </a>
     <div id="search">
@@ -97,11 +109,15 @@
     </div>
 </div>
 <style type="text/css">
+    .catBlock {
+        padding-bottom: 10px;
+    }
     .search {
         margin-top: 20px;
     }
     h3 {
         margin-bottom: 5px;
+        display: inline;
     }
     button {
         color: #ffffff;
@@ -182,11 +198,12 @@
         margin: 0;
     }
     .advanced-search-block {
-        margin: 20px 0px;
+        margin: 20px 0;
         border: 2px solid rgb(238, 238, 238);
         padding: 10px 10px 5px 10px;
         border-radius: 5px;
     }
+    .section {padding-bottom: 15px}
 </style>
 
 <script type="text/ng-template" id="search-contribute-form.html">
