@@ -24,17 +24,40 @@ a.icon-search {
 li {
     list-style-type: none;
 }
+div[ui-view] {
+    padding-top: 35px;
+}
 header {
+    -webkit-box-shadow: 0 3px 3px rgba(0,0,0,0.175);
+    box-shadow: 0 3px 3px rgba(0,0,0,0.175);
+    background-color: #127AD0;
+    color: white;
+    min-height: 30px;
+    margin-bottom: 15px;
+    position: fixed;
+    width: 100%;
+}
+header .title {
+    padding-top: 3px;
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+    display: block;
+    float: left;
+}
+header div {
     max-width: 650px;
     margin: 0 auto;
-    text-align: right;
-    /*padding-right: 35px;*/
 }
 a.icon-search {
     font-size: 150%;
+    float: right;
+    color: white;
+    padding-top: 3px;
+    cursor: pointer;
 }
-header a {
-    position: absolute;
+header:after {
+    clear: both;
 }
 aside {
     background: #f0f0f0;
@@ -69,10 +92,6 @@ term {
     line-height: 15px;
     position: relative;
 }
-.navbar {
-    -webkit-box-shadow: 0 3px 3px rgba(0,0,0,0.175);
-    box-shadow: 0 3px 3px rgba(0,0,0,0.175);
-}
 .btn-icon {
     padding: 3px 8px 1px;
     /*font-size: 1.5em;*/
@@ -101,7 +120,6 @@ blockquote {
 .home {
     margin: 0 auto;
     max-width: 500px;
-    padding-top: 50px;
 }
 .home h1 {
     text-align: center;
@@ -130,7 +148,16 @@ blockquote {
 @media screen and (max-width: 767px) {
     body {
         font-size: 200%;
-        padding: 5px;
+    }
+    div[ui-view], header .title, a.icon-search {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    header .title {
+        font-size: 75%;
+    }
+    a.icon-search {
+        font-size: 110%;
     }
     .home {
         padding-top: 10px;

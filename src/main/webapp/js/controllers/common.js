@@ -62,7 +62,7 @@ function ParagraphController($scope, $stateParams, $api, $state) {
     $scope.loading = true;
     $scope.goNext = function() {
         $state.go($scope.next);
-    }
+    };
 
     $api.category.get("параграф:"+$scope.number)
         .then(function(paragrapg){

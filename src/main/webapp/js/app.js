@@ -507,6 +507,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                     }
                 });
                 $rootScope.$on('home-state-entered', function() {
+                    scope.$root.hideLoop = true;
                     scope.visible = false;
                 })
             }
