@@ -18,10 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +40,7 @@ public class SearchController {
     @Autowired EmailNotifier notifier;
     @Autowired ApplicationEventPublisher eventPublisher;
     @Autowired TermsMarker termsMarker;
+    @Autowired NewSearchController searchController;
 
     private Map<String, List<ModelMap>> searchInContentCatch = new HashMap<String, List<ModelMap>>();
 
@@ -213,11 +211,13 @@ public class SearchController {
                 terms.add(entry.getValue().getTerm());
             }
         }
+        Collections.reverse(terms);
 
         ModelMap modelMap = new ModelMap();
         modelMap.put("terms", terms);
         modelMap.put("articles", articleDao.getLike("name", query, MatchMode.ANYWHERE));
         modelMap.put("exactMatchTerm", exactMatchTerm);
+        modelMap.put("categories", searchController.inCategories(query));
 
         return modelMap;
     }

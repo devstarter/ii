@@ -43,10 +43,10 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
             keywords += ","+ data.related[i].name;
         }
         $scope.$root.metaKeywords = keywords;
-        $scope.$root.hideLoop = false;
+        //$scope.$root.hideLoop = false;
     }, function () {
         $scope.editMode = true;
-        $scope.$root.hideLoop = true;
+        //$scope.$root.hideLoop = true;
         $scope.search();
     })
     ['finally'](function () {
@@ -131,17 +131,18 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
         }
         currentQuery = query;
         pageCounter = 0;
-        if (!$scope.termFound) {
+        if ($scope.termFound) {
+            searchInContent();
+        } else {
             $api.search.term($scope.query).then(function (r) {
                 $scope.loadingTerms = false;
                 $scope.terms = r.terms;
                 $scope.articles = r.articles;
                 $scope.exactMatchTerm = r.exactMatchTerm;
-                searchInContent();
+                $scope.categories = r.categories;
+                if (!r.categories.length) searchInContent();
             });
             $scope.loadingTerms = true;
-        } else {
-            searchInContent();
         }
     };
 
@@ -170,8 +171,8 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
         } else {
             $scope.loadingMore = true;
         }
-
     }
+    $scope.searchInContent = searchInContent;
 
     function rateComplete() {
         alert("Ваш голос учтён, благодарим за помощь! :)")

@@ -10,9 +10,11 @@
               <button class="btn btn-primary" ng-click="search(query)">Искать</button>
             </span>
         </div>
-        <span style="color:#808080">Побробуйте со звёздочкой после корня слова для учёта всех вариантов
+        <!--<span class="btn-link" style="color:#808080;" ng-hide="showSearchHelp" ng-click="showSearchHelp = true">как работает поиск</span>-->
+        <!--<span ng-show="showSearchHelp" style="color:#808080">???<span class="btn btn-link" ng-click="showSearchHelp = false">скрыть этот текст</span></span>-->
+        <div style="color:#808080" ng-show="query.indexOf('*') == -1 && query.indexOf(' ') == -1">Побробуйте со звёздочкой после корня слова для учёта всех вариантов
             окончания слова. Например "лийллусцивный" - "лийллусцивн*" (будут учтены "лийллусцивн<u>о</u>", "лийллусцивн<u>ые</u>",
-            "лийллусцивн<u>ость</u>" и т. д.</span>
+            "лийллусцивн<u>ость</u>" и т. д. </div>
     </div>
     <div class="block loading" ng-show="loading">Загрузка...</div>
     <div ng-hide="loading && termFound">
@@ -46,7 +48,7 @@
             </cite>
         </blockquote>
 
-        <div class="pointer section" title="Показать" ng-click="showCategories = !showCategories" ng-show="categories.length">
+        <div class="pointer section" title="Показать" ng-click="showCategories = !showCategories" ng-show="termFound && categories.length">
             <h3>Упоминания в содержании</h3> <span ng-hide="showCategories">показать {{categories.length}}</span>
         </div>
         <div ng-repeat="cat in categories" ng-show="showCategories" class="catBlock">
@@ -57,18 +59,28 @@
         <span ng-show="related.length">Также связан с</span>
         <a ii-ref="link" ng-repeat="link in related" class="related-btn btn btn-link">{{link._label}}</a>
     </div>
-    <a ng-hide="foundQuotes.length || loadingContents || loadingTerms || noResult" class="search btn btn-default" ng-click="search()">
-        <i class="icon-search"></i> Искать упоминания в томах
-    </a>
     <div id="search">
-        <div class="block loading" ng-show="loadingTerms">Загрузка терминов...</div>
-        <div ng-show="terms.length">
-            <h3>В названиях терминов</h3>
-            <button class="btn btn-link" ng-repeat="term in terms" ng-click="navigate(term.name)">{{term.name}}</button>
+        <div class="block loading" ng-show="loadingTerms">Загрузка...</div>
+        <div ng-show="terms.length" class="catBlock">
+            <div class="pointer section" title="Показать" ng-click="showTerms = !showTerms">
+                <h3>Найдено в названиях терминов</h3> <span ng-hide="showTerms">показать {{terms.length}}</span>
+            </div>
+            <a style="display: block" ng-show="showTerms" ii-ref="term" ng-repeat="term in terms" ng-click="navigate(term.name)">{{term.name}}</a>
         </div>
-        <div ng-show="articles.length">
-            <h3>Статьи из 9 тома</h3>
-            <button class="btn btn-link" ng-repeat="article in articles" ng-click="navigate(article)">{{article.name}}</button>
+        <div ng-show="articles.length" class="catBlock">
+            <div class="pointer section" title="Показать" ng-click="showArticles = !showArticles">
+                <h3>Найдено в 9 томе</h3> <span ng-hide="showArticles">показать {{articles.length}}</span>
+            </div>
+            <a style="display: block" ng-show="showArticles" ii-ref="article" ng-repeat="article in articles" ng-click="navigate(article)">{{article.name}}</a>
+        </div>
+        <div ng-show="!termFound && categories.length">
+            <div class="pointer section" title="Показать" ng-click="showSCategories = !showSCategories">
+                <h3>Найдено в содержании</h3> <span ng-hide="showSCategories">показать {{categories.length}}</span>
+            </div>
+            <div ng-repeat="cat in categories" ng-show="showSCategories" class="catBlock">
+                <a ii-ref="cat">{{cat.path}}</a>
+                <div ii-bind="cat.description"></div>
+            </div>
         </div>
         <div class="block loading" ng-show="loadingContents">
             <img src="images/ajax-loader.gif"/> Поиск по содержимому (может занять около минуты)...
@@ -77,6 +89,9 @@
             <div ng-show="noResult">
                 Упоминаний в текстах томов не найденны, подкорректируйте фразу.
             </div>
+            <a ng-hide="foundQuotes.length || loadingContents || loadingTerms || noResult" class="search btn btn-default" ng-click="searchInContent()">
+                <i class="icon-search"></i> Искать упоминания в томах
+            </a>
             <div ng-show="foundQuotes.length">
                 <span class="h3" style="display: inline-block;">Цитаты из томов</span>
                 <a class="btn" ng-class="{'btn-link': !showAdvancedSearch, 'btn-success': showAdvancedSearch}" ng-click="showAdvancedSearch = !showAdvancedSearch">Расширенный поиск</a>

@@ -313,7 +313,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             }*/
         };
     })
-    .directive('iiLookup', function($api, $state) {
+    .directive('iiLookup', function($api, $state, $parse) {
         return {
             require:'ngModel',
             link: function (originalScope, element, attrs, modelCtrl) {
@@ -323,9 +323,11 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 originalScope.$suggestionSelected = function(suggestion) {
                     $state.goToTerm(suggestion);
                 };
+                var onEnter = $parse(attrs.onEnter);
                 element.bind('keyup', function(event) {
                     if (event.keyCode == 13) {// enter
                         originalScope.$suggestionSelected(event.target.value);
+                        if (onEnter) onEnter(originalScope);
                     }
                 })
             }

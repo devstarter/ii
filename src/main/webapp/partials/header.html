@@ -4,7 +4,8 @@
            ii-lookup ng-blur="closeWithDelay()"
            typeahead-append-to-body="true" ng-focus="focused = true"
            typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
-           typeahead-on-select="expanded = false;$suggestionSelected($label)"/>
+           typeahead-on-select="expanded = false;$suggestionSelected($label)"
+           on-enter="expanded = false" />
     <a ng-hide="expanded" class="icon-search" ng-click="expand()" title="Искать"></a>
 </div>
     <!--<aside ng-show="expanded">

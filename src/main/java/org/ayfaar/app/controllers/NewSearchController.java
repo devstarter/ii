@@ -101,12 +101,16 @@ public class NewSearchController {
     @ResponseBody
     public Object inCategories(@RequestParam String query) {
         TermProvider provider = termsMap.getTermProvider(query);
-        if (provider == null) return "";
-
-		List<String> searchQueries = provider.getMorphs();
-        List<TermProvider> aliases = getAllAliases(provider);
-        List<String> aliasesSearchQueries = getAllMorphs(aliases);
-        searchQueries.addAll(aliasesSearchQueries);
+        List<String> searchQueries;
+        if (provider == null) {
+			query = query.replace("*", ".*");
+            searchQueries = asList(query);
+        } else {
+            searchQueries = provider.getMorphs();
+            List<TermProvider> aliases = getAllAliases(provider);
+            List<String> aliasesSearchQueries = getAllMorphs(aliases);
+            searchQueries.addAll(aliasesSearchQueries);
+        }
 		List<CategoryMap.CategoryProvider> foundCategoryProviders = categoryMap.descriptionContains(searchQueries);
 
 		List<FoundCategoryPresentation> presentations = new ArrayList<FoundCategoryPresentation>();
