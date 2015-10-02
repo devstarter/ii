@@ -89,6 +89,7 @@ public class ContentsHelper {
             currentItem = itemDao.getByNumber(itemNumber);
             items.add(currentItem);
         }
+		if (itemNumber.startsWith("1.") || itemNumber.startsWith("2.") || itemNumber.startsWith("3.")) items.remove(items.size()-1);
         return items;
     }
 
