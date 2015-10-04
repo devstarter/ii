@@ -74,6 +74,7 @@ public class SearchQuotesHelper {
             }*/
             Quote quote = new Quote();
             quote.setNumber(item.getNumber());
+            textQuote = textQuote.replaceAll("^[^<]+</term>\\s*", "...");
             quote.setQuote(textQuote);
             quotes.add(quote);
         }

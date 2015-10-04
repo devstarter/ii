@@ -84,9 +84,11 @@ public class CategoryMapImpl implements CategoryMap {
         String regexp = "";
         while (iterator.hasNext()) {
             String q = iterator.next();
-            regexp += "(^" + q + RegExpUtils.W + "+)|(" + RegExpUtils.W + "+" + q + RegExpUtils.W + "+)|(" + RegExpUtils.W + "+" + q + "$)";
+            regexp += RegExpUtils.buildWordContainsRegExp(q);
             if (iterator.hasNext()) regexp += "|";
         }
+
+        final Map<CategoryProvider, Integer> rateMap = new HashMap<CategoryProvider, Integer>();
 
         Pattern pattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
         List<CategoryProvider> foundCategories = new ArrayList<CategoryProvider>();
@@ -95,8 +97,16 @@ public class CategoryMapImpl implements CategoryMap {
             Matcher matcher = pattern.matcher(provider.getDescription());
             if (matcher.find()) {
                 foundCategories.add(provider);
+                rateMap.put(provider, matcher.start());
             }
         }
+
+        Collections.sort(foundCategories, new Comparator<CategoryProvider>() {
+            @Override
+            public int compare(CategoryProvider p1, CategoryProvider p2) {
+                return rateMap.get(p1).compareTo(rateMap.get(p2));
+            }
+        });
 
         return foundCategories;
     }

@@ -10,6 +10,7 @@ import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.events.LinkPushEvent;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.CategoryMap;
+import org.ayfaar.app.utils.StringUtils;
 import org.ayfaar.app.utils.TermsMap;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
@@ -115,14 +116,15 @@ public class NewSearchController {
 
 		List<FoundCategoryPresentation> presentations = new ArrayList<FoundCategoryPresentation>();
 		for (CategoryMap.CategoryProvider p : foundCategoryProviders) {
-			FoundCategoryPresentation presentation = new FoundCategoryPresentation(p.getPath(), p.getUri(), p.getDescription());
+			String strongMarkedDescription = StringUtils.markWithStrong(p.getDescription(), searchQueries);
+			FoundCategoryPresentation presentation = new FoundCategoryPresentation(p.getPath(), p.getUri(), strongMarkedDescription);
 			presentations.add(presentation);
 		}
 
 		return presentations;
     }
 
-    List<String> getAllMorphs(List<TermProvider> providers) {
+	List<String> getAllMorphs(List<TermProvider> providers) {
         List<String> morphs = new ArrayList<String>();
 
         for(TermProvider provider : providers) {
