@@ -1,4 +1,5 @@
 <div class="term">
+    <span class="structure-item">Термин:</span>
     <span ng-hide="editMode" class="current-term-title">{{name}}</span>
     <div ng-show="editMode">
         <div class="input-group" style="padding-top: 20px">
@@ -18,17 +19,20 @@
     </div>
     <div class="block loading" ng-show="loading">Загрузка...</div>
     <div ng-hide="loading && termFound">
-        <span class="info" ng-show="from">Перенапраленно с: {{from.name}}</span>
-        <span class="info" ng-show="code">Код понятия: {{code.name}}</span>
-        <span class="info" ng-show="aliases.length">Синонимы и сокращения:
+        <span ng-show="from"><span class="structure-item">Перенапраленно с:</span> {{from.name}}</span>
+        <span ng-show="code"><span class="structure-item">Код понятия:</span> {{code.name}}</span>
+        <span ng-show="aliases.length"><span class="structure-item">Синонимы и сокращения:</span>
             <span class="alias" ng-repeat="alias in aliases">
                 {{alias.name}}{{$last ? '' : ', '}}
             </span>
         </span>
         <br/>
-        <div class="highlight" ng-show="shortDescription || description" style="margin-top: 0">
-            <p ng-show="shortDescription" ii-bind="shortDescription" class="shortDescription"></p>
-            <p ng-show="description" ii-bind="description"></p>
+        <div ng-show="shortDescription || description" style="margin-top: 20px">
+            <span class="structure-item">Словарная статья свободной интерпретации:</span>
+            <div class="highlight" style="margin-top: 2px">
+                <p ng-show="shortDescription" ii-bind="shortDescription" class="shortDescription"></p>
+                <p ng-show="description" ii-bind="description"></p>
+            </div>
         </div>
         <div class="pointer section" title="Показать" ng-click="showQuotes = !showQuotes" ng-show="quotes.length">
             <h3>Избранные цитаты</h3> <span ng-hide="showQuotes">показать {{quotes.length}}</span>
@@ -173,7 +177,7 @@
         width: 400px;
     }
     .term .current-term-title {
-        font-size: 3em;
+        font-size: 2em;
         word-break: break-all
     }
     @media screen and (max-width: 767px) {

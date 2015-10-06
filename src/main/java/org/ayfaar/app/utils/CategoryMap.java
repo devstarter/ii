@@ -34,5 +34,6 @@ public interface CategoryMap {
 		CategoryProvider getPrevious();
 		String getPreviousUri();
 		String getNextUri();
-	}
+        String getStartItemNumber();
+    }
 }

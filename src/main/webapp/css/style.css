@@ -67,10 +67,11 @@ aside {
     float: right;
 }
 body {
-    max-width: 1200px;
     margin: 0 auto;
     padding-bottom: 50px;
+    font-size: 16px;
 }
+.structure-item {font-family: Arial; color: grey}
 .highlite {
     font-weight: bold;
 }
@@ -101,6 +102,11 @@ blockquote>cite {
     height: 30px;
     cursor: pointer;
     display: block;
+}
+
+strong {
+    font-weight: normal;
+    background-color: lightyellow;
 }
 
 body {
@@ -145,6 +151,9 @@ blockquote {
     width: 100%
 }
 .pointer {cursor: pointer}
+
+.home-search-tips {font-size: 75%}
+.home-contents-block a {display: block;padding-bottom: 5px;}
 
 /*поднять шрифт для планшета*/
 @media screen and (max-width: 767px) {

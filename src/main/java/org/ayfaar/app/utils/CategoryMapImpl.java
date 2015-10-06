@@ -88,7 +88,7 @@ public class CategoryMapImpl implements CategoryMap {
             if (iterator.hasNext()) regexp += "|";
         }
 
-        final Map<CategoryProvider, Integer> rateMap = new HashMap<CategoryProvider, Integer>();
+//        final Map<CategoryProvider, Integer> rateMap = new HashMap<CategoryProvider, Integer>();
 
         Pattern pattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
         List<CategoryProvider> foundCategories = new ArrayList<CategoryProvider>();
@@ -97,14 +97,16 @@ public class CategoryMapImpl implements CategoryMap {
             Matcher matcher = pattern.matcher(provider.getDescription());
             if (matcher.find()) {
                 foundCategories.add(provider);
-                rateMap.put(provider, matcher.start());
+//                rateMap.put(provider, matcher.start());
             }
         }
 
         Collections.sort(foundCategories, new Comparator<CategoryProvider>() {
             @Override
             public int compare(CategoryProvider p1, CategoryProvider p2) {
-                return rateMap.get(p1).compareTo(rateMap.get(p2));
+				if (p1.getStartItemNumber() == null || p2.getStartItemNumber() == null) return 0;
+				return Double.compare(Double.valueOf(p1.getStartItemNumber()), Double.valueOf(p2.getStartItemNumber()));
+//                return rateMap.get(p1).compareTo(rateMap.get(p2));
             }
         });
 
@@ -245,6 +247,19 @@ public class CategoryMapImpl implements CategoryMap {
 		@Override
 		public String getNextUri() {
 			return category.getNext();
+		}
+
+		@Override
+		public String getStartItemNumber() {
+			if (category.isParagraph()) return UriGenerator.getValueFromUri(Item.class, category.getStart());
+			return getStartItemNumberOfChildren(getChildren());
+		}
+
+		private String getStartItemNumberOfChildren(List<CategoryProvider> categories) {
+			if (categories.isEmpty()) return null;
+			CategoryProvider firstCat = categories.get(0);
+			if (firstCat.isParagraph()) return firstCat.getStartItemNumber();
+			return getStartItemNumberOfChildren(firstCat.getChildren());
 		}
 
 		@Override
