@@ -112,10 +112,10 @@ public interface BasicCrudDao<E> {
     E getOneFor(String entity, Serializable id);
 
     List<E> getByExample(E o);
-
+/*
     List<E> getAudit(Serializable id);
 
-    List<E> getAllAudit();
+    List<E> getAllAudit();*/
 
     E initialize(E detachedParent, String fieldName);
 }

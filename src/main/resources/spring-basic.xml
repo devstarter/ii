@@ -74,7 +74,7 @@
         </property>
     </bean>
 
-    <bean id="webTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+    <!--<bean id="webTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
         <property name="prefix" value="/WEB-INF/templates/" />
         <property name="templateMode" value="HTML5" />
         <property name="characterEncoding" value="UTF-8" />
@@ -87,7 +87,7 @@
                 <ref bean="webTemplateResolver" />
             </set>
         </property>
-    </bean>
+    </bean>-->
 
     <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" >
 		<property name="host" value="smtp.gmail.com" />

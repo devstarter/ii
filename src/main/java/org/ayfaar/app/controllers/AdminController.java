@@ -1,27 +1,12 @@
 package org.ayfaar.app.controllers;
 
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.ayfaar.app.utils.TermsMap;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
-import static org.ayfaar.app.utils.StringUtils.trim;
 
 @Controller
 @RequestMapping("api/admin")
 public class AdminController {
-
+/*
     @Autowired TermsMap termsMap;
 
     @SuppressWarnings("UnusedAssignment")
@@ -74,5 +59,5 @@ public class AdminController {
         }
 
         workbook.write(new BufferedOutputStream(response.getOutputStream()));
-    }
+    }*/
 }

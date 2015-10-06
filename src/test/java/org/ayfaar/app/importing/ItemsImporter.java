@@ -6,7 +6,6 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ItemsHelper;
 import org.ayfaar.app.utils.TermsTaggingUpdater;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -25,7 +24,7 @@ public class ItemsImporter {
     private static ItemDao itemDao;
     private static TermsTaggingUpdater taggingUpdater;
 
-    public static void main(String[] args) throws Docx4JException, IOException {
+    public static void main(String[] args) throws IOException {
         currentItem = null;
 
         ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);

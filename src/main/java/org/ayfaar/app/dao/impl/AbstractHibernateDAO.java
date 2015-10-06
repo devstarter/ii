@@ -1,16 +1,11 @@
 package org.ayfaar.app.dao.impl;
 
 import org.ayfaar.app.dao.BasicCrudDao;
-import org.dozer.DozerBeanMapper;
 import org.hibernate.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.cfg.ImprovedNamingStrategy;
 import org.hibernate.criterion.*;
-import org.hibernate.envers.AuditReader;
-import org.hibernate.envers.AuditReaderFactory;
-import org.hibernate.envers.query.AuditEntity;
-import org.hibernate.envers.query.AuditQuery;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.StringType;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +24,8 @@ import static org.hibernate.criterion.Projections.rowCount;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.like;
 import static org.springframework.util.Assert.notNull;
+
+//import org.dozer.DozerBeanMapper;
 
 @SuppressWarnings("unchecked")
 @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
@@ -324,7 +321,7 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         return list(criteria().add(Example.create(o)));
     }
 
-    @Override
+    /*@Override
     public List<E> getAudit(Serializable id) {
         AuditReader reader = AuditReaderFactory.get(currentSession());
 
@@ -345,9 +342,9 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         }
 
         return result;
-    }
+    }*/
 
-    @Override
+/*    @Override
     public List<E> getAllAudit() {
         AuditReader reader = AuditReaderFactory.get(currentSession());
 
@@ -363,7 +360,7 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         }
 
         return result;
-    }
+    }*/
 
     @Override
     public E initialize(E detachedParent, String fieldName) {

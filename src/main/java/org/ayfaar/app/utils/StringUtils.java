@@ -31,16 +31,16 @@ public class StringUtils {
     }
 
 
-    public static String markWithStrong(String text, List<String> originQueries) {
-		List<String> queries = new ArrayList<String>(originQueries);
-		Collections.sort(queries, new Comparator<String>() {
+    public static String markWithStrong(String text, List<String> queries) {
+		List<String> sortedQueries = new ArrayList<String>(queries);
+		Collections.sort(sortedQueries, new Comparator<String>() {
 			@Override
 			public int compare(String o1, String o2) {
 				return Integer.compare(o2.length(), o1.length());
 			}
 		});
 		String regexp = "";
-		for (String query : queries) {
+		for (String query : sortedQueries) {
 			regexp += "|("+query+")";
 		}
 		regexp = regexp.replaceFirst("\\|", "");
