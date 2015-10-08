@@ -30,6 +30,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.languagetool</groupId>
+            <artifactId>language-ru</artifactId>
+            <version>3.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.7.3</version>
@@ -105,11 +111,11 @@
             <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.9.9-RC1</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
@@ -155,6 +161,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -402,12 +413,6 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>russian-morphology.lucene.apache.org</id>
-            <name>Lucene Russian Morphology Repository for Maven</name>
-            <url>http://russianmorphology.googlecode.com/svn/repo/releases/</url>
-        </repository>
-
         <repository>
             <id>pushbullet.java-mvn-repo</id>
             <url>https://raw.github.com/devstarter/pushbullet.java/mvn-repo/</url>

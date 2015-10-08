@@ -31,13 +31,13 @@ public class CategoryImporter {
 
         categoriesMap = new HashMap<String, Category>();
         Category paragraphCat = null;
-        Category typeCat = null;
+        Category ciklCat = null;
         Category tomCat = null;
         Category razdelCat = null;
         Category glavaCat = null;
 
 //        List<String> lines = FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-app\\src\\main\\text\\paragraphs\\Параграфы, БДК, Том 10,14.utf.csv"));
-        CSVReader reader = new CSVReader(new FileReader("D:\\PROJECTS\\ayfaar\\ii-archive\\text\\paragraphs\\Параграфы, Основы, Том 1.csv"), ';');
+        CSVReader reader = new CSVReader(new FileReader("D:\\PROJECTS\\ayfaar\\ii-archive\\text\\paragraphs\\Параграфы, Основы, Том 4.csv"), ';');
         String [] nextLine;
 //        reader.readNext(); // skip header
         while ((nextLine = reader.readNext()) != null){
@@ -45,11 +45,11 @@ public class CategoryImporter {
             String cikl = data.next().trim().replace("\uFEFF", "");
             String tom = data.next().trim();
             int tomNumber = Integer.valueOf(tom.replace("Том ", "").trim());
-            String razdelName = data.next().trim();
+            data.next();
             String razdelCode = data.next().trim();
             String razdelaDesc = data.next().trim();
-            String glavaFull = data.next().trim();
-            String glavaName = data.next().trim();
+            data.next();
+            data.next();
             String glavaCode = data.next().trim();
             String glavaDesc = data.next().trim();
             String paragraphNumber = data.next().trim();
@@ -68,14 +68,14 @@ public class CategoryImporter {
                 itemTo = tomNumber+"."+items[1];
             }
 
-            typeCat = getCat(cikl, typeCat, null);
-            tomCat = getCat(tom, tomCat, typeCat);
+            ciklCat = getCat(cikl, ciklCat, null);
+            tomCat = getCat(tom, tomCat, ciklCat);
             razdelCat = getCat(razdelCode, razdelaDesc, razdelCat, tomCat);
             glavaCat = getCat(glavaCode, glavaDesc, glavaCat, razdelCat);
 
-            if (typeCat.getStart() == null) {
-                typeCat.setStart(tomCat.getUri());
-                commonDao.save(typeCat);
+            if (ciklCat.getStart() == null) {
+                ciklCat.setStart(tomCat.getUri());
+                commonDao.save(ciklCat);
             }
             if (tomCat.getStart() == null) {
                 tomCat.setStart(razdelCat.getUri());
@@ -100,6 +100,12 @@ public class CategoryImporter {
                 }
                 commonDao.save(paragraphCat);
                 System.out.println("new " + paragraphCat.getName());
+            } else {
+                if (!paragraphCat.getDescription().equals(paragraphDescription)) {
+                    paragraphCat.setDescription(paragraphDescription);
+                    System.out.println("update description of "+paragraphCat.getName());
+                    commonDao.save(paragraphCat);
+                }
             }
             if (prevParagraphCat != null && !paragraphCat.getUri().equals(prevParagraphCat.getNext())) {
                 prevParagraphCat.setNext(paragraphCat.getUri());
