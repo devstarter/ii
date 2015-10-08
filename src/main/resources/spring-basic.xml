@@ -74,21 +74,6 @@
         </property>
     </bean>
 
-    <!--<bean id="webTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
-        <property name="prefix" value="/WEB-INF/templates/" />
-        <property name="templateMode" value="HTML5" />
-        <property name="characterEncoding" value="UTF-8" />
-        <property name="order" value="1" />
-    </bean>
-
-    <bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
-        <property name="templateResolvers">
-            <set>
-                <ref bean="webTemplateResolver" />
-            </set>
-        </property>
-    </bean>-->
-
     <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" >
 		<property name="host" value="smtp.gmail.com" />
 		<property name="port" value="587" />

@@ -4,6 +4,8 @@ package org.ayfaar.app.utils;
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,8 @@ import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
 public class CategoryMapImpl implements CategoryMap {
+    private static final Logger logger = LoggerFactory.getLogger(CategoryMap.class);
+
     @Autowired
     private CategoryDao categoryDao;
 
@@ -24,6 +28,7 @@ public class CategoryMapImpl implements CategoryMap {
 
     @PostConstruct
     public void load() {
+        logger.info("Category map loading...");
         categoryMap = new HashMap<String, CategoryProvider>();
         paragraphs = new ArrayList<Paragraph>();
 
@@ -36,6 +41,7 @@ public class CategoryMapImpl implements CategoryMap {
                         convertItemNumber(category.getStart()), convertItemNumber(category.getEnd())));
             }
         }
+        logger.info("Category map loading finish");
     }
 
     private class Paragraph {
