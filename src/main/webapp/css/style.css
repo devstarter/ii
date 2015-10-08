@@ -108,6 +108,10 @@ strong {
     font-weight: normal;
     background-color: lightyellow;
 }
+.dropdown-menu strong {
+    background-color: inherit;
+    font-weight: bold;
+}
 
 body {
     font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Trebuchet MS', 'Helvetica Neue', Helvetica, Arial, sans-serif;
