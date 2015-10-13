@@ -67,12 +67,8 @@ public class NewSearchController {
         List<String> searchQueries;
         if (provider != null) {
             // 3.2. Получить все падежи по всем терминам
-            searchQueries = provider.getMorphs();
+            searchQueries = provider.getAllAliasesWithAllMorphs();
             // 4. Произвести поиск
-            // 4.1. Сначала поискать совпадение термина в различных падежах
-            List<TermProvider> aliases = getAllAliases(provider);
-            List<String> aliasesSearchQueries = getAllMorphs(aliases);
-            searchQueries.addAll(aliasesSearchQueries);
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, startFrom);
 
             if (foundItems.isEmpty()) {
@@ -108,10 +104,7 @@ public class NewSearchController {
 			query = query.replace("*", RegExpUtils.w+"+");
             searchQueries = asList(query);
         } else {
-            searchQueries = provider.getMorphs();
-            List<TermProvider> aliases = getAllAliases(provider);
-            List<String> aliasesSearchQueries = getAllMorphs(aliases);
-            searchQueries.addAll(aliasesSearchQueries);
+            searchQueries = provider.getAllAliasesWithAllMorphs();
         }
 		List<CategoryMap.CategoryProvider> foundCategoryProviders = categoryMap.descriptionContains(searchQueries);
 
@@ -123,27 +116,6 @@ public class NewSearchController {
 		}
 
 		return presentations;
-    }
-
-	List<String> getAllMorphs(List<TermProvider> providers) {
-        List<String> morphs = new ArrayList<String>();
-
-        for(TermProvider provider : providers) {
-            morphs.addAll(provider.getMorphs());
-        }
-        return morphs;
-    }
-
-    List<TermProvider> getAllAliases(TermProvider provider) {
-        List<TermProvider> aliases = new ArrayList<TermProvider>();
-        TermProvider code = provider.getCode();
-
-        aliases.addAll(provider.getAliases());
-        aliases.addAll(provider.getAbbreviations());
-        if(code != null) {
-            aliases.add(provider.getCode());
-        }
-        return aliases;
     }
 
     private String prepareQuery(String query) {

@@ -136,6 +136,14 @@ public class TermController {
             }
         });
 
+        // mark quotes with strong
+        List<String> allAliasesWithAllMorphs = provider.getAllAliasesWithAllMorphs();
+        for (ModelMap quote : quotes) {
+            String text = (String) quote.get("quote");
+            if (text == null || text.isEmpty() || text.contains("strong")) continue;
+            quote.put("quote", StringUtils.markWithStrong(text, allAliasesWithAllMorphs));
+        }
+
         modelMap.put("code", code);
         modelMap.put("quotes", quotes);
         modelMap.put("related", toPlainObjectWithoutContent(related));

@@ -34,5 +34,6 @@ public interface TermsMap {
         boolean isAlias();
         boolean isCode();
         boolean hasCode();
+        List<String> getAllAliasesWithAllMorphs();
     }
 }

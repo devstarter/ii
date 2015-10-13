@@ -168,7 +168,37 @@ public class TermsMapImpl implements TermsMap {
         public boolean hasCode() {
             return !getListProviders(Link.CODE, getName()).isEmpty();
         }
+
+        @Override
+        public List<String> getAllAliasesWithAllMorphs() {
+            List<String> list = getMorphs();
+            List<String> aliasesSearchQueries = getAllMorphs(getAllAliases());
+            list.addAll(aliasesSearchQueries);
+            return list;
+        }
+
+        List<String> getAllMorphs(List<TermProvider> providers) {
+            List<String> morphs = new ArrayList<String>();
+
+            for(TermProvider provider : providers) {
+                morphs.addAll(provider.getMorphs());
+            }
+            return morphs;
+        }
+
+        List<TermProvider> getAllAliases() {
+            List<TermProvider> aliases = new ArrayList<TermProvider>();
+            TermProvider code = getCode();
+
+            aliases.addAll(getAliases());
+            aliases.addAll(getAbbreviations());
+            if(code != null) {
+                aliases.add(getCode());
+            }
+            return aliases;
+        }
     }
+
 
     @Override
     public TermProvider getTermProvider(String name) {
