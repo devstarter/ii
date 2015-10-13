@@ -31,7 +31,7 @@ public class SearchQuotesHelper {
         String forLeftPart = "([\\.\\?!]*)([^\\.\\?!]*)(<strong>)";
         String forRightPart = "<strong>[^\\.\\?!]+[\\.\\?!]*</strong>[^\\.\\?!]*[\\.\\?!]*";
         String regexp = join(allPossibleSearchQueries, "|");
-        regexp = regexp.replace("*", "["+RegExpUtils.w+"]*");
+        regexp = regexp.replace("*", RegExpUtils.w+"*");
 
 
         for (Item item : foundedItems) {

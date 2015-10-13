@@ -126,7 +126,7 @@ public class SearchController {
                 query = newQuery;
             }
 
-            query = query.replaceAll("\\*", "[" + w + "]*");
+            query = query.replaceAll("\\*", w + "*");
             if (aliasesList.size() > 0) {
                 items = commonDao.findInAllContent(aliasesList, page * pageSize, pageSize);
             } else {

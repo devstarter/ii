@@ -10,6 +10,7 @@ import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.events.LinkPushEvent;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.CategoryMap;
+import org.ayfaar.app.utils.RegExpUtils;
 import org.ayfaar.app.utils.StringUtils;
 import org.ayfaar.app.utils.TermsMap;
 import org.springframework.context.ApplicationEventPublisher;
@@ -104,7 +105,7 @@ public class NewSearchController {
         TermProvider provider = termsMap.getTermProvider(query);
         List<String> searchQueries;
         if (provider == null) {
-			query = query.replace("*", ".*");
+			query = query.replace("*", RegExpUtils.w+"+");
             searchQueries = asList(query);
         } else {
             searchQueries = provider.getMorphs();
