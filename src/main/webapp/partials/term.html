@@ -1,5 +1,5 @@
 <div class="term">
-    <span class="structure-item">Термин:</span>
+    <span class="structure-item">Термин</span>
     <span ng-hide="editMode" class="current-term-title">{{name}}</span>
     <div ng-show="editMode">
         <div class="input-group" style="padding-top: 20px">
@@ -19,15 +19,14 @@
     </div>
     <div class="block loading" ng-show="loading">Загрузка...</div>
     <div ng-hide="loading && termFound">
-        <span ng-show="from"><span class="structure-item">Перенапраленно с:</span> {{from.name}}</span>
-        <span ng-show="code"><span class="structure-item">Код понятия:</span> {{code.name}}</span>
-        <span ng-show="aliases.length"><span class="structure-item">Синонимы и сокращения:</span>
-            <span class="alias" ng-repeat="alias in aliases">
+        <span ng-show="from"><span class="structure-item">Перенапраленно с</span> {{from.name}}</span>
+        <span ng-show="code"><span class="structure-item">Код понятия</span> {{code.name}}</span>
+        <span ng-show="aliases.length"><span class="structure-item">Синонимы и сокращения</span>
+            <span ng-repeat="alias in aliases">
                 {{alias.name}}{{$last ? '' : ', '}}
             </span>
         </span>
-        <br/>
-        <div ng-show="shortDescription || description" style="margin-top: 20px">
+        <div ng-show="shortDescription || description" style="margin-top: 10px">
             <span class="structure-item">Словарная статья свободной интерпретации:</span>
             <div class="highlight" style="margin-top: 2px">
                 <p ng-show="shortDescription" ii-bind="shortDescription" class="shortDescription"></p>
@@ -178,7 +177,8 @@
     }
     .term .current-term-title {
         font-size: 2em;
-        word-break: break-all
+        word-break: break-all;
+        display: block;
     }
     @media screen and (max-width: 767px) {
         .term .current-term-title {

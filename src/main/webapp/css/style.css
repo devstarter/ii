@@ -71,7 +71,11 @@ body {
     padding-bottom: 50px;
     font-size: 16px;
 }
-.structure-item {font-family: Arial; color: grey}
+.structure-item {
+    color: #969696;
+    font-size: 90%;
+    display: block;
+}
 .highlite {
     font-weight: bold;
 }
