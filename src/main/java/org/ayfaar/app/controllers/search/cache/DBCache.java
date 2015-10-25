@@ -12,12 +12,18 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleValueWrapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.net.URI;
 
 
 @Component
+@Controller
+@RequestMapping("api/dbcache")
 public class DBCache extends ConcurrentMapCache {
     @Inject CustomObjectMapper objectMapper;
     @Inject TermsMap termsMap;
@@ -84,16 +90,30 @@ public class DBCache extends ConcurrentMapCache {
 
         if (key instanceof SearchCacheKey && ((SearchCacheKey) key).page == 0) {
             TermsMap.TermProvider provider = termsMap.getTermProvider(((SearchCacheKey) key).query);
-            if(provider != null && ((SearchCacheKey) key).page == 0) {
+            if(provider != null) {
                 uid = provider.hasMainTerm() ? provider.getMainTermProvider().getTerm() : provider.getTerm();
             }
         } else if(key instanceof ContentsCacheKey) {
             String name = ((ContentsCacheKey) key).categoryName;
             uid = commonDao.get(UID.class, UriGenerator.generate(Category.class, name));
         }
+
         if(uid != null) {
             commonDao.save(new CacheEntity(uid, json));
         }
         super.put(key, json);
     }
+
+    @RequestMapping("clear")
+    public void clearAll(){
+        super.clear();
+    }
+
+    @RequestMapping("clearby/{uri}")
+    public void clearByURI(@PathVariable String uri){
+        SearchCacheKey searchKey = new SearchCacheKey(uri,0);
+        super.evict(searchKey);
+    }
+
+
 }
