@@ -1,6 +1,5 @@
 package org.ayfaar.app.spring;
 
-import com.google.common.collect.Lists;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -8,6 +7,7 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandlerCom
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +24,7 @@ public class ModelViewSupportFactoryBean implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         HandlerMethodReturnValueHandlerComposite returnValueHandlers = adapter.getReturnValueHandlers();
-        List<HandlerMethodReturnValueHandler> handlers = Lists.newArrayList(returnValueHandlers.getHandlers());
+        List<HandlerMethodReturnValueHandler> handlers = new ArrayList<HandlerMethodReturnValueHandler>(returnValueHandlers.getHandlers());
 
         ModelMethodReturnValueHandler modelHandler = null;
 

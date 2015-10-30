@@ -1,0 +1,37 @@
+<div class="home">
+    <div class="header">
+        <img src="images/logo.png" alt="Ииссиидиология">
+    </div>
+    <h1>Интерактивная Ииссиидиология</h1>
+    <div>
+        Поиск пунктов, терминов, словосочетаний в материалах:
+        <div class="input-group">
+            <input ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
+                   ii-lookup
+                   typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
+                   typeahead-on-select="$suggestionSelected($label)">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" ng-click="search(query)">Искать</button>
+            </span>
+        </div>
+        <span class="home-search-tips">
+            Примеры поиска: <a href tooltip-placement="bottom" tooltip='"*" означает поиск всех вариантов склонения слова, например: птицам, птицы и т.п.' ng-click="search('птиц*')">птиц*</a>, <a href tooltip-placement="bottom" tooltip="поиск упоминаний непосредственно Космического Кода в содержимом" ng-click="search('НУУ-ВВУ')">НУУ-ВВУ</a>, <a href tooltip-placement="bottom" tooltip="поиск упоминаний Ииссиидиологического термина в содержимом" ng-click="search('клекс')">клекс</a>, <a href tooltip-placement="bottom" tooltip="показать текст абзаца" ng-click="search('10.10176')">10.10176</a>, <a href tooltip-placement="bottom" tooltip="показать диапазон пунктов" ng-click="search('3.0844-3.0846')">3.0844-3.0846</a>
+        </span>
+        <h3 style="text-align: center">Приступить к изучению</h3>
+        <div class="home-contents-block">
+            <h4>Основы</h4>
+            <a href="c/Том 1"><b>Том 1.</b> Структура Вселенной и механизмы воплощения</a>
+            <a href="c/Том 2"><b>Том 2.</b> Космические Качества как Основа энергоинформационного проявления всех Формо-систем Мироздания</a>
+            <a href="c/Том 3"><b>Том 3.</b> Разнообразие Форм творческой реализации Человека Космического</a>
+            <a href="c/Том 4"><b>Том 4.</b> Структура и Законы осуществления энергоинформационной динамики скррууллерртной системы Мироздания</a>
+            <h4>Бессмертие доступно каждому</h4>
+            <a href="c/Том 10"><b>Том 10.</b> Основополагающие Принципы Бессмертия</a>
+            <a href="11.11896"><b>Том 11.</b> Энергетические и биологические механизмы перефокусировок Самосознания</a>
+            <a href="12.13134"><b>Том 12.</b> Ноовременная динамика Универсального Фокуса Самосознания</a>
+            <a href="13.14295"><b>Том 13.</b> Психогенетическая обусловленность проявления «человеческой» Формы</a>
+            <a href="c/Том 14"><b>Том 14.</b> Принципы резонационности структур Самосознания</a>
+            <a href="15.16855"><b>Том 15.</b> Осознанный Путь к Человеческим Мирам «личностного» Бессмертия</a>
+        </div>
+        <span style="color: grey;text-align: center;display: block;padding-top: 10px">Творчеством автора является только текст нумерованных абзацев, всё остальное - результат работы коллектива читателей</span>
+    </div>
+</div>

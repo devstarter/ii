@@ -32,6 +32,8 @@ public class Link {
     private String source;
     @Column(columnDefinition = "TEXT")
     private String quote;
+    @Column(columnDefinition = "TEXT")
+    private String taggedQuote;
 
     @ManyToOne
     private UID uid1;
@@ -52,9 +54,9 @@ public class Link {
         this.type = type;
     }
 
-    public Link(Term term, Item item, String quote, String source) {
+    public Link(Term term, Item item, String quote, String taggedQuote) {
         this(term, item, quote);
-        this.source = source;
+        this.taggedQuote = taggedQuote;
     }
 
     public Link(UID uid1, UID uid2, String quote) {
