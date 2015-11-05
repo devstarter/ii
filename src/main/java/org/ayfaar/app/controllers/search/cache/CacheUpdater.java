@@ -9,7 +9,7 @@ import org.ayfaar.app.events.SimplePushEvent;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
-import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -29,7 +29,7 @@ public class CacheUpdater {
     @Autowired
     private CommonDao commonDao;
     @Autowired
-    private TermsMap termsMap;
+    private TermService termService;
     @Autowired
     private ApplicationEventPublisher eventPublisher;
     @Inject
@@ -39,7 +39,7 @@ public class CacheUpdater {
     public void update() throws IOException {
         long start = System.currentTimeMillis();
 
-        termsMap.reload();
+        termService.reload();
         updateCacheSearchResult();
 
         long end = System.currentTimeMillis();

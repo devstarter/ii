@@ -2,8 +2,8 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.RegExpUtils;
-import org.ayfaar.app.utils.TermsMap;
-import org.ayfaar.app.utils.TermsMapImpl;
+import org.ayfaar.app.utils.TermService;
+import org.ayfaar.app.utils.TermServiceImpl;
 import org.ayfaar.app.utils.TermsTaggingUpdater;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,8 @@ import static java.util.regex.Pattern.compile;
 @Controller
 @RequestMapping("api/v2/term")
 public class NewTermController {
-    @Inject TermsMapImpl termsMap;
+    @Inject
+    TermServiceImpl termsMap;
     @Inject TermsTaggingUpdater taggingUpdater;
     @Inject AsyncTaskExecutor taskExecutor;
 
@@ -41,7 +42,7 @@ public class NewTermController {
         Map<String, Integer> contains = new HashMap<String, Integer>();
         text = text.toLowerCase();
 
-        for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
+        for (Map.Entry<String, TermService.TermProvider> entry : termsMap.getAll()) {
             String key = entry.getKey();
             Matcher matcher = compile("((" + RegExpUtils.W + ")|^)" + key
                     + "((" + RegExpUtils.W + ")|$)", Pattern.UNICODE_CHARACTER_CLASS)

@@ -24,8 +24,8 @@ import static java.util.regex.Pattern.compile;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
-public class TermsMapImpl implements TermsMap {
-    private static final Logger logger = LoggerFactory.getLogger(TermsMap.class);
+public class TermServiceImpl implements TermService {
+    private static final Logger logger = LoggerFactory.getLogger(TermService.class);
 
     @Autowired
     private CommonDao commonDao;
@@ -68,10 +68,10 @@ public class TermsMapImpl implements TermsMap {
         }
 
         // prepare sorted List by term name length, longest terms first
-        sortedList = new ArrayList<Map.Entry<String, TermsMap.TermProvider>>(aliasesMap.entrySet());
-        sort(sortedList, new Comparator<Map.Entry<String, TermsMap.TermProvider>>() {
+        sortedList = new ArrayList<Map.Entry<String, TermService.TermProvider>>(aliasesMap.entrySet());
+        sort(sortedList, new Comparator<Map.Entry<String, TermService.TermProvider>>() {
             @Override
-            public int compare(Map.Entry<String, TermsMap.TermProvider> o1, Map.Entry<String, TermsMap.TermProvider> o2) {
+            public int compare(Map.Entry<String, TermService.TermProvider> o1, Map.Entry<String, TermService.TermProvider> o2) {
                 return Integer.compare(o2.getKey().length(), o1.getKey().length());
             }
         });

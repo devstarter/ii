@@ -9,8 +9,8 @@ import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
-import org.ayfaar.app.utils.TermsMapImpl;
-import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermServiceImpl;
+import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -26,7 +26,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.io.IOException;
 
 
-import static org.ayfaar.app.utils.TermsMap.TermProvider;
+import static org.ayfaar.app.utils.TermService.TermProvider;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -36,7 +36,8 @@ public class DBCacheUnitTest {
     @Mock CustomObjectMapper objectMapper;
     @Mock CommonDao commonDao;
     @Mock CategoryDao categoryDao;
-    @Mock TermsMap termsMap;
+    @Mock
+    TermService termService;
     @Mock TermDao termDao;
     @Mock LinkDao linkDao;
     @Mock ApplicationEventPublisher eventPublisher;
@@ -45,7 +46,7 @@ public class DBCacheUnitTest {
     DBCache dbCache;
     @InjectMocks
     @Spy
-    TermsMapImpl aliasesMap;
+    TermServiceImpl aliasesMap;
 
     /**
      * проверяем что-бы не сохранялось в базу если это не термин
@@ -58,7 +59,7 @@ public class DBCacheUnitTest {
 
         dbCache.put(key, page);
         verify(objectMapper, times(1)).writeValueAsString(page);
-        verify(termsMap, times(1)).getTermProvider(termName);
+        verify(termService, times(1)).getTermProvider(termName);
         verify(commonDao, never()).save(anyObject());
     }
 
@@ -78,15 +79,15 @@ public class DBCacheUnitTest {
         TermProvider mainProvider = aliasesMap.new TermProviderImpl(
                 UriGenerator.generate(Term.class, mainTerm.getName()), null, false);
 
-        when(termsMap.getTermProvider(term.getName())).thenReturn(provider);
+        when(termService.getTermProvider(term.getName())).thenReturn(provider);
 
         aliasesMap.load();
         dbCache.put(key, page);
 
 
         verify(objectMapper, times(1)).writeValueAsString(page);
-        verify(termsMap, times(1)).getTermProvider(term.getName());
-        assertNotNull(termsMap.getTermProvider(term.getName()));
+        verify(termService, times(1)).getTermProvider(term.getName());
+        assertNotNull(termService.getTermProvider(term.getName()));
         verify(commonDao, times(1)).save(anyObject());
     }
 
@@ -105,12 +106,12 @@ public class DBCacheUnitTest {
         TermProvider provider = aliasesMap.new TermProviderImpl(uri, null, false);
 
         when(provider.getTerm()).thenReturn(term);
-        when(termsMap.getTermProvider(term.getName())).thenReturn(provider);
+        when(termService.getTermProvider(term.getName())).thenReturn(provider);
 
 
         dbCache.put(key, page);
         verify(objectMapper, times(1)).writeValueAsString(page);
-        verify(termsMap, times(1)).getTermProvider(term.getName());
+        verify(termService, times(1)).getTermProvider(term.getName());
         verify(commonDao, times(1)).save(anyObject());
     }
 
@@ -125,7 +126,7 @@ public class DBCacheUnitTest {
         SearchCacheKey key = new SearchCacheKey(term.getName(), "", 1);
         SearchResultPage page = new SearchResultPage();
 
-        when(termsMap.getTerm(term.getName())).thenReturn(term);
+        when(termService.getTerm(term.getName())).thenReturn(term);
 
         dbCache.put(key, page);
         Cache.ValueWrapper value = dbCache.get(key);
@@ -146,7 +147,7 @@ public class DBCacheUnitTest {
         TermProvider provider = aliasesMap.new TermProviderImpl(uri, null, false);
 
 
-        when(termsMap.getTermProvider(term.getName())).thenReturn(provider);
+        when(termService.getTermProvider(term.getName())).thenReturn(provider);
         when(provider.getTerm()).thenReturn(term);
 
         dbCache.get(key);
@@ -175,7 +176,7 @@ public class DBCacheUnitTest {
         term.setUri(UriGenerator.generate(Term.class, term.getName()));
         SearchCacheKey key = new SearchCacheKey(term.getName(), "", 0);
 
-        when(termsMap.getTermProvider(term.getName())).thenReturn(null);
+        when(termService.getTermProvider(term.getName())).thenReturn(null);
 
         dbCache.get(key);
 
@@ -190,7 +191,7 @@ public class DBCacheUnitTest {
         String uri = UriGenerator.generate(Term.class, term.getName());
         TermProvider provider = aliasesMap.new TermProviderImpl(uri, null, false);
 
-        when(termsMap.getTermProvider(term.getName())).thenReturn(provider);
+        when(termService.getTermProvider(term.getName())).thenReturn(provider);
         when(provider.getTerm()).thenReturn(term);
 
         dbCache.get(key);

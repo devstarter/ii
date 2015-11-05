@@ -4,7 +4,7 @@ import org.ayfaar.app.controllers.ItemController;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.utils.CategoryMap;
+import org.ayfaar.app.utils.CategoryService;
 import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,12 +19,13 @@ import static org.ayfaar.app.utils.StringUtils.trim;
 public class ContentsHelper {
     @Autowired ItemDao itemDao;
     @Autowired TermsMarker marker;
-    @Autowired CategoryMap categoryMap;
+    @Autowired
+    CategoryService categoryService;
 
     private final int SUBCATEGORY_COUNT = 2;
 
     public CategoryPresentation createContents(String categoryName) {
-        CategoryMap.CategoryProvider provider = categoryMap.getByName(categoryName);
+        CategoryService.CategoryProvider provider = categoryService.getByName(categoryName);
         if (provider == null) {
             throw new RuntimeException(format("Category `%s` not found", categoryName));
         }
@@ -42,14 +43,14 @@ public class ContentsHelper {
         }
     }
 
-    private List<CategoryPresentation> createChildrenPresentation(List<CategoryMap.CategoryProvider> categories, int count) {
+    private List<CategoryPresentation> createChildrenPresentation(List<CategoryService.CategoryProvider> categories, int count) {
         if(count >= SUBCATEGORY_COUNT) return null;
 
         List<CategoryPresentation> childrenPresentations = new ArrayList<CategoryPresentation>();
 
         count++;
 
-        for (CategoryMap.CategoryProvider category : categories) {
+        for (CategoryService.CategoryProvider category : categories) {
             if (!category.isParagraph()) {
                 childrenPresentations.add(new CategoryPresentation(
                         extractCategoryName(category.getCode()), category.getUri(), category.getDescription(),
@@ -104,10 +105,10 @@ public class ContentsHelper {
      * @param categories
      * @return
      */
-    List<CategoryPresentation> createParentPresentation(List<CategoryMap.CategoryProvider> categories) {
+    List<CategoryPresentation> createParentPresentation(List<CategoryService.CategoryProvider> categories) {
         List<CategoryPresentation> presentations = new ArrayList<CategoryPresentation>();
 
-        for(CategoryMap.CategoryProvider category : categories) {
+        for(CategoryService.CategoryProvider category : categories) {
             presentations.add(new CategoryPresentation(extractCategoryName(category.getCode()),
                     category.getUri(), trim(category.getDescription())));
         }

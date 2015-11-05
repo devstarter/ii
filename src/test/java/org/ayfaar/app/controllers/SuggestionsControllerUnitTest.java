@@ -1,7 +1,7 @@
 package org.ayfaar.app.controllers;
 
-import org.ayfaar.app.utils.TermsMapImpl;
-import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermServiceImpl;
+import org.ayfaar.app.utils.TermService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -17,15 +17,16 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.ayfaar.app.utils.TermsMap.TermProvider;
+import static org.ayfaar.app.utils.TermService.TermProvider;
 
 
 @SuppressWarnings("unchecked")
 @RunWith(MockitoJUnitRunner.class)
 public class SuggestionsControllerUnitTest {
-    @Mock TermsMap termsMap;
     @Mock
-    TermsMapImpl aliasesMap;
+    TermService termService;
+    @Mock
+    TermServiceImpl aliasesMap;
 
     @InjectMocks
     SuggestionsController controller;
@@ -35,7 +36,7 @@ public class SuggestionsControllerUnitTest {
         String q = "a";
         List<String> fakeTerms = asList("a", "1 a", "bterfd", "b-aaaa", "aa", "242a424");
 
-        Mockito.when(termsMap.getAll()).thenReturn(transform(fakeTerms));
+        Mockito.when(termService.getAll()).thenReturn(transform(fakeTerms));
 
         List<String> suggestions = controller.suggestions(q);
 
@@ -54,7 +55,7 @@ public class SuggestionsControllerUnitTest {
                                         "Звёздно-Галактическая Форма", "Вселенский Межгалактический Диапазон", "Межгалактический",
                                         "Межгалактические Комплекс-Планы", "Межгалактический Астральный Комплекс-План", "Галактика");
 
-        Mockito.when(termsMap.getAll()).thenReturn(transform(fakeTerms));
+        Mockito.when(termService.getAll()).thenReturn(transform(fakeTerms));
 
         List<String> suggestions = controller.suggestions(q);
         assertTrue(suggestions.size() <= SuggestionsController.MAX_SUGGESTIONS);
@@ -68,7 +69,7 @@ public class SuggestionsControllerUnitTest {
         String q = "aa";
         List<String> fakeTerms = asList("aabbcc", "242aa424", "aa", "aabb", "aab");
 
-        Mockito.when(termsMap.getAll()).thenReturn(transform(fakeTerms));
+        Mockito.when(termService.getAll()).thenReturn(transform(fakeTerms));
 
         List<String> suggestions = controller.suggestions(q);
 
@@ -81,7 +82,7 @@ public class SuggestionsControllerUnitTest {
     }
 
     private List<Map.Entry<String, TermProvider>> transform(List<String> fakeTerms) {
-        Map<String, TermsMap.TermProvider> map = new HashMap<String, TermsMap.TermProvider>();
+        Map<String, TermService.TermProvider> map = new HashMap<String, TermService.TermProvider>();
         for (String fakeTerm : fakeTerms) {
             map.put(fakeTerm, aliasesMap.new TermProviderImpl(fakeTerm, null, false));
         }

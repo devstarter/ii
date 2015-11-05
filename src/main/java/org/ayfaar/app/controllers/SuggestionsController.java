@@ -1,6 +1,6 @@
 package org.ayfaar.app.controllers;
 
-import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +19,8 @@ import static java.util.regex.Pattern.UNICODE_CASE;
 @Controller
 @RequestMapping("api/suggestions")
 public class SuggestionsController {
-    @Autowired TermsMap termsMap;
+    @Autowired
+    TermService termService;
 
     private List<String> escapeChars = Arrays.asList("(", ")", "[", "]", "{", "}");
     public static final int MAX_SUGGESTIONS = 7;
@@ -64,7 +65,7 @@ public class SuggestionsController {
         List<String> terms = new ArrayList<String>();
         Pattern pattern = Pattern.compile(query,CASE_INSENSITIVE + UNICODE_CASE);
 
-        for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
+        for (Map.Entry<String, TermService.TermProvider> entry : termService.getAll()) {
             Matcher matcher = pattern.matcher(entry.getValue().getName());
             String providerName = entry.getValue().getName();
             if(matcher.find() && !suggestions.contains(providerName) && !terms.contains(providerName)) {

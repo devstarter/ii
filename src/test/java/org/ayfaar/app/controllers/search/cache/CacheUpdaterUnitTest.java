@@ -9,7 +9,7 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.events.SimplePushEvent;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
-import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.TermsMarker;
 import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Test;
@@ -31,7 +31,8 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class CacheUpdaterUnitTest {
     @Mock CommonDao commonDao;
-    @Mock TermsMap termsMap;
+    @Mock
+    TermService termService;
     @Mock ItemDao itemDao;
     @Mock TermsMarker termsMarker;
     @Mock NewSearchController searchController;
@@ -63,7 +64,7 @@ public class CacheUpdaterUnitTest {
 
         cacheUpdater.update();
 
-        verify(termsMap, times(1)).reload();
+        verify(termService, times(1)).reload();
         verify(commonDao, times(1)).getLike(CacheEntity.class, "uri", (uri + "%"), Integer.MAX_VALUE);
         verify(searchController, times(3)).searchWithoutCache(getValueFromUri(Term.class, anyString()), eq(0), anyString());
         verify(eventPublisher, times(1)).publishEvent(any(SimplePushEvent.class));

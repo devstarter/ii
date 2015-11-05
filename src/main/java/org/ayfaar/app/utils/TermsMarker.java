@@ -1,5 +1,6 @@
 package org.ayfaar.app.utils;
 
+import org.ayfaar.app.utils.TermService.TermProvider;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -14,7 +15,7 @@ import static java.util.regex.Pattern.*;
 public class TermsMarker {
     public final static String TAG_NAME = "term";
 
-    @Inject TermsMap termsMap;
+    @Inject TermService termService;
 
     /**
      * Пометить все термины в тексте тегами <term></term>.
@@ -35,7 +36,7 @@ public class TermsMarker {
         //перед обходом отсортируем по длине термина, сначала самые длинные
 
 
-        for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
+        for (Map.Entry<String, TermProvider> entry : termService.getAll()) {
             // получаем слово связаное с термином, напрмер "времени" будет связано с термином "Время"
             String word = entry.getKey();
             // составляем условие по которому проверяем есть ли это слов в тексте
@@ -67,8 +68,8 @@ public class TermsMarker {
                     // формируем маску для тегирования, title="%s" это дополнительное требования, не описывал ещё в задаче
                     //String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
                     //пока забыли о  title="...."
-                    final TermsMap.TermProvider termProvider = entry.getValue();
-                    final TermsMap.TermProvider mainTermProvider = termProvider.getMainTermProvider();
+                    final TermProvider termProvider = entry.getValue();
+                    final TermProvider mainTermProvider = termProvider.getMainTermProvider();
                     boolean hasMainTerm = termProvider.hasMainTerm();
                     boolean hasShortDescription = hasMainTerm ? mainTermProvider.hasShortDescription() : termProvider.hasShortDescription();
 

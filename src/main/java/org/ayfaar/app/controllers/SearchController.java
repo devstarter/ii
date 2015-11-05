@@ -9,7 +9,7 @@ import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.events.SearchQuoteEvent;
 import org.ayfaar.app.utils.Content;
 import org.ayfaar.app.utils.EmailNotifier;
-import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.TermsMarker;
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,8 @@ import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 @Controller
 @RequestMapping("api/search")
 public class SearchController {
-    @Autowired TermsMap termsMap;
+    @Autowired
+    TermService termService;
     @Autowired TermDao termDao;
     @Autowired ItemDao itemDao;
     @Autowired ArticleDao articleDao;
@@ -78,13 +79,13 @@ public class SearchController {
             items = commonDao.findInAllContent(query, page*pageSize, pageSize);
         } else {
 
-            TermsMap.TermProvider provider = termsMap.getTermProvider(query);
+            TermService.TermProvider provider = termService.getTermProvider(query);
 
             Term term = null;
             if (provider != null) {
                 term = provider.getTerm();
             } else {
-                for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
+                for (Map.Entry<String, TermService.TermProvider> entry : termService.getAll()) {
                     if (entry.getKey().equals(query)) {
                         term = entry.getValue().getTerm();
                         break;
@@ -159,7 +160,7 @@ public class SearchController {
     @ResponseBody
     private ModelMap searchAsTerm(@RequestParam String query) {
         query = query.trim();
-        List<Map.Entry<String, TermsMap.TermProvider>> allProviders = termsMap.getAll();
+        List<Map.Entry<String, TermService.TermProvider>> allProviders = termService.getAll();
         List<String> matches = new ArrayList<String>();
         Term exactMatchTerm = null;
 
@@ -175,7 +176,7 @@ public class SearchController {
             pattern = Pattern.compile(regexp.toLowerCase());
         }
 
-        for (Map.Entry<String, TermsMap.TermProvider> providers : allProviders) {
+        for (Map.Entry<String, TermService.TermProvider> providers : allProviders) {
             if (providers.getKey().equals(query.toLowerCase())) {
                 exactMatchTerm = providers.getValue().getTerm();
             } else if (providers.getKey().contains(query.toLowerCase())
@@ -186,12 +187,12 @@ public class SearchController {
 
         TermMorph morph = termMorphDao.getByName(query);
         if (morph != null) {
-            exactMatchTerm = termsMap.getTerm(getValueFromUri(Term.class, morph.getTermUri()));
+            exactMatchTerm = termService.getTerm(getValueFromUri(Term.class, morph.getTermUri()));
         }
 
         List<Term> terms = new ArrayList<Term>();
         for (String match : matches) {
-            Term prime = termsMap.getTerm(match);
+            Term prime = termService.getTerm(match);
             boolean has = false;
             for (Term term : terms) {
                 if (term.getUri().equals(prime.getUri())) {
@@ -202,7 +203,7 @@ public class SearchController {
             if (!has) terms.add(prime);
         }
 
-        for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
+        for (Map.Entry<String, TermService.TermProvider> entry : termService.getAll()) {
             String word = entry.getKey();
             pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|])|^)(" + word
                     + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|])|$)", UNICODE_CHARACTER_CLASS | UNICODE_CASE | CASE_INSENSITIVE);
@@ -228,7 +229,7 @@ public class SearchController {
                      @RequestParam String query,
                      @RequestParam(required = false) String quote) {
         if (kind.equals("+")) {
-            Term term = termsMap.getTerm(query);
+            Term term = termService.getTerm(query);
             Item item = itemDao.get(uri);
             boolean possibleDuplication = false;
             Link link = null;

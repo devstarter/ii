@@ -3,7 +3,7 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.dao.ArticleDao;
 import org.ayfaar.app.model.Article;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.utils.TermsMapImpl;
+import org.ayfaar.app.utils.TermServiceImpl;
 import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,8 @@ import static org.springframework.util.Assert.notNull;
 public class ArticleController {
 
     @Autowired ArticleDao articleDao;
-    @Autowired TermsMapImpl aliasesMap;
+    @Autowired
+    TermServiceImpl aliasesMap;
     @Autowired TermsMarker termsMarker;
 
     @RequestMapping("{id}")

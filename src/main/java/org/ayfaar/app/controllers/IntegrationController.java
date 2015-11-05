@@ -4,7 +4,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.RegExpUtils;
-import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +22,8 @@ import static java.util.regex.Pattern.compile;
 @Controller
 @RequestMapping("api/integration")
 public class IntegrationController {
-    @Autowired TermsMap termsMap;
+    @Autowired
+    TermService termService;
     @Autowired ItemDao itemDao;
 
     private List<String> allItemNumbers;
@@ -39,9 +40,9 @@ public class IntegrationController {
         text = URLDecoder.decode(text).toLowerCase();
 
         // terms
-        for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
+        for (Map.Entry<String, TermService.TermProvider> entry : termService.getAll()) {
             String key = entry.getKey();
-            TermsMap.TermProvider provider = entry.getValue();
+            TermService.TermProvider provider = entry.getValue();
             if (ArrayUtils.contains(ignoreTerms, provider.getName().toLowerCase())) continue;
             Matcher matcher = compile("((" + RegExpUtils.W + ")|^)" + key + "((" + RegExpUtils.W + ")|$)", Pattern.UNICODE_CHARACTER_CLASS).matcher(text);
             if (matcher.find()) {

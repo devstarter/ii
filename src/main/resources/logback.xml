@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <property name="DEV_HOME" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}"/>
+    <!--<property name="DEV_HOME" value="${LOG_PATH:logs/}"/>-->
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
@@ -11,7 +11,7 @@
         </layout>
     </appender>
 
-    <appender name="FILE-ERROR"
+    <!--<appender name="FILE-ERROR"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${DEV_HOME}/error.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -21,7 +21,7 @@
         </encoder>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- rollover daily -->
+            &lt;!&ndash; rollover daily &ndash;&gt;
             <fileNamePattern>${DEV_HOME}/archived/error.%d{yyyy-MM-dd}.%i.log
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
@@ -30,17 +30,17 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
 
-    </appender>
+    </appender>-->
 
     <!-- Send logs to both console and file audit -->
     <logger name="org.ayfaar" level="all"
             additivity="false">
-        <appender-ref ref="FILE-AUDIT" />
+        <!--<appender-ref ref="FILE-AUDIT" />-->
         <appender-ref ref="STDOUT" />
     </logger>
 
-    <root level="warn">
+    <!--<root level="warn">
         <appender-ref ref="FILE-ERROR" />
-    </root>
+    </root>-->
 
 </configuration>

@@ -2,7 +2,7 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.utils.CategoryMap;
+import org.ayfaar.app.utils.CategoryService;
 import org.ayfaar.app.utils.TermsMarker;
 import org.ayfaar.app.utils.TermsTaggingUpdater;
 import org.springframework.context.ApplicationEventPublisher;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static org.ayfaar.app.controllers.ItemController.getPrev;
-import static org.ayfaar.app.utils.CategoryMap.CategoryProvider;
+import static org.ayfaar.app.utils.CategoryService.CategoryProvider;
 import static org.ayfaar.app.utils.UriGenerator.generate;
 import static org.springframework.util.Assert.notNull;
 
@@ -29,7 +29,8 @@ public class NewItemController {
 
     private static final int MAXIMUM_RANGE_SIZE = 200;
     @Inject ItemDao itemDao;
-    @Inject CategoryMap categoryMap;
+    @Inject
+    CategoryService categoryService;
     @Inject TermsMarker termsMarker;
     @Inject AsyncTaskExecutor taskExecutor;
     @Inject TermsTaggingUpdater taggingUpdater;
@@ -141,7 +142,7 @@ public class NewItemController {
 
      private List<ParentPresentation> getParents(String number) {
          List<ParentPresentation> parents = new ArrayList<ParentPresentation>();
-         CategoryProvider provider = categoryMap.getProviderByItemNumber(number);
+         CategoryProvider provider = categoryService.getByItemNumber(number);
          if (provider != null) {
              parents.add(new ParentPresentation(provider.extractCategoryName(), provider.getUri()));
              for (CategoryProvider parent : provider.getParents()) {

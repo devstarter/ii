@@ -1,8 +1,9 @@
 package org.ayfaar.app.utils.speller;
 
-import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermService;
 import org.languagetool.rules.*;
 import org.languagetool.rules.ru.*;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -15,14 +16,16 @@ import java.util.ResourceBundle;
 import static java.util.Arrays.asList;
 
 @Component
+@Profile("speller")
 public class Russian extends org.languagetool.language.Russian {
-	@Inject TermsMap termsMap;
+	@Inject
+	TermService termService;
 
 	@Override
 	public List<Rule> getRelevantRules(ResourceBundle messages) throws IOException {
 		SpellerRule spellerRule = new SpellerRule(messages, this);
 		List<String> terms = new ArrayList<String>();
-		for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
+		for (Map.Entry<String, TermService.TermProvider> entry : termService.getAll()) {
 			terms.add(entry.getKey());
 		}
 		spellerRule.addIgnoreTokens(terms);

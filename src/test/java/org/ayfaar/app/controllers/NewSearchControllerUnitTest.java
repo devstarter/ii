@@ -2,9 +2,9 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.controllers.search.SearchCache;
 import org.ayfaar.app.controllers.search.SearchQuotesHelper;
-import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.dao.*;
-import org.ayfaar.app.utils.*;
+import org.ayfaar.app.utils.TermService;
+import org.ayfaar.app.utils.TermServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,14 +13,10 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.List;
-
 import static java.util.Arrays.asList;
-import static org.ayfaar.app.utils.TermsMap.TermProvider;
 import static org.ayfaar.app.controllers.NewSearchController.PAGE_SIZE;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NewSearchControllerUnitTest {
@@ -30,20 +26,21 @@ public class NewSearchControllerUnitTest {
     @Mock TermMorphDao termMorphDao;
     @Mock SearchCache cache;
     @Mock SearchQuotesHelper handleItems;
-    @Mock TermsMap termsMap;
+    @Mock
+    TermService termService;
     @Mock TermDao termDao;
     @Mock LinkDao linkDao;
     @InjectMocks @Spy
     NewSearchController controller;
     @InjectMocks @Spy
-    TermsMapImpl aliasesMap;
+    TermServiceImpl aliasesMap;
 
 
     @Before
     public void setUp() {
     }
 
-    @SuppressWarnings("unchecked")
+/*    @SuppressWarnings("unchecked")
     @Test
     public void testHasMore() {
         String q = "время";
@@ -65,7 +62,7 @@ public class NewSearchControllerUnitTest {
         assertTrue(page.isHasMore());
         verify(searchDao, only()).findInItems(anyList(), anyInt(), anyInt(), anyString());
         verify(items).remove(20);
-    }
+    }*/
 
     @Test
     public void testSearchPhrase() {

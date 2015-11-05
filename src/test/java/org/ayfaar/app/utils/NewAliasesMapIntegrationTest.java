@@ -10,18 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 
-import static org.ayfaar.app.utils.TermsMap.TermProvider;
+import static org.ayfaar.app.utils.TermService.TermProvider;
 import static org.junit.Assert.*;
 
 public class NewAliasesMapIntegrationTest extends IntegrationTest{
     @Autowired
-    private TermsMapImpl aliasesMap;
+    private TermServiceImpl aliasesMap;
     @Autowired
-    private TermsMap termsMap;
+    private TermService termService;
 
     @Test
     public void testGetTermProvider() {
-        TermProvider provider = termsMap.getTermProvider("Чистое Качество");
+        TermProvider provider = termService.getTermProvider("Чистое Качество");
 
         assertNotNull(provider);
         assertEquals("ии:термин:Чистое Качество", provider.getUri());
@@ -29,14 +29,14 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetAll() {
-        List<Map.Entry<String, TermProvider>> set = termsMap.getAll();
+        List<Map.Entry<String, TermProvider>> set = termService.getAll();
 
         assertTrue(set.size() > 0);
     }
 
     @Test
     public void testGetTerm() {
-        Term term = termsMap.getTerm("Вселенский Межгалактический Диапазон");
+        Term term = termService.getTerm("Вселенский Межгалактический Диапазон");
 
         assertNotNull(term);
         assertEquals("ии:термин:Вселенский Межгалактический Диапазон", term.getUri());
@@ -54,7 +54,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetTypeOfTerm() {
-        final TermProvider provider = termsMap.getTermProvider("ТОО-УУ");
+        final TermProvider provider = termService.getTermProvider("ТОО-УУ");
 
         assertEquals("ТОО-УУ", provider.getName());
         assertEquals(UriGenerator.generate(Term.class, "ТОО-УУ"), provider.getUri());
@@ -74,7 +74,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetAliases() {
-        TermProvider provider = termsMap.getTermProvider("Конфективное ССС-Состояние");
+        TermProvider provider = termService.getTermProvider("Конфективное ССС-Состояние");
 
         List<TermProvider> aliases = provider.getAliases();
         assertEquals("ии:термин:Конфективный", aliases.get(0).getUri());
@@ -83,7 +83,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetAbbreviations() {
-        TermProvider provider = termsMap.getTermProvider("ФЛУУ-ЛУУ-комплекс");
+        TermProvider provider = termService.getTermProvider("ФЛУУ-ЛУУ-комплекс");
 
         List<TermProvider> abbreviations = provider.getAbbreviations();
         assertEquals("ии:термин:ФЛК", abbreviations.get(0).getUri());
@@ -92,7 +92,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetCodes() {
-        TermProvider provider = termsMap.getTermProvider("Мобиллюрасцитный Дубликатор Сектора");
+        TermProvider provider = termService.getTermProvider("Мобиллюрасцитный Дубликатор Сектора");
 
         TermProvider code = provider.getCode();
         assertEquals("ии:термин:ЮЮ-ИИЙ-ССС-ЮЮ", code.getUri());
@@ -100,15 +100,15 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testRA() {
-        final TermProvider ra = termsMap.getTermProvider("РА");
+        final TermProvider ra = termService.getTermProvider("РА");
         assertTrue(ra.getMainTermProvider().hasShortDescription());
     }
 
     @Test
     public void sameTermProviders() {
-        final TermProvider morph = termsMap.getTermProvider("резонационной Активности");
-        final TermProvider origin = termsMap.getTermProvider("резонационная Активность");
-        final TermProvider abbr = termsMap.getTermProvider("РА");
+        final TermProvider morph = termService.getTermProvider("резонационной Активности");
+        final TermProvider origin = termService.getTermProvider("резонационная Активность");
+        final TermProvider abbr = termService.getTermProvider("РА");
 
         assertEquals(morph, origin);
         assertEquals(abbr.getMainTermProvider(), origin);
@@ -116,7 +116,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetMorphs() {
-        TermProvider provider = termsMap.getTermProvider("Время");
+        TermProvider provider = termService.getTermProvider("Время");
         List<String> morphs = provider.getMorphs();
 
         assertEquals(8, morphs.size());

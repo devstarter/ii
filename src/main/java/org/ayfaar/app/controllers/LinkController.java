@@ -12,7 +12,7 @@ import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.events.NewLinkEvent;
 import org.ayfaar.app.events.NewQuoteLinkEvent;
 import org.ayfaar.app.utils.EmailNotifier;
-import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -36,7 +36,8 @@ public class LinkController {
     @Autowired ItemDao itemDao;
     @Autowired TermController termController;
     @Autowired EmailNotifier emailNotifier;
-    @Autowired TermsMap termsMap;
+    @Autowired
+    TermService termService;
     @Autowired TermMorphDao termMorphDao;
     @Autowired TermsMarker termsMarker;
     @Autowired ApplicationEventPublisher eventPublisher;
@@ -52,8 +53,8 @@ public class LinkController {
         }
         Term term = termDao.getByName(termName);
         if (term == null) {
-            if (termsMap.getTermProvider(termName) != null) {
-                term = termsMap.getTerm(termName);
+            if (termService.getTermProvider(termName) != null) {
+                term = termService.getTerm(termName);
             } else {
                 term = termController.add(termName);
             }

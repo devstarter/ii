@@ -3,7 +3,7 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,7 +13,8 @@ import static org.junit.Assert.assertEquals;
 
 public class ItemControllerIntegrationTest extends IntegrationTest {
     @Autowired ItemController itemController;
-    @Autowired TermsMap termsMap;
+    @Autowired
+    TermService termService;
 
     @Test
     public void testGetLinkedTerms() {

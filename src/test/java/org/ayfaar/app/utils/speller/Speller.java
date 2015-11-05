@@ -3,6 +3,7 @@ package org.ayfaar.app.utils.speller;
 import org.ayfaar.app.dao.ItemDao;
 import org.languagetool.JLanguageTool;
 import org.languagetool.rules.RuleMatch;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@Profile("speller")
 public class Speller {
 	@Inject Russian russian;
 	@Inject ItemDao itemDao;

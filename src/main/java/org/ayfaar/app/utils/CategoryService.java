@@ -5,17 +5,15 @@ import org.ayfaar.app.model.Category;
 
 import java.util.List;
 
-
-public interface CategoryMap {
+public interface CategoryService {
     CategoryProvider getByName(String name);
-    CategoryProvider getProviderByItemNumber(String number);
-    Category getCategory(String name);
+    CategoryProvider getByItemNumber(String number);
     List<CategoryProvider> descriptionContains(List<String> searchQueries);
     void reload();
 
 	CategoryProvider getByUri(String uri);
 
-	interface CategoryProvider {
+    interface CategoryProvider {
         Category getCategory();
         CategoryProvider getNext();
         String getUri();

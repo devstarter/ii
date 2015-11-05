@@ -17,8 +17,8 @@ import java.util.regex.Pattern;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
-public class CategoryMapImpl implements CategoryMap {
-    private static final Logger logger = LoggerFactory.getLogger(CategoryMap.class);
+public class CategoryServiceImpl implements CategoryService {
+    private static final Logger logger = LoggerFactory.getLogger(CategoryService.class);
 
     @Autowired
     private CategoryDao categoryDao;
@@ -62,7 +62,7 @@ public class CategoryMapImpl implements CategoryMap {
     }
 
     @Override
-    public CategoryProvider getProviderByItemNumber(String number) {
+    public CategoryProvider getByItemNumber(String number) {
         CategoryProvider provider = null;
         double itemNumber = convertItemNumber(UriGenerator.generate(Item.class, number));
 
@@ -76,11 +76,6 @@ public class CategoryMapImpl implements CategoryMap {
             }
         }
         return provider;
-    }
-
-    @Override
-    public Category getCategory(String name) {
-        return getByName(name).getCategory();
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.ayfaar.app.events.SearchEvent;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.UID;
 import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
-import org.ayfaar.app.utils.TermsMap;
+import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleValueWrapper;
@@ -20,7 +20,8 @@ import java.io.IOException;
 @Component
 public class DBCache extends ConcurrentMapCache {
     @Inject CustomObjectMapper objectMapper;
-    @Inject TermsMap termsMap;
+    @Inject
+    TermService termService;
     @Inject CommonDao commonDao;
     @Inject CategoryDao categoryDao;
     @Inject ApplicationEventPublisher eventPublisher;
@@ -41,7 +42,7 @@ public class DBCache extends ConcurrentMapCache {
             SearchCacheKey searchKey = (SearchCacheKey) key;
             boolean isTerm = false;
             if (searchKey.page == 0 && (searchKey.startFrom == null || searchKey.startFrom.isEmpty())) {
-                final TermsMap.TermProvider provider = termsMap.getTermProvider(searchKey.query);
+                final TermService.TermProvider provider = termService.getTermProvider(searchKey.query);
                 String termUri = null;
                 if (provider != null) {
                     termUri = provider.hasMainTerm() ? provider.getMainTermProvider().getUri() : provider.getUri();
@@ -83,7 +84,7 @@ public class DBCache extends ConcurrentMapCache {
         }
 
         if (key instanceof SearchCacheKey && ((SearchCacheKey) key).page == 0) {
-            TermsMap.TermProvider provider = termsMap.getTermProvider(((SearchCacheKey) key).query);
+            TermService.TermProvider provider = termService.getTermProvider(((SearchCacheKey) key).query);
             if(provider != null && ((SearchCacheKey) key).page == 0) {
                 uid = provider.hasMainTerm() ? provider.getMainTermProvider().getTerm() : provider.getTerm();
             }

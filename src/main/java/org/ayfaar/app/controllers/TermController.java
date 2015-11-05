@@ -33,8 +33,10 @@ public class TermController {
     @Autowired CommonDao commonDao;
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
-    @Autowired TermsMap termsMap;
-    @Autowired TermsMapImpl aliasesMap;
+    @Autowired
+    TermService termService;
+    @Autowired
+    TermServiceImpl aliasesMap;
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
     @Inject ApplicationEventPublisher publisher;
@@ -51,7 +53,7 @@ public class TermController {
     @Model
     public ModelMap get(@RequestParam("name") String termName, @RequestParam(required = false) boolean mark) {
         termName = termName.replace("_", " ");
-        TermsMap.TermProvider provider = termsMap.getTermProvider(termName);
+        TermService.TermProvider provider = termService.getTermProvider(termName);
         if (provider == null) {
             throw new QuietException(format("Термин `%s` отсутствует", termName));
         }
@@ -243,7 +245,7 @@ public class TermController {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                termsMap.reload();
+                termService.reload();
             }
         }).start();
 
@@ -302,7 +304,7 @@ public class TermController {
     @RequestMapping("get-short-description")
     @ResponseBody
     public String getShortDescription(@RequestParam String name) {
-        return termsMap.getTerm(name).getShortDescription();
+        return termService.getTerm(name).getShortDescription();
     }
 
     @RequestMapping("remove/{name}")
@@ -313,6 +315,6 @@ public class TermController {
 
     @RequestMapping("reload-aliases-map")
     public void reloadAliasesMap() {
-        termsMap.reload();
+        termService.reload();
     }
 }
