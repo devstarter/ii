@@ -8,7 +8,44 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     </head>
 <body>
-
+<div style="text-align:center;">
+    <div style="background-color:rgb(149,179,215);color:rgb(15,0,130);font-size:200%;line-height:1;">
+        <p>Содержание</p>
+        <span>Ииссидология. Основы. </span><span style="border-collapse: collapse;" th:text="${data.name}">data</span>
+        <p style="border-collapse: collapse;" th:text="${data.description}">data</p>
+    </div>
+    <div th:each="CategoryPresentation : ${data.children}" >
+        <table style="text-align: center">
+            <tr>
+                <td width="15%"></td>
+                <td width="70%">
+                    <div style="background-color: RGB(219,229,241)">
+                        <div style="font-weight: bold;color:rgb(15,0,130);" th:text="${CategoryPresentation.name}">name</div>
+                        <div style="font-weight: bold;color:rgb(15,0,130);" th:text="${CategoryPresentation.description}">description</div>
+                    </div>
+                </td>
+                <td width="15%"></td>
+            </tr>
+            <tr th:each="CategoryPresentation1 : ${CategoryPresentation.children}">
+                <tr>
+                    <td width="15%"></td>
+                    <td width="70%">
+                        <div>
+                            <span style="font-weight: bold;color:rgb(15,0,130);" th:text="${CategoryPresentation1.name}">name</span>.
+                            <span style="font-weight: bold;color:rgb(15,0,130);" th:text="${CategoryPresentation1.description}">description</span>
+                        </div>
+                    </td>
+                    <td width="15%"></td>
+                </tr>
+                <tr  th:each="CategoryPresentation2 : ${CategoryPresentation1.children}">
+                    <td width="15%" style="color:rgb(15,0,130);" th:text="${CategoryPresentation2.name}">name</td>
+                    <td width="70%" style="color:rgb(15,0,130);" th:text="${CategoryPresentation2.description}">description</td>
+                    <td width="15%" style="color:rgb(15,0,130);" th:text="${CategoryPresentation2.uri}">uri</td>
+                </tr>
+            </tr>
+        </table>
+    </div>
+</div>
 
 
 </body>
