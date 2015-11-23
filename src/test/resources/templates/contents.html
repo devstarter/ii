@@ -4,43 +4,80 @@
       xmlns:th="http://www.thymeleaf.org"
       xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout">
     <head>
+        <style type="text/css">
+            .titul{
+                background-color:rgb(149,179,215);
+                color:rgb(15,0,130);
+                font-size:200%;
+                line-height:1;
+            }
+            .shirina{
+                padding: 10px 0 10px;
+            }
+            .position{
+                text-align: center;
+            }
+            .position_table{
+                text-align: left;
+            }
+            .font_of_glava{
+                font-weight: bold;
+                color:rgb(15,0,130);
+                font-size: large;
+            }
+            .font_of_razdel{
+                font-weight: bold;
+                color:rgb(15,0,130);
+                font-size: x-large;
+            }
+            .conf_of_font_bold{
+                font-weight: bold;
+                color:rgb(15,0,130);
+            }.conf_of_font{
+                color:rgb(15,0,130);
+            }
+            .razdel_color{
+            background-color: RGB(219,229,241);
+            }
+        </style>
         <title></title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     </head>
 <body>
-<div style="text-align:center;">
-    <div style="background-color:rgb(149,179,215);color:rgb(15,0,130);font-size:200%;line-height:1;">
+<!--<div style="text-align:center;">-->
+<div class="position">
+    <div class="titul">
         <p>Содержание</p>
-        <span>Ииссидология. Основы. </span><span style="border-collapse: collapse;" th:text="${data.name}">data</span>
-        <p style="border-collapse: collapse;" th:text="${data.description}">data</p>
+        <span>Ииссидология. </span><span th:text="${data.name}">data</span>
+        <p th:text="${data.description}">data</p>
     </div>
-    <div th:each="CategoryPresentation : ${data.children}" >
-        <table style="text-align: center">
+    <div th:each="razdel : ${data.children}" >
+        <table class="position">
             <tr>
-                <td width="15%"></td>
-                <td width="70%">
-                    <div style="background-color: RGB(219,229,241)">
-                        <div style="font-weight: bold;color:rgb(15,0,130);" th:text="${CategoryPresentation.name}">name</div>
-                        <div style="font-weight: bold;color:rgb(15,0,130);" th:text="${CategoryPresentation.description}">description</div>
+                <td width="10%"></td>
+                <td width="80%">
+                    <div class="razdel_color">
+                        <div class="font_of_razdel" th:text="${razdel.name}">name</div>
+                        <div class="font_of_razdel" th:text="${razdel.description}">description</div>
                     </div>
                 </td>
-                <td width="15%"></td>
+                <td width="10%"></td>
             </tr>
-            <tr th:each="CategoryPresentation1 : ${CategoryPresentation.children}">
+            <tr  th:each="glava : ${razdel.children}">
                 <tr>
-                    <td width="15%"></td>
-                    <td width="70%">
-                        <div>
-                            <span style="font-weight: bold;color:rgb(15,0,130);" th:text="${CategoryPresentation1.name}">name</span>.
-                            <span style="font-weight: bold;color:rgb(15,0,130);" th:text="${CategoryPresentation1.description}">description</span>
+                    <td width="10%"></td>
+                    <td width="80%" class="shirina">
+                        <div class="position_table">
+                            <span class="font_of_glava" th:text="${glava.name}">name</span>.
+                            <span class="font_of_glava" th:text="${glava.description}">description</span>
                         </div>
                     </td>
-                    <td width="15%"></td>
+                    <td width="10%"></td>
                 </tr>
-                <tr  th:each="CategoryPresentation2 : ${CategoryPresentation1.children}">
-                    <td width="15%" style="color:rgb(15,0,130);" th:text="${CategoryPresentation2.name}">name</td>
-                    <td width="70%" style="color:rgb(15,0,130);" th:text="${CategoryPresentation2.description}">description</td>
-                    <td width="15%" style="color:rgb(15,0,130);" th:text="${CategoryPresentation2.uri}">uri</td>
+                <tr th:each="paragraf : ${glava.children}">
+                    <td width="10%" class="conf_of_font" th:text="${paragraf.name}">name</td>
+                    <td width="80%" class="conf_of_font position_table shirina" th:text="${paragraf.description}">description</td>
+                    <td width="10%" class="conf_of_font" th:text="${paragraf.uri}">uri</td>
                 </tr>
             </tr>
         </table>
