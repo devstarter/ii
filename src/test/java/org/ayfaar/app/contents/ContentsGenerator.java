@@ -60,6 +60,15 @@ public class ContentsGenerator {
 		FileUtils.writeStringToFile(new File("html.html"), html, Charset.forName("UTF-8"));
 	}
 
+
+	/**
+	 * Рекурсивно проходим все дерево объектов, находящихся в корневом объекте,
+	 * и заполняем список. После эти данные можно передавать на движок генерации
+	 * html - страниц.
+	 * @param rootCategoryProvider родительский объект класса CategoryProvider,
+	 * из детей которого получаем список.
+     * @return ArrayList, содержащий все объекты класса CategoryPresentation
+	 */
 	public static List<CategoryPresentation> fillCategoryPresentationList(List<CategoryService.CategoryProvider> rootCategoryProvider){
 		// рекурсивно заполняем список сategoryPresentationList
 		List<CategoryPresentation> сategoryPresentationList = new ArrayList<>();
@@ -68,8 +77,8 @@ public class ContentsGenerator {
 			String name = provider.extractCategoryName();
 			String[] uri_full = name.split(":");
 			String[] nameArr = name.split("\\.");
-			// если название длинное, то убераем лишнюю часть, если короткое, то значит,
-			// это новый Том, или Раздел, и название там не нужно
+			// если название длинное, то убираем лишнюю часть, если короткое, то значит,
+			// это новый Том, или Раздел, и название там используется исходное
 			if(nameArr.length > 2)
 				name = nameArr[nameArr.length-2]+"."+nameArr[nameArr.length-1];
 
@@ -80,12 +89,11 @@ public class ContentsGenerator {
 		return сategoryPresentationList;
 	}
 
-	/*
+	/**
 	* Этот класс создан для того, что бы формировался
 	* полноценный путь для перехода на сайт, на конкретное
 	* место. Добавленна ссылка uri_full
 	*/
-
 	@Data
 	@NoArgsConstructor
 	public static class CategoryPresentationExt extends CategoryPresentation{
@@ -95,7 +103,7 @@ public class ContentsGenerator {
 		private String uri_full;
 		/**
 		 * Здесь мы задаем полную ссылку на место в документации,
-		 * с помощью которой формируем путь на сайте.
+		 * с помощью которой формируем путь на сайте. <br>
 		 * К примеру - 4.13.1.3
 		*/
 		public CategoryPresentationExt(String name, String uri, String description, List<CategoryPresentation> children, String uri_full) {

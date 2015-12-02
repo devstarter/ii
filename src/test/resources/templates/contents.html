@@ -88,51 +88,54 @@
             .column3{
                 padding: 2%;
             }
+            body{
+                margin: 0px;
+                padding: 0px;
+            }
         </style>
-        <title></title>
+        <title>Содержание</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     </head>
-<body style="margin: 0px; padding: 0px;">
-<!--<div style="text-align:center;">-->
-<div class="position" th:with="site=('http://ii.ayfaar.org/')">
-    <div class="titul">
-            <h1>Содержание</h1>
-            <h2><span>Ииссидология. </span><span th:text="${data.name}"></span></h2>
-            <h3><p th:text="${data.description}"></p></h3>
-    </div>
-    <div th:each="razdel : ${data.children}" >
-        <table class="position">
-            <tr>
-                <td class="column1"></td>
-                <td >
-                    <h4>
-                        <div th:text="${razdel.name}"></div>
-                        <div th:text="${razdel.description}"></div>
-                    </h4>
-                </td>
-                <td class="column3"></td>
-            </tr>
-            <div  th:each="glava : ${razdel.children}" >
-                <tr>
-                    <td class="column1"></td>
-                    <td  class="shirina">
-                        <div class="position_table">
-                            <span class="font_of_glava" th:text="${glava.name}"></span>.
-                            <span class="font_of_glava" th:text="${glava.description}"></span>
-                        </div>
-                    </td>
-                    <td class="column3"></td>
-                </tr>
-                <tr th:each="paragraf : ${glava.children}" class="row" th:onclick="'window.open(\'' + @{${site}} + ${paragraf.uri_full} + '\');'" th:title="@{${site}} + ${paragraf.uri_full}">
-                        <td class="column1" th:text="${paragraf.name}" ></td>
-                        <td class="position_table shirina" th:text="${paragraf.description}"></td>
-                        <td class="column3" th:text="${paragraf.uri}"></td>
-                </tr>
+    <body>
+        <div class="position" th:with="site=('http://ii.ayfaar.org/')">
+            <div class="titul">
+                    <h1>Содержание</h1>
+                    <h2>Ииссидология. <span th:text="${data.name}"></span></h2>
+                    <h3><p th:text="${data.description}"></p></h3>
             </div>
-        </table>
-    </div>
-</div>
+            <div th:each="razdel : ${data.children}" >
+                <table class="position">
+                    <tr>
+                        <td class="column1"></td>
+                        <td >
+                            <h4>
+                                <div th:text="${razdel.name}"></div>
+                                <div th:text="${razdel.description}"></div>
+                            </h4>
+                        </td>
+                        <td class="column3"></td>
+                    </tr>
+                    <div  th:each="glava : ${razdel.children}" >
+                        <tr>
+                            <td class="column1"></td>
+                            <td  class="shirina">
+                                <div class="position_table">
+                                    <span class="font_of_glava" th:text="${glava.name}"></span>.
+                                    <span class="font_of_glava" th:text="${glava.description}"></span>
+                                </div>
+                            </td>
+                            <td class="column3"></td>
+                        </tr>
+                        <tr th:each="paragraf : ${glava.children}" class="row" th:onclick="'window.open(\'' + @{${site}} + ${paragraf.uri_full} + '\');'" th:title="@{${site}} + ${paragraf.uri_full}">
+                            <td class="column1" th:text="${paragraf.name}" ></td>
+                            <td class="position_table shirina" th:text="${paragraf.description}"></td>
+                            <td class="column3" th:text="${paragraf.uri}"></td>
+                        </tr>
+                    </div>
+                </table>
+            </div>
+        </div>
 
 
-</body>
+    </body>
 </html>
