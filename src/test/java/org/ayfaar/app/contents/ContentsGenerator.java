@@ -1,5 +1,7 @@
 package org.ayfaar.app.contents;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.ayfaar.app.SpringTestConfiguration;
 import org.ayfaar.app.utils.CategoryService;
@@ -35,9 +37,12 @@ public class ContentsGenerator {
 		logger.trace("Загруженная категория: " + rootCategoryProvider.extractCategoryName());
 		// в этом объект нужно положить всю нужную в шаблоне информацию о категрии (имя, описание, дочерние категории...)
 		CategoryPresentation rootCategoryPresentation = null; //
-		List<CategoryPresentation> categoryPresentationList = fillCategoryPresentationList(rootCategoryProvider.getChildren());;
-		rootCategoryPresentation =  new CategoryPresentation(rootCategoryProvider.getParentUri().substring(rootCategoryProvider.getParentUri().indexOf(":")+1)+"."+rootCategoryProvider.extractCategoryName(),
-				rootCategoryProvider.getUri(),rootCategoryProvider.getDescription(), categoryPresentationList); //
+		List<CategoryPresentation> categoryPresentationList = fillCategoryPresentationList(rootCategoryProvider.getChildren());
+		// заполняем поле name, которое содержит полное название (к примеру - Основы. Том 4)
+		String rootCategoryPresentationName;
+		rootCategoryPresentationName = rootCategoryProvider.getParentUri().substring(rootCategoryProvider.getParentUri().indexOf(":")+1)+"."+rootCategoryProvider.extractCategoryName();
+		rootCategoryPresentation =  new CategoryPresentation(rootCategoryPresentationName,
+				rootCategoryProvider.getUri(),rootCategoryProvider.getDescription(), categoryPresentationList);
 		// делаем объект категории доступным для шаблона по пути "data"
 		values.put("data", rootCategoryPresentation);
 		// заполняем шаблон данными и получаем результат в виде html с данными
@@ -56,17 +61,48 @@ public class ContentsGenerator {
 	}
 
 	public static List<CategoryPresentation> fillCategoryPresentationList(List<CategoryService.CategoryProvider> rootCategoryProvider){
-		// рекурсивно заполняем список cPList
-		List<CategoryPresentation> cPList = new ArrayList<>();
+		// рекурсивно заполняем список сategoryPresentationList
+		List<CategoryPresentation> сategoryPresentationList = new ArrayList<>();
 		for (CategoryService.CategoryProvider provider : rootCategoryProvider){
+			// заполняем поле name, которое содержит название параграфа, главы и т.д.
 			String name = provider.extractCategoryName();
+			String[] uri_full = name.split(":");
 			String[] nameArr = name.split("\\.");
+			// если название длинное, то убераем лишнюю часть, если короткое, то значит,
+			// это новый Том, или Раздел, и название там не нужно
 			if(nameArr.length > 2)
 				name = nameArr[nameArr.length-2]+"."+nameArr[nameArr.length-1];
+
 			// рекурсивно заполняем список, со всеми вложенными детьми
-			cPList.add(new CategoryPresentation(name, provider.getStartItemNumber(),
-					provider.getDescription(), new ArrayList<>(fillCategoryPresentationList(provider.getChildren()))));
+			сategoryPresentationList.add(new CategoryPresentationExt(name, provider.getStartItemNumber(),
+					provider.getDescription(), fillCategoryPresentationList(provider.getChildren()),uri_full[uri_full.length-1]));
 		}
-		return cPList;
+		return сategoryPresentationList;
+	}
+
+	/*
+	* Этот класс создан для того, что бы формировался
+	* полноценный путь для перехода на сайт, на конкретное
+	* место. Добавленна ссылка uri_full
+	*/
+
+	@Data
+	@NoArgsConstructor
+	public static class CategoryPresentationExt extends CategoryPresentation{
+		/**
+		 * Ссылка на место в источнике
+		 */
+		private String uri_full;
+		/**
+		 * Здесь мы задаем полную ссылку на место в документации,
+		 * с помощью которой формируем путь на сайте.
+		 * К примеру - 4.13.1.3
+		*/
+		public CategoryPresentationExt(String name, String uri, String description, List<CategoryPresentation> children, String uri_full) {
+			super(name, uri, description, children);
+			this.uri_full = uri_full;
+		}
+
+
 	}
 }
