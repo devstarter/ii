@@ -25,14 +25,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("api/topic")
 public class TopicController {
 
-    @Inject
-    CommonDao commonDao;
-    @Inject
-    LinkDao linkDao;
-    @Inject
-    TopicService topicService;
-
-    GetTopicPresentation getTopicPresentation;
+    @Inject CommonDao commonDao;
+    @Inject LinkDao linkDao;
+    @Inject TopicService topicService;
 
     @RequestMapping("for/{uri}")
     public List<TopicPresentation> getForUri(@PathVariable String uri) throws Exception {

@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories
 @EntityScan("org.ayfaar.app.model")
 @ComponentScan("org.ayfaar.app")
-@ImportResource({"hibernate.xml", "spring-basic.xml"})
+@ImportResource({"classpath:hibernate.xml", "classpath:spring-basic.xml"})
 @EnableCaching
 public class Application {
     public static void main(String[] args) {

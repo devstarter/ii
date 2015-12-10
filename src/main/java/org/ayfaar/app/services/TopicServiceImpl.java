@@ -31,7 +31,7 @@ class TopicServiceImpl implements TopicService {
 
         commonDao.getAll(Topic.class)
                 .stream()
-                .parallel()
+//                .parallel()
                 .map(TopicProviderImpl::new)
                 .forEach(t -> topics.put(t.uri(), t));
 
