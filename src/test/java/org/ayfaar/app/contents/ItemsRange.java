@@ -1,12 +1,12 @@
 package org.ayfaar.app.contents;
 
+import org.ayfaar.app.model.UID;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name="items_range")
-public class items_range {
+public class ItemsRange extends UID {
 
 //    first: 5.0001
 //    last: 5.0002 (определил по следующей строке)
@@ -16,14 +16,12 @@ public class items_range {
 
     private String first;
     private String last;
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "UriGenerator")
-    @GenericGenerator(name = "UriGenerator", strategy = "org.ayfaar.app.utils.UriGenerator")
+
     private String code;
     private String description;
     private String uri;
 
-    public items_range(String first, String last, String description, String uri) {
+    public ItemsRange(String first, String last, String description, String uri) {
         this.first = first;
         this.last = last;
         this.description = description;

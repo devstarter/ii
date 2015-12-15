@@ -5,10 +5,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 
 import java.io.*;
@@ -17,18 +13,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-
+/**
+ * Filling DB from xlsx files
+ * @author Ruav
+ *
+ */
 public class ContentsImporter {
 
     public static void main(String[] args) throws IOException {
 
         InputStream in = new FileInputStream("./src/test/resources/content/5tom-content.xlsx");
+
         // Заполняем список элементов книги
         List<ItemBook> itemBookList = fillListItemBooks(in);
         in.close();
+
+
         for (ItemBook item : itemBookList) {
-            System.out.print(item.isChapter() ? "Глава: " : item.isRoot() ? "Основы: " : item.isSection() ? "Раздел: " : "Параграф: " + item.getName() + " ");
-            System.out.println(item.getDescription() + " " + (item.isParagraph() ? item.getCode() : ""));
+            System.out.print(item.getType() == ItemBook.typeSection.Chapter ? "Глава: " : item.getType() == ItemBook.typeSection.Root ? "Основы: " : item.getType() == ItemBook.typeSection.Section
+                    ? "Раздел: " : "Параграф: " + item.getName() + " ");
+            System.out.println(item.getDescription() + " " + (item.getType() == ItemBook.typeSection.Paragraph ? item.getCode() : ""));
         }
 
     }
@@ -83,8 +87,8 @@ public class ContentsImporter {
                         if (titul && !root) {
                             main = new ItemBook(str.split("\\. ")[str.split("\\. ").length - 1]);
                             tom = (main.getDescription().matches("\\d+")?Integer.parseInt(main.getDescription()):0);
-                            root = true;
-                            main.setRoot(root);
+//                            root = true;
+                            main.setType(ItemBook.typeSection.Root);
                             main.setCikl(cikl);
                             categories.add(main);
                             main = null;
@@ -96,11 +100,11 @@ public class ContentsImporter {
                         if (str.toLowerCase().startsWith("раздел ")) {
                             String[] strArray = str.split(" ");
                             ItemBook itemBook = new ItemBook(strArray[0] + " " + strArray[1]);
-                            razdel = String.valueOf(itemBook.parseRomanianNumber(strArray[1]));
+                            razdel = String.valueOf(RomanNumber.parseRomanNumber(strArray[1]));
                             for (int j = 2; j < strArray.length - 1; j++) {
                                 itemBook.setName(strArray[j] + ((j < strArray.length - 2) ? " " : ""));
                             }
-                            itemBook.setSection(true);
+                            itemBook.setType(ItemBook.typeSection.Section);
                             categories.add(itemBook);
                             continue;
                         }
@@ -111,7 +115,7 @@ public class ContentsImporter {
                             for (int j = 2; j < strArray.length - 1; j++) {
                                 itemBook.setName(strArray[j] + ((j < strArray.length - 2) ? " " : ""));
                             }
-                            itemBook.setChapter(true);
+                            itemBook.setType(ItemBook.typeSection.Chapter);
                             categories.add(itemBook);
                             continue;
                         } else {
@@ -132,7 +136,7 @@ public class ContentsImporter {
                                     code = tom + "." + razdel + "." + str;
                                 }
                                 ItemBook itemBook = new ItemBook(description);
-                                itemBook.setParagraph(true);
+                                itemBook.setType(ItemBook.typeSection.Paragraph);
                                 itemBook.setName(name);
                                 itemBook.setCode(code);
                                 itemBook.setRazdel(razdel);
