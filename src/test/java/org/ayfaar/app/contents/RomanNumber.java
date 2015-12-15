@@ -9,14 +9,14 @@ import org.junit.Test;
  */
 public class RomanNumber {
 
-    public static void main(String[] args) {
-        System.out.println(convertToRomanNumber(14));
-        System.out.println(convertToRomanNumber(9));
-        System.out.println(convertToRomanNumber(1));
-        System.out.println(convertToRomanNumber(4));
-        System.out.println(convertToRomanNumber(23));
-        System.out.println(convertToRomanNumber(49));
-    }
+//    public static void main(String[] args) {
+//        System.out.println(convertToRomanNumber(14));
+//        System.out.println(convertToRomanNumber(9));
+//        System.out.println(convertToRomanNumber(1));
+//        System.out.println(convertToRomanNumber(4));
+//        System.out.println(convertToRomanNumber(23));
+//        System.out.println(convertToRomanNumber(49));
+//    }
 
     /**
      * Function for converting from
