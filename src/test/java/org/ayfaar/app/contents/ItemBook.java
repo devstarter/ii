@@ -15,7 +15,7 @@ public class ItemBook {
     private String code;
     private String uri;
 
-    typeSection type;
+    TypeSection type;
     private boolean cikl;
 
 //    том.раздел.глава.параграф
@@ -28,7 +28,7 @@ public class ItemBook {
         this.description = description;
     }
 
-    public enum typeSection {
+    public enum TypeSection {
         Chapter, Paragraph, Section, Root
     }
 }

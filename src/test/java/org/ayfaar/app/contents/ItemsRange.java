@@ -1,13 +1,19 @@
 package org.ayfaar.app.contents;
 
+import lombok.NoArgsConstructor;
+import org.ayfaar.app.annotations.Uri;
 import org.ayfaar.app.model.UID;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
 @Entity
+@PrimaryKeyJoinColumn(name="uri")
+@NoArgsConstructor
+@Uri(nameSpace = "ии:пункт:диапазон:")
 public class ItemsRange extends UID {
 
+    public static final Class SEQUENCE = ItemsRangeSeq.class;
 //    first: 5.0001
 //    last: 5.0002 (определил по следующей строке)
 //    code: 5.17.1.1 (том.раздел.глава.параграф)
@@ -16,15 +22,16 @@ public class ItemsRange extends UID {
 
     private String first;
     private String last;
-
+    @Column(unique = true)
     private String code;
+    @Column(columnDefinition = "TEXT")
     private String description;
-    private String uri;
+//    private String uri;
 
-    public ItemsRange(String first, String last, String description, String uri) {
+    public ItemsRange(String first, String last, String code, String description) {
         this.first = first;
         this.last = last;
+        this.code = code;
         this.description = description;
-        this.uri = uri;
     }
 }
