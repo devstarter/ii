@@ -1,47 +1,56 @@
 package org.ayfaar.app.contents;
 
-import org.junit.Test;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is made for working
  * with Roman numerals
+ *
  * @author Ruav
  */
 public class RomanNumber {
 
-//    public static void main(String[] args) {
-//        System.out.println(convertToRomanNumber(14));
-//        System.out.println(convertToRomanNumber(9));
-//        System.out.println(convertToRomanNumber(1));
-//        System.out.println(convertToRomanNumber(4));
-//        System.out.println(convertToRomanNumber(23));
-//        System.out.println(convertToRomanNumber(49));
-//    }
-
     /**
      * Function for converting from
      * Roman number to Arabic number.
-     * @param str String with roman
-     * numerals, which we need convert.
+     *
+     * @param in String with roman
+     *           numerals, which we need convert.
      * @return int Converted value from
      * roman numerals to arabic numerals.
-     *
      */
 
-    public static int parseRomanNumber(String str){
-        String RomanSymbols[] ={"I", "V", "X"};
-        int[] ArabicSymbols ={1, 5, 10};
+    public static int parse(String str) {
+        if (str.isEmpty()) {
+            throw new NullPointerException("String is empty");
+        }
+        if (str == null) {
+            throw new NullPointerException("Nullpointer Exception");
+        }
+        String in = str.toUpperCase().replaceAll(" ", "");
+
+        Pattern pattern = Pattern.compile("[\\sIVX]");
+        Matcher matcher = pattern.matcher(in);
+        if (!matcher.find()) {
+            throw new NumberFormatException("Wrong string");
+        }
+        String romanSymbols[] = {"I", "V", "X"};
+        int[] arabicSymbols = {1, 5, 10};
+
         int out = 0;
-        if(str.length() > 1){
-            switch(str.toUpperCase().substring(0,2)){
+        int length = in.length();
+        if (length > 1) {
+            switch (in.toUpperCase().substring(0, 2)) {
                 case "IV":
-                    out = 4 + parseRomanNumber(str.substring(2));
+                    out = 4 + ((length > 2) ? parse(in.substring(2)) : 0);
                     break;
                 case "IX":
-                    out = 9 + parseRomanNumber(str.substring(2));
+                    out = 9 + ((length > 2) ? parse(in.substring(2)) : 0);
                     break;
                 default:
-                    out = parseRomanNumber(str.substring(0,1)) + parseRomanNumber(str.substring(1));
+                    out = parse(in.substring(0, 1)) + parse(in.substring(1));
             }
 //            if(str.substring(0,2).equals("IV"))
 //                out = 4 + parseRomanNumber(str.substring(2));
@@ -50,9 +59,9 @@ public class RomanNumber {
 //            else
 //                out = parseRomanNumber(str.substring(0,1)) + parseRomanNumber(str.substring(1));
         } else {
-            for (int i = 0; i < RomanSymbols.length; i++) {
-                if(RomanSymbols[i].equals(str)){
-                    out = ArabicSymbols[i];
+            for (int i = 0; i < romanSymbols.length; i++) {
+                if (romanSymbols[i].equals(in)) {
+                    out = arabicSymbols[i];
                     break;
                 }
             }
@@ -63,30 +72,40 @@ public class RomanNumber {
     /**
      * Function for converting from
      * Arabic number to Roman number.
+     *
      * @param num integer with arabic
-     * numerals, which we need convert.
+     *            numerals, which we need convert.
      * @return String Converted value from
      * arabic numerals to roman numerals.
-     *
      */
 
-    public static String convertToRomanNumber(int num){
-        String RomanSymbols[] ={"I", "IV", "V", "IX", "X"};
-        int[] ArabicSymbols ={1, 4, 5, 9, 10};
+    public static String convertToRomanNumber(Integer num) {
+        String romanSymbols[] = {"X", "IX", "V", "IV", "I"};
+        int[] arabicSymbols = {10, 9, 5, 4, 1};
         int[] numbers = {0, 0, 0, 0, 0};
+        int MAXIMUM_KOEFF = 5; // берется из расчета, что для 50 идет уже символ L, а у нас он не заведен
+        if (num == null) {
+            throw new NullPointerException("Nullpointer Exception");
+        }
+        if (num <= 0) {
+            throw new NumberFormatException("Less then or equals zero");
+        }
+        if (num > arabicSymbols[0] * MAXIMUM_KOEFF) {
+            throw new NumberFormatException("More then maximum for this function");
+        }
         int temp;
         String out = "";
         temp = num;
 
-        for(int i=ArabicSymbols.length-1; i>=0;i--) {
-            if (num >= ArabicSymbols[i]) {
-                numbers[i] = temp / ArabicSymbols[i];
-                temp = temp % ArabicSymbols[i];
+        for (int i = 0; i < arabicSymbols.length; i++) {
+            if (num >= arabicSymbols[i]) {
+                numbers[i] = temp / arabicSymbols[i];
+                temp = temp % arabicSymbols[i];
             }
         }
-        for(int i=ArabicSymbols.length-1;i>=0;i--){
+        for (int i = 0; i < arabicSymbols.length; i++) {
             for (int j = 0; j < numbers[i]; j++) {
-                out += RomanSymbols[i];
+                out += romanSymbols[i];
             }
         }
 
