@@ -43,6 +43,7 @@ public class Link {
     private String quote;
     @Column(columnDefinition = "TEXT")
     private String taggedQuote;
+    private Float rate;
     private Date createdAt = new Date();
 
     @ManyToOne

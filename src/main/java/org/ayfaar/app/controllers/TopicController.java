@@ -25,19 +25,31 @@ public class TopicController {
 
     @RequestMapping("for/{uri}")
     @ResponseBody
-    public List<Topic> getForUri(@PathVariable String uri) throws Exception {
+    public List<TopicPresentation> getForUri(@PathVariable String uri) throws Exception {
         hasLength(uri);
         final List<Link> links = linkDao.getAllLinks(uri);
-        List<Topic> topics = new ArrayList<>();
+        List<TopicPresentation> topicPresentations = new ArrayList<>();
         for (Link link : links) {
             if (link.getUid1() instanceof Topic) {
-                topics.add((Topic) link.getUid1());
+                topicPresentations.add(new TopicPresentation((Topic) link.getUid1(), link.getRate()));
             }
             if (link.getUid2() instanceof Topic) {
-                topics.add((Topic) link.getUid2());
+                topicPresentations.add(new TopicPresentation((Topic) link.getUid2(), link.getRate()));
             }
         }
-        return topics;
+        return topicPresentations;
+    }
+
+    private class TopicPresentation {
+        public String uri;
+        public String name;
+        public Float rate;
+
+        TopicPresentation(Topic topic, Float rate) {
+            name = topic.getName();
+            uri = topic.getUri();
+            this.rate = rate;
+        }
     }
 
     @RequestMapping(value = "import", method = POST)
@@ -60,6 +72,19 @@ public class TopicController {
         return topic;
     }
 
+    @RequestMapping(value = "rate", method = POST)
+    @ResponseBody
+    public void rate(@RequestParam String forUri, @RequestParam String topicUri, @RequestParam Float rate) throws Exception {
+        final List<Link> links = linkDao.getAllLinks(forUri);
+        for (Link link : links) {
+            if ((link.getUid1() instanceof Topic && link.getUid1().getUri().equals(topicUri)) ||
+                    (link.getUid2() instanceof Topic && link.getUid2().getUri().equals(topicUri))) {
+                link.setRate(rate);
+                linkDao.save(link);
+            }
+        }
+    }
+
     @RequestMapping(value = "for", method = DELETE)
     @ResponseBody
     public void deleteFor(@RequestParam String uri, @RequestParam String topicUri) throws Exception {
@@ -70,6 +95,7 @@ public class TopicController {
             if ((link.getUid1() instanceof Topic && link.getUid1().getUri().equals(topicUri)) ||
                     (link.getUid2() instanceof Topic && link.getUid2().getUri().equals(topicUri))) {
                 linkDao.remove(link.getLinkId());
+                return; // remove only first one
             }
         }
     }

@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 
+import java.util.Date;
+
 import static org.ayfaar.app.utils.EnumHibernateType.CLASS;
 import static org.ayfaar.app.utils.EnumHibernateType.ENUM;
 
@@ -28,4 +30,6 @@ public class VideoResource extends UID {
     @Column(nullable = false)
     @Type(type = ENUM, parameters = @Parameter(name = CLASS, value = "org.ayfaar.app.utils.Language"))
     private Language lang;
+
+    private Date createdAt = new Date();
 }

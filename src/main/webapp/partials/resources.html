@@ -1,3 +1,4 @@
+<script src="lib/ui-bootstrap/ui-bootstrap-tpls-1.2.1.min.js"></script>
 <div>
     <div ng-show="showUrlInput && !video">
         <div class="input-group" style="padding-top: 20px">
@@ -18,7 +19,10 @@
         <span ng-hide="topics.length">Не указано ни одной темы</span>
         <span ng-show="topics.length" style="color: grey">Темы видео:</span>
         <ul>
-        <li ng-repeat="topic in topics" class="topic">{{topic.name}} <a class="btn btn-link" ng-click="removeTopic(topic)">удалить</a></li>
+            <li ng-repeat="topic in topics" class="topic">{{topic.name}}
+                <rating ng-click="updateRate(topic)" ng-model="topic.rate" max="3" state-on="'icon-star'"></rating>
+                <a class="btn btn-link" ng-click="removeTopic(topic)">удалить</a>
+            </li>
         </ul>
 
         <div style="padding-bottom: 600px">
