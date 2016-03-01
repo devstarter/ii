@@ -33,10 +33,8 @@ public class ItemController {
     @Autowired ItemDao itemDao;
     @Autowired TermDao termDao;
     @Autowired TermController termController;
-    @Autowired
-    TermService termService;
-    @Autowired
-    TermServiceImpl aliasesMap;
+    @Autowired TermService termService;
+    @Autowired TermServiceImpl aliasesMap;
     @Autowired TermsTaggingUpdater taggingUpdater;
 
     @RequestMapping(value = "{number}", method = POST)

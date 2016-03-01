@@ -20,8 +20,7 @@ import static java.util.regex.Pattern.compile;
 @Controller
 @RequestMapping("api/v2/term")
 public class NewTermController {
-    @Inject
-    TermServiceImpl termsMap;
+    @Inject TermServiceImpl termsMap;
     @Inject TermsTaggingUpdater taggingUpdater;
     @Inject AsyncTaskExecutor taskExecutor;
 

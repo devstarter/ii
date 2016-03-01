@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Data
@@ -21,9 +22,17 @@ public class Link {
 
     /**
      * Ссылка на код понятия
-     * Первый понятие, воторой код
+     * Первый понятие, второй код
      */
     public static final Byte CODE = 4;
+
+    /**
+     * Ссылка на дочерний объет
+     * Первый родитель, второй потомок
+     */
+    public static final Byte CHILDREN = 5;
+
+    public static final Byte TRANSLATION = 6;
 
     @Id
     @GeneratedValue
@@ -34,6 +43,7 @@ public class Link {
     private String quote;
     @Column(columnDefinition = "TEXT")
     private String taggedQuote;
+    private Date createdAt = new Date();
 
     @ManyToOne
     private UID uid1;

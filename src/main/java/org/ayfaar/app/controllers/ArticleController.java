@@ -20,8 +20,7 @@ import static org.springframework.util.Assert.notNull;
 public class ArticleController {
 
     @Autowired ArticleDao articleDao;
-    @Autowired
-    TermServiceImpl aliasesMap;
+    @Autowired TermServiceImpl aliasesMap;
     @Autowired TermsMarker termsMarker;
 
     @RequestMapping("{id}")

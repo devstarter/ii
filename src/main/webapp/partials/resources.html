@@ -1,0 +1,39 @@
+<div>
+    <div ng-show="showUrlInput && !video">
+        <div class="input-group" style="padding-top: 20px">
+            <input ng-model="url" placeholder="Вставте ссылку на видео" class="form-control"/>
+            <span class="input-group-btn">
+                <button ng-click="save()" class="btn btn-primary" ng-class="videoLoading ? 'disabled' : ''">Добавить</button>
+            </span>
+        </div>
+        <div ng-show="videoLoading"><img src="images/ajax-loader.gif"/>Добавление видео...</div>
+    </div>
+    <div ng-show="video">
+        <a href="resource/video/">← Добавить следующее видео</a>
+        <br>
+        <br>
+        <youtube code="video.id"></youtube>
+        <br>
+        <br>
+        <span ng-hide="topics.length">Не указано ни одной темы</span>
+        <span ng-show="topics.length" style="color: grey">Темы видео:</span>
+        <ul>
+        <li ng-repeat="topic in topics">{{topic.name}} <a class="btn btn-link" ng-click="removeTopic(topic)">удалить</a></li>
+        </ul>
+
+        <div style="padding-bottom: 600px">
+            <div class="input-group" style="padding-top: 20px">
+                <input ng-model="newTopic" type="text" class="form-control" placeholder="Введите новую тему"
+                       typeahead="suggestion for suggestion in getSuggestions($viewValue)">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" ng-click="addTopic()">Добавить тему</button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <style>
+        li {
+            list-style-type: decimal;
+        }
+    </style>
+</div>

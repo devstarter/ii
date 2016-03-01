@@ -36,8 +36,7 @@ public class LinkController {
     @Autowired ItemDao itemDao;
     @Autowired TermController termController;
     @Autowired EmailNotifier emailNotifier;
-    @Autowired
-    TermService termService;
+    @Autowired TermService termService;
     @Autowired TermMorphDao termMorphDao;
     @Autowired TermsMarker termsMarker;
     @Autowired ApplicationEventPublisher eventPublisher;

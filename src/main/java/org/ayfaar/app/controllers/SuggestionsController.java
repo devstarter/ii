@@ -19,8 +19,7 @@ import static java.util.regex.Pattern.UNICODE_CASE;
 @Controller
 @RequestMapping("api/suggestions")
 public class SuggestionsController {
-    @Autowired
-    TermService termService;
+    @Autowired TermService termService;
 
     private List<String> escapeChars = Arrays.asList("(", ")", "[", "]", "{", "}");
     public static final int MAX_SUGGESTIONS = 7;

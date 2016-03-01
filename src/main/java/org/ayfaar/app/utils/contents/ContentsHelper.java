@@ -19,8 +19,7 @@ import static org.ayfaar.app.utils.StringUtils.trim;
 public class ContentsHelper {
     @Autowired ItemDao itemDao;
     @Autowired TermsMarker marker;
-    @Autowired
-    CategoryService categoryService;
+    @Autowired CategoryService categoryService;
 
     private final int SUBCATEGORY_COUNT = 2;
 

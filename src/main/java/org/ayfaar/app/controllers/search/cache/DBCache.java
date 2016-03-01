@@ -20,8 +20,7 @@ import java.io.IOException;
 @Component
 public class DBCache extends ConcurrentMapCache {
     @Inject CustomObjectMapper objectMapper;
-    @Inject
-    TermService termService;
+    @Inject TermService termService;
     @Inject CommonDao commonDao;
     @Inject CategoryDao categoryDao;
     @Inject ApplicationEventPublisher eventPublisher;

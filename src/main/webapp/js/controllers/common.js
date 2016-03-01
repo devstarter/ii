@@ -84,6 +84,55 @@ function TaggerController($scope, $stateParams, $api) {
     };
 }
 
+function ResourcesController($scope, $stateParams, $state, Video, Topic) {
+    $scope.$root.hideLoop = true;
+    $scope.topics = [];
+    
+    if ($stateParams.id) {
+        $scope.videoLoading = true;
+        Video.get({id: $stateParams.id}).$promise.then(function(video){
+            $scope.videoLoading = false;
+            if (video.id) {
+                $scope.video = video;
+                getTopics();
+            } else {
+                $scope.showUrlInput = true;
+            }
+        });
+    } else {
+        $scope.showUrlInput = true;
+    }
+    
+    $scope.save = function(){
+        $scope.videoLoading = true;
+        Video.save({url: $scope.url}).$promise.then(function(video){
+            $state.goToVideo(video);
+        });
+    };
+    
+    $scope.addTopic = function () {
+        Topic.addForUri({uri: $scope.video.uri, name: $scope.newTopic}).$promise.then(function(topic){
+            $scope.newTopic = '';
+            getTopics();
+        });
+    };
+    
+    $scope.removeTopic = function (topic) {
+        Topic.deleteForUri({uri: $scope.video.uri, topicUri: topic.uri}).$promise.then(function(topic){
+            getTopics();
+        });
+    };
+    $scope.getSuggestions = function (q) {
+        return Topic.suggest({q: q}).$promise
+    };
+    
+    function getTopics() {
+        Topic.getForUri({uri: $scope.video.uri}).$promise.then(function(topics){
+            $scope.topics = topics;
+        });
+    }
+}
+
 function ArticleController($scope, $stateParams, $state, $api) {
     $scope.id = $stateParams.id;
     if (!$scope.id) {

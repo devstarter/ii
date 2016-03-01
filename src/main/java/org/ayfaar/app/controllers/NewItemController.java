@@ -29,8 +29,7 @@ public class NewItemController {
 
     private static final int MAXIMUM_RANGE_SIZE = 200;
     @Inject ItemDao itemDao;
-    @Inject
-    CategoryService categoryService;
+    @Inject CategoryService categoryService;
     @Inject TermsMarker termsMarker;
     @Inject AsyncTaskExecutor taskExecutor;
     @Inject TermsTaggingUpdater taggingUpdater;

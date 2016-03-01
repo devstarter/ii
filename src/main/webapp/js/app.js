@@ -3,7 +3,7 @@ if (hash) {
     window.location.hash = '';
     window.location.pathname = window.location.pathname + hash.replace("#?", "").replace("#", "");
 }
-var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
+var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bootstrap'])
     .config(function($locationProvider, $urlRouterProvider, $stateProvider, config) {
         if (config.useHtml5Mode) $locationProvider.html5Mode(true).hashPrefix('!');
         $urlRouterProvider.otherwise("@");
@@ -11,7 +11,7 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
 //        // Now set up the states
         $stateProvider
             .state('home', {
-                url: "/@",
+                url: "/{at: @?}",
                 templateUrl: "partials/home.html",
                 controller: HomeController,
                 onEnter: function($rootScope){
@@ -22,6 +22,11 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 url: "/tagger",
                 templateUrl: "partials/tagger.html",
                 controller: TaggerController
+            })
+            .state('resource-video', {
+                url: "/resource/video/{id: \.*}",
+                templateUrl: "partials/resources.html",
+                controller: ResourcesController
             })
             .state('article', {
                 url: "/a/:id",
@@ -168,6 +173,13 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
                 },
                 quote: function(uri, term, quote) {
                     return api.post("search/rate/+", {uri: uri, query: term, quote: quote})
+                }
+            },
+            resource: {
+                video: {
+                    save: function (url) {
+                        return api.post("resource/video/", {url: url})
+                    }
                 }
             }
         };
@@ -481,6 +493,69 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             });
         };
     })
+    .factory('poster', function($httpParamSerializer) {
+        return {
+                action: "save",
+                method: "POST",
+                isArray: false,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+                transformRequest: $httpParamSerializer
+        }
+    })
+    .factory('Video', function($resource, config, poster) {
+        return $resource(config.apiUrl + "resource/video", {}, {
+            save: poster,
+            get: {
+                method: "GET",
+                isArray: false,
+                url: config.apiUrl + "resource/video/:id"
+            }
+        });
+    })
+    .factory('Topic', function($resource, config, poster, $httpParamSerializer) {
+        return $resource(config.apiUrl + "topic", {}, {
+            suggest: {
+                method: "GET",
+                url: config.apiUrl + "topic/suggest",
+                isArray: true
+            },
+            getForUri: {
+                method: "GET",
+                url: config.apiUrl + "topic/for/:uri",
+                isArray: true
+            },
+            addForUri: {
+                method: "POST",
+                url: config.apiUrl + "topic/for",
+                isArray: false,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+                transformRequest: $httpParamSerializer
+            },
+            deleteForUri: {
+                method: "DELETE",
+                url: config.apiUrl + "topic/for",
+                isArray: false,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+                transformRequest: $httpParamSerializer
+            },
+            save: poster
+        });
+    })
+    .directive('youtube', function($sce) {
+        return {
+            restrict: 'EA',
+            scope: { code:'=' },
+            replace: true,
+            template: '<div style="height:400px;"><iframe style="overflow:hidden;height:100%;width:100%" width="100%" height="100%" src="{{url}}" frameborder="0" allowfullscreen></iframe></div>',
+            link: function (scope) {
+                scope.$watch('code', function (newVal) {
+                    if (newVal) {
+                        scope.url = $sce.trustAsResourceUrl("http://www.youtube.com/embed/" + newVal);
+                    }
+                });
+            }
+        };
+    })
     .directive("iiHeader", function($rootScope, focus, $state, $timeout) {
         return {
             scope: {},
@@ -546,6 +621,9 @@ var app = angular.module('app', ['ui.router', 'ngSanitize', 'ui.bootstrap'])
             } else {
                 originStateGo.bind($state)(to, params, options)
             }
+        };
+        $state.goToVideo = function(video) {
+            originStateGo.bind($state)("resource-video", {id: video.id})
         };
         $state.goToItem = function(number) {
             originStateGo.bind($state)("item", {number: number})

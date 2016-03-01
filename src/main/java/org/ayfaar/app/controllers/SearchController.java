@@ -30,8 +30,7 @@ import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 @Controller
 @RequestMapping("api/search")
 public class SearchController {
-    @Autowired
-    TermService termService;
+    @Autowired TermService termService;
     @Autowired TermDao termDao;
     @Autowired ItemDao itemDao;
     @Autowired ArticleDao articleDao;

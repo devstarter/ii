@@ -33,10 +33,8 @@ public class TermController {
     @Autowired CommonDao commonDao;
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
-    @Autowired
-    TermService termService;
-    @Autowired
-    TermServiceImpl aliasesMap;
+    @Autowired TermService termService;
+    @Autowired TermServiceImpl aliasesMap;
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
     @Inject ApplicationEventPublisher publisher;

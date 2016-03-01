@@ -29,8 +29,7 @@ public class CategoryController {
     @Autowired LinkDao linkDao;
     @Autowired ItemDao itemDao;
     @Autowired ContentsHelper contentsHelper;
-    @Autowired
-    CategoryService categoryService;
+    @Autowired CategoryService categoryService;
 
     @ContentsCache //fixme временно пока идёт активная работа с ним
     @RequestMapping
