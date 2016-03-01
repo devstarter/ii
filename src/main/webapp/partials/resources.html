@@ -18,7 +18,7 @@
         <span ng-hide="topics.length">Не указано ни одной темы</span>
         <span ng-show="topics.length" style="color: grey">Темы видео:</span>
         <ul>
-        <li ng-repeat="topic in topics">{{topic.name}} <a class="btn btn-link" ng-click="removeTopic(topic)">удалить</a></li>
+        <li ng-repeat="topic in topics" class="topic">{{topic.name}} <a class="btn btn-link" ng-click="removeTopic(topic)">удалить</a></li>
         </ul>
 
         <div style="padding-bottom: 600px">
@@ -32,7 +32,7 @@
         </div>
     </div>
     <style>
-        li {
+        li.topic {
             list-style-type: decimal;
         }
     </style>

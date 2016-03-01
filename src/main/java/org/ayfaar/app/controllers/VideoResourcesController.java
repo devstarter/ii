@@ -47,7 +47,7 @@ public class VideoResourcesController {
             return matcher.group(1);
         } else {
             // https://youtu.be/1I1cy6z-FgY
-            matcher = Pattern.compile("^https://youtu.be/(.*)^").matcher(url);
+            matcher = Pattern.compile("^https://youtu.be/(.*)$").matcher(url);
             if (matcher.find()) {
                 return matcher.group(1);
             }
