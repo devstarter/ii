@@ -503,6 +503,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
         }
     })
     .factory('Video', function($resource, config, poster) {
+        poster.interceptor = {responseError: function(response) {
+            return response.data;
+        }};
         return $resource(config.apiUrl + "resource/video", {}, {
             save: poster,
             get: {
@@ -514,6 +517,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
     })
     .factory('Topic', function($resource, config, poster, $httpParamSerializer) {
         return $resource(config.apiUrl + "topic", {}, {
+            rate: {
+                method: "POST",
+                url: config.apiUrl + "topic/rate",
+                isArray: false,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+                transformRequest: $httpParamSerializer
+            },
             suggest: {
                 method: "GET",
                 url: config.apiUrl + "topic/suggest",

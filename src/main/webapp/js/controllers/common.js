@@ -84,13 +84,13 @@ function TaggerController($scope, $stateParams, $api) {
     };
 }
 
-function ResourcesController($scope, $stateParams, $state, Video, Topic) {
+function ResourcesController($scope, $stateParams, $state, Video, Topic, errorService) {
     $scope.$root.hideLoop = true;
     $scope.topics = [];
     
     if ($stateParams.id) {
         $scope.videoLoading = true;
-        Video.get({id: $stateParams.id}).$promise.then(function(video){
+        Video.get({id: $stateParams.id}, function(video){
             $scope.videoLoading = false;
             if (video.id) {
                 $scope.video = video;
@@ -98,11 +98,18 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic) {
             } else {
                 $scope.showUrlInput = true;
             }
+        }, function(response){
+            $scope.videoLoading = false;
+            errorService.resolve("Ошибка добавления видео: " + response.error);
         });
     } else {
         $scope.showUrlInput = true;
     }
     
+    $scope.updateRate = function(topic){
+        Topic.rate({forUri: $scope.video.uri, topicUri: topic.uri, rate: topic.rate})
+    };
+
     $scope.save = function(){
         $scope.videoLoading = true;
         Video.save({url: $scope.url}).$promise.then(function(video){
