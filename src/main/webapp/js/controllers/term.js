@@ -1,6 +1,7 @@
 function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
     var pageCounter = 0, currentQuery;
     var query = $scope.query = $stateParams.name;
+    if (query == "{{url}}") return; // strange bug
     if (!query) {
         $state.goToHome();
         return
