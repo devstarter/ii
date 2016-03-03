@@ -44,6 +44,8 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
             keywords += ","+ data.related[i].name;
         }
         $scope.$root.metaKeywords = keywords;
+        $scope.showQuotes = data.quotes.length < 3;
+        $scope.showCategories = data.categories.length < 3;
         //$scope.$root.hideLoop = false;
     }, function () {
         $scope.editMode = true;

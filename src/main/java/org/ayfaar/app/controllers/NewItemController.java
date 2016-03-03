@@ -120,7 +120,7 @@ public class NewItemController {
         }
     }
 
-    @RequestMapping("{number}/content")
+    @RequestMapping(value = "{number}/content", produces = "text/plain; charset=utf-8")
     @ResponseBody
     public String getContent(@PathVariable String number) {
         Item item = itemDao.getByNumber(number);
