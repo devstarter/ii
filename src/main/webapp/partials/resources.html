@@ -10,12 +10,14 @@
         <div ng-show="videoLoading"><img src="images/ajax-loader.gif"/>Добавление видео...</div>
         <div style="padding-top: 20px">
             <span class="grey">Последние 10 добавленных видео</span>
-            <div ng-repeat="video in lastTen" ii-ref="video">
-                <img ng-src="https://i.ytimg.com/vi/{{video.id}}/default.jpg" style="float: left; padding: 5px"/>
-                <a>{{video.title}}</a>
-                <div style="clear: both"></div>
+            <div class="row">
+                <div ng-repeat="video in lastTen" ii-ref="video" class="col-md-3">
+                    <img ng-src="https://i.ytimg.com/vi/{{video.id}}/mqdefault.jpg" style="display: block; padding: 5px;width: 170px;"/>
+                    <a style="font-size: small">{{video.title}}</a>
+                </div>
             </div>
         </div>
+        <div style="clear: both"></div>
     </div>
     <div ng-show="video">
         <a href="resource/video/">← К списку видео</a>

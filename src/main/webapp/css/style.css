@@ -1,3 +1,37 @@
+.flex-container {
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.flex-container > :nth-child(3n + 1) { order: 1; } /* 1st column */
+.flex-container > :nth-child(3n + 2) { order: 2; } /* 2nd column */
+.flex-container > :nth-child(3n + 3) { order: 3; } /* 3rd column */
+
+.flex-container > :nth-child(-n + 3) {
+    page-break-before: always; /* CSS 2.1 syntax */
+    break-before: always;  /* New syntax */
+}
+
+/* The following is optional */
+.flex-container > div {
+    background: #666;
+    color: #fff;
+    margin: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+}
+.flex-container > :nth-child(1) { height: 100px; }
+.flex-container > :nth-child(2) { height: 50px; }
+.flex-container > :nth-child(3) { height: 75px; }
+.flex-container > :nth-child(4) { height: 50px; }
+.flex-container > :nth-child(5) { height: 100px; }
+.flex-container > :nth-child(6) { height: 50px; }
+.flex-container > :nth-child(7) { height: 100px; }
+.flex-container > :nth-child(8) { height: 75px; }
+.flex-container > :nth-child(9) { height: 125px; }
+
 .gray, .grey {
     color: grey;
 }
