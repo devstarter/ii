@@ -3,13 +3,15 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.VideoResource;
 import org.ayfaar.app.utils.Language;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.ayfaar.app.utils.YoutubeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.inject.Inject;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,14 +22,29 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("api/resource/video")
 public class VideoResourcesController {
 
-    @Autowired CommonDao commonDao;
+    @Inject CommonDao commonDao;
+    @Inject YoutubeService youtubeService;
 
     @RequestMapping("{id}")
     @ResponseBody
     public VideoResource get(@PathVariable String id) throws Exception {
         VideoResource video = commonDao.get(VideoResource.class, "id", id);
-        if (video != null) return video;
+        if (video != null) {
+            if (video.getTitle() == null) {
+                final YoutubeService.VideoInfo info = youtubeService.getInfo(id);
+                video.setTitle(info.title);
+                video.setPublishedAt(info.publishedAt);
+                commonDao.save(video);
+            }
+            return video;
+        }
         return null;//commonDao.save(new VideoResource(id, Language.ru));
+    }
+
+    @RequestMapping("last-ten")
+    @ResponseBody
+    public List<VideoResource> lastTen() throws Exception {
+        return commonDao.getOrdered(VideoResource.class, "createdAt", false, 10);
     }
 
     @RequestMapping(method = POST)
@@ -37,7 +54,11 @@ public class VideoResourcesController {
         final String videoId = extractIdFromUrl(url);
         VideoResource video = commonDao.get(VideoResource.class, "id", videoId);
         if (video != null) return video;
-        return commonDao.save(new VideoResource(videoId, Language.ru));
+        final YoutubeService.VideoInfo info = youtubeService.getInfo(videoId);
+        video = new VideoResource(videoId, Language.ru);
+        video.setTitle(info.title);
+        video.setPublishedAt(info.publishedAt);
+        return commonDao.save(video);
     }
 
     private String extractIdFromUrl(String url) {

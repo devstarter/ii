@@ -5,6 +5,7 @@ import org.ayfaar.app.utils.Content;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
@@ -234,5 +235,14 @@ public class CommonDaoImpl implements CommonDao {
     public Collection<?> findAuditEntities(Number revision, RevisionType revisionType) {
         return AuditReaderFactory.get(sessionFactory.getCurrentSession())
                 .getCrossTypeRevisionChangesReader().findEntities(revision, revisionType);
+    }
+
+    @Override
+    public <E> List<E> getOrdered(Class<E> clazz, String field, boolean ascending, int limit) {
+        return list(sessionFactory.getCurrentSession()
+                .createCriteria(clazz)
+                .addOrder(ascending ? Order.asc(field) : Order.desc(field))
+                .setMaxResults(limit)
+        );
     }
 }

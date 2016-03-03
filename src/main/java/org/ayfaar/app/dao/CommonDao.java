@@ -48,4 +48,6 @@ public interface CommonDao {
     <E> AuditReader getAuditReader();
 
     Collection<?> findAuditEntities(Number revision, RevisionType revisionType);
+
+    <E> List<E> getOrdered(Class<E> clazz, String field, boolean ascending, int limit);
 }

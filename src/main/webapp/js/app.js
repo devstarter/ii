@@ -177,8 +177,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             },
             resource: {
                 video: {
-                    save: function (url) {
-                        return api.post("resource/video/", {url: url})
+                    lastTen: function () {
+                        return api.get("resource/video/last-ten")
                     }
                 }
             }
@@ -261,8 +261,14 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
     })
     .factory('entityService', function(){
         var service = {
-            getName: function (uri) {
-                uri = uri.hasOwnProperty("uri") ? uri.uri : uri;
+            getName: function (uriOrObject) {
+                var uri, object;
+                if (uriOrObject.hasOwnProperty("uri")) {
+                    object = uriOrObject;
+                    uri = object.uri;
+                } else {
+                    uri = uriOrObject;
+                }
                 switch (service.getType(uri)) {
                     case 'term':
                         return uri.replace("ии:термин:", "");
@@ -274,6 +280,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                         return uri.replace("категория:", "");
                     case 'article':
                         return uri.replace("статья:", "");
+                    case 'video':
+                        return object ? object.title : "Undefined";
                 }
             },
             getType: function(uri) {
@@ -292,6 +300,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 }
                 if (uri.indexOf("статья:") === 0) {
                     return 'article'
+                }
+                if (uri.indexOf("видео:") === 0) {
+                    return 'video'
                 }
             }
         };
@@ -627,6 +638,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     case "article":
                         originStateGo.bind($state)("article", {id: entityService.getName(uri)});
                         return;
+                    case "video":
+                        originStateGo.bind($state)("resource-video", {id: to.id});
+                        return;
                 }
             } else {
                 originStateGo.bind($state)(to, params, options)
@@ -689,6 +703,7 @@ function getUrl(uri) {
     url = url.replace("категория:", "c/");
     url = url.replace("ии:термин:", "");
     url = url.replace("ии:пункт:", "");
+    url = url.replace("видео:youtube:", "resource/video/");
     return url;
 }
 

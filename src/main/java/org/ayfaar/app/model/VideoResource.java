@@ -26,10 +26,13 @@ public class VideoResource extends UID {
     @NonNull
     private String id;
 
+    private String title;
+
     @NonNull
     @Column(nullable = false)
     @Type(type = ENUM, parameters = @Parameter(name = CLASS, value = "org.ayfaar.app.utils.Language"))
     private Language lang;
 
+    private Date publishedAt = new Date();
     private Date createdAt = new Date();
 }

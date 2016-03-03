@@ -8,16 +8,23 @@
             </span>
         </div>
         <div ng-show="videoLoading"><img src="images/ajax-loader.gif"/>Добавление видео...</div>
+        <div style="padding-top: 20px">
+            <span class="grey">Последние 10 добавленных видео</span>
+            <div ng-repeat="video in lastTen" ii-ref="video">
+                <img ng-src="https://i.ytimg.com/vi/{{video.id}}/default.jpg" style="float: left; padding: 5px"/>
+                <a>{{video.title}}</a>
+                <div style="clear: both"></div>
+            </div>
+        </div>
     </div>
     <div ng-show="video">
-        <a href="resource/video/">← Добавить следующее видео</a>
-        <br>
-        <br>
+        <a href="resource/video/">← К списку видео</a>
+        <h2>{{video.title}}</h2>
         <youtube code="video.id"></youtube>
         <br>
         <br>
         <span ng-hide="topics.length">Не указано ни одной темы</span>
-        <span ng-show="topics.length" style="color: grey">Темы видео:</span>
+        <span ng-show="topics.length" class="grey">Темы видео:</span>
         <ul>
             <li ng-repeat="topic in topics" class="topic">{{topic.name}}
                 <rating ng-click="updateRate(topic)" ng-model="topic.rate" max="3" state-on="'icon-star'"></rating>

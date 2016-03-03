@@ -1,3 +1,6 @@
+.gray, .grey {
+    color: grey;
+}
 term:hover {
     border-bottom: 2px dotted #035697;
     text-decoration: none;

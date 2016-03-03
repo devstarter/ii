@@ -84,9 +84,10 @@ function TaggerController($scope, $stateParams, $api) {
     };
 }
 
-function ResourcesController($scope, $stateParams, $state, Video, Topic, errorService) {
+function ResourcesController($scope, $stateParams, $state, Video, Topic, errorService, $api) {
     $scope.$root.hideLoop = true;
     $scope.topics = [];
+    $scope.lastTen = [];
     
     if ($stateParams.id) {
         $scope.videoLoading = true;
@@ -104,6 +105,9 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
         });
     } else {
         $scope.showUrlInput = true;
+        $api.resource.video.lastTen().then(function (lastVideos) {
+            $scope.lastTen = lastVideos;
+        })
     }
     
     $scope.updateRate = function(topic){

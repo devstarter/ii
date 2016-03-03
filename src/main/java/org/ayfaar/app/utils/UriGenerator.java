@@ -41,6 +41,7 @@ public class UriGenerator implements IdentifierGenerator {
         return uri.replace(annotation.nameSpace(), "");
     }
 
+    @SuppressWarnings("unchecked")
     public static <E extends UID> Class<E> getClassByUri(String uri) {
         Uri annotation = VideoResource.class.getAnnotation(Uri.class);
         if (uri.startsWith(annotation.nameSpace())) return (Class<E>) VideoResource.class;
