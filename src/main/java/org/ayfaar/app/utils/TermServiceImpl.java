@@ -7,6 +7,7 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Link;
+import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.slf4j.Logger;
@@ -21,6 +22,9 @@ import java.util.regex.Pattern;
 
 import static java.util.Collections.sort;
 import static java.util.regex.Pattern.compile;
+import static org.ayfaar.app.model.LinkType.ABBREVIATION;
+import static org.ayfaar.app.model.LinkType.ALIAS;
+import static org.ayfaar.app.model.LinkType.CODE;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
@@ -41,13 +45,13 @@ public class TermServiceImpl implements TermService {
     @PostConstruct
     public void load() {
 		logger.info("Terms map loading...");
-        aliasesMap = new HashMap<String, TermProvider>();
+        aliasesMap = new HashMap<>();
 
         List<TermMorph> allTermMorphs = commonDao.getAll(TermMorph.class);
         List<TermDao.TermInfo> termsInfo = termDao.getAllTermInfo();
         List<Link> allSynonyms = linkDao.getAllSynonyms();
 
-        links = new HashMap<String, LinkInfo>();
+        links = new HashMap<>();
         for(Link link : allSynonyms) {
             links.put(link.getUid2().getUri(), new LinkInfo(link.getType(), (Term)link.getUid1()));
         }
@@ -84,10 +88,10 @@ public class TermServiceImpl implements TermService {
 
     @Data
     private class LinkInfo {
-        private byte type;
+        private LinkType type;
         private Term mainTerm;
 
-        private LinkInfo(byte type, Term term) {
+        private LinkInfo(LinkType type, Term term) {
             this.type = type;
             this.mainTerm = term;
         }
@@ -118,15 +122,15 @@ public class TermServiceImpl implements TermService {
         }
 
         public List<TermProvider> getAliases() {
-            return getListProviders(Link.ALIAS, getName());
+            return getListProviders(ALIAS, getName());
         }
 
         public List<TermProvider> getAbbreviations() {
-            return getListProviders(Link.ABBREVIATION, getName());
+            return getListProviders(ABBREVIATION, getName());
         }
 
         public TermProvider getCode() {
-            List<TermProvider> codes = getListProviders(Link.CODE, getName());
+            List<TermProvider> codes = getListProviders(CODE, getName());
             return codes.size() > 0 ? codes.get(0) : null;
         }
 
@@ -144,7 +148,7 @@ public class TermServiceImpl implements TermService {
             return morphs;
         }
 
-        public Byte getType() {
+        public LinkType getType() {
             return links.get(uri) != null ? links.get(uri).getType() : null;
         }
 
@@ -153,20 +157,20 @@ public class TermServiceImpl implements TermService {
         }
 
         public boolean isAbbreviation() {
-            return Link.ABBREVIATION.equals(getType());
+            return ABBREVIATION.equals(getType());
         }
 
         public boolean isAlias() {
-            return Link.ALIAS.equals(getType());
+            return ALIAS.equals(getType());
         }
 
         public boolean isCode() {
-            return Link.CODE.equals(getType());
+            return CODE.equals(getType());
         }
 
         @Override
         public boolean hasCode() {
-            return !getListProviders(Link.CODE, getName()).isEmpty();
+            return !getListProviders(CODE, getName()).isEmpty();
         }
 
         @Override
@@ -216,7 +220,7 @@ public class TermServiceImpl implements TermService {
         return termProvider != null ? termProvider.getTerm() : null;
     }
 
-    private List<TermProvider> getListProviders(byte type, String name) {
+    private List<TermProvider> getListProviders(LinkType type, String name) {
         List<TermProvider> providers = new ArrayList<TermProvider>();
 
         for(Map.Entry<String, LinkInfo> link : links.entrySet()) {

@@ -1,4 +1,4 @@
-package org.ayfaar.app.utils;
+package org.ayfaar.app.utils.hibernate;
 
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
@@ -20,7 +20,7 @@ public class EnumHibernateType implements UserType, ParameterizedType {
     private static final int[] VARCHAR_SQL_TYPE = new int[]{ Types.VARCHAR };
     private static final int[] CHAR_SQL_TYPE = new int[]{ Types.CHAR };
     private Class<? extends Enum> enumClass;
-    private boolean charMode;
+    private boolean valueMode;
     private Method getter;
     private Method generator;
 
@@ -29,10 +29,10 @@ public class EnumHibernateType implements UserType, ParameterizedType {
 
         try {
             enumClass = Class.forName(enumClassName).asSubclass(Enum.class);
-            charMode = CharEnum.class.isAssignableFrom(enumClass);
-            if (charMode) {
+            valueMode = ValueEnum.class.isAssignableFrom(enumClass);
+            if (valueMode) {
                 getter = enumClass.getMethod("getValue");
-                generator = enumClass.getMethod("generate", String.class);
+                generator = enumClass.getMethod("getEnum", String.class);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -96,6 +96,6 @@ public class EnumHibernateType implements UserType, ParameterizedType {
     }
 
     public int[] sqlTypes() {
-        return charMode ? CHAR_SQL_TYPE : VARCHAR_SQL_TYPE;
+        return valueMode ? CHAR_SQL_TYPE : VARCHAR_SQL_TYPE;
     }
 }

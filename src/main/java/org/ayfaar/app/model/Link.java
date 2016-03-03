@@ -2,42 +2,28 @@ package org.ayfaar.app.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.Date;
+
+import static org.ayfaar.app.utils.hibernate.EnumHibernateType.CLASS;
+import static org.ayfaar.app.utils.hibernate.EnumHibernateType.ENUM;
 
 @Entity
 @Data
 @NoArgsConstructor
+/**
+ * Связывает между собой две произвольные сущности наследуюющие UID
+ */
 public class Link {
-    /**
-     * Синомим, первым следует указывать более точное понятие или код
-     */
-    public static final Byte ALIAS = 1;
-
-    /**
-     * Аббревиатура или сокращение, первым указывают полное значение
-     */
-    public static final Byte ABBREVIATION = 2;
-
-    /**
-     * Ссылка на код понятия
-     * Первый понятие, второй код
-     */
-    public static final Byte CODE = 4;
-
-    /**
-     * Ссылка на дочерний объет
-     * Первый родитель, второй потомок
-     */
-    public static final Byte CHILDREN = 5;
-
-    public static final Byte TRANSLATION = 6;
 
     @Id
     @GeneratedValue
     private Integer linkId;
-    private Byte type;
+    @Type(type = ENUM, parameters = @org.hibernate.annotations.Parameter(name = CLASS, value = "org.ayfaar.app.model.LinkType"))
+    private LinkType type;
     private String source;
     @Column(columnDefinition = "TEXT")
     private String quote;
@@ -61,6 +47,10 @@ public class Link {
     }
 
     public Link(UID uid1, UID uid2, Byte type) {
+        this(uid1, uid2, LinkType.getEnum(type));
+    }
+
+    public Link(UID uid1, UID uid2, LinkType type) {
         this(uid1, uid2);
         this.type = type;
     }

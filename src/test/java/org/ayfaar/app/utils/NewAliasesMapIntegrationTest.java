@@ -2,7 +2,7 @@ package org.ayfaar.app.utils;
 
 
 import org.ayfaar.app.IntegrationTest;
-import org.ayfaar.app.model.Link;
+import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Term;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
         assertEquals("ТОО-УУ", provider.getName());
         assertEquals(UriGenerator.generate(Term.class, "ТОО-УУ"), provider.getUri());
-        assertEquals(Link.CODE, provider.getType());
+        assertEquals(LinkType.CODE, provider.getType());
         assertTrue(provider.isCode());
         assertFalse(provider.isAbbreviation());
         assertFalse(provider.isAlias());

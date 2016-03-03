@@ -1,6 +1,5 @@
 package org.ayfaar.app.utils;
 
-import lombok.Builder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -24,15 +23,16 @@ public class YoutubeService {
         //noinspection unchecked
         final Map snippet = (Map) ((List<Map>) response.get("items")).get(0).get("snippet");
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        return VideoInfo.builder()
-                .title((String) snippet.get("title"))
-                .publishedAt(dateFormat.parse((String) snippet.get("publishedAt")))
-                .build();
+        return new VideoInfo((String) snippet.get("title"), dateFormat.parse((String) snippet.get("publishedAt")));
     }
 
-    @Builder
     public static class VideoInfo {
         public Date publishedAt;
         public String title;
+
+        public VideoInfo(String title, Date publishedAt) {
+            this.title = title;
+            this.publishedAt = publishedAt;
+        }
     }
 }

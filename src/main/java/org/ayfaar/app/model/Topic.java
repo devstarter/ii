@@ -11,8 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import java.util.Date;
 
-import static org.ayfaar.app.utils.EnumHibernateType.CLASS;
-import static org.ayfaar.app.utils.EnumHibernateType.ENUM;
+import static org.ayfaar.app.utils.hibernate.EnumHibernateType.CLASS;
+import static org.ayfaar.app.utils.hibernate.EnumHibernateType.ENUM;
 
 @Entity
 @PrimaryKeyJoinColumn(name="uri")
@@ -20,6 +20,9 @@ import static org.ayfaar.app.utils.EnumHibernateType.ENUM;
 @Getter @Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
+/**
+ * Сущность хранящая название некой произвольной темы
+ */
 public class Topic extends UID {
     @Column(unique = true)
     @NonNull

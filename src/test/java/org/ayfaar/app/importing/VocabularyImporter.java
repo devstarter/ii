@@ -8,6 +8,7 @@ import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Article;
 import org.ayfaar.app.model.Link;
+import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Term;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -62,7 +63,7 @@ public class VocabularyImporter {
     private static void saveAliases(String termName, String aliasName) {
         Term term = getTerm(termName);
         Term alias = getTerm(aliasName);
-        Link link = new Link(term, alias, Link.ALIAS);
+        Link link = new Link(term, alias, LinkType.ALIAS);
         linkDao.save(link);
     }
 

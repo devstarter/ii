@@ -21,7 +21,7 @@ import java.util.*;
 
 import static java.lang.String.format;
 import static java.util.Collections.sort;
-import static org.ayfaar.app.model.Link.*;
+import static org.ayfaar.app.model.LinkType.*;
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
 
 @Controller

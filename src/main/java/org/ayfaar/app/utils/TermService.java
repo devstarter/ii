@@ -1,5 +1,6 @@
 package org.ayfaar.app.utils;
 
+import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Term;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public interface TermService {
         List<TermProvider> getAliases();
         List<TermProvider> getAbbreviations();
         TermProvider getCode();
-        Byte getType();
+        LinkType getType();
         boolean hasMainTerm();
         boolean isAbbreviation();
         boolean isAlias();

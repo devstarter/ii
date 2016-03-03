@@ -1,8 +1,8 @@
 package org.ayfaar.app.model;
 
-import org.ayfaar.app.utils.CharEnum;
+import org.ayfaar.app.utils.hibernate.ValueEnum;
 
-public enum ResourceType implements CharEnum {
+public enum ResourceType implements ValueEnum<Character> {
     ARTICLE('A');
 
     private final char code;

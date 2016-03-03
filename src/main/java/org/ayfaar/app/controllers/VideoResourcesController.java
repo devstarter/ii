@@ -44,7 +44,7 @@ public class VideoResourcesController {
     @RequestMapping("last-ten")
     @ResponseBody
     public List<VideoResource> lastTen() throws Exception {
-        return commonDao.getOrdered(VideoResource.class, "createdAt", false, 10);
+        return commonDao.getOrdered(VideoResource.class, "createdAt", false, 8);
     }
 
     @RequestMapping(method = POST)
