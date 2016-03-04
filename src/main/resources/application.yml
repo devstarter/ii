@@ -4,6 +4,7 @@ spring:
     url: jdbc:mysql://${OPENSHIFT_EXTMYSQL_DB_HOST}:${OPENSHIFT_EXTMYSQL_DB_PORT}/${OPENSHIFT_EXTAPP_NAME}
     username: ${OPENSHIFT_EXTMYSQL_DB_USERNAME}
     password: ${OPENSHIFT_EXTMYSQL_DB_PASSWORD}
+    platform: org.hibernate.dialect.MySQL5Dialect
   jackson:
     property-naming-strategy: CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
     serialization-inclusion: non_empty
@@ -11,9 +12,10 @@ spring:
   jpa.hibernate.ddl-auto: update
 #  jpa.properties.hibernate.current_session_context_class: org.springframework.orm.hibernate4.SpringSessionContext
 
-hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+hibernate.dialect: ${spring.datasource.platform}
 
 logging:
+  file: ${OPENSHIFT_DATA_DIR}logs/app.log
   level:
     org: warn
     org.ayfaar: trace
