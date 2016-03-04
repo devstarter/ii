@@ -297,7 +297,7 @@ public class TermController {
         return searchController2.suggestions(filter);
     }
 
-    @RequestMapping("get-short-description")
+    @RequestMapping(value = "get-short-description", produces = "text/plain; charset=utf-8")
     @ResponseBody
     public String getShortDescription(@RequestParam String name) {
         return termService.getTerm(name).getShortDescription();

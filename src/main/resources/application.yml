@@ -1,23 +1,17 @@
-server.port: 8088
-
-OPENSHIFT_MYSQL_DB_HOST: 127.0.0.1
-OPENSHIFT_MYSQL_DB_USERNAME: root
-OPENSHIFT_MYSQL_DB_PASSWORD:
-OPENSHIFT_MYSQL_DB_PORT: 3306
-OPENSHIFT_APP_NAME: ii
-OPENSHIFT_HOMEDIR:
-
 # DB
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/ii
-    username: root
+    url: jdbc:mysql://${OPENSHIFT_EXTMYSQL_DB_HOST}:${OPENSHIFT_EXTMYSQL_DB_PORT}/${OPENSHIFT_EXTAPP_NAME}
+    username: ${OPENSHIFT_EXTMYSQL_DB_USERNAME}
+    password: ${OPENSHIFT_EXTMYSQL_DB_PASSWORD}
   jackson:
     property-naming-strategy: CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
     serialization-inclusion: non_empty
     serialization.WRITE_DATES_AS_TIMESTAMPS: false
   jpa.hibernate.ddl-auto: update
 #  jpa.properties.hibernate.current_session_context_class: org.springframework.orm.hibernate4.SpringSessionContext
+
+hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
 
 logging:
   level:
