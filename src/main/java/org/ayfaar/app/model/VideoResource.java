@@ -12,8 +12,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 
 import java.util.Date;
 
-import static org.ayfaar.app.utils.EnumHibernateType.CLASS;
-import static org.ayfaar.app.utils.EnumHibernateType.ENUM;
+import static org.ayfaar.app.utils.hibernate.EnumHibernateType.CLASS;
+import static org.ayfaar.app.utils.hibernate.EnumHibernateType.ENUM;
 
 @Entity
 @PrimaryKeyJoinColumn(name="uri")
