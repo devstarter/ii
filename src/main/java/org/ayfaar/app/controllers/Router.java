@@ -34,6 +34,27 @@ public class Router {
         return new FileSystemResource(path);
     }
 
+    @RequestMapping({
+            "/css/**",
+            "/old/css/**",
+            "/old/js/**",
+            "/old/lib/**",
+            "/old/images/**",
+            "/js/**",
+            "/lib/**",
+            "/partials/**",
+            "/template/**",
+            "/images/**",
+            "**.html",
+            "**.xml",
+            "**.js",
+            "**.css"
+    })
+    @ResponseBody
+    public Object returnStaticFile(HttpServletRequest request) throws IOException {
+        return resourceLoader.getResource("classpath:static"+request.getServletPath());
+    }
+
     @RequestMapping("/**")
     @ResponseBody
     public Object returnIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {

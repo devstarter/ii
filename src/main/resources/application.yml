@@ -17,14 +17,15 @@ spring:
     serialization-inclusion: non_empty
     serialization.WRITE_DATES_AS_TIMESTAMPS: false
   jpa.hibernate.ddl-auto: update
-  jpa.properties.hibernate.current_session_context_class: org.springframework.orm.hibernate4.SpringSessionContext
+#  jpa.properties.hibernate.current_session_context_class: org.springframework.orm.hibernate4.SpringSessionContext
 
 logging:
   level:
+    org: warn
     org.ayfaar: trace
-    org.springframework: warn
-  pattern:
-    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+#    org.springframework: warn
+#  pattern:
+#    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
 
 mail.user: some@gmail.com
 mail.password: some

@@ -8,7 +8,6 @@ import org.ayfaar.app.events.NewTermEvent;
 import org.ayfaar.app.events.QuietException;
 import org.ayfaar.app.events.TermUpdatedEvent;
 import org.ayfaar.app.model.*;
-import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -42,13 +41,13 @@ public class TermController {
 
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    @Model
+    @ResponseBody
     public void add(Term term) {
         add(term.getName(), term.getShortDescription(), term.getDescription());
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    @Model
+    @ResponseBody
     public ModelMap get(@RequestParam("name") String termName, @RequestParam(required = false) boolean mark) {
         termName = termName.replace("_", " ");
         TermService.TermProvider provider = termService.getTermProvider(termName);
@@ -174,7 +173,6 @@ public class TermController {
     }
 
     @RequestMapping("related")
-    @Model
     @ResponseBody
     public Collection<ModelMap> getRelated(@RequestParam String uri) {
         Set<UID> related = new LinkedHashSet<UID>();

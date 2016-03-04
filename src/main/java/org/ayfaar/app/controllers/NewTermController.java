@@ -1,6 +1,5 @@
 package org.ayfaar.app.controllers;
 
-import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.RegExpUtils;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.TermServiceImpl;
@@ -35,7 +34,6 @@ public class NewTermController {
     }
 
     @RequestMapping(value = "get-terms-in-text", method = RequestMethod.POST)
-    @Model
     @ResponseBody
     public Object getTerms(@RequestParam String text) {
         Map<String, Integer> contains = new HashMap<String, Integer>();

@@ -5,7 +5,6 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
-import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.events.SearchQuoteEvent;
 import org.ayfaar.app.utils.Content;
 import org.ayfaar.app.utils.EmailNotifier;
@@ -56,7 +55,6 @@ public class SearchController {
     }*/
 
     @RequestMapping("content")
-    @Model
     @ResponseBody
     private List<ModelMap> searchInContent(@RequestParam String query,
                                            @RequestParam(required = false, defaultValue = "0") Integer page) {
@@ -155,7 +153,6 @@ public class SearchController {
     }
 
     @RequestMapping("term")
-    @Model
     @ResponseBody
     private ModelMap searchAsTerm(@RequestParam String query) {
         query = query.trim();
