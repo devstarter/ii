@@ -3,10 +3,12 @@ package org.ayfaar.app.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +21,7 @@ public class Router {
     @Autowired ServletContext context;
     @Value("${OPENSHIFT_HOMEDIR}")
     private String jbossDir;
+    @Inject ResourceLoader resourceLoader;
 
     @RequestMapping("/old")
     @ResponseBody
@@ -68,11 +71,12 @@ public class Router {
         }
         //
 
-        String index = "index.html";
+        return resourceLoader.getResource("classpath:static/index.html");
+/*        String index = "index.html";
         String path = request.getServletContext().getRealPath(index);
         if (path == null) {
             path = jbossDir+"app-root/runtime/repo/src/main/webapp/"+index;
         }
-        return new FileSystemResource(path);
+        return new FileSystemResource(path);*/
     }
 }

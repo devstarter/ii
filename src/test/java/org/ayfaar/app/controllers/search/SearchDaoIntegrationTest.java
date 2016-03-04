@@ -1,11 +1,11 @@
 package org.ayfaar.app.controllers.search;
 
-import net.sf.cglib.core.CollectionUtils;
-import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.CollectionUtils;
+import org.ayfaar.app.utils.Transformer;
 import org.junit.Test;
 
 import javax.inject.Inject;

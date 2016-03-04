@@ -13,9 +13,6 @@ import org.springframework.stereotype.Component;
 
 import static com.pushbullet.Builder.pushbullet;
 
-/**
- * Created by Pas8sion on 09.11.2014.
- */
 @Component
 public class NotificationListener implements ApplicationListener<PushEvent> {
 

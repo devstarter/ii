@@ -1,6 +1,7 @@
 package org.ayfaar.app.controllers.search.cache;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.CommonDao;
@@ -8,9 +9,8 @@ import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
-import org.ayfaar.app.utils.TermServiceImpl;
 import org.ayfaar.app.utils.TermService;
+import org.ayfaar.app.utils.TermServiceImpl;
 import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -25,15 +25,15 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.io.IOException;
 
-
 import static org.ayfaar.app.utils.TermService.TermProvider;
-import static org.mockito.Matchers.*;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DBCacheUnitTest {
-    @Mock CustomObjectMapper objectMapper;
+    @Mock ObjectMapper objectMapper;
     @Mock CommonDao commonDao;
     @Mock CategoryDao categoryDao;
     @Mock

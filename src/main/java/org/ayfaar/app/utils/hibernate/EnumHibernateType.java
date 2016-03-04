@@ -69,7 +69,7 @@ public class EnumHibernateType implements UserType, ParameterizedType {
             return null;
         }
         try {
-            return generator != null ? generator.invoke(enumClass, value) : Enum.valueOf(enumClass, value);
+            return /*generator != null ? */generator.invoke(enumClass, value)/* : Enum.valueOf(enumClass, value)*/;
         } catch (Exception e) {
             throw new HibernateException("invalid enum " + enumClass + " value " + value, e);
         }

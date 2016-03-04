@@ -1,0 +1,34 @@
+server.port: 8088
+
+OPENSHIFT_MYSQL_DB_HOST: 127.0.0.1
+OPENSHIFT_MYSQL_DB_USERNAME: root
+OPENSHIFT_MYSQL_DB_PASSWORD:
+OPENSHIFT_MYSQL_DB_PORT: 3306
+OPENSHIFT_APP_NAME: ii
+OPENSHIFT_HOMEDIR:
+
+# DB
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/ii
+    username: root
+  jackson:
+    property-naming-strategy: CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
+    serialization-inclusion: non_empty
+    serialization.WRITE_DATES_AS_TIMESTAMPS: false
+  jpa.hibernate.ddl-auto: update
+  jpa.properties.hibernate.current_session_context_class: org.springframework.orm.hibernate4.SpringSessionContext
+
+logging:
+  level:
+    org.ayfaar: trace
+    org.springframework: warn
+  pattern:
+    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+
+mail.user: some@gmail.com
+mail.password: some
+
+pushbullet.key: v1Izhxi9HgremmZ8ZqEyAh0xbW7xJHLYWYujz0VEpiRR6
+pushbullet.channel: ii
+youtube.api.key: AIzaSyDZ2HuAgqxzjXCyzlkhN67pXcYtW_WuVLk

@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers.search.cache;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.ayfaar.app.controllers.CategoryController;
 import org.ayfaar.app.controllers.NewSearchController;
@@ -8,7 +9,6 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.events.SimplePushEvent;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +32,7 @@ public class CacheUpdater {
     private TermService termService;
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-    @Inject
-    CustomObjectMapper objectMapper;
+    @Inject ObjectMapper objectMapper;
 
 //    @Scheduled(cron="0 0 19 * * ?") // это 3 по Москве, так как время сервера в EST, таблица соответствия http://www.worldtimebuddy.com/?qm=1&lid=5,703448,524901&h=5&date=2014-12-28&sln=19-20
     public void update() throws IOException {

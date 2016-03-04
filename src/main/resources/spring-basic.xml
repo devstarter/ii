@@ -13,7 +13,7 @@
                            http://www.springframework.org/schema/cache
                            http://www.springframework.org/schema/cache/spring-cache.xsd">
 
-    <context:component-scan base-package="org.ayfaar.app"/> <!--.spring.converter"/>-->
+<!--    <context:component-scan base-package="org.ayfaar.app"/> &lt;!&ndash;.spring.converter"/>&ndash;&gt;
 
     <mvc:annotation-driven />
 
@@ -31,18 +31,12 @@
 
     <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
         <property name="order" value="1"/>
-        <property name="mediaTypes">
-            <map>
-                <entry key="json" value="application/json"/>
-            </map>
-        </property>
-        <property name="defaultContentType" value="#{T(org.springframework.http.MediaType).APPLICATION_JSON}"/>
         <property name="defaultViews">
             <list>
-                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
+                <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
             </list>
         </property>
-    </bean>
+    </bean>-->
 
     <!--<bean class="org.ayfaar.app.spring.ModelViewSupportFactoryBean"/>-->
 
@@ -50,7 +44,7 @@
           <!--class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver">-->
         <!--<property name="order" value="0"/>-->
     <!--</bean>-->
-    <bean id="restExceptionResolver" class="org.ayfaar.app.spring.handler.RestExceptionHandler">
+  <!--  <bean id="restExceptionResolver" class="org.ayfaar.app.spring.handler.RestExceptionHandler">
         <property name="order" value="100"/>
         <property name="messageConverters" ref="messageConverters"/>
         <property name="errorResolver">
@@ -65,14 +59,14 @@
     <bean id="messageConverters" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
-                <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
-                    <property name="objectMapper" ref="jacksonObjectMapper" />
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <property name="objectMapper" ref="objectMapper" />
                 </bean>
                 <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
                 <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"/>
             </list>
         </property>
-    </bean>
+    </bean>-->
 
     <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" >
 		<property name="host" value="smtp.gmail.com" />
@@ -92,7 +86,7 @@
 
     <!--pushbullet-->
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-        <property name="messageConverters" ref="messageConverters"/>
+        <!--<property name="messageConverters" ref="messageConverters"/>-->
     </bean>
 
     <bean class="com.pushbullet.PushbulletClient">
@@ -113,4 +107,5 @@
     <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
         <property name="poolSize" value="2"/>
     </bean>
+    <!--<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>-->
 </beans>

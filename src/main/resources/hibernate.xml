@@ -6,12 +6,12 @@
                            http://www.springframework.org/schema/tx
                            http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <bean id="dataSourceTarget" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${database.driver}"/>
+<!--    <bean id="dataSourceTarget" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url" value="jdbc:mysql://${OPENSHIFT_MYSQL_DB_HOST}:${OPENSHIFT_MYSQL_DB_PORT}/${OPENSHIFT_APP_NAME}?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"/>
         <property name="username" value="${OPENSHIFT_MYSQL_DB_USERNAME}"/>
         <property name="password" value="${OPENSHIFT_MYSQL_DB_PASSWORD}"/>
-    </bean>
+    </bean>-->
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
@@ -19,10 +19,10 @@
         <property name="namingStrategy" ref="namingStrategy"/>
         <property name="hibernateProperties">
             <props>
-                <prop key="hibernate.dialect">${database.dialect}</prop>
-                <prop key="hibernate.show_sql">${database.show_sql}</prop>
-                <prop key="hibernate.format_sql">${database.format_sql}</prop>
-                <prop key="hibernate.hbm2ddl.auto">${database.hibernate_hbm2ddl_auto}</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.format_sql">false</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
             </props>
         </property>
     </bean>
@@ -30,9 +30,7 @@
     <bean id="namingStrategy" class="org.hibernate.cfg.ImprovedNamingStrategy"/>
 
     <tx:annotation-driven/>
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
-        <property name="targetDataSource" ref="dataSourceTarget"/>
-    </bean>
+
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>

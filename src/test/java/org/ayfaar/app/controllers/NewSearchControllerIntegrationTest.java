@@ -1,10 +1,10 @@
 package org.ayfaar.app.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.controllers.search.Quote;
 import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.controllers.search.cache.DBCache;
-import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,7 +46,7 @@ public class NewSearchControllerIntegrationTest extends IntegrationTest {
 
     @Test
     public void test_cache() throws Exception {
-        CustomObjectMapper objectMapper = new CustomObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
         SearchResultPage page = (SearchResultPage) controller.search("ВЛОООМООТ", 0, null);
         String json = (String) controller.search("ВЛОООМООТ", 0, null);
         assertNotNull(page);
