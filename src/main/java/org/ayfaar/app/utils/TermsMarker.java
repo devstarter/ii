@@ -4,7 +4,7 @@ import org.ayfaar.app.utils.TermService.TermProvider;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

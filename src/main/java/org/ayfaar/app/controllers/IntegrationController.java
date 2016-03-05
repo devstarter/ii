@@ -2,15 +2,11 @@ package org.ayfaar.app.controllers;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.ayfaar.app.dao.ItemDao;
-import org.ayfaar.app.spring.Model;
 import org.ayfaar.app.utils.RegExpUtils;
 import org.ayfaar.app.utils.TermService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URLDecoder;
 import java.util.*;
@@ -35,8 +31,8 @@ public class IntegrationController {
             "мудрость"
     };
 
-    @Model
     @RequestMapping
+    @ResponseBody
     public Object t(@RequestBody String text, @RequestHeader("Referer") String referer, @RequestParam String id) {
         String cacheKey = referer+"#"+id;
         if (cache.containsKey(cacheKey)) return cache.get(cacheKey);

@@ -1,11 +1,11 @@
 package org.ayfaar.app.controllers.search.cache;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.events.SearchEvent;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.UID;
-import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -19,7 +19,7 @@ import java.io.IOException;
 
 @Component
 public class DBCache extends ConcurrentMapCache {
-    @Inject CustomObjectMapper objectMapper;
+    @Inject ObjectMapper objectMapper;
     @Inject TermService termService;
     @Inject CommonDao commonDao;
     @Inject CategoryDao categoryDao;

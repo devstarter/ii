@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers.search.cache;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.ayfaar.app.controllers.CategoryController;
 import org.ayfaar.app.controllers.NewSearchController;
@@ -8,11 +9,13 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.events.SimplePushEvent;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.spring.converter.json.CustomObjectMapper;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -20,7 +23,8 @@ import java.util.List;
 
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
-//@Component
+@Component
+@EnableScheduling
 public class CacheUpdater {
     @Autowired
     private NewSearchController searchController;
@@ -32,10 +36,9 @@ public class CacheUpdater {
     private TermService termService;
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-    @Inject
-    CustomObjectMapper objectMapper;
+    @Inject ObjectMapper objectMapper;
 
-//    @Scheduled(cron="0 0 19 * * ?") // это 3 по Москве, так как время сервера в EST, таблица соответствия http://www.worldtimebuddy.com/?qm=1&lid=5,703448,524901&h=5&date=2014-12-28&sln=19-20
+    @Scheduled(fixedDelay = 604800000, initialDelay = 360000) // обновлять кеш спустя час со старта и через неделю после каждого завершения обновления
     public void update() throws IOException {
         long start = System.currentTimeMillis();
 
