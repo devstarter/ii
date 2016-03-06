@@ -49,7 +49,6 @@ public class SearchController {
         modelMap.put("items", searchInItems(query));
         return modelMap;
     }
-
     private List searchInItems(String query) {
         return null;
     }*/
