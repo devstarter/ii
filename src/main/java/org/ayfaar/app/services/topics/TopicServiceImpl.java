@@ -9,9 +9,7 @@ import org.ayfaar.app.utils.UriGenerator;
 import org.ayfaar.app.utils.exceptions.Exceptions;
 import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -20,8 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.ayfaar.app.utils.StreamUtils.single;
-
+org static org.ayfaar.app.utils.StreamUtils.single;
 @Component
 class TopicServiceImpl implements TopicService {
     private static final Logger logger = LoggerFactory.getLogger(TopicServiceImpl.class);
@@ -158,9 +155,9 @@ class TopicServiceImpl implements TopicService {
             return linksMap.values().stream()
                     .filter(link ->
                             link.getUid1() instanceof Topic
-                            && link.getUid2() instanceof Topic
-                            && link.getUid1().getUri().equals(uri())
-                            && link.getType() == LinkType.CHILD)
+                                    && link.getUid2() instanceof Topic
+                                    && link.getUid1().getUri().equals(uri())
+                                    && link.getType() == LinkType.CHILD)
                     .map(l -> new TopicProviderImpl((Topic) l.getUid2()))
                     .sorted((o1, o2) -> o1.name().compareTo(o2.name()));
         }
@@ -170,9 +167,9 @@ class TopicServiceImpl implements TopicService {
             return linksMap.values().stream()
                     .filter(link ->
                             link.getUid1() instanceof Topic
-                            && link.getUid2() instanceof Topic
-                            && link.getUid2().getUri().equals(uri())
-                            && link.getType().isChild())
+                                    && link.getUid2() instanceof Topic
+                                    && link.getUid2().getUri().equals(uri())
+                                    && link.getType().isChild())
                     .map(l -> new TopicProviderImpl((Topic) l.getUid1()));
         }
 
@@ -199,7 +196,24 @@ class TopicServiceImpl implements TopicService {
 
         @Override
         public void addChild(String name) {
-            addChild(findOrCreate(name));
+                 addChild(findOrCreate(name));
+        }
+
+        @Override
+        public void unlink(String name, String linked) {
+            String uriFirst = getByName(name).uri();
+            String uriSec = getByName(linked).uri();
+            List<Link> removed = linksMap.values().stream()
+                    .filter(link ->
+                            (link.getUid1().getUri().equals(uriFirst)
+                                    && link.getUid2().getUri().equals(uriSec))
+                                    || (link.getUid1().getUri().equals(uriSec)
+                                    && link.getUid2().getUri().equals(uriFirst)))
+                    .collect(Collectors.toList());
+            for (Link link : removed){
+                linkDao.remove(link.getLinkId());
+            }
+
         }
 
         @Override
