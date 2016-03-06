@@ -111,14 +111,14 @@ public class TopicController {
         return names;
     }
 
-    @RequestMapping("child")
-    @ResponseBody
     public void addChild(String name, String childName){
+
 
         Topic topic = commonDao.get(Topic.class, "name", name);
         Topic childTopic = commonDao.get(Topic.class, "name", childName);
         final List<Link> links = linkDao.getByUris(topic.getUri(), childTopic.getUri());
-        if (links.size()!= 0)linkDao.save(new Link(topic, childTopic));
+        if ((links.size())!= 0)linkDao.save(new Link(topic, childTopic));
+
 
     }
 
