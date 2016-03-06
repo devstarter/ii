@@ -6,10 +6,11 @@ import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 
 @SpringBootApplication
-//@EnableJpaRepositories
+@EnableJpaRepositories
 @EntityScan("org.ayfaar.app.model")
 @ComponentScan("org.ayfaar.app")
 @ImportResource({"hibernate.xml", "spring-basic.xml"})
