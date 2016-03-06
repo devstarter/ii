@@ -4,8 +4,7 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.utils.UriGenerator;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
+import org.jetbrains.annotations.NotNull;import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -125,9 +124,9 @@ class TopicServiceImpl implements TopicService {
             return linksMap.values().stream()
                     .filter(link ->
                             link.getUid1() instanceof Topic
-                            && link.getUid2() instanceof Topic
-                            && link.getUid1().getUri().equals(uri())
-                            && link.getType() == LinkType.CHILD)
+                                    && link.getUid2() instanceof Topic
+                                    && link.getUid1().getUri().equals(uri())
+                                    && link.getType() == LinkType.CHILD)
                     .map(l -> new TopicProviderImpl((Topic) l.getUid2()));
         }
 
@@ -136,9 +135,9 @@ class TopicServiceImpl implements TopicService {
             return linksMap.values().stream()
                     .filter(link ->
                             link.getUid1() instanceof Topic
-                            && link.getUid2() instanceof Topic
-                            && link.getUid2().getUri().equals(uri())
-                            && link.getType().isChild())
+                                    && link.getUid2() instanceof Topic
+                                    && link.getUid2().getUri().equals(uri())
+                                    && link.getType().isChild())
                     .map(l -> new TopicProviderImpl((Topic) l.getUid1()));
         }
 
@@ -166,6 +165,18 @@ class TopicServiceImpl implements TopicService {
         @Override
         public void addChild(String name) {
             addChild(findOrCreate(name));
+        }
+
+        @Override
+        public void unlink(String linked){
+            final Link link = linksMap.remove(getByName(linked).topic());
+            linkDao.remove(link.getLinkId());
+        }
+
+        @Override
+        public void delete() {
+            commonDao.remove(topic);
+            topics.remove(topic().getUri());
         }
 
         @Override
@@ -200,8 +211,7 @@ class TopicServiceImpl implements TopicService {
             reload();
         }
 
-        @Override
-        public TopicResources resources() {
+           public TopicResources resources() {
             final TopicResources resources = new TopicResources();
             resources.video.addAll(prepareResource(VideoResource.class));
             resources.item.addAll(prepareResource(Item.class));
