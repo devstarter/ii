@@ -1,0 +1,28 @@
+# DB
+spring:
+  datasource:
+    url: jdbc:mysql://${OPENSHIFT_EXTMYSQL_DB_HOST}:${OPENSHIFT_EXTMYSQL_DB_PORT}/${OPENSHIFT_EXTAPP_NAME}?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    username: ${OPENSHIFT_EXTMYSQL_DB_USERNAME}
+    password: ${OPENSHIFT_EXTMYSQL_DB_PASSWORD}
+    platform: org.hibernate.dialect.MySQL5Dialect
+  jackson:
+    property-naming-strategy: CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
+    serialization-inclusion: non_empty
+    serialization.WRITE_DATES_AS_TIMESTAMPS: false
+  jpa.hibernate.ddl-auto: update
+
+logging:
+  file: ${OPENSHIFT_DATA_DIR}logs/app.log
+  level:
+    org: warn
+    org.ayfaar: trace
+#    org.springframework: warn
+#  pattern:
+#    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+
+mail.user: some@gmail.com
+mail.password: some
+
+pushbullet.key: v1Izhxi9HgremmZ8ZqEyAh0xbW7xJHLYWYujz0VEpiRR6
+pushbullet.channel: ii
+youtube.api.key: AIzaSyDZ2HuAgqxzjXCyzlkhN67pXcYtW_WuVLk

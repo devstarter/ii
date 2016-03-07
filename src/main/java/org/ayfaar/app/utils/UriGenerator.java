@@ -3,6 +3,7 @@ package org.ayfaar.app.utils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.ayfaar.app.annotations.Uri;
 import org.ayfaar.app.model.UID;
+import org.ayfaar.app.model.VideoResource;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.IdentifierGenerator;
@@ -38,5 +39,12 @@ public class UriGenerator implements IdentifierGenerator {
     public static String getValueFromUri(Class objectClass, String uri) {
         Uri annotation = (Uri) objectClass.getAnnotation(Uri.class);
         return uri.replace(annotation.nameSpace(), "");
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <E extends UID> Class<E> getClassByUri(String uri) {
+        Uri annotation = VideoResource.class.getAnnotation(Uri.class);
+        if (uri.startsWith(annotation.nameSpace())) return (Class<E>) VideoResource.class;
+        return null;
     }
 }

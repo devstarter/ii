@@ -1,12 +1,11 @@
 package org.ayfaar.app.controllers.search;
 
-import net.sf.cglib.core.CollectionUtils;
-import net.sf.cglib.core.Transformer;
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.controllers.NewSearchController;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
-import org.junit.Ignore;
+import org.ayfaar.app.utils.CollectionUtils;
+import org.ayfaar.app.utils.Transformer;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -32,7 +31,7 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
     public void testTimeForMethodFindInItems() {
         int skip = 0;
         long start = System.currentTimeMillis();
-        searchDao.findInItems(queries, skip, pageSize);
+        searchDao.findInItems(queries, skip, pageSize, null);
         long end = System.currentTimeMillis();
         System.out.println("searchDao.findInItems delta = " + (end - start));
     }
@@ -40,7 +39,7 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
     @Test
     public void testEqualityForMethodFindInItemsForFirstCall() {
         int skip = 0;
-        List<Item> actual = searchDao.findInItems(queries, skip, pageSize);
+        List<Item> actual = searchDao.findInItems(queries, skip, pageSize, null);
 
         assertEquals(20, actual.size());
         assertEquals("1.0003", actual.get(0).getNumber());
@@ -53,7 +52,7 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
     @Test
     public void testEqualityForMethodFindInItemsForTenthCall() {
         int skip = pageSize * 10;
-        List<Item> actual = searchDao.findInItems(queries, skip, pageSize);
+        List<Item> actual = searchDao.findInItems(queries, skip, pageSize, null);
 
         assertEquals(20, actual.size());
         assertEquals("1.0552", actual.get(0).getNumber());
@@ -65,44 +64,27 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
 
     @Test
     public void testOneWordSearch() {
-        List<Item> items = searchDao.findInItems(asList("апокликмия"), 0, pageSize);
+        List<Item> items = searchDao.findInItems(asList("апокликмия"), 0, pageSize, null);
         assertEquals(2, items.size());
         assertEquals("12.14021", items.get(0).getNumber());
         assertEquals("12.14023", items.get(1).getNumber());
     }
 
-    /*@Test
-    public void testFindInItemsWithFilter() {
-        List<Item> actual = searchDao.findInItems(queries, 0, 4000, "3.1201");
-
-        for(Item i : actual) {
-            System.out.println(i.getNumber());
-        }
-    }*/
-
     @Test
-    public void testFilter() {
-        List<Item> actual = searchDao.testFilter(queries, 0, 4000, "3.1201");
-
-        for(Item i : actual) {
-            System.out.println(i.getNumber());
-        }
+    public void testFindInItemsWithFilter() {
+        int skip = 0;
+        List<Item> actual = searchDao.findInItems(queries, skip, pageSize, "3.1201");
+        assertEquals(20, actual.size());
+        assertEquals("3.1201", actual.get(0).getNumber());
+        assertEquals("3.1225", actual.get(1).getNumber());
+        assertEquals("10.10037", actual.get(9).getNumber());
+        assertEquals("10.10119", actual.get(18).getNumber());
+        assertEquals("10.10122", actual.get(19).getNumber());
     }
 
     @Test
-    @Ignore
-    /*
-    Тест на правильную последовательность пунктом, сначала должны быть пункты из самых ранних томов.
-    SQL:
-    SELECT  *
-    FROM `ii`.`item`
-    WHERE `content` LIKE '%ААИИГЛА-МАА%'
-    ORDER BY cast(number as decimal(10,6)) ASC
-    LIMIT 20;
-    это без учёта разных знаком не по краям фразы, но по идее должно быть тоже самое
-     */
     public void testOrder() {
-        final List<Item> items = searchDao.findInItems(asList("ААИИГЛА-МАА"), 0, pageSize);
+        final List<Item> items = searchDao.findInItems(asList("ААИИГЛА-МАА"), 0, pageSize, null);
         @SuppressWarnings("unchecked")
         List<String> numbers = CollectionUtils.transform(items, new Transformer() {
             @Override
@@ -110,8 +92,9 @@ public class SearchDaoIntegrationTest extends IntegrationTest{
                 return ((Item) value).getNumber();
             }
         });
+
         assertEquals(13, numbers.size());
-        assertEquals(1, numbers.indexOf("1.1024"));
+        assertEquals(0, numbers.indexOf("1.1024"));
         assertTrue(numbers.indexOf("10.11809") > numbers.indexOf("3.0056"));
     }
 }

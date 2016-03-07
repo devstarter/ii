@@ -12,7 +12,7 @@ public abstract class UID {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "UriGenerator")
     @GenericGenerator(name = "UriGenerator", strategy = "org.ayfaar.app.utils.UriGenerator")
-    private String uri;
+    protected String uri;
 
     @Override
     public boolean equals(Object o) {

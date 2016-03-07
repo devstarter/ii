@@ -5,10 +5,8 @@ import org.ayfaar.app.utils.Content;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.envers.AuditReader;
-import org.hibernate.envers.AuditReaderFactory;
-import org.hibernate.envers.RevisionType;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -18,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -45,9 +42,9 @@ public class CommonDaoImpl implements CommonDao {
     @Override
     public <E> E getRandom(Class<E> clazz) {
         return (E) sessionFactory.getCurrentSession().createCriteria(clazz)
-            .add(Restrictions.sqlRestriction("1=1 order by rand()"))
-            .setMaxResults(1)
-            .list().get(0);
+                .add(Restrictions.sqlRestriction("1=1 order by rand()"))
+                .setMaxResults(1)
+                .list().get(0);
     }
 
     @Nullable
@@ -206,33 +203,18 @@ public class CommonDaoImpl implements CommonDao {
     @Override
     public <E> List<E> getLike(Class<E> className, String field, String value, Integer limit) {
         return list(sessionFactory.getCurrentSession()
-                .createCriteria(className)
-                .add(ilike(field, value))
-                .setMaxResults(limit)
+                        .createCriteria(className)
+                        .add(ilike(field, value))
+                        .setMaxResults(limit)
         );
     }
 
     @Override
-    public <E> AuditReader getAuditReader() {
-        return AuditReaderFactory.get(sessionFactory.getCurrentSession());
-
-        /*AuditQuery query = reader.getCrossTypeRevisionChangesReader().findEntities();
-
-        List<E> result = new ArrayList<E>();
-        List<Object[]> audits = query.getResultList();
-
-        DozerBeanMapper mapper = new DozerBeanMapper();
-
-        for (Object[] objects : audits) {
-            result.add(mapper.map(objects[0], entityClass));
-        }
-
-        return result;*/
-    }
-
-    @Override
-    public Collection<?> findAuditEntities(Number revision, RevisionType revisionType) {
-        return AuditReaderFactory.get(sessionFactory.getCurrentSession())
-                .getCrossTypeRevisionChangesReader().findEntities(revision, revisionType);
+    public <E> List<E> getOrdered(Class<E> clazz, String field, boolean ascending, int limit) {
+        return list(sessionFactory.getCurrentSession()
+                        .createCriteria(clazz)
+                        .addOrder(ascending ? Order.asc(field) : Order.desc(field))
+                        .setMaxResults(limit)
+        );
     }
 }

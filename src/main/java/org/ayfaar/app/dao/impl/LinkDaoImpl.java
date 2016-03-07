@@ -2,6 +2,7 @@ package org.ayfaar.app.dao.impl;
 
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
+import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.UID;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
@@ -9,6 +10,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static org.ayfaar.app.model.LinkType.ABBREVIATION;
+import static org.ayfaar.app.model.LinkType.ALIAS;
+import static org.ayfaar.app.model.LinkType.CODE;
 import static org.hibernate.criterion.Restrictions.*;
 
 @SuppressWarnings("unchecked")
@@ -24,7 +28,7 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
                 .createAlias("uid1", "uid1")
                 .createAlias("uid2", "uid2")
                 .add(eq("uid1.uri", uri))
-                .add(or(in("type", new Object[] {Link.ALIAS, Link.ABBREVIATION, Link.CODE})))
+                .add(or(in("type", new Object[] {ALIAS, ABBREVIATION, CODE})))
                 .list();
     }
 
@@ -34,7 +38,7 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
                 .createAlias("uid1", "uid1")
                 .createAlias("uid2", "uid2")
                 .add(eq("uid2.uri", uri))
-                .add(or(in("type", new Object[] {Link.ALIAS, Link.ABBREVIATION, Link.CODE})))
+                .add(or(in("type", new Object[] {ALIAS, ABBREVIATION, CODE})))
                 .uniqueResult();
         if (link != null) {
             return link.getUid1();
@@ -53,7 +57,7 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
                 .createAlias("uid1", "uid1")
                 .createAlias("uid2", "uid2")
                 .add(or(eq("uid1.uri", uri), eq("uid2.uri", uri)))
-                .add(or(in("type", new Byte[]{Link.ALIAS, Link.CODE}), isNull("type")))
+                .add(or(in("type", new LinkType[]{ALIAS, CODE}), isNull("type")))
 //                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .addOrder(Order.desc("weight"));
     }
@@ -72,7 +76,7 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
         return (Link) criteria()
                 .createAlias("uid2", "uid2")
                 .add(eq("uid2.uri", uri))
-                .add(in("type", new Byte[]{Link.ABBREVIATION, Link.ALIAS, Link.CODE}))
+                .add(in("type", new LinkType[]{ABBREVIATION, ALIAS, CODE}))
                 .uniqueResult();
     }
 
@@ -95,5 +99,22 @@ public class LinkDaoImpl extends AbstractHibernateDAO<Link> implements LinkDao {
                     )
                 )
                 .list();
+    }
+
+    @Override
+    public List<Link> get(UID uid1, UID uid2) {
+        return criteria()
+                .add(
+                    or(
+                        and(eq("uid1", uid1), eq("uid2", uid2)),
+                        and(eq("uid1", uid2), eq("uid2", uid1))
+                    )
+                )
+                .list();
+    }
+
+    @Override
+    public List<Link> getAllSynonyms() {
+        return  criteria().add(in("type", new LinkType[]{ABBREVIATION, ALIAS, CODE})).list();
     }
 }
