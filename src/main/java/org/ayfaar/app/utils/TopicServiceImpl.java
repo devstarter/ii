@@ -59,9 +59,20 @@ public class TopicServiceImpl implements TopicService {
             return getValueFromUri(Topic.class, uri);
         }
 
+<<<<<<< 9eac8854f5e7e4371177c7fe232e96cd3ecee253
         @Override
         public String getUri() {
             return null;
+=======
+//        @Override
+//        public String getUri() {
+//            return null;
+//        }
+
+        @Override
+        public TopicProvider getMainTopicProvider() {
+            return hasMainTopic() ? aliasesMap.get(getValueFromUri(Topic.class, mainTopicUri).toLowerCase()) : null;
+>>>>>>> add files TopicService by utils
         }
 
         @Override
@@ -69,6 +80,7 @@ public class TopicServiceImpl implements TopicService {
             return commonDao.get(Topic.class, uri);
         }
 
+<<<<<<< 9eac8854f5e7e4371177c7fe232e96cd3ecee253
         @Override
         public List<TopicProvider> getParents() {
             return null;
@@ -84,6 +96,8 @@ public class TopicServiceImpl implements TopicService {
             return null;
         }
 
+=======
+>>>>>>> add files TopicService by utils
         private List<TopicProvider> getListProviders(byte type, String name) {
             List<TopicProvider> providers = new ArrayList<TopicProvider>();
 
