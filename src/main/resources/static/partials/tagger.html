@@ -1,0 +1,19 @@
+<div style="padding-top: 20px">
+    <textarea rows="10" cols="80" ng-model="text" placeholder="Вставте текст с терминами"></textarea>
+    <a ng-click="getTags()" class="btn btn-primary" ng-class="loading ? 'disabled' : ''">Подсчитать термины</a>
+
+    <span ng-show="loading"><img src="images/ajax-loader.gif"/> Поиск терминов...</span>
+
+    <h2 ng-show="terms">Выбранные термины</h2>
+    <div>
+        <span ng-show="item.selected == '1'" ng-repeat="item in terms">{{item.key}}, </span>
+    </div>
+
+    <h2 ng-show="terms">Найденные термины</h2>
+    <div title="Кликните для выбора термина">
+        <button ng-repeat="item in terms" type="button" class="btn btn-default" ng-model="item.selected"
+                btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+            {{item.key}} ({{item.value}})
+        </button>
+    </div>
+</div>
