@@ -4,27 +4,26 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Topic;
-import org.ayfaar.app.utils.Language;
+import org.ayfaar.app.services.TopicService;
 import org.ayfaar.app.utils.UriGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.inject.Inject;
 import java.util.*;
 
 import static org.springframework.util.Assert.hasLength;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-@Controller
+@RestController
 @RequestMapping("api/topic")
 public class TopicController {
 
-    @Autowired CommonDao commonDao;
-    @Autowired LinkDao linkDao;
+    @Inject CommonDao commonDao;
+    @Inject LinkDao linkDao;
+    @Inject TopicService topicService;
 
     @RequestMapping("for/{uri}")
-    @ResponseBody
     public List<TopicPresentation> getForUri(@PathVariable String uri) throws Exception {
         hasLength(uri);
         final List<Link> links = linkDao.getAllLinks(uri);
@@ -53,27 +52,24 @@ public class TopicController {
     }
 
     @RequestMapping(value = "import", method = POST)
-    @ResponseBody
     public void importTopics(@RequestBody String topics) throws Exception {
         hasLength(topics);
         final Set<String> uniqueNames = new HashSet<>(Arrays.asList(topics.split("\n")));
         for (String name : uniqueNames) {
-            if (!name.isEmpty())commonDao.save(new Topic(name, Language.ru));
+            if (!name.isEmpty())commonDao.save(new Topic(name));
         }
     }
 
     @RequestMapping(value = "for", method = POST)
-    @ResponseBody
     public Topic addFor(@RequestParam String uri, @RequestParam String name) throws Exception {
         hasLength(name);
         Topic topic = commonDao.get(Topic.class, "name", name);
-        if (topic == null) topic = commonDao.save(new Topic(name, Language.ru));
+        if (topic == null) topic = commonDao.save(new Topic(name));
         linkDao.save(new Link(topic, commonDao.get(UriGenerator.getClassByUri(uri), uri)));
         return topic;
     }
 
     @RequestMapping(value = "rate", method = POST)
-    @ResponseBody
     public void rate(@RequestParam String forUri, @RequestParam String topicUri, @RequestParam Float rate) throws Exception {
         final List<Link> links = linkDao.getAllLinks(forUri);
         for (Link link : links) {
@@ -86,7 +82,6 @@ public class TopicController {
     }
 
     @RequestMapping(value = "for", method = DELETE)
-    @ResponseBody
     public void deleteFor(@RequestParam String uri, @RequestParam String topicUri) throws Exception {
         hasLength(uri);
         hasLength(topicUri);
@@ -101,7 +96,6 @@ public class TopicController {
     }
 
     @RequestMapping("suggest")
-    @ResponseBody
     public List<String> suggest(@RequestParam String q) {
         List<Topic> topics = commonDao.getLike(Topic.class, "name", "%" + q + "%", 20);
         List<String> names = new ArrayList<String>();
@@ -109,5 +103,17 @@ public class TopicController {
             names.add(topic.getName());
         }
         return names;
+    }
+
+    @RequestMapping("link-child")
+    public void linkChild(@RequestParam String name1, @RequestParam String name2) {
+        topicService.getOrCreate(name1).addChild(name2);
+    }
+
+    @RequestMapping("{name}/children")
+    public List<Topic> linkChild(@PathVariable String name) {
+        return topicService.get(UriGenerator.generate(Topic.class, name))
+                .orElseThrow(() -> new RuntimeException("Topic for "+name+" not found"))
+                .children();
     }
 }

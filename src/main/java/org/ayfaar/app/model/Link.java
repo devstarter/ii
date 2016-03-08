@@ -29,6 +29,8 @@ public class Link {
     private String quote;
     @Column(columnDefinition = "TEXT")
     private String taggedQuote;
+    @Column(columnDefinition = "TEXT")
+    private String comment;
     private Float rate;
     private Date createdAt = new Date();
 
@@ -64,5 +66,10 @@ public class Link {
         this.uid1 = uid1;
         this.uid2 = uid2;
         this.quote = quote;
+    }
+
+    public Link(UID uid1, UID uid2, LinkType type, String comment) {
+        this(uid1, uid2, type);
+        this.comment = comment;
     }
 }

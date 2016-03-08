@@ -44,7 +44,7 @@ public class TermServiceImpl implements TermService {
 
     @PostConstruct
     public void load() {
-		logger.info("Terms map loading...");
+		logger.info("Terms loading...");
         aliasesMap = new HashMap<>();
 
         List<TermMorph> allTermMorphs = commonDao.getAll(TermMorph.class);
@@ -79,7 +79,7 @@ public class TermServiceImpl implements TermService {
                 return Integer.compare(o2.getKey().length(), o1.getKey().length());
             }
         });
-		logger.info("Terms map loading finish");
+		logger.info("Terms loading finish");
     }
 
     public void reload() {

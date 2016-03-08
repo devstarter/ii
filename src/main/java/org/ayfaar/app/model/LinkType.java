@@ -20,7 +20,7 @@ public enum LinkType implements ValueEnum {
      * Ссылка на дочерний объет
      * Первый родитель, второй потомок
      */
-    CHILDREN(5),
+    CHILD(5),
     /**
      * Перевод
      */
@@ -46,5 +46,9 @@ public enum LinkType implements ValueEnum {
             if (status.getValue().equals(value)) return status;
         }
         throw new RuntimeException("No LinkType for "+value);
+    }
+
+    public boolean isChild() {
+        return this == CHILD;
     }
 }
