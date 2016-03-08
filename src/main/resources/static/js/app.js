@@ -12,7 +12,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
         $stateProvider
             .state('home', {
                 url: "/{at: @?}",
-                templateUrl: "partials/home.html",
+                templateUrl: "static/partials/home.html",
                 controller: HomeController,
                 onEnter: function($rootScope){
                     $rootScope.$broadcast('home-state-entered');
@@ -20,42 +20,42 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             })
             .state('tagger', {
                 url: "/tagger",
-                templateUrl: "partials/tagger.html",
+                templateUrl: "static/partials/tagger.html",
                 controller: TaggerController
             })
             .state('resource-video', {
                 url: "/resource/video/{id: \.*}",
-                templateUrl: "partials/resources.html",
+                templateUrl: "static/partials/resources.html",
                 controller: ResourcesController
             })
             .state('article', {
                 url: "/a/:id",
-                templateUrl: "partials/article.html",
+                templateUrl: "static/partials/article.html",
                 controller: ArticleController
             })
             .state('item', {
                 url: "/{number:\\d+\\.\\d+}",
-                templateUrl: "partials/item.html",
+                templateUrl: "static/partials/item.html",
                 controller: ItemController
             })
             .state('item-range', {
                 url: "/{from:\\d+\\.\\d+}{space1:\\s*}-{space2:\\s*}{to:\\d+\\.\\d+}",
-                templateUrl: "partials/item-range.html",
+                templateUrl: "static/partials/item-range.html",
                 controller: ItemRangeController
             })
             .state('paragraph', {
                 url: "/{number:\\d+\\.\\d+\\.\\d+\\.\\d+}",
-                templateUrl: "partials/paragraph.html",
+                templateUrl: "static/partials/paragraph.html",
                 controller: ParagraphController
             })
             .state('category', {
                 url: "/c/*name",
-                templateUrl: "partials/category.html",
+                templateUrl: "static/partials/category.html",
                 controller: CategoryController
             })
             .state('term', {
                 url: "/:name",
-                templateUrl: "partials/term.html",
+                templateUrl: "static/partials/term.html",
                 controller: TermController
             });
 
@@ -580,7 +580,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
     .directive("iiHeader", function($rootScope, focus, $state, $timeout) {
         return {
             scope: {},
-            templateUrl: "partials/header.html",
+            templateUrl: "static/partials/header.html",
             link: function(scope, element, attrs) {
                 scope.visible = true;
                 scope.expand = function() {

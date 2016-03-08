@@ -35,6 +35,7 @@
         </div>
         <div style="padding-top: 20px"></div>
         <div class="pointer section" title="Показать" ng-click="showQuotes = !showQuotes" ng-show="quotes.length">
+            <i ng-class="showQuotes ? 'halflings-triangle-bottom' : 'halflings-triangle-right'" class="halflings"></i>
             <h3>Избранные цитаты</h3> <span ng-hide="showQuotes">показать {{quotes.length}}</span>
         </div>
         <!--<span class="info" data-bind="invisible: description">Нет короткого определения</span>-->
@@ -87,7 +88,7 @@
             </div>
         </div>
         <div class="block loading" ng-show="loadingContents">
-            <img src="images/ajax-loader.gif"/> Поиск по содержимому (может занять около минуты)...
+            <img src="static/images/ajax-loader.gif"/> Поиск по содержимому (может занять около минуты)...
         </div>
         <div ng-hide="loadingContents">
             <div ng-show="noResult">
@@ -122,7 +123,7 @@
                     </cite>
                 </blockquote>
                 <button class="btn btn-success" ng-show="showLoadMore" ng-click="loadNextPage()">
-                    <img src="images/ajax-loader.gif" ng-show="loadingMore" />{{loadingMore ? 'Поиск...' : 'Искать далее'}}</button>
+                    <img src="static/images/ajax-loader.gif" ng-show="loadingMore" />{{loadingMore ? 'Поиск...' : 'Искать далее'}}</button>
             </div>
         </div>
     </div>
