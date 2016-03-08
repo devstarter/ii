@@ -35,8 +35,8 @@
         </div>
         <div style="padding-top: 20px"></div>
         <div class="pointer section" title="Показать" ng-click="showQuotes = !showQuotes" ng-show="quotes.length">
-            <i ng-class="showQuotes ? 'halflings-triangle-bottom' : 'halflings-triangle-right'" class="halflings"></i>
-            <h3>Избранные цитаты</h3> <span ng-hide="showQuotes">показать {{quotes.length}}</span>
+            <i ng-class="showQuotes ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'" class="glyphicon"></i>
+            <h3>Избранные цитаты</h3> <span ng-hide="showQuotes" class="gray">показать {{quotes.length}}</span>
         </div>
         <!--<span class="info" data-bind="invisible: description">Нет короткого определения</span>-->
         <blockquote ng-repeat="quote in quotes" ng-mouseover="quote.showControlls = true"
@@ -54,7 +54,8 @@
         </blockquote>
 
         <div class="pointer section" title="Показать" ng-click="showCategories = !showCategories" ng-show="termFound && categories.length">
-            <h3>Упоминания в содержании</h3> <span ng-hide="showCategories">показать {{categories.length}}</span>
+            <i ng-class="showCategories ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'" class="glyphicon"></i>
+            <h3>Упоминания в содержании</h3> <span ng-hide="showCategories" class="gray">показать {{categories.length}}</span>
         </div>
         <div ng-repeat="cat in categories" ng-show="showCategories" class="catBlock">
             <a ii-ref="cat">{{cat.path}}</a>
