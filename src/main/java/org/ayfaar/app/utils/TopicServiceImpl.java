@@ -59,19 +59,29 @@ public class TopicServiceImpl implements TopicService {
             return getValueFromUri(Topic.class, uri);
         }
 
-//        @Override
-//        public String getUri() {
-//            return null;
-//        }
-
         @Override
-        public TopicProvider getMainTopicProvider() {
-            return hasMainTopic() ? aliasesMap.get(getValueFromUri(Topic.class, mainTopicUri).toLowerCase()) : null;
+        public String getUri() {
+            return null;
         }
 
         @Override
         public Topic getTopic() {
             return commonDao.get(Topic.class, uri);
+        }
+
+        @Override
+        public List<TopicProvider> getParents() {
+            return null;
+        }
+
+        @Override
+        public List<TopicProvider> getChildren() {
+            return null;
+        }
+
+        @Override
+        public List<TopicProvider> getSimilar() {
+            return null;
         }
 
         private List<TopicProvider> getListProviders(byte type, String name) {
