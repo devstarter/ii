@@ -100,7 +100,11 @@ class TopicServiceImpl implements TopicService {
         @Override
         public List<Topic> children() {
             return linksMap.values().stream()
-                    .filter(l -> l.getUid1() instanceof Topic && l.getUid1().getUri().equals(uri()) && l.getType().isChild())
+                    .filter(l ->
+                            l.getUid1() instanceof Topic
+                            && l.getUid2() instanceof Topic
+                            && l.getUid1().getUri().equals(uri())
+                            && l.getType().isChild())
                     .map(l -> (Topic) l.getUid2())
                     .collect(toList());
         }
