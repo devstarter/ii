@@ -110,4 +110,30 @@ public class TopicController {
         }
         return names;
     }
+
+<<<<<<< HEAD
+    @RequestMapping("addchild")
+    @ResponseBody
+    public void addChild(String name, String childName){
+
+
+        Topic topic = commonDao.get(Topic.class, "name", name);
+        Topic childTopic = commonDao.get(Topic.class, "name", childName);
+        final List<Link> links = linkDao.getByUris(topic.getUri(), childTopic.getUri());
+        if ((links.size())!= 0)linkDao.save(new Link(topic, childTopic));
+
+=======
+    @RequestMapping("child")
+    @ResponseBody
+    public void addChild(String name, String childName){
+
+        Topic topic = commonDao.get(Topic.class, "name", name);
+        Topic childTopic = commonDao.get(Topic.class, "name", childName);
+        final List<Link> links = linkDao.getByUris(topic.getUri(), childTopic.getUri());
+        if (links.size()!= 0)linkDao.save(new Link(topic, childTopic));
+>>>>>>> 2af4b9bad3265b89e900166c1f2620b979a8f96b
+
+    }
+
+
 }
