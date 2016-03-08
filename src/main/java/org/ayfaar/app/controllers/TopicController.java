@@ -19,9 +19,14 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("api/topic")
 public class TopicController {
 
-    @Inject CommonDao commonDao;
-    @Inject LinkDao linkDao;
-    @Inject TopicService topicService;
+    @Inject
+    CommonDao commonDao;
+    @Inject
+    LinkDao linkDao;
+    @Inject
+    TopicService topicService;
+
+    GetTopicPresentation getTopicPresentation;
 
     @RequestMapping("for/{uri}")
     public List<TopicPresentation> getForUri(@PathVariable String uri) throws Exception {
@@ -56,7 +61,7 @@ public class TopicController {
         hasLength(topics);
         final Set<String> uniqueNames = new HashSet<>(Arrays.asList(topics.split("\n")));
         for (String name : uniqueNames) {
-            if (!name.isEmpty())commonDao.save(new Topic(name));
+            if (!name.isEmpty()) commonDao.save(new Topic(name));
         }
     }
 
@@ -113,7 +118,38 @@ public class TopicController {
     @RequestMapping("{name}/children")
     public List<Topic> linkChild(@PathVariable String name) {
         return topicService.get(UriGenerator.generate(Topic.class, name))
-                .orElseThrow(() -> new RuntimeException("Topic for "+name+" not found"))
+                .orElseThrow(() -> new RuntimeException("Topic for " + name + " not found"))
                 .children();
     }
+
+    @RequestMapping("{name}/parents")
+    public List<Topic> linkParent(@PathVariable String name) {
+        return topicService.get(UriGenerator.generate(Topic.class, name))
+                .orElseThrow(() -> new RuntimeException("Topic for " + name + " not found"))
+                .parents();
+    }
+
+
+    @RequestMapping("{name}")
+    public GetTopicPresentation get(@PathVariable String name) {
+        try {
+            getTopicPresentation.name = name;
+            getTopicPresentation.uri = topicService.getOrCreate(name).uri();
+            getTopicPresentation.children =
+        } catch (Exception e) {
+            throw new RuntimeException("Unimplemented");
+        }
+
+
+    }
+
+    private class GetTopicPresentation {
+        public String uri;
+        public String name;
+        public List<String> children; // names of all children
+        public List<String> parents; // names of all parents
+        public List<String> related; // это те, у которых линки без укзания типа, то есть просто как-то связаны, не родительски и не дочерние
+
+    }
+
 }

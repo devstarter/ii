@@ -110,6 +110,16 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
+        public List<Topic> parents() {
+            return linksMap.entrySet().stream()
+                    .filter(e -> e.getKey() instanceof Topic && e.getValue().getType().isChild())
+                    .map(e -> (Topic) e.getKey())
+                    .collect(Collectors.toList());
+        }
+
+
+
+        @Override
         public Topic topic() {
             return topic;
         }
