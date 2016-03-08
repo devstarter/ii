@@ -18,7 +18,9 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
     public BusinessError resolveError(ServletWebRequest request, Object handler, Exception ex) {
 
 //        ex.printStackTrace(System.out);
-        logger.error("Exception", ex);
+        if (!(ex instanceof QuietException)) {
+            logger.error("Exception", ex);
+        }
 
         if (ex instanceof NullPointerException) {
             String stackTrace = "";

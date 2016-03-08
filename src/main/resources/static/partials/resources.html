@@ -8,7 +8,7 @@
         </div>
         <div ng-show="videoLoading"><img src="static/images/ajax-loader.gif"/>Добавление видео...</div>
         <div style="padding-top: 20px">
-            <span class="grey">Последние 10 добавленных видео</span>
+            <span class="grey">Последние 8 добавленных видео</span>
             <div class="row">
                 <div ng-repeat="video in lastTen" ii-ref="video" class="col-md-3" style="height: 250px">
                     <img ng-src="https://i.ytimg.com/vi/{{video.id}}/mqdefault.jpg" style="display: block; padding: 5px;width: 170px;"/>
