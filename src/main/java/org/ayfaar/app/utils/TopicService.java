@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * �?нтерфейс взаимодействия с предварительно загруженными всеми топиками
+ * 
  */
 public interface TopicService {
     /**
@@ -17,24 +17,23 @@ public interface TopicService {
     List<Map.Entry<String, TopicProvider>> getAll();
     TopicProvider getTopicProvider(String name);
     Topic getTopic(String name);
-    //void reload();
+    void reload();
 
     interface TopicProvider {
         String getName();
         String getUri();
-        //boolean hasShortDescription();
-        TopicProvider getMainTopicProvider();
+
         Topic getTopic();
 
-//        List<TopicProvider> getAliases();
+        List<TopicProvider> getParents();
 
-//        TopicProvider getCode();
+        List<TopicProvider> getChildren();
+
+        List<TopicProvider> getSimilar();
+
         Byte getType();
         boolean hasMainTopic();
 
-//        boolean isAlias();
-//        boolean isCode();
-        //boolean hasCode();
-        //List<String> getAllAliasesWithAllMorphs();
+
     }
 }
