@@ -1,11 +1,8 @@
 package org.ayfaar.app.spring.handler;
 
-import org.ayfaar.app.events.DefaultRestErrorEvent;
 import org.ayfaar.app.events.QuietException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -13,8 +10,8 @@ import org.springframework.web.context.request.ServletWebRequest;
 public class DefaultRestErrorResolver implements RestErrorResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultRestErrorResolver.class);
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+//    @Autowired
+//    private ApplicationEventPublisher eventPublisher;
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
@@ -28,17 +25,17 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
             for (StackTraceElement element : ex.getStackTrace()) {
                 stackTrace += "\n" + element.toString();
             }
-            eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception, UNDEFINED:",ex.toString() + "\n" + stackTrace));
+//            eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception, UNDEFINED:",ex.toString() + "\n" + stackTrace));
             return new BusinessError("UNDEFINED", ex.toString(), stackTrace);
         }
 
         Throwable mySQLIntegrityConstraintViolationException = findInChain("com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException", ex);
         if (mySQLIntegrityConstraintViolationException != null) {
-            eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception:",mySQLIntegrityConstraintViolationException.getMessage() + "\n" + ex.getMessage()));
+//            eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception:",mySQLIntegrityConstraintViolationException.getMessage() + "\n" + ex.getMessage()));
             return new BusinessError(mySQLIntegrityConstraintViolationException.getMessage(), ex.getMessage());
         }
         if (!(ex instanceof QuietException)) {
-            eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception", ex.toString()));
+//            eventPublisher.publishEvent(new DefaultRestErrorEvent("Exception", ex.toString()));
         }
         return new BusinessError(ex.toString(), ex.getMessage());
     }
