@@ -105,9 +105,9 @@ public class TopicController {
         return names;
     }
 
-    @RequestMapping("link-child")
-    public void linkChild(@RequestParam String name1, @RequestParam String name2) {
-        topicService.getOrCreate(name1).addChild(name2);
+    @RequestMapping("{name}/add-child/{child}")
+    public void addChild(@PathVariable String name, @PathVariable String child) {
+        topicService.getOrCreate(name).addChild(child);
     }
 
     @RequestMapping("{name}/children")
