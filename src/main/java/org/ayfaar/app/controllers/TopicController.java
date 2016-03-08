@@ -15,6 +15,8 @@ import static org.springframework.util.Assert.hasLength;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import static java.util.stream.Collectors.toList;
+
 @RestController
 @RequestMapping("api/topic")
 public class TopicController {
@@ -133,10 +135,12 @@ public class TopicController {
     @RequestMapping("{name}")
     public GetTopicPresentation get(@PathVariable String name) {
         try {
+
             getTopicPresentation.name = name;
             getTopicPresentation.uri = topicService.getOrCreate(name).uri();
-            getTopicPresentation.children =
-        } catch (Exception e) {
+            getTopicPresentation.children = topicService.getOrCreate(name).stream().map(String::toUpperCase).toArray(String[]::new);
+
+        }catch (Exception e){
             throw new RuntimeException("Unimplemented");
         }
 
