@@ -5,7 +5,6 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Topic;
 import org.ayfaar.app.model.UID;
-import org.ayfaar.app.repositories.LinkRepository;
 import org.ayfaar.app.repositories.TopicRepository;
 import org.ayfaar.app.utils.UriGenerator;
 import org.slf4j.Logger;
@@ -15,16 +14,16 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
-public class TopicServiceImpl implements TopicService {
+class TopicServiceImpl implements TopicService {
     private static final Logger logger = LoggerFactory.getLogger(TopicServiceImpl.class);
 
     private LinkedHashMap<String, TopicProvider> topics = new LinkedHashMap<>();
 
     @Inject TopicRepository topicRepository;
-    @Inject LinkRepository linkRepository;
     @Inject LinkDao linkDao;
 
     @PostConstruct
@@ -37,17 +36,17 @@ public class TopicServiceImpl implements TopicService {
                 .map(TopicProviderImpl::new)
                 .forEach(t -> topics.put(t.uri(), t));
 
-        linkRepository.findAll()
+        linkDao.getAll()
                 .stream()
                 .parallel()
                 .filter(l -> l.getUid1() instanceof Topic || l.getUid2() instanceof Topic)
                 .forEach(link -> {
                     if (link.getUid1() instanceof Topic) {
-                        final TopicProviderImpl provider = (TopicProviderImpl) topics.get(((Topic) link.getUid1()).getName());
+                        final TopicProviderImpl provider = (TopicProviderImpl) topics.get(link.getUid1().getUri());
                         provider.addLoadedLink(link, link.getUid2());
                     }
                     if (link.getUid2() instanceof Topic) {
-                        final TopicProviderImpl provider = (TopicProviderImpl) topics.get(((Topic) link.getUid2()).getName());
+                        final TopicProviderImpl provider = (TopicProviderImpl) topics.get(link.getUid2().getUri());
                         provider.addLoadedLink(link, link.getUid1());
                     }
                 });
@@ -100,10 +99,10 @@ public class TopicServiceImpl implements TopicService {
 
         @Override
         public List<Topic> children() {
-            return linksMap.entrySet().stream()
-                    .filter(e -> e.getKey() instanceof Topic && e.getValue().getType().isChild())
-                    .map(e -> (Topic) e.getKey())
-                    .collect(Collectors.toList());
+            return linksMap.values().stream()
+                    .filter(l -> l.getUid1() instanceof Topic && l.getUid1().getUri().equals(uri()) && l.getType().isChild())
+                    .map(l -> (Topic) l.getUid2())
+                    .collect(toList());
         }
 
         @Override
