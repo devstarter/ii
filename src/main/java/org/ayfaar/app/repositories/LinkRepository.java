@@ -1,3 +1,4 @@
+
 package org.ayfaar.app.repositories;
 
 import org.ayfaar.app.model.Link;

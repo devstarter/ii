@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -108,6 +109,16 @@ class TopicServiceImpl implements TopicService {
                     .map(l -> (Topic) l.getUid2())
                     .collect(toList());
         }
+
+        @Override
+        public List<Topic> parents() {
+            return linksMap.entrySet().stream()
+                    .filter(e -> e.getKey() instanceof Topic && e.getValue().getType().isChild())
+                    .map(e -> (Topic) e.getKey())
+                    .collect(Collectors.toList());
+        }
+
+
 
         @Override
         public Topic topic() {

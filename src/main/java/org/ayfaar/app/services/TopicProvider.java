@@ -17,6 +17,7 @@ public interface TopicProvider {
     Link link(LinkType type, UID uid, String comment);
 
     List<Topic> children();
+    List<Topic> parents();
 
     default void addChild(Topic child) {
         link(LinkType.CHILD, child);
@@ -31,4 +32,7 @@ public interface TopicProvider {
     String uri();
 
     void addChild(String name);
+
+    //void addParent(String parent);
+
 }
