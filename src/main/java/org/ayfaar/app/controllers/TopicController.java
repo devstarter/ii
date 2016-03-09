@@ -141,7 +141,7 @@ public class TopicController {
             getTopicPresentation.uri = topicService.getOrCreate(name).uri();
             getTopicPresentation.children = topicService.getOrCreate(name).children().stream().map((topic) -> topic.getName()).collect(toList());
             getTopicPresentation.parents = topicService.getOrCreate(name).parents().stream().map((topic) -> topic.getName()).collect(toList());
-
+            //getTopicPresentation.related = ?????
 
         }catch (Exception e){
             throw new RuntimeException("Unimplemented");
