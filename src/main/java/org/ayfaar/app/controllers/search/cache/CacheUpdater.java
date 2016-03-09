@@ -13,6 +13,7 @@ import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ import java.util.List;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
+@Profile("default")
 @EnableScheduling
 public class CacheUpdater {
     @Autowired
