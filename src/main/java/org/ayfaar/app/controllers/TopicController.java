@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.springframework.util.Assert.hasLength;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -138,13 +139,15 @@ public class TopicController {
 
             getTopicPresentation.name = name;
             getTopicPresentation.uri = topicService.getOrCreate(name).uri();
-            getTopicPresentation.children = topicService.getOrCreate(name).stream().map(String::toUpperCase).toArray(String[]::new);
+            getTopicPresentation.children = topicService.getOrCreate(name).children().stream().map((topic) -> topic.getName()).collect(toList());
+            getTopicPresentation.parents = topicService.getOrCreate(name).parents().stream().map((topic) -> topic.getName()).collect(toList());
+
 
         }catch (Exception e){
             throw new RuntimeException("Unimplemented");
         }
 
-
+        return getTopicPresentation;
     }
 
     private class GetTopicPresentation {
