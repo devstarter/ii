@@ -1,11 +1,11 @@
 package org.ayfaar.app.services;
 
+import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Topic;
 import org.ayfaar.app.model.UID;
-import org.ayfaar.app.repositories.TopicRepository;
 import org.ayfaar.app.utils.UriGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Stream;
 
 @Component
 class TopicServiceImpl implements TopicService {
@@ -24,14 +22,14 @@ class TopicServiceImpl implements TopicService {
 
     private LinkedHashMap<String, TopicProvider> topics = new LinkedHashMap<>();
 
-    @Inject TopicRepository topicRepository;
+    @Inject CommonDao commonDao;
     @Inject LinkDao linkDao;
 
     @PostConstruct
     private void init() {
         logger.info("Topics loading...");
 
-        topicRepository.findAll()
+        commonDao.getAll(Topic.class)
                 .stream()
                 .parallel()
                 .map(TopicProviderImpl::new)
@@ -60,10 +58,10 @@ class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public TopicProvider getOrCreate(String name) {
+    public TopicProvider findOrCreate(String name) {
         return Optional.ofNullable(topics.get(UriGenerator.generate(Topic.class, name)))
                 .orElseGet(() -> {
-                    final Topic topic = topicRepository.save(new Topic(name));
+                    final Topic topic = commonDao.save(new Topic(name));
                     final TopicProviderImpl provider = new TopicProviderImpl(topic);
                     topics.put(provider.uri(), provider);
                     return provider;
@@ -99,23 +97,32 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
-        public List<Topic> children() {
+        public Stream<TopicProvider> children() {
             return linksMap.values().stream()
-                    .filter(l ->
-                            l.getUid1() instanceof Topic
-                            && l.getUid2() instanceof Topic
-                            && l.getUid1().getUri().equals(uri())
-                            && l.getType().isChild())
-                    .map(l -> (Topic) l.getUid2())
-                    .collect(toList());
+                    .filter(link ->
+                            link.getUid1() instanceof Topic
+                            && link.getUid2() instanceof Topic
+                            && link.getUid1().getUri().equals(uri())
+                            && link.getType().isChild())
+                    .map(l -> new TopicProviderImpl((Topic) l.getUid2()));
         }
 
         @Override
-        public List<Topic> parents() {
+        public Stream<TopicProvider> parents() {
+            return linksMap.values().stream()
+                    .filter(link ->
+                            link.getUid1() instanceof Topic
+                            && link.getUid2() instanceof Topic
+                            && link.getUid2().getUri().equals(uri())
+                            && link.getType().isChild())
+                    .map(l -> new TopicProviderImpl((Topic) l.getUid1()));
+        }
+
+        @Override
+        public Stream<TopicProvider> related() {
             return linksMap.entrySet().stream()
-                    .filter(e -> e.getKey() instanceof Topic && e.getValue().getType().isChild())
-                    .map(e -> (Topic) e.getKey())
-                    .collect(Collectors.toList());
+                    .filter(entry -> entry.getKey() instanceof Topic && entry.getValue().getType() == null)
+                    .map(e -> new TopicProviderImpl((Topic) e.getKey()));
         }
 
 
@@ -132,7 +139,13 @@ class TopicServiceImpl implements TopicService {
 
         @Override
         public void addChild(String name) {
-            addChild(getOrCreate(name));
+            addChild(findOrCreate(name));
+        }
+
+        @Override
+        public Stream<TopicResourcesGroup> resources() {
+            // находим линки не относящиеся к топикам и сортируем по типу (пока только один тип VideoResource)
+            throw new RuntimeException("Unimplemented"); // удалить когда добавишь нужную логику
         }
 
         private void addLoadedLink(Link link, UID uid) {

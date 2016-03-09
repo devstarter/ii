@@ -1,22 +1,23 @@
 package org.ayfaar.app.controllers;
 
+import lombok.Builder;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Topic;
+import org.ayfaar.app.model.VideoResource;
+import org.ayfaar.app.services.TopicProvider;
 import org.ayfaar.app.services.TopicService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.hasLength;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("api/topic")
@@ -115,48 +116,70 @@ public class TopicController {
 
     @RequestMapping("{name}/add-child/{child}")
     public void addChild(@PathVariable String name, @PathVariable String child) {
-        topicService.getOrCreate(name).addChild(child);
+        topicService.findOrCreate(name).addChild(child);
+    }
+
+    @RequestMapping("{name}/add-parent/{parent}")
+    // todo: Implement
+    public void addParent(@PathVariable String name, @PathVariable String parent) {
+        throw new RuntimeException("Unimplemented");
+    }
+
+    @RequestMapping("{name}/add-related/{related}")
+    // todo: Implement
+    public void addRelated(@PathVariable String name, @PathVariable String related) {
+        throw new RuntimeException("Unimplemented");
     }
 
     @RequestMapping("{name}/children")
     public List<Topic> linkChild(@PathVariable String name) {
-        return topicService.get(UriGenerator.generate(Topic.class, name))
-                .orElseThrow(() -> new RuntimeException("Topic for " + name + " not found"))
-                .children();
+        return topicService.getByName(name)
+                .children()
+                .map(TopicProvider::topic).collect(toList());
     }
 
     @RequestMapping("{name}/parents")
     public List<Topic> linkParent(@PathVariable String name) {
-        return topicService.get(UriGenerator.generate(Topic.class, name))
-                .orElseThrow(() -> new RuntimeException("Topic for " + name + " not found"))
-                .parents();
+        return topicService.getByName(name)
+                .parents()
+                .map(TopicProvider::topic).collect(toList());
     }
 
 
     @RequestMapping("{name}")
     public GetTopicPresentation get(@PathVariable String name) {
-        try {
-
-            getTopicPresentation.name = name;
-            getTopicPresentation.uri = topicService.getOrCreate(name).uri();
-            getTopicPresentation.children = topicService.getOrCreate(name).children().stream().map((topic) -> topic.getName()).collect(toList());
-            getTopicPresentation.parents = topicService.getOrCreate(name).parents().stream().map((topic) -> topic.getName()).collect(toList());
-            //getTopicPresentation.related = ?????
-
-        }catch (Exception e){
-            throw new RuntimeException("Unimplemented");
-        }
-
-        return getTopicPresentation;
+        TopicProvider topic = topicService.getByName(name);
+        return GetTopicPresentation.builder()
+                .name(topic.name())
+                .uri(topic.uri())
+                .children(topic.children().map(TopicProvider::name).collect(toList()))
+                .parents(topic.parents().map(TopicProvider::name).collect(toList()))
+                .related(topic.related().map(TopicProvider::name).collect(toList()))
+                .build();
     }
 
-    private class GetTopicPresentation {
+    @Builder
+    private static class GetTopicPresentation {
         public String uri;
         public String name;
-        public List<String> children; // names of all children
-        public List<String> parents; // names of all parents
-        public List<String> related; // это те, у которых линки без укзания типа, то есть просто как-то связаны, не родительски и не дочерние
-
+        public List<String> children;
+        public List<String> parents;
+        public List<String> related;
     }
 
+    // todo: метод для получения все ресурсов связанных с темой)
+    // сделать доступной через url
+    public ResourcesPresentation getResources(String name) {
+        topicService.getByName(name).resources();
+        // приобразовать полученые ресурсы к нужному виду
+        return ResourcesPresentation.builder()
+                //...
+                .build();
+    }
+
+    @Builder
+    private static class ResourcesPresentation {
+        public List<VideoResource> video;
+        // ещё будут позже
+    }
 }

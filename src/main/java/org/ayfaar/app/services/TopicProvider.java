@@ -1,11 +1,9 @@
 package org.ayfaar.app.services;
 
-import org.ayfaar.app.model.Link;
-import org.ayfaar.app.model.LinkType;
-import org.ayfaar.app.model.Topic;
-import org.ayfaar.app.model.UID;
+import org.ayfaar.app.model.*;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public interface TopicProvider {
     String name();
@@ -16,8 +14,9 @@ public interface TopicProvider {
 
     Link link(LinkType type, UID uid, String comment);
 
-    List<Topic> children();
-    List<Topic> parents();
+    Stream<TopicProvider> children();
+    Stream<TopicProvider> parents();
+    Stream<TopicProvider> related();
 
     default void addChild(Topic child) {
         link(LinkType.CHILD, child);
@@ -32,6 +31,17 @@ public interface TopicProvider {
     String uri();
 
     void addChild(String name);
+
+    /**
+     * @return все ресурсы (пока только VideoResource) связаные любыми линками с этой темой
+     */
+    Stream<TopicResourcesGroup> resources();
+
+    class TopicResourcesGroup {
+        public ResourceType type;
+        public List<UID> resources;
+    }
+
 
     //void addParent(String parent);
 

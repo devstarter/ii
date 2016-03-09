@@ -3,7 +3,7 @@ package org.ayfaar.app.model;
 import org.ayfaar.app.utils.hibernate.ValueEnum;
 
 public enum ResourceType implements ValueEnum<Character> {
-    ARTICLE('A');
+    article('A'), video('V');
 
     private final char code;
 
