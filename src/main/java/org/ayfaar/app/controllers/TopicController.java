@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.springframework.util.Assert.hasLength;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("api/topic")
@@ -25,6 +28,8 @@ public class TopicController {
     LinkDao linkDao;
     @Inject
     TopicService topicService;
+
+    GetTopicPresentation getTopicPresentation;
 
     @RequestMapping("for/{uri}")
     public List<TopicPresentation> getForUri(@PathVariable String uri) throws Exception {
@@ -120,9 +125,29 @@ public class TopicController {
                 .children();
     }
 
+    @RequestMapping("{name}/parents")
+    public List<Topic> linkParent(@PathVariable String name) {
+        return topicService.get(UriGenerator.generate(Topic.class, name))
+                .orElseThrow(() -> new RuntimeException("Topic for " + name + " not found"))
+                .parents();
+    }
+
+
     @RequestMapping("{name}")
     public GetTopicPresentation get(@PathVariable String name) {
-        throw new RuntimeException("Unimplemented");
+        try {
+
+            getTopicPresentation.name = name;
+            getTopicPresentation.uri = topicService.getOrCreate(name).uri();
+            getTopicPresentation.children = topicService.getOrCreate(name).children().stream().map((topic) -> topic.getName()).collect(toList());
+            getTopicPresentation.parents = topicService.getOrCreate(name).parents().stream().map((topic) -> topic.getName()).collect(toList());
+            //getTopicPresentation.related = ?????
+
+        }catch (Exception e){
+            throw new RuntimeException("Unimplemented");
+        }
+
+        return getTopicPresentation;
     }
 
     private class GetTopicPresentation {
@@ -131,5 +156,7 @@ public class TopicController {
         public List<String> children; // names of all children
         public List<String> parents; // names of all parents
         public List<String> related; // это те, у которых линки без укзания типа, то есть просто как-то связаны, не родительски и не дочерние
+
     }
+
 }
