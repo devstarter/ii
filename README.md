@@ -36,10 +36,9 @@
 2.	Добавляем git.exe в [переменную окружения Path](http://clip2net.com/s/iuLWXk) и перезагружаем windows
 3.	Выполняем тестовую задачу [Тренировка работы с git](https://github.com/devstarter/ii/issues/4)
 4.	[IntelliJ IDEA](http://www.jetbrains.com/idea/download/)
-5.	[Java version 1.8](https://www.java.com/en/download)
-6.	[Java SE Development Kit 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
+5.	[Java](https://www.java.com/en/download)
+6.	[Java SE Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 7.	[MySQL](http://dev.mysql.com/downloads/mysql/) или [XAMPP](https://www.apachefriends.org/index.html) [wiki/База данных](https://github.com/devstarter/ii/wiki/%D0%91%D0%B0%D0%B7%D0%B0-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85)
-8.	Не обязательно, [Apache Tomcat](http://tomcat.apache.org/download-70.cgi) или [XAMPP](https://www.apachefriends.org/index.html)
 
 Окрываем проект:
 
