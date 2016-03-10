@@ -5,7 +5,7 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Topic;
-import org.ayfaar.app.model.VideoResource;
+import org.ayfaar.app.model.UID;
 import org.ayfaar.app.services.TopicProvider;
 import org.ayfaar.app.services.TopicService;
 import org.ayfaar.app.utils.UriGenerator;
@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
+import static org.ayfaar.app.utils.StreamUtils.single;
 import static org.springframework.util.Assert.hasLength;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -119,9 +121,10 @@ public class TopicController {
         topicService.findOrCreate(name).addChild(child);
     }
 
-    @RequestMapping("{name}/add-parent/{parent}")
+    @RequestMapping("{name}/unlink/{linked}")
+    // убрать связь
     // todo: Implement
-    public void addParent(@PathVariable String name, @PathVariable String parent) {
+    public void unlink(@PathVariable String name, @PathVariable String linked) {
         throw new RuntimeException("Unimplemented");
     }
 
@@ -170,16 +173,20 @@ public class TopicController {
     // todo: метод для получения все ресурсов связанных с темой)
     // сделать доступной через url
     public ResourcesPresentation getResources(String name) {
-        topicService.getByName(name).resources();
+        final Stream<TopicProvider.TopicResourcesGroup> resources = topicService.getByName(name).resources();
         // приобразовать полученые ресурсы к нужному виду
         return ResourcesPresentation.builder()
-                //...
+                .video(resources
+                        .filter(group -> group.type.isVideo())
+                        .map(group -> group.resources)
+                        .collect(single()).get()
+                )
                 .build();
     }
 
     @Builder
     private static class ResourcesPresentation {
-        public List<VideoResource> video;
+        public List<UID> video;
         // ещё будут позже
     }
 }

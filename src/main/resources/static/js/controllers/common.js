@@ -1,3 +1,54 @@
+function TopicController($scope, $stateParams, $api, $state, $modal) {
+    $scope.name = $stateParams.name;
+    document.title = $scope.name;
+    $scope.loading = true;
+
+    function load() {
+        $api.topic.get($scope.name).then(function(topic){
+            $scope.loading = false;
+            copyObjectTo(topic, $scope);
+            document.title = $scope.name;
+        });
+    }
+    load();
+    $scope.unlink = function (linkedTopic) {
+        $api.topic.unlink($scope.name, linkedTopic).then(load);
+    };
+    $scope.addParent = function () {
+        var parentScope = $scope;
+        $modal.open({
+            templateUrl: 'static/partials/topic-select.html',
+            controller: function ($scope, $modalInstance) {
+                $scope.suggestTopics = function (q) {
+                    return $api.topic.suggest(q);
+                };
+                $scope.select = function() {
+                    $api.topic.addChild($scope.topic, parentScope.name).then(function() {
+                        $modalInstance.close();
+                        load();
+                    })
+                };
+            }
+        });
+    };
+    $scope.addChild = function () {
+        var parentScope = $scope;
+        $modal.open({
+            templateUrl: 'static/partials/topic-select.html',
+            controller: function ($scope, $modalInstance) {
+                $scope.suggestTopics = function (q) {
+                    return $api.topic.suggest(q);
+                };
+                $scope.select = function() {
+                    $api.topic.addChild(parentScope.name, $scope.topic).then(function() {
+                        $modalInstance.close();
+                        load();
+                    })
+                };
+            }
+        });
+    }
+}
 function CategoryController($scope, $stateParams, $api, $state) {
 
     $scope.name = $stateParams.name;

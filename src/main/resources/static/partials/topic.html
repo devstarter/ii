@@ -1,0 +1,26 @@
+<span class="gray">Тема:</span>
+<h1 class="inline" style="padding-bottom: 20px">{{name}}</h1>
+<div>
+    <a ng-hide="parents" class="btn btn-link" ng-click="addParent()">Добавить родительскую тему</a>
+    <span ng-show="parents">
+        <span class="gray">Родительские темы</span>
+        <a ng-repeat="parent in parents" topic-ref="parent">{{parent}}{{$last ? '' : ', '}}</a>
+        <i class="btn glyphicon glyphicon-plus-sign" ng-click="addParent()" title="Добавить родительскую тему"></i>
+    </span>
+</div>
+<div ng-show="children">
+    <span class="gray">Дочерние темы</span>
+    <i class="btn glyphicon glyphicon-plus-sign" ng-click="addChild()" title="Добавить дочернюю тему"></i>
+    <span class="linked-topic" ng-repeat="child in children">
+        <a class="btn btn-link topic" topic-ref="child"></a>
+        <a class="btn glyphicon glyphicon-remove" ng-click="unlink(child)" title="Удалить связь с темой"></a>
+    </span>
+</div>
+<a ng-hide="children" class="btn btn-link" ng-click="addChild()">Добавить дочернюю тему</a>
+
+<style type="text/css">
+    .linked-topic {display: table-row;}
+    .linked-topic .topic {padding-right: 0}
+    .linked-topic .glyphicon {display: none; color: black}
+    .linked-topic:hover .glyphicon {display: inline}
+</style>

@@ -18,6 +18,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     $rootScope.$broadcast('home-state-entered');
                 }
             })
+            .state('topic', {
+                url: "/t/{name}",
+                templateUrl: "static/partials/topic.html",
+                controller: TopicController
+            })
             .state('tagger', {
                 url: "/tagger",
                 templateUrl: "static/partials/tagger.html",
@@ -180,6 +185,20 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     lastTen: function () {
                         return api.get("resource/video/last-ten")
                     }
+                }
+            },
+            topic: {
+                unlink: function (main, linked) {
+                    return api.get("topic/"+main+"/unlink/"+linked)  
+                },
+                suggest: function (q) {
+                    return api.get("topic/suggest", {q: q})  
+                },
+                get: function (name) {
+                    return api.get("topic/"+name)
+                },
+                addChild: function (parent, child) {
+                    return api.get("topic/"+parent+"/add-child/"+child)
                 }
             }
         };
@@ -367,6 +386,20 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 obj._label = entityService.getType(obj) == 'paragraph' ? '§' + label : label;
                 element.bind('click', function() {
                     $state.go(obj)
+                })
+            }
+        };
+    })
+    .directive('topicRef', function($state, entityService, $parse) {
+        return {
+            link: function (scope, element, attrs, modelCtrl) {
+                var getter = $parse(attrs.topicRef);
+                var topicName = getter(scope);
+                if (!topicName) return;
+                element.attr('href', "t/"+topicName);
+                if (!element[0].innerText) element.append(topicName);
+                element.bind('click', function() {
+                    $state.goToTopic(topicName)
                 })
             }
         };
@@ -648,6 +681,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
         };
         $state.goToVideo = function(video) {
             originStateGo.bind($state)("resource-video", {id: video.id})
+        };
+        $state.goToTopic = function(topicName) {
+            originStateGo.bind($state)("topic", {name: topicName})
         };
         $state.goToItem = function(number) {
             originStateGo.bind($state)("item", {number: number})

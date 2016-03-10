@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 class TopicServiceImpl implements TopicService {
     private static final Logger logger = LoggerFactory.getLogger(TopicServiceImpl.class);
 
-    private LinkedHashMap<String, TopicProvider> topics = new LinkedHashMap<>();
+    private LinkedHashMap<String, TopicProviderImpl> topics = new LinkedHashMap<>();
 
     @Inject CommonDao commonDao;
     @Inject LinkDao linkDao;
@@ -41,12 +41,12 @@ class TopicServiceImpl implements TopicService {
                 .filter(l -> l.getUid1() instanceof Topic || l.getUid2() instanceof Topic)
                 .forEach(link -> {
                     if (link.getUid1() instanceof Topic) {
-                        final TopicProviderImpl provider = (TopicProviderImpl) topics.get(link.getUid1().getUri());
-                        provider.addLoadedLink(link, link.getUid2());
+                        final TopicProviderImpl provider = topics.get(link.getUid1().getUri());
+                        provider.registerLink(link, link.getUid2());
                     }
                     if (link.getUid2() instanceof Topic) {
-                        final TopicProviderImpl provider = (TopicProviderImpl) topics.get(link.getUid2().getUri());
-                        provider.addLoadedLink(link, link.getUid1());
+                        final TopicProviderImpl provider = topics.get(link.getUid2().getUri());
+                        provider.registerLink(link, link.getUid1());
                     }
                 });
         logger.info("Topics loaded");
@@ -90,7 +90,10 @@ class TopicServiceImpl implements TopicService {
             if (link == null) {
                 // link = linkRepository.save(new Link(topic, uid, type, comment)); this throw error
                 link = linkDao.save(new Link(topic, uid, type, comment));
-                addLoadedLink(link, uid);
+                if (uid instanceof Topic) {
+                    topics.get(uid.getUri()).registerLink(link, topic);
+                }
+                registerLink(link, uid);
             }
 
             return link;
@@ -144,11 +147,11 @@ class TopicServiceImpl implements TopicService {
 
         @Override
         public Stream<TopicResourcesGroup> resources() {
-            // находим линки не относящиеся к топикам и сортируем по типу (пока только один тип VideoResource)
+            // todo: находим линки не относящиеся к топикам и сортируем по типу (пока только один тип VideoResource)
             throw new RuntimeException("Unimplemented"); // удалить когда добавишь нужную логику
         }
 
-        private void addLoadedLink(Link link, UID uid) {
+        private void registerLink(Link link, UID uid) {
             linksMap.put(uid, link);
         }
     }

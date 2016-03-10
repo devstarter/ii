@@ -15,4 +15,8 @@ public enum ResourceType implements ValueEnum<Character> {
     public Character getValue() {
         return code;
     }
+
+    public boolean isVideo() {
+        return this == video;
+    }
 }
