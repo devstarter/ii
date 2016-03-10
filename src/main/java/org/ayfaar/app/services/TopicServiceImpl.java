@@ -2,10 +2,7 @@ package org.ayfaar.app.services;
 
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
-import org.ayfaar.app.model.Link;
-import org.ayfaar.app.model.LinkType;
-import org.ayfaar.app.model.Topic;
-import org.ayfaar.app.model.UID;
+import org.ayfaar.app.model.*;
 import org.ayfaar.app.utils.UriGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,8 +142,13 @@ class TopicServiceImpl implements TopicService {
         @Override
         public Stream<TopicResourcesGroup> resources() {
             // находим линки не относящиеся к топикам и сортируем по типу (пока только один тип VideoResource)
-            throw new RuntimeException("Unimplemented"); // удалить когда добавишь нужную логику
+            return linksMap.values().stream()
+                    .filter(link ->
+                            link.getUid1() instanceof VideoResource
+                                    && link.getUid2() instanceof VideoResource)
+                    .map(l -> new TopicResourcesGroup());
         }
+
 
         private void addLoadedLink(Link link, UID uid) {
             linksMap.put(uid, link);

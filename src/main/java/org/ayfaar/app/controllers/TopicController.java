@@ -122,11 +122,22 @@ public class TopicController {
         topicService.findOrCreate(name).addChild(child);
     }
 
-    @RequestMapping("{name}/add-parent/{parent}")
+
+    /**
+     * @param linked its name for linked topic
+     * method delete link for this topic
+     */
+    @RequestMapping("{name}/unlink/{linked}")
+    // убрать связь
     // todo: Implement
-    public void addParent(@PathVariable String name, @PathVariable String parent) {
-        topicService.findOrCreate(name).addChild(parent);
+    public void unlink(@PathVariable String name, @PathVariable String linked) {
+        Topic topic = (Topic) topicService.findOrCreate(name);
+        List<Link> allLinks = linkDao.getAllLinks(topic.getUri());
+        for (Link link : allLinks){
+            linkDao.remove(link.getLinkId());
+        }
     }
+
 
     @RequestMapping("{name}/add-related/{related}")
     // todo: Implement
@@ -171,22 +182,15 @@ public class TopicController {
     }
 
     // todo: метод для получения все ресурсов связанных с темой)
+
     @RequestMapping("{name}")
     public ResourcesPresentation getResources(String name) {
         Stream<TopicProvider.TopicResourcesGroup> resources = topicService.getByName(name).resources();
-        // приобразовать полученые ресурсы к нужному виду
-        return ResourcesPresentation.builder()
-                .video(resources.filter(res -> res.type == ResourceType.video).map(res -> res.resources).collect())
-                        .build();
+        List<TopicProvider.TopicResourcesGroup> videoRes = new ArrayList<>();
+        resources = resources.filter(res -> res.type == ResourceType.video);
+        resources.forEach(s -> videoRes.add(s));
+        return (ResourcesPresentation) videoRes;
     }
-
-//    public ResourcesPresentation getResourcesMy(String name) {
-//        Stream<TopicProvider.TopicResourcesGroup> resources = topicService.getByName(name).resources();
-//        List<TopicProvider.TopicResourcesGroup> videoRes = new ArrayList<>();
-//        resources = resources.filter(res -> res.type == ResourceType.video);
-//        resources.forEach(s -> videoRes.add(s));
-//        return (ResourcesPresentation) videoRes;
-//    }
 
     @Builder
     private static class ResourcesPresentation {
