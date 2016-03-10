@@ -4,6 +4,7 @@ import lombok.Builder;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
+import org.ayfaar.app.model.ResourceType;
 import org.ayfaar.app.model.Topic;
 import org.ayfaar.app.model.VideoResource;
 import org.ayfaar.app.services.TopicProvider;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.hasLength;
@@ -122,13 +125,13 @@ public class TopicController {
     @RequestMapping("{name}/add-parent/{parent}")
     // todo: Implement
     public void addParent(@PathVariable String name, @PathVariable String parent) {
-        throw new RuntimeException("Unimplemented");
+        topicService.findOrCreate(name).addChild(parent);
     }
 
     @RequestMapping("{name}/add-related/{related}")
     // todo: Implement
     public void addRelated(@PathVariable String name, @PathVariable String related) {
-        throw new RuntimeException("Unimplemented");
+        topicService.findOrCreate(name).addChild(related);
     }
 
     @RequestMapping("{name}/children")
@@ -168,14 +171,22 @@ public class TopicController {
     }
 
     // todo: метод для получения все ресурсов связанных с темой)
-    // сделать доступной через url
+    @RequestMapping("{name}")
     public ResourcesPresentation getResources(String name) {
-        topicService.getByName(name).resources();
+        Stream<TopicProvider.TopicResourcesGroup> resources = topicService.getByName(name).resources();
         // приобразовать полученые ресурсы к нужному виду
         return ResourcesPresentation.builder()
-                //...
-                .build();
+                .video(resources.filter(res -> res.type == ResourceType.video).map(res -> res.resources).collect())
+                        .build();
     }
+
+//    public ResourcesPresentation getResourcesMy(String name) {
+//        Stream<TopicProvider.TopicResourcesGroup> resources = topicService.getByName(name).resources();
+//        List<TopicProvider.TopicResourcesGroup> videoRes = new ArrayList<>();
+//        resources = resources.filter(res -> res.type == ResourceType.video);
+//        resources.forEach(s -> videoRes.add(s));
+//        return (ResourcesPresentation) videoRes;
+//    }
 
     @Builder
     private static class ResourcesPresentation {
