@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -140,20 +139,20 @@ public class TopicController {
 
 
     @RequestMapping("{name}/add-related/{related}")
-    // todo: Implement
     public void addRelated(@PathVariable String name, @PathVariable String related) {
-        topicService.findOrCreate(name).addChild(related);
+        //нужно было добавить не чайлда, а просто связанный линк
+        topicService.findOrCreate(name).link(topicService.findOrCreate(related).topic());
     }
 
     @RequestMapping("{name}/children")
-    public List<Topic> linkChild(@PathVariable String name) {
+    public List<Topic> getChildren(@PathVariable String name) {
         return topicService.getByName(name)
                 .children()
                 .map(TopicProvider::topic).collect(toList());
     }
 
     @RequestMapping("{name}/parents")
-    public List<Topic> linkParent(@PathVariable String name) {
+    public List<Topic> getParents(@PathVariable String name) {
         return topicService.getByName(name)
                 .parents()
                 .map(TopicProvider::topic).collect(toList());
@@ -183,7 +182,7 @@ public class TopicController {
 
     // todo: метод для получения все ресурсов связанных с темой)
 
-    @RequestMapping("{name}")
+//    @RequestMapping("{name}") // не подходит такой урл, так как дублирует урл для метода TopicController.get
     public ResourcesPresentation getResources(String name) {
         Stream<TopicProvider.TopicResourcesGroup> resources = topicService.getByName(name).resources();
         List<TopicProvider.TopicResourcesGroup> videoRes = new ArrayList<>();

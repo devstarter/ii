@@ -8,6 +8,10 @@ import java.util.stream.Stream;
 public interface TopicProvider {
     String name();
 
+    default void link(UID uid) {
+        link(null, uid, null);
+    }
+
     default void link(LinkType type, UID uid) {
         link(type, uid, null);
     }

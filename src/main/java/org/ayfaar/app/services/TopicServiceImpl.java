@@ -8,8 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -79,7 +81,7 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
-        public Link link(LinkType type, UID uid, String comment) {
+        public Link link(@Nullable LinkType type, @NotNull UID uid, @Nullable String comment) {
             Link link = linksMap.get(uid);
             if (link != null && link.getType() != type)
                 throw new RuntimeException("Link already exist with another type: "+link.getType());
