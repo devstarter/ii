@@ -69,7 +69,6 @@ public class TopicController {
 
     @RequestMapping(value = "for", method = POST)
     public Topic addFor(@RequestParam String uri, @RequestParam String name) throws Exception {
-        hasLength(name);
         Topic topic = commonDao.get(Topic.class, "name", name);
         if (topic == null) topic = commonDao.save(new Topic(name));
         linkDao.save(new Link(topic, commonDao.get(UriGenerator.getClassByUri(uri), uri)));
