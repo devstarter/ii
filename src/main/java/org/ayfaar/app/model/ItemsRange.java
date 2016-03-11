@@ -1,5 +1,7 @@
 package org.ayfaar.app.model;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.ayfaar.app.annotations.Uri;
 
@@ -9,6 +11,8 @@ import javax.persistence.*;
 @PrimaryKeyJoinColumn(name="uri")
 @NoArgsConstructor
 @Uri(nameSpace = "ии:пункт:диапазон:")
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class ItemsRange extends UID {
 
     public static final Class SEQUENCE = ItemsRangeSeq.class;
@@ -24,7 +28,6 @@ public class ItemsRange extends UID {
     private String code;
     @Column(columnDefinition = "TEXT")
     private String description;
-//    private String uri;
 
     public ItemsRange(String first, String last, String code, String description) {
         this.first = first;

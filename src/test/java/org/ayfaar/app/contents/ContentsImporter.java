@@ -1,6 +1,7 @@
 package org.ayfaar.app.contents;
 
 
+import lombok.extern.log4j.Log4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -9,14 +10,17 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.ayfaar.app.Application;
 import org.ayfaar.app.controllers.ItemController;
 import org.ayfaar.app.dao.CommonDao;
+import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.ItemsRange;
 import org.ayfaar.app.utils.RomanNumber;
+import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.util.Assert;
 
 import javax.inject.Inject;
 import java.io.FileInputStream;
@@ -29,20 +33,23 @@ import java.util.List;
 @ActiveProfiles("dev")
 @WebAppConfiguration
 @SpringApplicationConfiguration(Application.class)
+@Log4j
 public class ContentsImporter {
 
     @Inject CommonDao commonDao;
 
     @Test
     public void main() throws IOException, XLSParsingException {
-
+        log.info("Открытие файла оглавлений");
         InputStream in = new FileInputStream("./src/test/resources/content/5tom-content.xlsx");
-
+        log.info("Считывание данных"); //todo также в таком же стиле
         List<ItemBook> list = fillListItemBooks(in);
+        in.close();
         System.out.println();
         List<ItemsRange> itemsRanges = getItemsRange(list); //получили готовый массив ItemsRange
         System.out.println();
-        in.close();
+        //todo: сформировать объекты Category, проставить itemRange.category ссылку на URI категории главы
+        //todo: сохранить в БД
     }
 
     private static ItemBook getTom(Sheet sheet) throws XLSParsingException{
@@ -129,10 +136,20 @@ public class ContentsImporter {
                         throw new IncorrectRowException("Неверная строка №" + (row.getRowNum() + 1) + ". Данная строка не являесят ни Томом, ни разделом, ни главой, ни параграфом");
                     }
                 }
+                validate(itemBook);
                 categories.add(itemBook);
             }
         }
         return categories;
+    }
+
+    private static void validate(ItemBook itemBook) {
+        Assert.hasLength(itemBook.getTitle(), "..."); //todo: ... заменить на текст
+        Assert.isTrue(itemBook.getTitle().length() < 500);
+        Assert.hasLength(itemBook.getCategoryNumber(), "...");
+        Assert.notNull(itemBook.getType(), "...");
+        if (itemBook.type == SectionType.Paragraph)
+            Assert.isTrue(Item.isItemNumber(itemBook.getItemNumber()), "...");
     }
 
     private static List<ItemsRange> getItemsRange(List<ItemBook> itemBookList) throws XLSParsingException{
@@ -165,11 +182,22 @@ public class ContentsImporter {
                                                             lastItem,
                                                             code,
                                                             itemBookList.get(i).getTitle());
+                    itemsRange.setUri(UriGenerator.generate(ItemsRange.class, code));
+                    validate(itemsRange);
                     itemsRanges.add(itemsRange);
                     break;
             }
         }
         return itemsRanges;
+    }
+
+    private static void validate(ItemsRange range) {
+        Assert.isTrue(Item.isItemNumber(range.getFirst()), "...");
+        Assert.isTrue(Item.isItemNumber(range.getLast()), "...");
+        Assert.isTrue(range.getCode().matches("^(\\d+\\.){3}\\d+$"), "...");
+        Assert.hasLength(range.getDescription(), "...");
+        Assert.isTrue(range.getDescription().length() < 500, "...");
+        Assert.hasLength(range.getUri(), "...");
     }
 
     private static int getStep(List<ItemBook> itemBookList, int i) throws XLSParsingException{
