@@ -82,7 +82,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             }
         }
     })
-    .factory("$api", function($rootScope, $state, $http, errorService, $q, config){
+    .factory("$api", function($rootScope, $state, $http, errorService, $q, config, $httpParamSerializer){
         var apiUrl = config.apiUrl;
 //        var apiUrl = "https://ii.ayfaar.org/api/";
         var api = {
@@ -95,12 +95,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     data: data,
                     cache: cache,
                     method: "POST",
-                    headers: { 'Content-Type': undefined },
-                    transformRequest: function(data, getHeaders) {
-                        var headers = getHeaders();
-                        headers[ "Content-type" ] = "application/x-www-form-urlencoded; charset=utf-8";
-                        return( serializePost( data ) );
-                    }
+                    headers: { 'Content-Type': "application/x-www-form-urlencoded; charset=utf-8" },
+                    transformRequest: $httpParamSerializer
                 }).then(function(response){
                         deferred.resolve(response.data)
                     },function(response){
@@ -183,22 +179,28 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             resource: {
                 video: {
                     lastTen: function () {
-                        return api.get("resource/video/last-ten")
+                        return api.get("resource/video/last-created")
                     }
                 }
             },
             topic: {
+                updateComment: function (forUri, topicName, comment) {
+                    return api.post("topic/update-comment", {forUri: forUri, name: topicName, comment: comment})  
+                },
+                addFor: function (objectUri, topicName, comment, rate) {
+                    return api.post("topic/for", {name: topicName, uri: objectUri, comment: comment, rate: rate})
+                },
                 unlink: function (main, linked) {
-                    return api.get("topic/"+main+"/unlink/"+linked)  
+                    return api.get("topic/unlink", {name: main, linked: linked})
                 },
                 suggest: function (q) {
                     return api.get("topic/suggest", {q: q})  
                 },
                 get: function (name) {
-                    return api.get("topic/"+name)
+                    return api.get("topic", {name: name})
                 },
                 addChild: function (parent, child) {
-                    return api.get("topic/"+parent+"/add-child/"+child)
+                    return api.get("topic/add-child", {name: parent, child: child})
                 }
             }
         };
@@ -355,6 +357,61 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             }*/
         };
     })
+    .service('$topicPrompt', function($api, $modal, $topicSelector) {
+        return {
+            prompt: function () {
+                return $modal.open({
+                    templateUrl: 'static/partials/topic-prompt.html',
+                    controller: function ($scope, $modalInstance) {
+                        $scope.suggestTopics = function (q) {
+                            return $api.topic.suggest(q);
+                        };
+                        $scope.select = function() {
+                            $modalInstance.close($scope.topic);
+                        };
+                        $scope.cancel = function() {
+                            $modalInstance.dismiss('cancel');
+                        };
+                        $scope.openSelector = function () {
+                            $topicSelector.select().then(function (topicName) {
+                                $modalInstance.close(topicName);
+                            });
+                        };
+                    }
+                }).result;
+            }
+        }
+    })
+    .service('$topicSelector', function($api, $modal) {
+        return {
+            select: function () {
+                return $modal.open({
+                    templateUrl: 'static/partials/topic-selector.html',
+                    controller: function ($scope, $modalInstance) {
+                        $scope.history = [];
+                        $scope.select = function () {
+                            $modalInstance.close($scope.name);
+                        };
+                        $scope.cancel = function () {
+                            $modalInstance.dismiss('cancel');
+                        };
+                        $scope.load = function (topicName, dontSaveHistory) {
+                            if ($scope.name && !dontSaveHistory) $scope.history.push($scope.name);
+                            $scope.children = [];
+                            $api.topic.get(topicName).then(function (topic) {
+                                copyObjectTo(topic, $scope);
+                            });
+                        };
+                        $scope.back = function () {
+                            if ($scope.history.length)
+                                $scope.load($scope.history.pop(), true);
+                        };
+                        $scope.load("Методика МИЦИАР");
+                    }
+                }).result
+            }
+        }
+    })
     .directive('iiLookup', function($api, $state, $parse) {
         return {
             require:'ngModel',
@@ -395,6 +452,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             link: function (scope, element, attrs, modelCtrl) {
                 var getter = $parse(attrs.topicRef);
                 var topicName = getter(scope);
+                if (topicName.hasOwnProperty("name")) topicName = topicName.name;
                 if (!topicName) return;
                 element.attr('href', "t/"+topicName);
                 if (!element[0].innerText) element.append(topicName);

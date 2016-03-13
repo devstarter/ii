@@ -1,24 +1,35 @@
-<span class="gray">Тема:</span>
-<h1 class="inline" style="padding-bottom: 20px">{{name}}</h1>
-<div>
-    <a ng-hide="parents" class="btn btn-link" ng-click="addParent()">Добавить родительскую тему</a>
-    <span ng-show="parents">
-        <span class="gray">Родительские темы</span>
+<div class="title">
+    <span class="gray">Тема:</span>
+    <h1 class="inline" style="padding-bottom: 20px">{{name}}</h1>
+    <a ng-hide="parents" class="h btn btn-link" ng-click="addParent()" style="display: block;text-align: left">Добавить родительскую тему</a>
+    <div ng-show="parents" class="parents h" style="padding-top: 20px">
+        <span class="gray">Родительские темы:</span>
         <a ng-repeat="parent in parents" topic-ref="parent">{{parent}}{{$last ? '' : ', '}}</a>
-        <i class="btn glyphicon glyphicon-plus-sign" ng-click="addParent()" title="Добавить родительскую тему"></i>
-    </span>
+        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addParent()" title="Добавить родительскую тему"></i>
+    </div>
 </div>
-<div ng-show="children">
-    <span class="gray">Дочерние темы</span>
-    <i class="btn glyphicon glyphicon-plus-sign" ng-click="addChild()" title="Добавить дочернюю тему"></i>
-    <span class="linked-topic" ng-repeat="child in children">
-        <a class="btn btn-link topic" topic-ref="child"></a>
-        <a class="btn glyphicon glyphicon-remove" ng-click="unlink(child)" title="Удалить связь с темой"></a>
-    </span>
+<div style="padding-top: 20px">
+    <div ng-show="children" class="children">
+        <span class="gray">Дочерние темы</span>
+        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addChild()" title="Добавить дочернюю тему"></i>
+        <span class="linked-topic" ng-repeat="child in children">
+            <a class="btn btn-link topic" topic-ref="child"></a>
+            <a class="btn glyphicon glyphicon-remove" ng-click="unlink(child)" title="Удалить связь с темой"></a>
+        </span>
+    </div>
+    <span ng-hide="children" >Нет дочерних тем</span>
+    <a ng-hide="children" class="btn btn-link" ng-click="addChild()">Добавить дочернюю тему</a>
 </div>
-<a ng-hide="children" class="btn btn-link" ng-click="addChild()">Добавить дочернюю тему</a>
-
 <style type="text/css">
+    .title .h {visibility: hidden}
+    .title:hover .h {visibility: visible}
+
+    .parents .h {visibility: hidden}
+    .parents:hover .h {visibility: visible}
+
+    .children .h {visibility: hidden}
+    .children:hover .h {visibility: visible}
+
     .linked-topic {display: table-row;}
     .linked-topic .topic {padding-right: 0}
     .linked-topic .glyphicon {display: none; color: black}

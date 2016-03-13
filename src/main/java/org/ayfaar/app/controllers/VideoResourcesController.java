@@ -5,8 +5,6 @@ import org.ayfaar.app.model.VideoResource;
 import org.ayfaar.app.repositories.VideoResourceRepository;
 import org.ayfaar.app.utils.Language;
 import org.ayfaar.app.utils.YoutubeService;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,13 +43,13 @@ public class VideoResourcesController {
         return null;//commonDao.save(new VideoResource(id, Language.ru));
     }
 
-    @RequestMapping("last-ten")
+    @RequestMapping("last-created")
     @ResponseBody
-    public List<VideoResource> lastTen() throws Exception {
-        return videoResourceRepository
+    public List<VideoResource> lastCreated() throws Exception {
+        /*return videoResourceRepository
                 .findAll(new PageRequest(0, 8, new Sort(Sort.Direction.DESC, "createdAt")))
-                .getContent();
-//        return commonDao.getOrdered(VideoResource.class, "createdAt", false, 8);
+                .getContent();*/
+        return commonDao.getOrdered(VideoResource.class, "createdAt", false, 8);
     }
 
     @RequestMapping(method = POST)

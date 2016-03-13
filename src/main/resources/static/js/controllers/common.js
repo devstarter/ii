@@ -1,4 +1,4 @@
-function TopicController($scope, $stateParams, $api, $state, $modal) {
+function TopicController($scope, $stateParams, $api, $state, $modal, $topicPrompt) {
     $scope.name = $stateParams.name;
     document.title = $scope.name;
     $scope.loading = true;
@@ -15,37 +15,13 @@ function TopicController($scope, $stateParams, $api, $state, $modal) {
         $api.topic.unlink($scope.name, linkedTopic).then(load);
     };
     $scope.addParent = function () {
-        var parentScope = $scope;
-        $modal.open({
-            templateUrl: 'static/partials/topic-select.html',
-            controller: function ($scope, $modalInstance) {
-                $scope.suggestTopics = function (q) {
-                    return $api.topic.suggest(q);
-                };
-                $scope.select = function() {
-                    $api.topic.addChild($scope.topic, parentScope.name).then(function() {
-                        $modalInstance.close();
-                        load();
-                    })
-                };
-            }
+        $topicPrompt.prompt().then(function (topic) {
+            $api.topic.addChild(topic, $scope.name).then(load)
         });
     };
     $scope.addChild = function () {
-        var parentScope = $scope;
-        $modal.open({
-            templateUrl: 'static/partials/topic-select.html',
-            controller: function ($scope, $modalInstance) {
-                $scope.suggestTopics = function (q) {
-                    return $api.topic.suggest(q);
-                };
-                $scope.select = function() {
-                    $api.topic.addChild(parentScope.name, $scope.topic).then(function() {
-                        $modalInstance.close();
-                        load();
-                    })
-                };
-            }
+        $topicPrompt.prompt().then(function (topic) {
+            $api.topic.addChild($scope.name, topic).then(load)
         });
     }
 }
@@ -135,9 +111,10 @@ function TaggerController($scope, $stateParams, $api) {
     };
 }
 
-function ResourcesController($scope, $stateParams, $state, Video, Topic, errorService, $api) {
+function ResourcesController($scope, $stateParams, $state, Video, Topic, errorService, $api, $modal, $topicSelector) {
     $scope.$root.hideLoop = true;
     $scope.topics = [];
+    $scope.newTopic = {};
     $scope.lastTen = [];
     
     if ($stateParams.id) {
@@ -165,6 +142,23 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
         Topic.rate({forUri: $scope.video.uri, topicUri: topic.uri, rate: topic.rate})
     };
 
+    $scope.updateComment = function(topic){
+        $modal.open({
+            templateUrl: 'prompt.html',
+            controller: function ($scope, $modalInstance) {
+                $scope.comment = topic.comment;
+                $scope.ok = function () {
+                    $modalInstance.close($scope.comment);
+                };
+                $scope.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                };
+            }
+        }).result.then(function (comment) {
+            $api.topic.updateComment($scope.video.uri, topic.name, comment).then(getTopics);
+        });
+    };
+
     $scope.save = function(){
         $scope.videoLoading = true;
         Video.save({url: $scope.url}).$promise.then(function(video){
@@ -173,16 +167,20 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
     };
     
     $scope.addTopic = function () {
-        Topic.addForUri({uri: $scope.video.uri, name: $scope.newTopic}).$promise.then(function(topic){
-            $scope.newTopic = '';
+        if (!$scope.newTopic.name) return;
+        $api.topic.addFor($scope.video.uri, $scope.newTopic.name, $scope.newTopic.comment, $scope.newTopic.rate)
+            .then(function(topic){
+            $scope.newTopic = {};
             getTopics();
         });
     };
     
     $scope.removeTopic = function (topic) {
-        Topic.deleteForUri({uri: $scope.video.uri, topicUri: topic.uri}).$promise.then(function(topic){
-            getTopics();
-        });
+        if (confirm("Коментарий и оценка будут утеряны, уверены что хотите отменить тему?")) {
+            Topic.deleteForUri({uri: $scope.video.uri, topicUri: topic.uri}).$promise.then(function (topic) {
+                getTopics();
+            });
+        }
     };
     $scope.getSuggestions = function (q) {
         return Topic.suggest({q: q}).$promise
@@ -193,6 +191,12 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
             $scope.topics = topics;
         });
     }
+
+    $scope.openSelector = function () {
+        $topicSelector.select().then(function (topicName) {
+            $scope.newTopic.name = topicName;
+        });
+    };
 }
 
 function ArticleController($scope, $stateParams, $state, $api) {

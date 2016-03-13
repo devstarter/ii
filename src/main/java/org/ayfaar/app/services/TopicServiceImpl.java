@@ -13,7 +13,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Component
@@ -84,17 +87,15 @@ class TopicServiceImpl implements TopicService {
         @Override
         public Link link(LinkType type, UID uid, String comment) {
             Link link = linksMap.get(uid);
-            if (link != null && link.getType() != type)
+            if (link != null)
                 throw new RuntimeException("Link already exist with another type: "+link.getType());
 
-            if (link == null) {
-                // link = linkRepository.save(new Link(topic, uid, type, comment)); this throw error
-                link = linkDao.save(new Link(topic, uid, type, comment));
-                if (uid instanceof Topic) {
-                    topics.get(uid.getUri()).registerLink(link, topic);
-                }
-                registerLink(link, uid);
+            // link = linkRepository.save(new Link(topic, uid, type, comment)); this throw error
+            link = linkDao.save(new Link(topic, uid, type, comment));
+            if (uid instanceof Topic) {
+                topics.get(uid.getUri()).registerLink(link, topic);
             }
+            registerLink(link, uid);
 
             return link;
         }

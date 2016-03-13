@@ -111,41 +111,41 @@ public class TopicController {
         return names;
     }
 
-    @RequestMapping("{name}/add-child/{child}")
-    public void addChild(@PathVariable String name, @PathVariable String child) {
+    @RequestMapping("add-child")
+    public void addChild(@RequestParam String name, @RequestParam String child) {
         topicService.findOrCreate(name).addChild(child);
     }
 
-    @RequestMapping("{name}/unlink/{linked}")
+    @RequestMapping("unlink")
     // убрать связь
     // todo: Implement
-    public void unlink(@PathVariable String name, @PathVariable String linked) {
+    public void unlink(@RequestParam String name, @RequestParam String linked) {
         throw new RuntimeException("Unimplemented");
     }
 
-    @RequestMapping("{name}/add-related/{related}")
+    @RequestMapping("add-related")
     // todo: Implement
-    public void addRelated(@PathVariable String name, @PathVariable String related) {
+    public void addRelated(@RequestParam String name, @RequestParam String related) {
         throw new RuntimeException("Unimplemented");
     }
 
-    @RequestMapping("{name}/children")
-    public List<Topic> linkChild(@PathVariable String name) {
+    @RequestMapping("children")
+    public List<Topic> linkChild(@RequestParam String name) {
         return topicService.getByName(name)
                 .children()
                 .map(TopicProvider::topic).collect(toList());
     }
 
-    @RequestMapping("{name}/parents")
-    public List<Topic> linkParent(@PathVariable String name) {
+    @RequestMapping("parents")
+    public List<Topic> linkParent(@RequestParam String name) {
         return topicService.getByName(name)
                 .parents()
                 .map(TopicProvider::topic).collect(toList());
     }
 
 
-    @RequestMapping("{name}")
-    public GetTopicPresentation get(@PathVariable String name) {
+    @RequestMapping
+    public GetTopicPresentation get(@RequestParam String name) {
         TopicProvider topic = topicService.getByName(name);
         return GetTopicPresentation.builder()
                 .name(topic.name())
