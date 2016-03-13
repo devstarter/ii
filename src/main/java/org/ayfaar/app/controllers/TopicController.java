@@ -64,6 +64,7 @@ public class TopicController {
         for (String name : uniqueNames) {
             if (!name.isEmpty()) commonDao.save(new Topic(name));
         }
+        topicService.reload();
     }
 
     @RequestMapping(value = "for", method = POST)

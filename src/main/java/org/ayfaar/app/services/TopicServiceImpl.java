@@ -71,6 +71,12 @@ class TopicServiceImpl implements TopicService {
                 });
     }
 
+    @Override
+    public void reload() {
+        topics.clear();
+        init();
+    }
+
     private class TopicProviderImpl implements TopicProvider {
         private final Topic topic;
         private Map<UID, Link> linksMap = new HashMap<>();

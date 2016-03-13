@@ -18,4 +18,6 @@ public interface TopicService {
         return get(UriGenerator.generate(Topic.class, name))
                 .orElseThrow(() -> new RuntimeException("Topic for " + name + " not found"));
     }
+
+    void reload();
 }
