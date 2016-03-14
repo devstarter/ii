@@ -23,12 +23,27 @@
 <div style="padding-top: 20px">
     <div ng-show="resources.video" class="children">
         <span class="gray">Прикреплённые видео</span>
-        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addVideoResource()" title="Добавить видео"></i>
+        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addVideoResource()" title="Прикрепить видео"></i>
         <span class="linked-topic" ng-repeat="video in resources.video">
             <a class="btn btn-link" ii-ref="video.resource">{{video.resource.title}}</a>
         </span>
     </div>
     <a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>
+</div>
+<div style="padding-top: 20px">
+    <div ng-show="resources.item" class="children">
+        <span class="gray">Прикреплённые абзацы</span>
+        <!--<i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addItemResource()" title="Добавить абзац"></i>-->
+        <div ng-repeat="item in resources.item">
+            <blockquote ng-show="item.quote">
+                <div ii-bind="item.quote"></div>
+                <cite>&mdash; <a ii-ref="item.resource">{{item.resource.title}}</a>
+                </cite>
+            </blockquote>
+            <a ng-hide="item.quote" ii-ref="item.resource">{{item.resource.title}}</a>
+        </div>
+    </div>
+    <!--<a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>-->
 </div>
 <style type="text/css">
     .title .h {visibility: hidden}
