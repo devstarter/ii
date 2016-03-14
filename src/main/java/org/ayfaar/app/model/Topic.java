@@ -34,4 +34,9 @@ public class Topic extends UID {
     private Language lang = ru;
 
     private Date createdAt = new Date();
+
+    @Override
+    public String toTitle() {
+        return name;
+    }
 }

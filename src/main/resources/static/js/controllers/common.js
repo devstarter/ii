@@ -4,7 +4,7 @@ function TopicController($scope, $stateParams, $api, $state, $modal, $topicPromp
     $scope.loading = true;
 
     function load() {
-        $api.topic.get($scope.name).then(function(topic){
+        $api.topic.get($scope.name, true).then(function(topic){
             $scope.loading = false;
             copyObjectTo(topic, $scope);
             document.title = $scope.name;
@@ -23,6 +23,9 @@ function TopicController($scope, $stateParams, $api, $state, $modal, $topicPromp
         $topicPrompt.prompt().then(function (topic) {
             $api.topic.addChild($scope.name, topic).then(load)
         });
+    };
+    $scope.addVideoResource = function () {
+        $state.goToVideo("")
     }
 }
 function CategoryController($scope, $stateParams, $api, $state) {

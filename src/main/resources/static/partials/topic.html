@@ -20,6 +20,16 @@
     <span ng-hide="children" >Нет дочерних тем</span>
     <a ng-hide="children" class="btn btn-link" ng-click="addChild()">Добавить дочернюю тему</a>
 </div>
+<div style="padding-top: 20px">
+    <div ng-show="resources.video" class="children">
+        <span class="gray">Прикреплённые видео</span>
+        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addVideoResource()" title="Добавить видео"></i>
+        <span class="linked-topic" ng-repeat="video in resources.video">
+            <a class="btn btn-link" ii-ref="video.resource">{{video.resource.title}}</a>
+        </span>
+    </div>
+    <a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>
+</div>
 <style type="text/css">
     .title .h {visibility: hidden}
     .title:hover .h {visibility: visible}

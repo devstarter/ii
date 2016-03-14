@@ -196,8 +196,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 suggest: function (q) {
                     return api.get("topic/suggest", {q: q})  
                 },
-                get: function (name) {
-                    return api.get("topic", {name: name})
+                /**
+                 * @param name имя топика
+                 * @param includeResources true|false
+                 * @returns топик с родительскими и дочерними топиками, и ресурсами если требуется
+                 */
+                get: function (name, includeResources) {
+                    return api.get("topic", {name: name, includeResources: includeResources ? "true" : "false"})
                 },
                 addChild: function (parent, child) {
                     return api.get("topic/add-child", {name: parent, child: child})
@@ -730,6 +735,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                         originStateGo.bind($state)("article", {id: entityService.getName(uri)});
                         return;
                     case "video":
+                        if (!to.id) {
+                            to.id = to.uri.replace("видео:youtube:", "")
+                        }
                         originStateGo.bind($state)("resource-video", {id: to.id});
                         return;
                 }

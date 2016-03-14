@@ -44,4 +44,8 @@ public class Term extends UID {
         this.shortDescription = shortDescription;
     }
 
+    @Override
+    public String toTitle() {
+        return name;
+    }
 }

@@ -2,13 +2,16 @@ package org.ayfaar.app.utils;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.ayfaar.app.annotations.Uri;
-import org.ayfaar.app.model.UID;
-import org.ayfaar.app.model.VideoResource;
+import org.ayfaar.app.model.*;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.IdentifierGenerator;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.stream.Stream;
+
+import static org.ayfaar.app.utils.StreamUtils.single;
 
 //@Component
 public class UriGenerator implements IdentifierGenerator {
@@ -42,9 +45,12 @@ public class UriGenerator implements IdentifierGenerator {
     }
 
     @SuppressWarnings("unchecked")
-    public static <E extends UID> Class<E> getClassByUri(String uri) {
-        Uri annotation = VideoResource.class.getAnnotation(Uri.class);
-        if (uri.startsWith(annotation.nameSpace())) return (Class<E>) VideoResource.class;
-        return null;
+    public static Class<? extends UID> getClassByUri(String uri) {
+        return Stream.of(Item.class, Article.class, Category.class, ItemsRange.class, Resource.class, VideoResource.class, Term.class, Topic.class)
+                .filter(clazz -> {
+                    Uri annotation = clazz.getAnnotation(Uri.class);
+                    Assert.notNull(annotation, "Uri annotation not found for class "+clazz);
+                    return uri.startsWith(annotation.nameSpace());
+                }).collect(single()).orElseThrow(() -> new RuntimeException("Has no class for uri "+uri));
     }
 }

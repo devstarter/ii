@@ -35,4 +35,9 @@ public class VideoResource extends UID {
 
     private Date publishedAt = new Date();
     private Date createdAt = new Date();
+
+    @Override
+    public String toTitle() {
+        return title;
+    }
 }

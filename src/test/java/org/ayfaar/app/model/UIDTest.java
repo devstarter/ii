@@ -11,4 +11,9 @@ public class UIDTest extends UID{
     public void setUri(String uri) {
         this.uri = uri;
     }
+
+    @Override
+    public String toTitle() {
+        return "test";
+    }
 }

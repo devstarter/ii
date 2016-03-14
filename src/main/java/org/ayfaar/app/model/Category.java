@@ -100,4 +100,9 @@ public class Category extends UID {
     public boolean isCikl() {
         return name.equals("БДК") || name.equals("Основы");
     }
+
+    @Override
+    public String toTitle() {
+        return name;
+    }
 }

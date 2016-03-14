@@ -1,11 +1,11 @@
 package org.ayfaar.app.model;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
 import java.util.Date;
 
 import static org.ayfaar.app.utils.hibernate.EnumHibernateType.CLASS;
@@ -70,6 +70,16 @@ public class Link {
 
     public Link(UID uid1, UID uid2, LinkType type, String comment) {
         this(uid1, uid2, type);
+        this.comment = comment;
+    }
+
+    @Builder
+    public Link(UID uid1, UID uid2, LinkType type, String comment, String quote, Float rate) {
+        this.quote = quote;
+        this.rate = rate;
+        this.uid1 = uid1;
+        this.uid2 = uid2;
+        this.type = type;
         this.comment = comment;
     }
 }

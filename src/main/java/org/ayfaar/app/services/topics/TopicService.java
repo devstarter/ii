@@ -1,4 +1,4 @@
-package org.ayfaar.app.services;
+package org.ayfaar.app.services.topics;
 
 import org.ayfaar.app.model.Topic;
 import org.ayfaar.app.utils.UriGenerator;

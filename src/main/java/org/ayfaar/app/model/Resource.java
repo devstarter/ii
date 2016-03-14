@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Entity
 @PrimaryKeyJoinColumn(name="uri")
-@Uri(nameSpace = "", field = "uri")
+@Uri(nameSpace = "url:", field = "uri")
 @Getter @Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -27,4 +27,13 @@ public class Resource extends UID {
     private String comments;
 
     private Date createdAt = new Date();
+
+    @Override
+    public String toTitle() {
+        return title;
+    }
+
+    public String getUrl() {
+        return uri.replaceFirst("url:", "");
+    }
 }

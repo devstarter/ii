@@ -45,6 +45,11 @@ public class Item extends UID {
         return s.matches("^\\d\\d?\\.\\d{4}\\d?$");
     }
 
+    @Override
+    public String toTitle() {
+        return number;
+    }
+
     /*
     order index sql:
     ALTER TABLE `item` ADD COLUMN `order_index` DECIMAL(10,5) NULL DEFAULT NULL AFTER `next`;

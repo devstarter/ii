@@ -1,11 +1,8 @@
-package org.ayfaar.app.services;
+package org.ayfaar.app.services.topics;
 
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
-import org.ayfaar.app.model.Link;
-import org.ayfaar.app.model.LinkType;
-import org.ayfaar.app.model.Topic;
-import org.ayfaar.app.model.UID;
+import org.ayfaar.app.model.*;
 import org.ayfaar.app.utils.UriGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +10,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -91,13 +86,20 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
-        public Link link(LinkType type, UID uid, String comment) {
+        public Link link(LinkType type, UID uid, String comment, String quote, Float rate) {
             Link link = linksMap.get(uid);
             if (link != null)
                 throw new RuntimeException("Link already exist with another type: "+link.getType());
 
             // link = linkRepository.save(new Link(topic, uid, type, comment)); this throw error
-            link = linkDao.save(new Link(topic, uid, type, comment));
+            link = linkDao.save(Link.builder()
+                    .uid1(topic)
+                    .uid2(uid)
+                    .type(type)
+                    .comment(comment)
+                    .quote(quote)
+                    .rate(rate)
+                    .build());
             if (uid instanceof Topic) {
                 topics.get(uid.getUri()).registerLink(link, topic);
             }
@@ -153,9 +155,18 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
-        public Stream<TopicResourcesGroup> resources() {
-            // todo: находим линки не относящиеся к топикам и сортируем по типу (пока только один тип VideoResource)
-            throw new RuntimeException("Unimplemented"); // удалить когда добавишь нужную логику
+        public TopicResources resources() {
+            final TopicResources resources = new TopicResources();
+            resources.video.addAll(prepareResource(VideoResource.class));
+            resources.item.addAll(prepareResource(Item.class));
+            return resources;
+        }
+
+        private Collection<? extends ResourcePresentation> prepareResource(Class<? extends UID> resourceClass) {
+            return linksMap.entrySet().stream()
+                    .filter(e -> e.getKey().getClass().isAssignableFrom(resourceClass))
+                    .map(e -> new ResourcePresentation(e.getKey(), e.getValue()))
+                    .collect(Collectors.toList());
         }
 
         private void registerLink(Link link, UID uid) {

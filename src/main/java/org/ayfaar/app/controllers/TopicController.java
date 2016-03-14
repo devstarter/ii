@@ -6,17 +6,15 @@ import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Topic;
 import org.ayfaar.app.model.UID;
-import org.ayfaar.app.services.TopicProvider;
-import org.ayfaar.app.services.TopicService;
+import org.ayfaar.app.services.topics.TopicProvider;
+import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static org.ayfaar.app.utils.StreamUtils.single;
 import static org.springframework.util.Assert.hasLength;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -68,11 +66,15 @@ public class TopicController {
     }
 
     @RequestMapping(value = "for", method = POST)
-    public Topic addFor(@RequestParam String uri, @RequestParam String name) throws Exception {
-        Topic topic = commonDao.get(Topic.class, "name", name);
-        if (topic == null) topic = commonDao.save(new Topic(name));
-        linkDao.save(new Link(topic, commonDao.get(UriGenerator.getClassByUri(uri), uri)));
-        return topic;
+    public Topic addFor(@RequestParam String uri,
+                        @RequestParam String name,
+                        @RequestParam(required = false) String quote,
+                        @RequestParam(required = false) String comment,
+                        @RequestParam(required = false) Float rate) throws Exception {
+        UID uid = commonDao.get(UriGenerator.getClassByUri(uri), uri);
+        final TopicProvider topic = topicService.findOrCreate(name);
+        topic.link(null, uid, comment, quote, rate);
+        return topic.topic();
     }
 
     @RequestMapping(value = "rate", method = POST)
@@ -145,7 +147,7 @@ public class TopicController {
 
 
     @RequestMapping
-    public GetTopicPresentation get(@RequestParam String name) {
+    public GetTopicPresentation get(@RequestParam String name, @RequestParam(required = false) boolean includeResources) {
         TopicProvider topic = topicService.getByName(name);
         return GetTopicPresentation.builder()
                 .name(topic.name())
@@ -153,6 +155,7 @@ public class TopicController {
                 .children(topic.children().map(TopicProvider::name).collect(toList()))
                 .parents(topic.parents().map(TopicProvider::name).collect(toList()))
                 .related(topic.related().map(TopicProvider::name).collect(toList()))
+                .resources(includeResources ? topic.resources() : null)
                 .build();
     }
 
@@ -163,25 +166,6 @@ public class TopicController {
         public List<String> children;
         public List<String> parents;
         public List<String> related;
-    }
-
-    // todo: метод для получения все ресурсов связанных с темой)
-    // сделать доступной через url
-    public ResourcesPresentation getResources(String name) {
-        final Stream<TopicProvider.TopicResourcesGroup> resources = topicService.getByName(name).resources();
-        // приобразовать полученые ресурсы к нужному виду
-        return ResourcesPresentation.builder()
-                .video(resources
-                        .filter(group -> group.type.isVideo())
-                        .map(group -> group.resources)
-                        .collect(single()).get()
-                )
-                .build();
-    }
-
-    @Builder
-    private static class ResourcesPresentation {
-        public List<UID> video;
-        // ещё будут позже
+        public TopicProvider.TopicResources resources;
     }
 }
