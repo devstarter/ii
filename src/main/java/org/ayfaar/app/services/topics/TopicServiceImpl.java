@@ -88,9 +88,8 @@ class TopicServiceImpl implements TopicService {
         @Override
         public Link link(LinkType type, UID uid, String comment, String quote, Float rate) {
             Link link = linksMap.get(uid);
-            if (link != null)
+            if (link != null && !link.getType().isChild())
                 throw new RuntimeException("Link already exist with another type: "+link.getType());
-
             // link = linkRepository.save(new Link(topic, uid, type, comment)); this throw error
             link = linkDao.save(Link.builder()
                     .uid1(topic)
@@ -115,7 +114,8 @@ class TopicServiceImpl implements TopicService {
                             link.getUid1() instanceof Topic
                             && link.getUid2() instanceof Topic
                             && link.getUid1().getUri().equals(uri())
-                            && link.getType().isChild())
+                                    && link.getType()!=null
+                                    && link.getType().isChild())
                     .map(l -> new TopicProviderImpl((Topic) l.getUid2()));
         }
 
@@ -124,9 +124,9 @@ class TopicServiceImpl implements TopicService {
             return linksMap.values().stream()
                     .filter(link ->
                             link.getUid1() instanceof Topic
-                            && link.getUid2() instanceof Topic
-                            && link.getUid2().getUri().equals(uri())
-                            && link.getType().isChild())
+                                    && link.getUid2() instanceof Topic
+                                    && link.getUid2().getUri().equals(uri())
+                                    && link.getType().isChild())
                     .map(l -> new TopicProviderImpl((Topic) l.getUid1()));
         }
 

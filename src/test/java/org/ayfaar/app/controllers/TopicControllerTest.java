@@ -19,21 +19,24 @@ import static com.jayway.restassured.RestAssured.given;
 public class TopicControllerTest {
     @Test
     public void testGet() {
-        addChild("1", "2");
+        addChild("1001", "2015");
+        addChild("1001", "3015");
+        addChild("4", "1001");
 
         // todo добавить ещё чайлда "3" и парента "4"
 
-        given().param("name", "1").
+        given().param("name", "1001").
         when().get("/api/topic").
         then().
             log().all().
             statusCode(HttpStatus.SC_OK).
-            body("name", Matchers.is("1")).
-            body("uri", Matchers.is("тема:1")).
-            body("children", Matchers.hasItems("3", "2")).
+            body("name", Matchers.is("1001")).
+            body("uri", Matchers.is("тема:1001")).
+            body("children", Matchers.hasItems("3015", "2015")).
             body("parents", Matchers.hasItem("4"))
         ;
     }
+
 
     private void addChild(String name, String child) {
         given().
@@ -58,23 +61,29 @@ public class TopicControllerTest {
         ;
     }
 
+
     @Test
     public void testAddChild() {
-        addChild("1", "2");
+        addChild("1", "2012");
     }
 
-    @Test
-    public void testUnLink() {
-        // сначала прилинковываем
-        addChild("1", "2");
-
-        given().
-                params("name", "1", "linked", "2").
-        when().
-            get("/api/topic/unlink").
-        then().
-            log().all().
-            statusCode(HttpStatus.SC_OK)
-        ;
+    @Test//(expected = AssertionError.class)
+    public void testAddChildWrong() {
+        addChild("2012", "1");
     }
+
+//    @Test
+//    public void testUnLink() {
+//        // сначала прилинковываем
+//        addChild("1", "2011");
+//
+//        given().
+//                param("name", "1", "linked", "2011").
+//        when().
+//            get("/api/topic/unlink").
+//        then().
+//            log().all().
+//            statusCode(HttpStatus.SC_OK)
+//        ;
+//    }
 }

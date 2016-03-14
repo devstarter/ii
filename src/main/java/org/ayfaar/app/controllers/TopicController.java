@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.hasLength;
@@ -115,14 +116,21 @@ public class TopicController {
 
     @RequestMapping("add-child")
     public void addChild(@RequestParam String name, @RequestParam String child) {
-        topicService.findOrCreate(name).addChild(child);
+
+            Stream<TopicProvider> childrenOfParent = topicService.getByName(child).children();
+            if(childrenOfParent.noneMatch(name::equals)) topicService.findOrCreate(name).addChild(child);
+            
     }
 
     @RequestMapping("unlink")
-    // убрать связь
-    // todo: Implement
-    public void unlink(@RequestParam String name, @RequestParam String linked) {
-        throw new RuntimeException("Unimplemented");
+
+    public void unlink(@PathVariable String name, @PathVariable String linked) {
+        Topic topic = (Topic) topicService.findOrCreate(name);
+        Topic linkedTopic = (Topic) topicService.findOrCreate(linked);
+        List<Link> byUris = linkDao.getByUris(topic.getUri(), linkedTopic.getUri());
+        for (Link link : byUris){
+            linkDao.remove(link.getLinkId());
+        }
     }
 
     @RequestMapping("add-related")
