@@ -115,7 +115,7 @@ public class RestExceptionHandler extends AbstractHandlerExceptionResolver imple
         ServletWebRequest webRequest = new ServletWebRequest(request, response);
 
 //        if (!WebUtils.isIncludeRequest(webRequest.getRequest())) {
-        webRequest.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            webRequest.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 //        }
 
         RestErrorResolver resolver = getErrorResolver();

@@ -42,9 +42,9 @@ public class CommonDaoImpl implements CommonDao {
     @Override
     public <E> E getRandom(Class<E> clazz) {
         return (E) sessionFactory.getCurrentSession().createCriteria(clazz)
-                .add(Restrictions.sqlRestriction("1=1 order by rand()"))
-                .setMaxResults(1)
-                .list().get(0);
+             .add(Restrictions.sqlRestriction("1=1 order by rand()"))
+             .setMaxResults(1)
+             .list().get(0);
     }
 
     @Nullable
@@ -203,18 +203,18 @@ public class CommonDaoImpl implements CommonDao {
     @Override
     public <E> List<E> getLike(Class<E> className, String field, String value, Integer limit) {
         return list(sessionFactory.getCurrentSession()
-                        .createCriteria(className)
-                        .add(ilike(field, value))
-                        .setMaxResults(limit)
+                .createCriteria(className)
+                .add(ilike(field, value))
+                .setMaxResults(limit)
         );
     }
 
     @Override
     public <E> List<E> getOrdered(Class<E> clazz, String field, boolean ascending, int limit) {
         return list(sessionFactory.getCurrentSession()
-                        .createCriteria(clazz)
-                        .addOrder(ascending ? Order.asc(field) : Order.desc(field))
-                        .setMaxResults(limit)
+                .createCriteria(clazz)
+                .addOrder(ascending ? Order.asc(field) : Order.desc(field))
+                .setMaxResults(limit)
         );
     }
 }
