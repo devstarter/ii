@@ -19,21 +19,21 @@ import static com.jayway.restassured.RestAssured.given;
 public class TopicControllerTest {
     @Test
     public void testGet() {
-        addChild("1001", "2015");
-        addChild("1001", "3015");
-        addChild("4", "1001");
+        addChild("156", "2");
+        addChild("156", "1001");
+        addChild("400", "156");
 
         // todo добавить ещё чайлда "3" и парента "4"
 
-        given().param("name", "1001").
+        given().param("name", "156").
         when().get("/api/topic").
         then().
             log().all().
             statusCode(HttpStatus.SC_OK).
-            body("name", Matchers.is("1001")).
-            body("uri", Matchers.is("тема:1001")).
-            body("children", Matchers.hasItems("3015", "2015")).
-            body("parents", Matchers.hasItem("4"))
+            body("name", Matchers.is("156")).
+            body("uri", Matchers.is("тема:156")).
+            body("children", Matchers.hasItems("2", "1001")).
+            body("parents", Matchers.hasItem("400"))
         ;
     }
 
@@ -67,23 +67,24 @@ public class TopicControllerTest {
         addChild("1", "2012");
     }
 
-    @Test//(expected = AssertionError.class)
+    @Test(expected = AssertionError.class)
     public void testAddChildWrong() {
-        addChild("2012", "1");
+        addChild("1", "4");
+        addChild("4", "1");
     }
 
-//    @Test
-//    public void testUnLink() {
-//        // сначала прилинковываем
-//        addChild("1", "2011");
-//
-//        given().
-//                param("name", "1", "linked", "2011").
-//        when().
-//            get("/api/topic/unlink").
-//        then().
-//            log().all().
-//            statusCode(HttpStatus.SC_OK)
-//        ;
-//    }
+    @Test
+    public void testUnLink() {
+        // сначала прилинковываем
+        addChild("1001", "2015");
+
+        given().
+                params("name", "1001", "linked", "2015").
+        when().
+            get("/api/topic/unlink").
+        then().
+            log().all().
+            statusCode(HttpStatus.SC_OK)
+        ;
+    }
 }

@@ -116,21 +116,24 @@ public class TopicController {
 
     @RequestMapping("add-child")
     public void addChild(@RequestParam String name, @RequestParam String child) {
-
-            Stream<TopicProvider> childrenOfParent = topicService.getByName(child).children();
-            if(childrenOfParent.noneMatch(name::equals)) topicService.findOrCreate(name).addChild(child);
-            
+            if(topicService.getByName(child)==null) {
+                topicService.findOrCreate(name).addChild(child);
+            }else{
+                List<Topic> childrenOfParent = topicService.getByName(child).children().map(TopicProvider::topic).collect(toList());
+                for (Topic topic : childrenOfParent) {
+                    if (!topic.getName().equals(name)) {
+                        topicService.findOrCreate(name).addChild(child);
+                    } else {
+                        throw new RuntimeException("The parent has a child for the given name");
+                    }
+                }
+            }
     }
 
     @RequestMapping("unlink")
 
-    public void unlink(@PathVariable String name, @PathVariable String linked) {
-        Topic topic = (Topic) topicService.findOrCreate(name);
-        Topic linkedTopic = (Topic) topicService.findOrCreate(linked);
-        List<Link> byUris = linkDao.getByUris(topic.getUri(), linkedTopic.getUri());
-        for (Link link : byUris){
-            linkDao.remove(link.getLinkId());
-        }
+    public void unlink(@RequestParam String name,@RequestParam String linked) {
+        topicService.getByName(name).unlink(name, linked);
     }
 
     @RequestMapping("add-related")
