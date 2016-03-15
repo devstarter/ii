@@ -42,9 +42,9 @@ public class CommonDaoImpl implements CommonDao {
     @Override
     public <E> E getRandom(Class<E> clazz) {
         return (E) sessionFactory.getCurrentSession().createCriteria(clazz)
-             .add(Restrictions.sqlRestriction("1=1 order by rand()"))
-             .setMaxResults(1)
-             .list().get(0);
+            .add(Restrictions.sqlRestriction("1=1 order by rand()"))
+            .setMaxResults(1)
+            .list().get(0);
     }
 
     @Nullable
