@@ -4,28 +4,28 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean class="org.springframework.mail.javamail.JavaMailSenderImpl" >
+    <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" >
 		<property name="host" value="smtp.gmail.com" />
 		<property name="port" value="587" />
 		<property name="username" value="${mail.user}" />
 		<property name="password" value="${mail.password}" />
-
+	 
 		<property name="javaMailProperties">
-			<props>
-				<prop key="mail.smtp.auth">true</prop>
-				<prop key="mail.smtp.starttls.enable">true</prop>
-			</props>
+		   <props>
+				  <prop key="mail.smtp.auth">true</prop>
+				  <prop key="mail.smtp.starttls.enable">true</prop>
+			   </props>
 		</property>
 	</bean>
 
-	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
 
-	<bean class="com.pushbullet.PushbulletClient">
-		<property name="key" value="${pushbullet.key}"/>
-		<property name="restTemplate" ref="restTemplate"/>
-	</bean>
+    <bean class="com.pushbullet.PushbulletClient">
+        <property name="key" value="${pushbullet.key}"/>
+        <property name="restTemplate" ref="restTemplate"/>
+    </bean>
 
-	<bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
-		<property name="poolSize" value="2"/>
-	</bean>
+    <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+        <property name="poolSize" value="2"/>
+    </bean>
 </beans>
