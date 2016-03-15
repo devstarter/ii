@@ -159,6 +159,7 @@ class TopicServiceImpl implements TopicService {
             final TopicResources resources = new TopicResources();
             resources.video.addAll(prepareResource(VideoResource.class));
             resources.item.addAll(prepareResource(Item.class));
+            resources.itemsRange.addAll(prepareResource(ItemsRange.class));
             return resources;
         }
 

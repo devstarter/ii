@@ -3,6 +3,7 @@ package org.ayfaar.app.controllers;
 import lombok.Builder;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
+import org.ayfaar.app.model.ItemsRange;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Topic;
 import org.ayfaar.app.model.UID;
@@ -75,6 +76,20 @@ public class TopicController {
         final TopicProvider topic = topicService.findOrCreate(name);
         topic.link(null, uid, comment, quote, rate);
         return topic.topic();
+    }
+
+    @RequestMapping(value = "for/items-range", method = POST)
+    public void addFor(@RequestParam String from,
+                        @RequestParam String to,
+                        @RequestParam String topicName,
+                        @RequestParam(required = false) String rangeName,
+                        @RequestParam(required = false) String quote,
+                        @RequestParam(required = false) String comment,
+                        @RequestParam(required = false) Float rate) throws Exception {
+        ItemsRange itemsRange = ItemsRange.builder().from(from).to(to).description(rangeName).build();
+        itemsRange = commonDao.save(itemsRange);
+        final TopicProvider topic = topicService.findOrCreate(topicName);
+        topic.link(null, itemsRange, comment, quote, rate);
     }
 
     @RequestMapping(value = "rate", method = POST)

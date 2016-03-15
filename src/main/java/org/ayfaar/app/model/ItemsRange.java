@@ -1,43 +1,51 @@
 package org.ayfaar.app.model;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.ayfaar.app.annotations.Uri;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+
+import static org.ayfaar.app.model.ItemsRange.NAME_SPACE;
 
 @Entity
 @PrimaryKeyJoinColumn(name="uri")
 @NoArgsConstructor
-@Uri(nameSpace = "ии:пункты:")
+@Uri(nameSpace = NAME_SPACE)
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ItemsRange extends UID {
-
+    public static final String NAME_SPACE = "ии:пункты:";
     public static final Class SEQUENCE = ItemsRangeSeq.class;
-//    first: 5.0001
-//    last: 5.0002 (определил по следующей строке)
+//    from: 5.0001
+//    to: 5.0002 (определил по следующей строке)
 //    code: 5.17.1.1 (том.раздел.глава.параграф)
 //    description: "Ииссиидиология не признаётся наукой, которая в свою очередь не может ответить на вопросы о структуре Самосознания. Поэтому представления людей о "своей душе" туманны и надуманы."
 //    uri: ии:пункты:5.17.1.1
-
-    private String first;
-    private String last;
+    @Column(name = "`from`")
+    private String from;
+    @Column(name = "`to`")
+    private String to;
     @Column(unique = true)
     private String code;
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    public ItemsRange(String first, String last, String code, String description) {
-        this.first = first;
-        this.last = last;
+    @Builder
+    public ItemsRange(String from, String to, String code, String description) {
+        this.from = from;
+        this.to = to;
         this.code = code;
         this.description = description;
+        if (this.code == null) this.code = this.from + "-" + this.to;
     }
 
     @Override
     public String toTitle() {
-        return first + " - " + last;
+        return description != null && !description.isEmpty() ? description : code;
     }
 }

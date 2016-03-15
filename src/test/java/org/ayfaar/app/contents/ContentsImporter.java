@@ -13,7 +13,6 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.ItemsRange;
 import org.ayfaar.app.utils.RomanNumber;
-import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -182,7 +181,7 @@ public class ContentsImporter {
                                                             lastItem,
                                                             code,
                                                             itemBookList.get(i).getTitle());
-                    itemsRange.setUri(UriGenerator.generate(ItemsRange.class, code));
+//                    itemsRange.setUri(UriGenerator.generate(ItemsRange.class, code));
                     validate(itemsRange);
                     itemsRanges.add(itemsRange);
                     break;
@@ -192,12 +191,11 @@ public class ContentsImporter {
     }
 
     private static void validate(ItemsRange range) {
-        Assert.isTrue(Item.isItemNumber(range.getFirst()), "...");
-        Assert.isTrue(Item.isItemNumber(range.getLast()), "...");
+        Assert.isTrue(Item.isItemNumber(range.getFrom()), "...");
+        Assert.isTrue(Item.isItemNumber(range.getTo()), "...");
         Assert.isTrue(range.getCode().matches("^(\\d+\\.){3}\\d+$"), "...");
         Assert.hasLength(range.getDescription(), "...");
         Assert.isTrue(range.getDescription().length() < 500, "...");
-        Assert.hasLength(range.getUri(), "...");
     }
 
     private static int getStep(List<ItemBook> itemBookList, int i) throws XLSParsingException{
