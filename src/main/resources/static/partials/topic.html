@@ -1,24 +1,24 @@
 <div class="title">
     <span class="gray">Тема:</span>
     <h1 class="inline" style="padding-bottom: 20px">{{name}}</h1>
-    <a ng-hide="parents" class="h btn btn-link" ng-click="addParent()" style="display: block;text-align: left">Добавить родительскую тему</a>
-    <div ng-show="parents" class="parents h" style="padding-top: 20px">
-        <span class="gray">Родительские темы:</span>
-        <a ng-repeat="parent in parents" topic-ref="parent">{{parent}}{{$last ? '' : ', '}}</a>
-        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addParent()" title="Добавить родительскую тему"></i>
-    </div>
+    <br>
+    <a ng-hide="parents" class="h btn btn-default" ng-click="addParent()">Добавить родительскую тему</a>
+    <a ng-hide="children" class="h btn btn-default" ng-click="addChild()">Добавить дочернюю тему</a>
+</div>
+<div ng-show="parents" class="parents h" style="padding-top: 20px">
+    <span class="gray">Родительские темы:</span>
+    <a ng-repeat="parent in parents" topic-ref="parent">{{parent}}{{$last ? '' : ', '}}</a>
+    <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addParent()" title="Добавить родительскую тему"></i>
 </div>
 <div style="padding-top: 20px">
     <div ng-show="children" class="children">
         <span class="gray">Дочерние темы</span>
         <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addChild()" title="Добавить дочернюю тему"></i>
         <span class="linked-topic" ng-repeat="child in children">
-            <a class="btn btn-link topic" topic-ref="child"></a>
+            <h4 class="topic" topic-ref="child" title="{{child}}">{{child | cut:true:70}}</h4>
             <a class="btn glyphicon glyphicon-remove" ng-click="unlink(child)" title="Удалить связь с темой"></a>
         </span>
     </div>
-    <span ng-hide="children" >Нет дочерних тем</span>
-    <a ng-hide="children" class="btn btn-link" ng-click="addChild()">Добавить дочернюю тему</a>
 </div>
 <div style="padding-top: 20px">
     <div ng-show="resources.video" class="children">
@@ -55,8 +55,16 @@
     .children .h {visibility: hidden}
     .children:hover .h {visibility: visible}
 
-    .linked-topic {display: table-row;}
-    .linked-topic .topic {padding-right: 0}
+    .linked-topic {
+        padding: 10px 0 10px 0;
+        display: block;
+        white-space: nowrap;
+    }
+    .linked-topic .topic {
+        text-align: left;
+        display: inline;
+        cursor: pointer;
+    }
     .linked-topic .glyphicon {display: none; color: black}
     .linked-topic:hover .glyphicon {display: inline}
 </style>

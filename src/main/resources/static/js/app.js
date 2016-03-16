@@ -460,7 +460,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 if (topicName.hasOwnProperty("name")) topicName = topicName.name;
                 if (!topicName) return;
                 element.attr('href', "t/"+topicName);
-                if (!element[0].innerText) element.append(topicName);
+                if (!element[0].innerText) element[0].innerText = topicName;
                 element.bind('click', function() {
                     $state.goToTopic(topicName)
                 })

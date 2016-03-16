@@ -44,7 +44,7 @@ public interface TopicProvider {
     void addChild(String name);
 
     /**
-     * @return все ресурсы (пока только VideoResource) связаные любыми линками с этой темой
+     * @return все ресурсы связаные любыми линками с этой темой
      */
     TopicResources resources();
 
