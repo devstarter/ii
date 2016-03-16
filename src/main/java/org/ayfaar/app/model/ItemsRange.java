@@ -9,6 +9,7 @@ import org.ayfaar.app.annotations.Uri;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
+import java.util.Date;
 
 import static org.ayfaar.app.model.ItemsRange.NAME_SPACE;
 
@@ -34,6 +35,7 @@ public class ItemsRange extends UID {
     private String code;
     @Column(columnDefinition = "TEXT")
     private String description;
+    private Date createdAt = new Date();
 
     @Builder
     public ItemsRange(String from, String to, String code, String description) {
