@@ -130,14 +130,18 @@ public class TopicController {
 
     @RequestMapping("add-child")
     public void addChild(@RequestParam String name, @RequestParam String child) {
+        if (topicService.hasTopic(name) && topicService.hasTopic(child)) {
+            boolean alreadyParent = topicService.getByName(child).children().anyMatch(c -> c.name().equals(name));
+            if (alreadyParent) {
+                throw new RuntimeException("The parent has a child for the given name");
+            }
+        }
         topicService.findOrCreate(name).addChild(child);
     }
 
     @RequestMapping("unlink")
-    // убрать связь
-    // todo: Implement
-    public void unlink(@RequestParam String name, @RequestParam String linked) {
-        throw new RuntimeException("Unimplemented");
+    public void unlink(@RequestParam String name,@RequestParam String linked) {
+        topicService.getByName(name).unlink(name, linked);
     }
 
     @RequestMapping("merge")

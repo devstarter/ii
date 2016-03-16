@@ -42,6 +42,7 @@ public interface TopicProvider {
     String uri();
 
     void addChild(String name);
+    void unlink(String name, String linked);
 
     /**
      * @return все ресурсы связаные любыми линками с этой темой

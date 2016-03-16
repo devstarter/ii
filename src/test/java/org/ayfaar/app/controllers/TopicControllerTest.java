@@ -20,6 +20,8 @@ public class TopicControllerTest {
     @Test
     public void testGet() {
         addChild("1", "2");
+        addChild("1", "10");
+        addChild("4", "1");
 
         // todo добавить ещё чайлда "3" и парента "4"
 
@@ -30,10 +32,11 @@ public class TopicControllerTest {
             statusCode(HttpStatus.SC_OK).
             body("name", Matchers.is("1")).
             body("uri", Matchers.is("тема:1")).
-            body("children", Matchers.hasItems("3", "2")).
+            body("children", Matchers.hasItems("2", "10")).
             body("parents", Matchers.hasItem("4"))
         ;
     }
+
 
     private void addChild(String name, String child) {
         given().
@@ -58,9 +61,16 @@ public class TopicControllerTest {
         ;
     }
 
+
     @Test
     public void testAddChild() {
         addChild("1", "2");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testAddChildWrong() {
+        addChild("1", "2");
+        addChild("2", "1");
     }
 
     @Test

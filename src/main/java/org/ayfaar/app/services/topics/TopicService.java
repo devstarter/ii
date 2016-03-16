@@ -24,4 +24,7 @@ public interface TopicService {
     }
 
     void reload();
+
+
+    boolean hasTopic(String name);
 }
