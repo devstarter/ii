@@ -5,12 +5,14 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Topic;
 import org.ayfaar.app.model.UID;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
 public interface TopicProvider {
+    @NotNull
     String name();
 
     default void link(LinkType type, UID uid) {
@@ -33,8 +35,10 @@ public interface TopicProvider {
         addChild(topicProvider.topic());
     }
 
+    @NotNull
     Topic topic();
 
+    @NotNull
     String uri();
 
     void addChild(String name);

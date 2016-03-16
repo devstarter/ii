@@ -4,9 +4,11 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.utils.UriGenerator;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -50,11 +52,13 @@ class TopicServiceImpl implements TopicService {
         logger.info("Topics loaded");
     }
 
+    @NotNull
     @Override
     public Optional<TopicProvider> get(String uri) {
         return Optional.ofNullable(topics.get(uri));
     }
 
+    @NotNull
     @Override
     public TopicProvider findOrCreate(String name) {
         return Optional.ofNullable(topics.get(UriGenerator.generate(Topic.class, name)))
@@ -77,9 +81,11 @@ class TopicServiceImpl implements TopicService {
         private Map<UID, Link> linksMap = new HashMap<>();
 
         private TopicProviderImpl(Topic topic) {
+            Assert.notNull(topic);
             this.topic = topic;
         }
 
+        @NotNull
         @Override
         public String name() {
             return topic.getName();
@@ -139,11 +145,13 @@ class TopicServiceImpl implements TopicService {
 
 
 
+        @NotNull
         @Override
         public Topic topic() {
             return topic;
         }
 
+        @NotNull
         @Override
         public String uri() {
             return topic.getUri();
