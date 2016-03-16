@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.hasLength;
@@ -130,14 +131,21 @@ public class TopicController {
 
     @RequestMapping("add-child")
     public void addChild(@RequestParam String name, @RequestParam String child) {
-        topicService.findOrCreate(name).addChild(child);
+        List<Topic> childrenOfParent = topicService.getByName(child).children().map(TopicProvider::topic).collect(toList());
+        for (Topic topic : childrenOfParent) {
+            if (!topic.getName().equals(name)) {
+                topicService.findOrCreate(name).addChild(child);
+            } else {
+                throw new RuntimeException("The parent has a child for the given name");
+            }
+        }
+
     }
 
     @RequestMapping("unlink")
-    // убрать связь
-    // todo: Implement
-    public void unlink(@RequestParam String name, @RequestParam String linked) {
-        throw new RuntimeException("Unimplemented");
+
+    public void unlink(@RequestParam String name,@RequestParam String linked) {
+        topicService.getByName(name).unlink(name, linked);
     }
 
     @RequestMapping("add-related")

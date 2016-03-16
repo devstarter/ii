@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
+
 @Component
 class TopicServiceImpl implements TopicService {
     private static final Logger logger = LoggerFactory.getLogger(TopicServiceImpl.class);
@@ -88,10 +90,11 @@ class TopicServiceImpl implements TopicService {
         @Override
         public Link link(LinkType type, UID uid, String comment, String quote, Float rate) {
             Link link = linksMap.get(uid);
-            if (link != null)
-                throw new RuntimeException("Link already exist with another type: "+link.getType());
+            if (link != null && link.getType()!= null && !link.getType().isChild())
+                throw new RuntimeException("Link already exist with another type: " + link.getType());
 
             // link = linkRepository.save(new Link(topic, uid, type, comment)); this throw error
+
             link = linkDao.save(Link.builder()
                     .uid1(topic)
                     .uid2(uid)
@@ -115,7 +118,7 @@ class TopicServiceImpl implements TopicService {
                             link.getUid1() instanceof Topic
                             && link.getUid2() instanceof Topic
                             && link.getUid1().getUri().equals(uri())
-                            && link.getType().isChild())
+                            && link.getType() == LinkType.CHILD)
                     .map(l -> new TopicProviderImpl((Topic) l.getUid2()));
         }
 
@@ -151,7 +154,24 @@ class TopicServiceImpl implements TopicService {
 
         @Override
         public void addChild(String name) {
-            addChild(findOrCreate(name));
+                 addChild(findOrCreate(name));
+        }
+
+        @Override
+        public void unlink(String name, String linked) {
+            String uriFirst = getByName(name).uri();
+            String uriSec = getByName(linked).uri();
+            List<Link> removed = linksMap.values().stream()
+                    .filter(link ->
+                            (link.getUid1().getUri().equals(uriFirst)
+                                    && link.getUid2().getUri().equals(uriSec))
+                                    || (link.getUid1().getUri().equals(uriSec)
+                                    && link.getUid2().getUri().equals(uriFirst)))
+                    .collect(Collectors.toList());
+            for (Link link : removed){
+                linkDao.remove(link.getLinkId());
+            }
+
         }
 
         @Override
