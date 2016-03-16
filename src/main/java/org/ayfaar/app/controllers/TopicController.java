@@ -116,18 +116,15 @@ public class TopicController {
 
     @RequestMapping("add-child")
     public void addChild(@RequestParam String name, @RequestParam String child) {
-            if(topicService.getByName(child)==null) {
+        List<Topic> childrenOfParent = topicService.getByName(child).children().map(TopicProvider::topic).collect(toList());
+        for (Topic topic : childrenOfParent) {
+            if (!topic.getName().equals(name)) {
                 topicService.findOrCreate(name).addChild(child);
-            }else{
-                List<Topic> childrenOfParent = topicService.getByName(child).children().map(TopicProvider::topic).collect(toList());
-                for (Topic topic : childrenOfParent) {
-                    if (!topic.getName().equals(name)) {
-                        topicService.findOrCreate(name).addChild(child);
-                    } else {
-                        throw new RuntimeException("The parent has a child for the given name");
-                    }
-                }
+            } else {
+                throw new RuntimeException("The parent has a child for the given name");
             }
+        }
+
     }
 
     @RequestMapping("unlink")

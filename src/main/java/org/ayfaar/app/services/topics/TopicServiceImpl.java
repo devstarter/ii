@@ -163,8 +163,10 @@ class TopicServiceImpl implements TopicService {
             String uriSec = getByName(linked).uri();
             List<Link> removed = linksMap.values().stream()
                     .filter(link ->
-                            link.getUid1().getUri().equals(uriFirst)
+                            (link.getUid1().getUri().equals(uriFirst)
                                     && link.getUid2().getUri().equals(uriSec))
+                                    || (link.getUid1().getUri().equals(uriSec)
+                                    && link.getUid2().getUri().equals(uriFirst)))
                     .collect(Collectors.toList());
             for (Link link : removed){
                 linkDao.remove(link.getLinkId());
