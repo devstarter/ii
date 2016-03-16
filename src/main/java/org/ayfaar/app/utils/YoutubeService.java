@@ -21,7 +21,9 @@ public class YoutubeService {
         final Map response = restTemplate.getForObject("https://content.googleapis.com/youtube/v3/videos?part={part}&id={id}&key={key}",
                 Map.class, "snippet", id, KEY);
         //noinspection unchecked
-        final Map snippet = (Map) ((List<Map>) response.get("items")).get(0).get("snippet");
+        final List<Map> items = (List<Map>) response.get("items");
+        if (response.isEmpty()) throw new RuntimeException("Video private or removed");
+        final Map snippet = (Map) items.get(0).get("snippet");
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         return new VideoInfo((String) snippet.get("title"), dateFormat.parse((String) snippet.get("publishedAt")));
     }
