@@ -140,6 +140,21 @@ public class TopicController {
         throw new RuntimeException("Unimplemented");
     }
 
+    @RequestMapping("merge")
+    // Слияние двух веток
+    // todo: Implement
+    public void merge(@RequestParam String main, @RequestParam String mergeWith) {
+        throw new RuntimeException("Unimplemented");
+        /**
+         * алгоритм:
+         * 1. Получаем тему для слияния (mergeWith), если такой нет - ошибка
+         * 2. Получаем или создаём основную тему (main)
+         * 3. Все линки с mergeWith пересоздаём для main
+         * 4. Удаляем mergeWith
+         */
+        // добавить метод merge TopicProvider'у
+    }
+
     @RequestMapping("add-related")
     // todo: Implement
     public void addRelated(@RequestParam String name, @RequestParam String related) {
