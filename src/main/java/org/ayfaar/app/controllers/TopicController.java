@@ -146,23 +146,19 @@ public class TopicController {
 
     @RequestMapping("merge")
     // Слияние двух веток
-    // todo: Implement
     public void merge(@RequestParam String main, @RequestParam String mergeWith) {
-        throw new RuntimeException("Unimplemented");
-        /**
-         * алгоритм:
-         * 1. Получаем тему для слияния (mergeWith), если такой нет - ошибка
-         * 2. Получаем или создаём основную тему (main)
-         * 3. Все линки с mergeWith пересоздаём для main
-         * 4. Удаляем mergeWith
-         */
-        // добавить метод merge TopicProvider'у
+        if (topicService.hasTopic(mergeWith)) {
+            topicService.findOrCreate(main);
+            topicService.getByName(main).merge(main,mergeWith);
+            topicService.getByName(mergeWith).delete(mergeWith);
+        }else{
+            throw new RuntimeException("Topic for " + mergeWith + " not found");
+        }
     }
 
     @RequestMapping("add-related")
-    // todo: Implement
     public void addRelated(@RequestParam String name, @RequestParam String related) {
-        throw new RuntimeException("Unimplemented");
+        topicService.findOrCreate(name).link(topicService.findOrCreate(related).topic());
     }
 
     @RequestMapping("children")
