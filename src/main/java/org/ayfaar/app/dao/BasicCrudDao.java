@@ -4,9 +4,12 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 public interface BasicCrudDao<E> {
     E save(E entity);
@@ -91,6 +94,17 @@ public interface BasicCrudDao<E> {
     List<E> getPage(int skip, int pageSize, String sortField, String sortDirection);
     @NotNull
     List<E> getPage(int skip, int pageSize, String sortField, String sortDirection, List<String> aliases, List<Criterion> criterions);
+
+    @NotNull
+    default List<E> getPage(Pageable pageable) {
+        final Sort sort = pageable.getSort();
+        Optional<Sort.Order> order = Optional.ofNullable(sort.iterator().hasNext() ? sort.iterator().next() : null);
+        return getPage(
+                pageable.getOffset(),
+                pageable.getPageSize(),
+                order.orElseGet(() -> null).getProperty(),
+                order.orElseGet(() -> null).getDirection().name());
+    }
 
     @NotNull
     Long getCount();

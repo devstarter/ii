@@ -42,7 +42,7 @@ public interface TopicProvider {
     String uri();
 
     void addChild(String name);
-    void unlink(String name, String linked);
+    void unlink(String linked);
 
     /**
      * @return все ресурсы связаные любыми линками с этой темой
@@ -59,6 +59,7 @@ public interface TopicProvider {
         public List<ResourcePresentation> video = new LinkedList<>();
         public List<ResourcePresentation> item = new LinkedList<>();
         public List<ResourcePresentation> itemsRange = new LinkedList<>();
+        public List<ResourcePresentation> document = new LinkedList<>();
     }
 
     class ResourcePresentation {

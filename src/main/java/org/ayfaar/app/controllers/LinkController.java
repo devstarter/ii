@@ -4,31 +4,29 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.dao.TermMorphDao;
+import org.ayfaar.app.events.NewLinkEvent;
+import org.ayfaar.app.events.NewQuoteLinkEvent;
 import org.ayfaar.app.events.TermUpdatedEvent;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
-import org.ayfaar.app.events.NewLinkEvent;
-import org.ayfaar.app.events.NewQuoteLinkEvent;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
-
 import java.util.List;
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-@Controller
+@RestController
 @RequestMapping("api/link")
 public class LinkController {
     @Autowired LinkDao linkDao;
@@ -106,5 +104,10 @@ public class LinkController {
     @ResponseBody
     public List<Link> getCreatedFromSearch(){
         return linkDao.getList("source", "search");
+    }
+
+    @RequestMapping("last")
+    public List<Link> getLast(@PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable) {
+        return linkDao.getPage(pageable);
     }
 }

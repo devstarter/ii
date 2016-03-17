@@ -16,8 +16,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-
 @Component
 class TopicServiceImpl implements TopicService {
     private static final Logger logger = LoggerFactory.getLogger(TopicServiceImpl.class);
@@ -85,7 +83,7 @@ class TopicServiceImpl implements TopicService {
 
     private class TopicProviderImpl implements TopicProvider {
         private final Topic topic;
-        private Map<UID, Link> linksMap = new HashMap<>();
+        protected Map<UID, Link> linksMap = new HashMap<>();
 
         private TopicProviderImpl(Topic topic) {
             Assert.notNull(topic);
@@ -167,24 +165,13 @@ class TopicServiceImpl implements TopicService {
 
         @Override
         public void addChild(String name) {
-                 addChild(findOrCreate(name));
+            addChild(findOrCreate(name));
         }
 
         @Override
-        public void unlink(String name, String linked) {
-            String uriFirst = getByName(name).uri();
-            String uriSec = getByName(linked).uri();
-            List<Link> removed = linksMap.values().stream()
-                    .filter(link ->
-                            (link.getUid1().getUri().equals(uriFirst)
-                                    && link.getUid2().getUri().equals(uriSec))
-                                    || (link.getUid1().getUri().equals(uriSec)
-                                    && link.getUid2().getUri().equals(uriFirst)))
-                    .collect(Collectors.toList());
-            for (Link link : removed){
-                linkDao.remove(link.getLinkId());
-            }
-
+        public void unlink(String linked) {
+            final Link link = linksMap.remove(getByName(linked).topic());
+            linkDao.remove(link.getLinkId());
         }
 
         @Override
@@ -193,6 +180,7 @@ class TopicServiceImpl implements TopicService {
             resources.video.addAll(prepareResource(VideoResource.class));
             resources.item.addAll(prepareResource(Item.class));
             resources.itemsRange.addAll(prepareResource(ItemsRange.class));
+            resources.document.addAll(prepareResource(Document.class));
             return resources;
         }
 

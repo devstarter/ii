@@ -211,10 +211,12 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         currentSession().delete(entity);
     }
 
+    @NotNull
     public List<E> getPage(int skip, int pageSize) {
         return list(criteria().setFirstResult(skip).setMaxResults(pageSize));
     }
 
+    @NotNull
     public List<E> getPage(int skip, int pageSize, String sortField, String sortDirection) {
         Criteria criteria = currentSession().createCriteria(entityClass)
                 .setFirstResult(skip)
@@ -248,6 +250,7 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         return list(criteria);
     }
 
+    @NotNull
     public Long getCount() {
         return (Long) currentSession().createQuery("select count (*) from "+entityClass.getName())
                 .uniqueResult();
@@ -278,6 +281,7 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         return (Long) criteria.uniqueResult();
     }
 
+    @NotNull
     @Override
     public List<E> getAll() {
         return criteria()

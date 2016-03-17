@@ -141,7 +141,7 @@ public class TopicController {
 
     @RequestMapping("unlink")
     public void unlink(@RequestParam String name,@RequestParam String linked) {
-        topicService.getByName(name).unlink(name, linked);
+        topicService.getByName(name).unlink(linked);
     }
 
     @RequestMapping("merge")
@@ -167,7 +167,6 @@ public class TopicController {
 
     @RequestMapping("children")
     public List<Topic> linkChild(@RequestParam String name) {
-        if (topicService.getByName(name) == null) return null;
         return topicService.getByName(name)
                 .children()
                 .map(TopicProvider::topic).collect(toList());
