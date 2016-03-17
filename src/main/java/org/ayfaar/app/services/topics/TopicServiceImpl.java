@@ -188,6 +188,34 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
+        public void delete(String name) {
+            List<Link> deleted = linksMap.values().stream()
+                    .filter(link ->
+                            link.getUid1().getUri().equals(name)
+                                    || link.getUid2().getUri().equals(name))
+                    .collect(Collectors.toList());
+            for (Link link : deleted){
+                linkDao.remove(link.getLinkId());
+            }
+        }
+
+        @Override
+        public void merge(String main,String mergeWith) {
+            List<Link> merged = linksMap.values().stream()
+                    .filter(link ->
+                            link.getUid1().getUri().equals(mergeWith)
+                                    || link.getUid2().getUri().equals(mergeWith))
+                    .collect(Collectors.toList());
+            for (Link link : merged){
+                getByName(main).link(link.getType(),
+                        (UID)getByName(mergeWith),
+                        link.getComment(),
+                        link.getQuote(),
+                        link.getRate());
+            }
+        }
+
+        @Override
         public TopicResources resources() {
             final TopicResources resources = new TopicResources();
             resources.video.addAll(prepareResource(VideoResource.class));

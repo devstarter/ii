@@ -21,7 +21,7 @@ public class TopicControllerTest {
     public void testGet() {
         addChild("1", "2");
         addChild("1", "10");
-        addChild("4", "1");
+        addChild("5", "1");
 
         // todo добавить ещё чайлда "3" и парента "4"
 
@@ -33,7 +33,7 @@ public class TopicControllerTest {
             body("name", Matchers.is("1")).
             body("uri", Matchers.is("тема:1")).
             body("children", Matchers.hasItems("2", "10")).
-            body("parents", Matchers.hasItem("4"))
+            body("parents", Matchers.hasItem("5"))
         ;
     }
 
@@ -85,6 +85,21 @@ public class TopicControllerTest {
         then().
             log().all().
             statusCode(HttpStatus.SC_OK)
+        ;
+    }
+
+    @Test
+    public void testMerge() {
+        addChild("1", "2");
+        addChild("101", "2011");
+        addChild("4", "101");
+        given().
+                params("main", "101", "mergeWith", "1").
+                when().
+                get("/api/topic/merge").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_OK)
         ;
     }
 }
