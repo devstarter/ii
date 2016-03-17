@@ -188,6 +188,28 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
+        public void delete() {
+            commonDao.remove(topic);
+            topics.remove(topic.getName());
+            //topic().setUri(null);
+
+        }
+
+        @Override
+        public void merge(String main,String mergeWith) {
+
+            Collection<Link> links = ((TopicProviderImpl) getByName(mergeWith)).linksMap.values();
+
+            for (Link link : links){
+                getByName(main).link(link.getType(),
+                        link.getUid2(),
+                        link.getComment(),
+                        link.getQuote(),
+                        link.getRate());
+            }
+        }
+
+        @Override
         public TopicResources resources() {
             final TopicResources resources = new TopicResources();
             resources.video.addAll(prepareResource(VideoResource.class));

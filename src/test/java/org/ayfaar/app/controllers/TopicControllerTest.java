@@ -21,7 +21,7 @@ public class TopicControllerTest {
     public void testGet() {
         addChild("1", "2");
         addChild("1", "10");
-        addChild("4", "1");
+        addChild("5", "1");
 
         // todo добавить ещё чайлда "3" и парента "4"
 
@@ -33,7 +33,7 @@ public class TopicControllerTest {
             body("name", Matchers.is("1")).
             body("uri", Matchers.is("тема:1")).
             body("children", Matchers.hasItems("2", "10")).
-            body("parents", Matchers.hasItem("4"))
+            body("parents", Matchers.hasItem("5"))
         ;
     }
 
@@ -85,6 +85,43 @@ public class TopicControllerTest {
         then().
             log().all().
             statusCode(HttpStatus.SC_OK)
+        ;
+    }
+
+    @Test
+    public void testMerge() {
+        addChild("1011", "2012");
+        addChild("101", "2011");
+        addChild("4", "101");
+        given().
+                params("main", "101", "mergeWith", "1011").
+                when().
+                get("/api/topic/merge").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_OK)
+        ;
+
+//        given().param("name", "1011").
+//                when().get("/api/topic").
+//                then().
+//                log().all().
+//                statusCode(HttpStatus.SC_OK).
+//                body("name", Matchers.is("1011")).
+//                body("uri", Matchers.is("тема:1011")).
+//                body("children", Matchers.hasItems("2012")).
+//                body("parents", Matchers.hasItem("4"))
+//        ;  это для проверки удалился ли топик(недоделанный!!!)
+
+        given().param("name", "101").
+                when().get("/api/topic").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_OK).
+                body("name", Matchers.is("101")).
+                body("uri", Matchers.is("тема:101")).
+                body("children", Matchers.hasItems("2011","2012")).
+                body("parents", Matchers.hasItem("4"))
         ;
     }
 }
