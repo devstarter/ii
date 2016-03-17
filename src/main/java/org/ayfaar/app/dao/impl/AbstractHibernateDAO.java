@@ -11,6 +11,8 @@ import org.hibernate.type.StringType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -248,6 +250,18 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         }
 
         return list(criteria);
+    }
+
+    @NotNull
+    @Override
+    public List<E> getPage(Pageable pageable) {
+        final Sort sort = pageable.getSort();
+        Optional<Sort.Order> order = Optional.ofNullable(sort.iterator().hasNext() ? sort.iterator().next() : null);
+        return getPage(
+                pageable.getOffset(),
+                pageable.getPageSize(),
+                order.orElseGet(() -> null).getProperty(),
+                order.orElseGet(() -> null).getDirection().name());
     }
 
     @NotNull
