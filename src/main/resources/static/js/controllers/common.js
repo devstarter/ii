@@ -51,7 +51,7 @@ function HomeController($scope, $state) {
 
 
 function ItemController($scope, $stateParams, $state, $api) {
-    $scope.number = $stateParams.number;
+    $scope.number = $stateParams.number.trim();
     if (!$scope.number) {
         $state.goToHome();
         return

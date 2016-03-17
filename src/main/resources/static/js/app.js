@@ -39,7 +39,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 controller: ArticleController
             })
             .state('item', {
-                url: "/{number:\\d+\\.\\d+}",
+                url: "/{number: \\s*\\d+\\.\\d+}",
                 templateUrl: "static/partials/item.html",
                 controller: ItemController
             })
