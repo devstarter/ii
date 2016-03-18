@@ -171,28 +171,15 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
-        public void unlink(String name, String linked) {
-            String uriFirst = getByName(name).uri();
-            String uriSec = getByName(linked).uri();
-            List<Link> removed = linksMap.values().stream()
-                    .filter(link ->
-                            (link.getUid1().getUri().equals(uriFirst)
-                                    && link.getUid2().getUri().equals(uriSec))
-                                    || (link.getUid1().getUri().equals(uriSec)
-                                    && link.getUid2().getUri().equals(uriFirst)))
-                    .collect(Collectors.toList());
-            for (Link link : removed){
-                linkDao.remove(link.getLinkId());
-            }
-
+        public void unlink(String linked) {
+            final Link link = linksMap.remove(getByName(linked).topic());
+            linkDao.remove(link.getLinkId());
         }
 
         @Override
         public void delete() {
             commonDao.remove(topic);
-            topics.remove(topic.getName());
-            //topic().setUri(null);
-
+            topics.remove(topic().getUri());
         }
 
         @Override

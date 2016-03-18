@@ -42,7 +42,7 @@ public interface TopicProvider {
     String uri();
 
     void addChild(String name);
-    void unlink(String name, String linked);
+    void unlink(String linked);
     void merge(String main,String mergeWith);
     void delete();
     /**
