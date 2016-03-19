@@ -27,8 +27,6 @@ import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.like;
 import static org.springframework.util.Assert.notNull;
 
-//import org.dozer.DozerBeanMapper;
-
 @SuppressWarnings("unchecked")
 @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {

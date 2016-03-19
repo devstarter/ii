@@ -33,13 +33,24 @@
 <header ii-header ng-hide="hideLoop"></header>
 
 <div ui-view></div>
-
+<div style="position: absolute; right: 0;top: 35px; width: 400px">
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+</div>
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     ga('create', 'UA-51463207-1', 'ayfaar.org');
+</script>
+<script type="text/ng-template" id="template/alert/alert.html">
+    <div class="alert" ng-class="['alert-' + (type || 'warning'), closeable ? 'alert-dismissable' : null]" role="alert">
+        <button ng-show="closeable" type="button" class="close" ng-click="close()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <div ng-transclude></div>
+    </div>
 </script>
 <script type="text/ng-template" id="contribute-form.html">
     <div class="modal-header">

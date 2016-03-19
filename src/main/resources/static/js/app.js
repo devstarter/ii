@@ -39,7 +39,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 controller: ArticleController
             })
             .state('item', {
-                url: "/{number: \\s*\\d+\\.\\d+}",
+                url: "/{number: \\s*\\d+\\.\\d+\\s*}",
                 templateUrl: "static/partials/item.html",
                 controller: ItemController
             })
@@ -184,6 +184,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 }
             },
             topic: {
+                merge: function (main, mergeWith) {
+                    return api.get("topic/merge", {main: main, mergeWith: mergeWith})  
+                },
                 updateComment: function (forUri, topicName, comment) {
                     return api.post("topic/update-comment", {forUri: forUri, name: topicName, comment: comment})  
                 },
@@ -218,72 +221,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             }
             return str.length ? "?"+str.join("&") : "";
         }
-        function serializePost( data ) {
-            // If this is not an object, defer to native stringification.
-            if ( ! angular.isObject( data ) ) {
-                return( ( data == null ) ? "" : data.toString() );
-            }
-
-            var buffer = [];
-
-            // Serialize each key in the object.
-            for ( var name in data ) {
-                if ( ! data.hasOwnProperty( name ) ) {
-                    continue;
-                }
-                var value = data[ name ];
-
-                buffer.push(
-                        encodeURIComponent( name ) +
-                        "=" +
-                        encodeURIComponent( ( value == null ) ? "" : value )
-                );
-            }
-
-            // Serialize the buffer and clean it up for transportation.
-            var source = buffer
-                    .join( "&" )
-                    .replace( /%20/g, "+" )
-                ;
-            return( source );
-        }
-
         return api;
-    })
-    .factory("errorService", function($rootScope, $state){
-        return {
-            validationError: function(message) {
-                return $ionicPopup.alert({
-                    title: 'Ошибка',
-                    template: message
-                });
-            },
-            resolve: function(error) {
-                var message = "Неизвесная ошибка";
-                if (error) {
-                    message = error.message;
-                    switch (error.code) {
-                        case "USER_NOT_FOUND":
-                            message = "Пользователь не найден";
-                            break;
-                        case "PASSWORD_NOT_VALID":
-                            message = "Пароль не верный";
-                            break;
-                        case "BAD_CREDENTIALS":
-                            message = "Не верные email и пароль";
-                            break;
-                        case "EMAIL_DUPLICATION":
-                            message = "Такой email уже зарегистрированн в системе";
-                            break;
-                    }
-                }
-                alert(message);
-                /*return $ionicPopup.alert({
-                    title: 'Ошибка',
-                    template: message
-                });*/
-            }
-        };
     })
     .factory('entityService', function(){
         var service = {
@@ -360,6 +298,65 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 element.append(name);
                 $compile(element)(scope);
             }*/
+        };
+    })
+    .service('messager', function($rootScope) {
+        $rootScope.alerts = [];
+        $rootScope.closeAlert = function(index) {
+            $rootScope.alerts.splice(index, 1);
+        };
+        return {
+            ok: function (msg) {
+                $rootScope.alerts.push({msg: msg, type: 'success'});
+            },
+            error: function (msg) {
+                $rootScope.alerts.push({msg: msg, type: 'danger'});
+            }
+        }
+    })
+    .service('modal', function($modal) {
+        return {
+            confirm: function (title, text, action) {
+                return $modal.open({
+                    templateUrl: 'static/partials/modal-confirm.html',
+                    controller: function ($scope, $modalInstance) {
+                        $scope.title = title;
+                        $scope.text = text;
+                        $scope.action = action;
+                        $scope.act = function() {
+                            $modalInstance.close();
+                        };
+                        $scope.cancel = function() {
+                            $modalInstance.dismiss('cancel');
+                        };
+                    }
+                }).result;
+            }
+        }
+    })
+    .service("errorService", function(messager){
+        return {
+            resolve: function(error) {
+                var message = "Неизвесная ошибка";
+                if (error) {
+                    message = error.message;
+                    switch (error.code) {
+                        case "USER_NOT_FOUND":
+                            message = "Пользователь не найден";
+                            break;
+                        case "PASSWORD_NOT_VALID":
+                            message = "Пароль не верный";
+                            break;
+                        case "BAD_CREDENTIALS":
+                            message = "Не верные email и пароль";
+                            break;
+                        case "EMAIL_DUPLICATION":
+                            message = "Такой email уже зарегистрированн в системе";
+                            break;
+                    }
+                }
+                messager.error(message);
+            }
         };
     })
     .service('$topicPrompt', function($api, $modal, $topicSelector) {

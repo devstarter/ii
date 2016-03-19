@@ -1,4 +1,4 @@
-function TopicController($scope, $stateParams, $api, $state, $modal, $topicPrompt) {
+function TopicController($scope, $stateParams, $api, $state, /*modal,*/ $topicPrompt, messager) {
     $scope.name = $stateParams.name;
     document.title = $scope.name;
     $scope.loading = true;
@@ -26,7 +26,18 @@ function TopicController($scope, $stateParams, $api, $state, $modal, $topicPromp
     };
     $scope.addVideoResource = function () {
         $state.goToVideo("")
-    }
+    }/*;
+    $scope.merge = function () {
+        $topicPrompt.prompt().then(function (topic) {
+            modal.confirm("Подтвердите объединение тем", "Текущая тема \""+$scope.name+"\" будет удалена из системы, а всё что с ней связанно будет перенесено в выбранную тему (\""+topic+"\"). Подтвержаете объединение?", "Объединить")
+                .then(function () {
+                    $api.topic.merge($scope.name, topic).then(function () {
+                        $state.gotToTopic(topic);
+                        messager.ok("Объединение успешно выполнено")
+                    })
+                })
+        })
+    };*/
 }
 function CategoryController($scope, $stateParams, $api, $state) {
 
