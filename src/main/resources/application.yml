@@ -25,4 +25,4 @@ mail.password: some
 
 pushbullet.key: v1Izhxi9HgremmZ8ZqEyAh0xbW7xJHLYWYujz0VEpiRR6
 pushbullet.channel: ii
-youtube.api.key: AIzaSyDZ2HuAgqxzjXCyzlkhN67pXcYtW_WuVLk
+google.api.key: ${GOOGLE_API_KEY:'no_key'}
