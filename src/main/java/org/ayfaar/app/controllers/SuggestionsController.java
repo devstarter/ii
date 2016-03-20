@@ -58,7 +58,7 @@ public class SuggestionsController {
     }
 
     protected static String addDuplications(String q) {
-        return q.replaceAll("([A-Za-zА-Яа-яЁё])", "$1+");
+        return q.replaceAll("([A-Za-zА-Яа-яЁё])", "$1+-*$1*");
     }
 
     public List<String> getSuggestedTerms(String query, List<String> suggestions) {
