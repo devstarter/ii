@@ -7,17 +7,22 @@ import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static org.apache.commons.beanutils.PropertyUtils.setProperty;
 import static org.ayfaar.app.utils.EntityUtils.getPrimaryKeyFiledName;
@@ -40,6 +45,11 @@ public class CommonDaoImpl implements CommonDao {
     }
 
     @Override
+    public <E> Optional<E> getOpt(Class<E> clazz, Serializable id) {
+        return Optional.ofNullable(get(clazz, id));
+    }
+
+    @Override
     public <E> E getRandom(Class<E> clazz) {
         return (E) sessionFactory.getCurrentSession().createCriteria(clazz)
             .add(Restrictions.sqlRestriction("1=1 order by rand()"))
@@ -50,6 +60,8 @@ public class CommonDaoImpl implements CommonDao {
     @Nullable
     @Override
     public <E> E get(Class<E> clazz, Serializable id) {
+        Assert.notNull(clazz);
+        Assert.notNull(id);
         return (E) sessionFactory.getCurrentSession().get(clazz, id);
     }
 
@@ -216,5 +228,32 @@ public class CommonDaoImpl implements CommonDao {
                 .addOrder(ascending ? Order.asc(field) : Order.desc(field))
                 .setMaxResults(limit)
         );
+    }
+
+    @NotNull
+    @Override
+    public <E> List<E> getPage(Class<E> entityClass, Pageable pageable) {
+        final Sort sort = pageable.getSort();
+        Optional<Sort.Order> order = Optional.ofNullable(sort != null && sort.iterator().hasNext() ? sort.iterator().next() : null);
+        return getPage(
+                entityClass,
+                pageable.getOffset(),
+                pageable.getPageSize(),
+                order.isPresent() ? order.get().getProperty() : null,
+                order.isPresent() ? order.get().getDirection().name() : null);
+    }
+
+    @NotNull
+    @Override
+    public <E> List<E> getPage(Class<E> entityClass, int skip, int pageSize, String sortField, String sortDirection) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(entityClass)
+                .setFirstResult(skip)
+                .setMaxResults(pageSize);
+
+        if (sortField != null && !sortField.isEmpty()) {
+            criteria.addOrder("asc".equals(sortDirection) ? Order.asc(sortField) : Order.desc(sortField));
+        }
+
+        return list(criteria);
     }
 }

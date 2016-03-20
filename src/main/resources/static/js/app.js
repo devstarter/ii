@@ -18,6 +18,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     $rootScope.$broadcast('home-state-entered');
                 }
             })
+            .state('document', {
+                url: "/d/{id}",
+                templateUrl: "static/partials/document.html",
+                controller: DocumentController
+            })
             .state('topic', {
                 url: "/t/{name}",
                 templateUrl: "static/partials/topic.html",
@@ -184,6 +189,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 }
             },
             topic: {
+                getFor: function (uri) {
+                    return api.get("topic/for/"+uri)
+                },
                 merge: function (main, mergeWith) {
                     return api.get("topic/merge", {main: main, mergeWith: mergeWith})  
                 },
@@ -209,6 +217,17 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 },
                 addChild: function (parent, child) {
                     return api.get("topic/add-child", {name: parent, child: child})
+                }
+            },
+            document: {
+                get: function (id) {
+                    return api.get("document/"+id)
+                },
+                add: function (url) {
+                    return api.post("document", {url: url})
+                },
+                last: function () {
+                    return api.get("document/last")
                 }
             }
         };
@@ -325,6 +344,22 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                         $scope.action = action;
                         $scope.act = function() {
                             $modalInstance.close();
+                        };
+                        $scope.cancel = function() {
+                            $modalInstance.dismiss('cancel');
+                        };
+                    }
+                }).result;
+            },
+            prompt: function (title, text, action) {
+                return $modal.open({
+                    templateUrl: 'modal-prompt.html',
+                    controller: function ($scope, $modalInstance) {
+                        $scope.title = title;
+                        $scope.text = text;
+                        $scope.action = action;
+                        $scope.act = function() {
+                            $modalInstance.close($scope.text);
                         };
                         $scope.cancel = function() {
                             $modalInstance.dismiss('cancel');
@@ -670,6 +705,21 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             }
         };
     })
+    .directive('google', function($sce) {
+        return {
+            restrict: 'EA',
+            scope: { code: '=' },
+            replace: true,
+            template: '<div style="height:600px;"><iframe src="{{url}}" width="700" height="600" frameborder="0" allowfullscreen></iframe></div>',
+            link: function (scope) {
+                scope.$watch('code', function (id) {
+                    if (id) {
+                        scope.url = $sce.trustAsResourceUrl("https://drive.google.com/file/d/"+id+"/preview");
+                    }
+                });
+            }
+        };
+    })
     .directive("iiHeader", function($rootScope, focus, $state, $timeout) {
         return {
             scope: {},
@@ -701,6 +751,54 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     scope.$root.hideLoop = true;
                     scope.visible = false;
                 })
+            }
+        };
+    })
+    .directive("topics", function($topicSelector, Topic, $api, modal) {
+        return {
+            scope: { ownerUri: '='},
+            templateUrl: "static/partials/topics-directive.html",
+            link: function(scope, element, attrs) {
+                scope.updateRate = function(topic){
+                    Topic.rate({forUri: scope.ownerUri, topicUri: topic.uri, rate: topic.rate})
+                };
+                scope.updateComment = function(topic){
+                    modal.prompt("Редактирование коментария", topic.comment, "Сохранить").then(function (comment) {
+                        $api.topic.updateComment(scope.ownerUri, topic.name, comment).then(getTopics);
+                    });
+                };
+                scope.addTopic = function () {
+                    if (!scope.newTopic.name) return;
+                    $api.topic.addFor(scope.ownerUri, scope.newTopic.name, scope.newTopic.comment, scope.newTopic.rate)
+                        .then(function(topic){
+                            scope.newTopic = {};
+                            getTopics();
+                        });
+                };
+                scope.removeTopic = function (topic) {
+                    modal.confirm("Подтверждение", "Коментарий и оценка будут утеряны. Вы уверены что желаете убрать тему?", "Убрать тему")
+                        .then(function () {
+                        Topic.deleteForUri({uri: scope.ownerUri, topicUri: topic.uri}).$promise.then(function (topic) {
+                            getTopics();
+                        });
+                    })
+                };
+                scope.getSuggestions = function (q) {
+                    return Topic.suggest({q: q}).$promise
+                };
+                function getTopics() {
+                    if (!scope.ownerUri) return;
+                    $api.topic.getFor(scope.ownerUri).then(function(topics){
+                        scope.topics = topics;
+                    });
+                }
+                scope.openSelector = function () {
+                    $topicSelector.select().then(function (topicName) {
+                        scope.newTopic.name = topicName;
+                    });
+                };
+                scope.$watch('ownerUri', getTopics);
+                scope.newTopic = {}
             }
         };
     })
@@ -744,6 +842,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
         };
         $state.goToVideo = function(video) {
             originStateGo.bind($state)("resource-video", {id: video.id})
+        };
+        $state.goToDoc = function(doc) {
+            originStateGo.bind($state)("document", {id: doc.id})
         };
         $state.goToTopic = function(topicName) {
             originStateGo.bind($state)("topic", {name: topicName})

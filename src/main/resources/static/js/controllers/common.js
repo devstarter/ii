@@ -1,4 +1,32 @@
-function TopicController($scope, $stateParams, $api, $state, /*modal,*/ $topicPrompt, messager) {
+function DocumentController($scope, $stateParams, $api, messager, $state) {
+    if ($stateParams.id) {
+        $scope.docLoading = true;
+        $api.document.get($stateParams.id).then(function(doc){
+            $scope.docLoading = false;
+            if (doc.id) {
+                $scope.doc = doc;
+            } else {
+                $scope.showUrlInput = true;
+            }
+        }, function(response){
+            $scope.docLoading = false;
+            messager.error("Ошибка добавления документа");
+        });
+    } else {
+        $scope.showUrlInput = true;
+        $api.document.last().then(function (list) {
+            $scope.last = list;
+        })
+    }
+    $scope.add = function(){
+        $scope.docLoading = true;
+        $api.document.add($scope.url).then(function(doc){
+            $state.goToDoc(doc);
+        });
+    };
+    $scope.last = [];
+}
+function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt, messager) {
     $scope.name = $stateParams.name;
     document.title = $scope.name;
     $scope.loading = true;
@@ -26,7 +54,7 @@ function TopicController($scope, $stateParams, $api, $state, /*modal,*/ $topicPr
     };
     $scope.addVideoResource = function () {
         $state.goToVideo("")
-    }/*;
+    };
     $scope.merge = function () {
         $topicPrompt.prompt().then(function (topic) {
             modal.confirm("Подтвердите объединение тем", "Текущая тема \""+$scope.name+"\" будет удалена из системы, а всё что с ней связанно будет перенесено в выбранную тему (\""+topic+"\"). Подтвержаете объединение?", "Объединить")
@@ -37,7 +65,7 @@ function TopicController($scope, $stateParams, $api, $state, /*modal,*/ $topicPr
                     })
                 })
         })
-    };*/
+    };
 }
 function CategoryController($scope, $stateParams, $api, $state) {
 
@@ -51,7 +79,6 @@ function CategoryController($scope, $stateParams, $api, $state) {
         document.title = $scope.name;
     });
 }
-
 function HomeController($scope, $state) {
     $scope.search = function(query) {
         if (query) {
@@ -59,8 +86,6 @@ function HomeController($scope, $state) {
         }
     };
 }
-
-
 function ItemController($scope, $stateParams, $state, $api) {
     $scope.number = $stateParams.number.trim();
     if (!$scope.number) {
@@ -80,7 +105,6 @@ function ItemController($scope, $stateParams, $state, $api) {
         $state.go($scope.next);
     }
 }
-
 function ItemRangeController($scope, $stateParams, $api) {
 
     $scope.from = $stateParams.from;
@@ -94,8 +118,6 @@ function ItemRangeController($scope, $stateParams, $api) {
             $scope.items = items;
         });
 }
-
-
 function ParagraphController($scope, $stateParams, $api, $state) {
 
     $scope.number = $stateParams.number;
@@ -111,8 +133,6 @@ function ParagraphController($scope, $stateParams, $api, $state) {
             copyObjectTo(paragrapg, $scope);
         });
 }
-
-
 function TaggerController($scope, $stateParams, $api) {
     $scope.$root.hideLoop = true;
     $scope.getTags = function(){
@@ -124,7 +144,6 @@ function TaggerController($scope, $stateParams, $api) {
         });
     };
 }
-
 function ResourcesController($scope, $stateParams, $state, Video, Topic, errorService, $api, $modal, $topicSelector) {
     $scope.$root.hideLoop = true;
     $scope.topics = [];
@@ -137,7 +156,6 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
             $scope.videoLoading = false;
             if (video.id) {
                 $scope.video = video;
-                getTopics();
             } else {
                 $scope.showUrlInput = true;
             }
@@ -152,63 +170,10 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
         })
     }
     
-    $scope.updateRate = function(topic){
-        Topic.rate({forUri: $scope.video.uri, topicUri: topic.uri, rate: topic.rate})
-    };
-
-    $scope.updateComment = function(topic){
-        $modal.open({
-            templateUrl: 'prompt.html',
-            controller: function ($scope, $modalInstance) {
-                $scope.comment = topic.comment;
-                $scope.ok = function () {
-                    $modalInstance.close($scope.comment);
-                };
-                $scope.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            }
-        }).result.then(function (comment) {
-            $api.topic.updateComment($scope.video.uri, topic.name, comment).then(getTopics);
-        });
-    };
-
     $scope.save = function(){
         $scope.videoLoading = true;
         Video.save({url: $scope.url}).$promise.then(function(video){
             $state.goToVideo(video);
-        });
-    };
-    
-    $scope.addTopic = function () {
-        if (!$scope.newTopic.name) return;
-        $api.topic.addFor($scope.video.uri, $scope.newTopic.name, $scope.newTopic.comment, $scope.newTopic.rate)
-            .then(function(topic){
-            $scope.newTopic = {};
-            getTopics();
-        });
-    };
-    
-    $scope.removeTopic = function (topic) {
-        if (confirm("Коментарий и оценка будут утеряны, уверены что хотите отменить тему?")) {
-            Topic.deleteForUri({uri: $scope.video.uri, topicUri: topic.uri}).$promise.then(function (topic) {
-                getTopics();
-            });
-        }
-    };
-    $scope.getSuggestions = function (q) {
-        return Topic.suggest({q: q}).$promise
-    };
-    
-    function getTopics() {
-        Topic.getForUri({uri: $scope.video.uri}).$promise.then(function(topics){
-            $scope.topics = topics;
-        });
-    }
-
-    $scope.openSelector = function () {
-        $topicSelector.select().then(function (topicName) {
-            $scope.newTopic.name = topicName;
         });
     };
 }

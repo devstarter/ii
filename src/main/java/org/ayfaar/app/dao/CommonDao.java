@@ -1,16 +1,20 @@
 package org.ayfaar.app.dao;
 
 import org.ayfaar.app.utils.Content;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 public interface CommonDao {
     <E> List<E> getAll(Class<E> clazz);
 
+    <E> Optional<E> getOpt(Class<E> clazz, Serializable id);
     @Nullable
     <E> E get(Class<E> clazz, Serializable id);
     <E> E get(Class<E> clazz, String property, Object value);
@@ -43,4 +47,10 @@ public interface CommonDao {
     <E> List<E> getLike(Class<E> className, String field, String value, Integer limit);
 
     <E> List<E> getOrdered(Class<E> clazz, String field, boolean ascending, int limit);
+
+    @NotNull
+    <E> List<E> getPage(Class<E> entityClass, Pageable pageable);
+
+    @NotNull
+    <E> List<E> getPage(Class<E> entityClass, int skip, int pageSize, String sortField, String sortDirection);
 }

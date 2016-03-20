@@ -29,27 +29,32 @@ public class TopicController {
     @Inject TopicService topicService;
 
     @RequestMapping("for/{uri}")
-    public List<TopicPresentation> getForUri(@PathVariable String uri) throws Exception {
+    public List<LinkedTopicPresentation> getForUri(@PathVariable String uri) throws Exception {
         hasLength(uri);
         final List<Link> links = linkDao.getAllLinks(uri);
-        List<TopicPresentation> topicPresentations = new ArrayList<>();
+        List<LinkedTopicPresentation> presentations = new ArrayList<>();
         for (Link link : links) {
+            Topic topic = null;
             if (link.getUid1() instanceof Topic) {
-                topicPresentations.add(new TopicPresentation((Topic) link.getUid1(), link.getRate()));
+                topic = (Topic) link.getUid1();
             }
             if (link.getUid2() instanceof Topic) {
-                topicPresentations.add(new TopicPresentation((Topic) link.getUid2(), link.getRate()));
+                topic = (Topic) link.getUid2();
             }
+            if (topic != null)
+                presentations.add(new LinkedTopicPresentation(topic, link.getRate(), link.getComment()));
         }
-        return topicPresentations;
+        return presentations;
     }
 
-    private class TopicPresentation {
+    private class LinkedTopicPresentation {
+        public String comment;
         public String uri;
         public String name;
         public Float rate;
 
-        TopicPresentation(Topic topic, Float rate) {
+        LinkedTopicPresentation(Topic topic, Float rate, String comment) {
+            this.comment = comment;
             name = topic.getName();
             uri = topic.getUri();
             this.rate = rate;
@@ -99,6 +104,18 @@ public class TopicController {
             if ((link.getUid1() instanceof Topic && link.getUid1().getUri().equals(topicUri)) ||
                     (link.getUid2() instanceof Topic && link.getUid2().getUri().equals(topicUri))) {
                 link.setRate(rate);
+                linkDao.save(link);
+            }
+        }
+    }
+
+    @RequestMapping(value = "update-comment", method = POST)
+    public void updateComment(@RequestParam String forUri, @RequestParam String name, @RequestParam String comment) throws Exception {
+        final List<Link> links = linkDao.getAllLinks(forUri);
+        for (Link link : links) {
+            if ((link.getUid1() instanceof Topic && ((Topic) link.getUid1()).getName().equals(name)) ||
+                    (link.getUid2() instanceof Topic && ((Topic) link.getUid2()).getName().equals(name))) {
+                link.setComment(comment);
                 linkDao.save(link);
             }
         }

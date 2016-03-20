@@ -52,6 +52,18 @@
         <div ng-transclude></div>
     </div>
 </script>
+<script type="text/ng-template" id="modal-prompt.html">
+    <div class="modal-header">
+        <h3 class="modal-title">{{title}}</h3>
+    </div>
+    <div class="modal-body">
+        <textarea ng-model="text" rows="3" class="full-width form-control"></textarea>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()">Отменить</button>
+        <button class="btn btn-primary" ng-click="act()">{{action}}</button>
+    </div>
+</script>
 <script type="text/ng-template" id="contribute-form.html">
     <div class="modal-header">
         <h3 class="modal-title">Панель модератора</h3>
