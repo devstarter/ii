@@ -65,4 +65,11 @@ public class SuggestionsControllerIntegrationTest extends IntegrationTest {
     public void testSuggestionsWhenQueryContainsBracket() {
         assertEquals(0, searchController.suggestions("унго-ссвооун)").size());
     }
+
+    @Test
+    public void testHyphenWords(){
+        String query = "слосна";
+        List<String> suggestions = searchController.suggestions(query);
+        assertEquals("ССЛОО-СС-СНАА",suggestions.get(0));
+    }
 }
