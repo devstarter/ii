@@ -21,9 +21,7 @@ public class TopicControllerTest {
     public void testGet() {
         addChild("1", "2");
         addChild("1", "10");
-        addChild("4", "1");
-
-        // todo добавить ещё чайлда "3" и парента "4"
+        addChild("5", "1");
 
         given().param("name", "1").
         when().get("/api/topic").
@@ -33,7 +31,7 @@ public class TopicControllerTest {
             body("name", Matchers.is("1")).
             body("uri", Matchers.is("тема:1")).
             body("children", Matchers.hasItems("2", "10")).
-            body("parents", Matchers.hasItem("4"))
+            body("parents", Matchers.hasItem("5"))
         ;
     }
 
@@ -70,6 +68,7 @@ public class TopicControllerTest {
     @Test(expected = AssertionError.class)
     public void testAddChildWrong() {
         addChild("1", "2");
+        //Expected RuntimeException: The parent has a child for the given name
         addChild("2", "1");
     }
 
@@ -85,6 +84,92 @@ public class TopicControllerTest {
         then().
             log().all().
             statusCode(HttpStatus.SC_OK)
+        ;
+
+        given().param("name", "1").
+                when().get("/api/topic").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_OK).
+                body("name", Matchers.is("1")).
+                body("uri", Matchers.is("тема:1")).
+                body("children", Matchers.hasItems("10")).//"2" does not exist in children after unlink
+                body("parents", Matchers.hasItem("5"))
+        ;
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testMerge() {
+        addChild("1011", "2012");
+        addChild("101", "2011");
+        addChild("4", "101");
+        given().
+                params("main", "101", "mergeWith", "1011").
+                when().
+                get("/api/topic/merge").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_OK)
+        ;
+
+        given().param("name", "101").
+                when().get("/api/topic").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_OK).
+                body("name", Matchers.is("101")).
+                body("uri", Matchers.is("тема:101")).
+                body("children", Matchers.hasItems("2011", "2012")).
+                body("parents", Matchers.hasItem("4"))
+        ;
+
+        //Expected RuntimeException: Topic for 1011 not found, INTERNAL_SERVER_ERROR
+        given().param("name", "1011").
+                when().get("/api/topic").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR).
+                body("status", Matchers.is("error")).
+                body("code",Matchers.is("UNDEFINED")).
+                body("message", Matchers.is("java.lang.RuntimeException: Topic for 1011 not found"))
+        ;
+    }
+
+    @Test
+    public void testMerge2() {
+        addChild("1011", "2012");
+        addChild("1", "1011");
+        addChild("101", "2011");
+        addChild("4", "101");
+        given().
+                params("main", "101", "mergeWith", "1011").
+                when().
+                get("/api/topic/merge").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_OK)
+        ;
+
+        given().param("name", "101").
+                when().get("/api/topic").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_OK).
+                body("name", Matchers.is("101")).
+                body("uri", Matchers.is("тема:101")).
+                body("children", Matchers.hasItems("2011", "2012")).
+                body("parents", Matchers.hasItems("4","1"))
+        ;
+
+        //Expected RuntimeException: Topic for 1011 not found, INTERNAL_SERVER_ERROR
+        given().param("name", "1011").
+                when().get("/api/topic").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR).
+                body("status", Matchers.is("error")).
+                body("error.code", Matchers.is("UNDEFINED")).
+                body("error.message", Matchers.is("java.lang.RuntimeException: Topic for 1011 not found"))
         ;
     }
 }

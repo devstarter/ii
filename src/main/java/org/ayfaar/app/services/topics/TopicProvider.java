@@ -43,7 +43,12 @@ public interface TopicProvider {
 
     void addChild(String name);
     void unlink(String linked);
+    default void unlink(TopicProvider linked) {
+        unlink(linked.name());
+    }
 
+    void merge(String mergeWith);
+    void delete();
     /**
      * @return все ресурсы связаные любыми линками с этой темой
      */
@@ -54,6 +59,7 @@ public interface TopicProvider {
     }
 
     Link link(LinkType linkType, UID uid, String comment, String quote, Float rate);
+
 
     class TopicResources {
         public List<ResourcePresentation> video = new LinkedList<>();
