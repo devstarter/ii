@@ -98,7 +98,7 @@ public class TopicControllerTest {
         ;
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testMerge() {
         addChild("1011", "2012");
         addChild("101", "2011");
@@ -130,8 +130,8 @@ public class TopicControllerTest {
                 log().all().
                 statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR).
                 body("status", Matchers.is("error")).
-                body("code",Matchers.is("UNDEFINED")).
-                body("message", Matchers.is("java.lang.RuntimeException: Topic for 1011 not found"))
+                body("error.code",Matchers.is("TOPIC_NOT_FOUND")).
+                body("error.message", Matchers.is("org.ayfaar.app.utils.exceptions.LogicalException: Topic for 1011 not found"))
         ;
     }
 
@@ -168,8 +168,8 @@ public class TopicControllerTest {
                 log().all().
                 statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR).
                 body("status", Matchers.is("error")).
-                body("error.code", Matchers.is("UNDEFINED")).
-                body("error.message", Matchers.is("java.lang.RuntimeException: Topic for 1011 not found"))
+                body("error.code", Matchers.is("TOPIC_NOT_FOUND")).
+                body("error.message", Matchers.is("org.ayfaar.app.utils.exceptions.LogicalException: Topic for 1011 not found"))
         ;
     }
 }

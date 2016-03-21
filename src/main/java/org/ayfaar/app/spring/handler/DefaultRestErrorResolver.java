@@ -1,6 +1,7 @@
 package org.ayfaar.app.spring.handler;
 
 import org.ayfaar.app.events.QuietException;
+import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,10 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
     public BusinessError resolveError(ServletWebRequest request, Object handler, Exception ex) {
+
+        if (ex instanceof LogicalException){
+            return new BusinessError(((LogicalException) ex).getExceptions().toString(),ex.toString(),"");
+        }
 
 //        ex.printStackTrace(System.out);
         if (!(ex instanceof QuietException)) {

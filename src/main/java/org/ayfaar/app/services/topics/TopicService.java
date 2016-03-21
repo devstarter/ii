@@ -2,6 +2,8 @@ package org.ayfaar.app.services.topics;
 
 import org.ayfaar.app.model.Topic;
 import org.ayfaar.app.utils.UriGenerator;
+import org.ayfaar.app.utils.exceptions.Exceptions;
+import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -18,9 +20,9 @@ public interface TopicService {
      * @return
      */
     @NotNull
-    default TopicProvider getByName(String name) {
+    default TopicProvider getByName(String name){
         return get(UriGenerator.generate(Topic.class, name))
-                .orElseThrow(() -> new RuntimeException("Topic for " + name + " not found"));
+                .orElseThrow(() -> new LogicalException((Exceptions.TOPIC_NOT_FOUND), name));
     }
 
     void reload();
