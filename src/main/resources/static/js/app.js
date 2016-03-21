@@ -192,8 +192,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 getFor: function (uri) {
                     return api.get("topic/for/"+uri)
                 },
-                merge: function (main, mergeWith) {
-                    return api.get("topic/merge", {main: main, mergeWith: mergeWith})  
+                merge: function (main, mergeInto) {
+                    return api.get("topic/merge", {main: main, mergeInto: mergeInto})
                 },
                 updateComment: function (forUri, topicName, comment) {
                     return api.post("topic/update-comment", {forUri: forUri, name: topicName, comment: comment})  

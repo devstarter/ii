@@ -181,8 +181,8 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
-        public TopicProviderImpl merge(String mergeWith) {
-            final TopicProvider provider = findOrCreate(mergeWith);
+        public TopicProviderImpl merge(String mergeInto) {
+            final TopicProvider provider = findOrCreate(mergeInto);
             linksMap.values().stream()
                     .forEach(link -> {
                         // заменяем ссылки на старый топик на ссылки на новый
