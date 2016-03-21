@@ -164,8 +164,7 @@ public class TopicController {
     @RequestMapping("merge")
     // Слияние двух веток
     public void merge(@RequestParam String main, @RequestParam String mergeWith) {
-        topicService.getByName(main).merge(mergeWith);
-        topicService.getByName(mergeWith).delete();
+        topicService.getByName(main).merge(mergeWith).delete();
     }
 
     @RequestMapping("add-related")

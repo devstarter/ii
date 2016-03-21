@@ -47,7 +47,7 @@ public interface TopicProvider {
         unlink(linked.name());
     }
 
-    void merge(String mergeWith);
+    TopicProvider merge(String mergeWith);
     void delete();
     /**
      * @return все ресурсы связаные любыми линками с этой темой

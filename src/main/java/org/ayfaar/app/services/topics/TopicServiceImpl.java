@@ -181,13 +181,13 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
-        public void merge(String mergeWith) {
-            final TopicProviderImpl provider = (TopicProviderImpl) getByName(mergeWith);
-            provider.linksMap.values().stream()
+        public TopicProviderImpl merge(String mergeWith) {
+            final TopicProvider provider = findOrCreate(mergeWith);
+            linksMap.values().stream()
                     .forEach(link -> {
                         // заменяем ссылки на старый топик на ссылки на новый
-                        UID uid1 = link.getUid1().getUri().equals(provider.uri()) ? topic : link.getUid1();
-                        UID uid2 = link.getUid2().getUri().equals(provider.uri()) ? topic : link.getUid2();
+                        UID uid1 = link.getUid1().getUri().equals(uri()) ? provider.topic() : link.getUid1();
+                        UID uid2 = link.getUid2().getUri().equals(uri()) ? provider.topic() : link.getUid2();
                         link = linkDao.save(Link.builder()
                                 .uid1(uid1)
                                 .uid2(uid2)
@@ -198,6 +198,7 @@ class TopicServiceImpl implements TopicService {
                                 .build());
                     });
             reload();
+            return this;
         }
 
         @Override
