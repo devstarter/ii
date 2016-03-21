@@ -24,14 +24,14 @@ public class TopicControllerTest {
         addChild("5", "1");
 
         given().param("name", "1").
-        when().get("/api/topic").
-        then().
-            log().all().
-            statusCode(HttpStatus.SC_OK).
-            body("name", Matchers.is("1")).
-            body("uri", Matchers.is("тема:1")).
-            body("children", Matchers.hasItems("2", "10")).
-            body("parents", Matchers.hasItem("5"))
+                when().get("/api/topic").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_OK).
+                body("name", Matchers.is("1")).
+                body("uri", Matchers.is("тема:1")).
+                body("children", Matchers.hasItems("2", "10")).
+                body("parents", Matchers.hasItem("5"))
         ;
     }
 
@@ -39,21 +39,21 @@ public class TopicControllerTest {
     private void addChild(String name, String child) {
         given().
                 params("name", name, "child", child).
-        when().
+                when().
                 get("/api/topic/add-child").
-        then().
+                then().
                 statusCode(HttpStatus.SC_OK);
     }
 
     @Test
     public void testAddFor() {
         given().
-            contentType("application/x-www-form-urlencoded; charset=UTF-8"). // это чтобы русский понимал в параметрах
-            param("name", "1"). // имя темы
-            param("uri", "видео:youtube:_8vYBLrOq-w"). // uri объекта к которому прилинковать тему
-        when().
-            post("/api/topic/for").
-        then().
+                contentType("application/x-www-form-urlencoded; charset=UTF-8"). // это чтобы русский понимал в параметрах
+                param("name", "1"). // имя темы
+                param("uri", "видео:youtube:_8vYBLrOq-w"). // uri объекта к которому прилинковать тему
+                when().
+                post("/api/topic/for").
+                then().
                 log().all().
                 statusCode(HttpStatus.SC_OK)
         ;
@@ -79,11 +79,11 @@ public class TopicControllerTest {
 
         given().
                 params("name", "1", "linked", "2").
-        when().
-            get("/api/topic/unlink").
-        then().
-            log().all().
-            statusCode(HttpStatus.SC_OK)
+                when().
+                get("/api/topic/unlink").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_OK)
         ;
 
         given().param("name", "1").
@@ -98,7 +98,7 @@ public class TopicControllerTest {
         ;
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testMerge() {
         addChild("1011", "2012");
         addChild("101", "2011");
@@ -130,8 +130,8 @@ public class TopicControllerTest {
                 log().all().
                 statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR).
                 body("status", Matchers.is("error")).
-                body("code",Matchers.is("UNDEFINED")).
-                body("message", Matchers.is("java.lang.RuntimeException: Topic for 1011 not found"))
+                body("error.code",Matchers.is("TOPIC_NOT_FOUND")).
+                body("error.message", Matchers.is("org.ayfaar.app.utils.exceptions.TopicNotFoundException: Topic for 1011 not found"))
         ;
     }
 
@@ -168,8 +168,8 @@ public class TopicControllerTest {
                 log().all().
                 statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR).
                 body("status", Matchers.is("error")).
-                body("error.code", Matchers.is("UNDEFINED")).
-                body("error.message", Matchers.is("java.lang.RuntimeException: Topic for 1011 not found"))
+                body("error.code", Matchers.is("TOPIC_NOT_FOUND")).
+                body("error.message", Matchers.is("org.ayfaar.app.utils.exceptions.TopicNotFoundException: Topic for 1011 not found"))
         ;
     }
 }

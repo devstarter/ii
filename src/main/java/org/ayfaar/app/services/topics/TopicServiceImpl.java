@@ -125,9 +125,9 @@ class TopicServiceImpl implements TopicService {
             return linksMap.values().stream()
                     .filter(link ->
                             link.getUid1() instanceof Topic
-                            && link.getUid2() instanceof Topic
-                            && link.getUid1().getUri().equals(uri())
-                            && link.getType() == LinkType.CHILD)
+                                    && link.getUid2() instanceof Topic
+                                    && link.getUid1().getUri().equals(uri())
+                                    && link.getType() == LinkType.CHILD)
                     .map(l -> new TopicProviderImpl((Topic) l.getUid2()));
         }
 
@@ -136,9 +136,9 @@ class TopicServiceImpl implements TopicService {
             return linksMap.values().stream()
                     .filter(link ->
                             link.getUid1() instanceof Topic
-                            && link.getUid2() instanceof Topic
-                            && link.getUid2().getUri().equals(uri())
-                            && link.getType().isChild())
+                                    && link.getUid2() instanceof Topic
+                                    && link.getUid2().getUri().equals(uri())
+                                    && link.getType().isChild())
                     .map(l -> new TopicProviderImpl((Topic) l.getUid1()));
         }
 

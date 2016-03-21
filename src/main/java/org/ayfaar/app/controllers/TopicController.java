@@ -85,12 +85,12 @@ public class TopicController {
 
     @RequestMapping(value = "for/items-range", method = POST)
     public void addFor(@RequestParam String from,
-                        @RequestParam String to,
-                        @RequestParam String topicName,
-                        @RequestParam(required = false) String rangeName,
-                        @RequestParam(required = false) String quote,
-                        @RequestParam(required = false) String comment,
-                        @RequestParam(required = false) Float rate) throws Exception {
+                       @RequestParam String to,
+                       @RequestParam String topicName,
+                       @RequestParam(required = false) String rangeName,
+                       @RequestParam(required = false) String quote,
+                       @RequestParam(required = false) String comment,
+                       @RequestParam(required = false) Float rate) throws Exception {
         ItemsRange itemsRange = ItemsRange.builder().from(from).to(to).description(rangeName).build();
         itemsRange = commonDao.save(itemsRange);
         final TopicProvider topic = topicService.findOrCreate(topicName);
