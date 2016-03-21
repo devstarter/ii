@@ -183,16 +183,31 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
-        public void merge(String main,String mergeWith) {
+        public void merge(String mergeWith) {
 
             Collection<Link> links = ((TopicProviderImpl) getByName(mergeWith)).linksMap.values();
 
+//                    for (Link link : links){
+//                link(link.getType(),
+//                        (!(link.getUid2()instanceof Topic))? link.getUid2() : link.getUid1(),
+//                        link.getComment(),
+//                        link.getQuote(),
+//                        link.getRate());
+//            }
+
             for (Link link : links){
-                getByName(main).link(link.getType(),
-                        link.getUid2(),
-                        link.getComment(),
-                        link.getQuote(),
-                        link.getRate());
+                if(!(link.getUid2() instanceof Topic))
+                    link(link.getType(),
+                            link.getUid2(),
+                            link.getComment(),
+                            link.getQuote(),
+                            link.getRate());
+                if(!(link.getUid1() instanceof Topic))
+                    link(link.getType(),
+                            link.getUid1(),
+                            link.getComment(),
+                            link.getQuote(),
+                            link.getRate());
             }
         }
 

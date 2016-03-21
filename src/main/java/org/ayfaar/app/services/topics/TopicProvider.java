@@ -43,7 +43,7 @@ public interface TopicProvider {
 
     void addChild(String name);
     void unlink(String linked);
-    void merge(String main,String mergeWith);
+    void merge(String mergeWith);
     void delete();
     /**
      * @return все ресурсы связаные любыми линками с этой темой

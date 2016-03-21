@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.hasLength;
@@ -148,7 +149,13 @@ public class TopicController {
     // Слияние двух веток
     public void merge(@RequestParam String main, @RequestParam String mergeWith) {
         if (topicService.hasTopic(mergeWith)) {
-            topicService.getByName(main).merge(main, mergeWith);
+            List<String> namesParentsMergeWith = topicService.getByName(mergeWith).parents().map(TopicProvider::name).collect(toList());
+            if (namesParentsMergeWith.size()!=0) {
+                for(String nameParent : namesParentsMergeWith){
+                    topicService.getByName(nameParent).addChild(main);
+                }
+            }
+            topicService.getByName(main).merge(mergeWith);
             topicService.getByName(mergeWith).delete();
         }else{
             throw new RuntimeException("Topic for " + mergeWith + " not found");

@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers;
 
+import com.jayway.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.ayfaar.app.Application;
 import org.hamcrest.Matchers;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -72,7 +74,7 @@ public class TopicControllerTest {
         addChild("2", "1");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testUnLink() {
         // сначала прилинковываем
         addChild("1", "2");
@@ -85,7 +87,7 @@ public class TopicControllerTest {
             log().all().
             statusCode(HttpStatus.SC_OK)
         ;
-        //Expected RuntimeException, "2" does not exist in children after unlink
+
         given().param("name", "1").
                 when().get("/api/topic").
                 then().
@@ -93,7 +95,7 @@ public class TopicControllerTest {
                 statusCode(HttpStatus.SC_OK).
                 body("name", Matchers.is("1")).
                 body("uri", Matchers.is("тема:1")).
-                body("children", Matchers.hasItems("10","2")).
+                body("children", Matchers.hasItems("10")).//"2" does not exist in children after unlink
                 body("parents", Matchers.hasItem("5"))
         ;
     }
@@ -123,16 +125,53 @@ public class TopicControllerTest {
                 body("parents", Matchers.hasItem("4"))
         ;
 
-        //Expected RuntimeException: Topic for 1011 not found
+        //Expected RuntimeException: Topic for 1011 not found, INTERNAL_SERVER_ERROR
         given().param("name", "1011").
                 when().get("/api/topic").
                 then().
                 log().all().
+                statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR).
+                body("status", Matchers.is("error")).
+                body("code",Matchers.is("UNDEFINED")).
+                body("message", Matchers.is("java.lang.RuntimeException: Topic for 1011 not found"))
+        ;
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testMerge2() {
+        addChild("1011", "2012");
+        addChild("1", "1011");
+        addChild("101", "2011");
+        addChild("4", "101");
+        given().
+                params("main", "101", "mergeWith", "1011").
+                when().
+                get("/api/topic/merge").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_OK)
+        ;
+
+        given().param("name", "101").
+                when().get("/api/topic").
+                then().
+                log().all().
                 statusCode(HttpStatus.SC_OK).
-                body("name", Matchers.is("1011")).
-                body("uri", Matchers.is("тема:1011")).
-                body("children", Matchers.hasItems("2012")).
-                body("parents", Matchers.hasItem(""))
+                body("name", Matchers.is("101")).
+                body("uri", Matchers.is("тема:101")).
+                body("children", Matchers.hasItems("2011", "2012")).
+                body("parents", Matchers.hasItems("4","1"))
+        ;
+
+        //Expected RuntimeException: Topic for 1011 not found, INTERNAL_SERVER_ERROR
+        given().param("name", "1011").
+                when().get("/api/topic").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR).
+                body("status", Matchers.is("error")).
+                body("code", Matchers.is("UNDEFINED")).
+                body("message", Matchers.is("java.lang.RuntimeException: Topic for 1011 not found"))
         ;
     }
 }
