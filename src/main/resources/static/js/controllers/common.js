@@ -148,8 +148,8 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
     $scope.$root.hideLoop = true;
     $scope.topics = [];
     $scope.newTopic = {};
-    $scope.lastTen = [];
-    
+    $scope.lastVideos = [];
+
     if ($stateParams.id) {
         $scope.videoLoading = true;
         Video.get({id: $stateParams.id}, function(video){
@@ -165,17 +165,48 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
         });
     } else {
         $scope.showUrlInput = true;
-        $api.resource.video.lastTen().then(function (lastVideos) {
-            $scope.lastTen = lastVideos;
-        })
+        getLast();
     }
-    
+
     $scope.save = function(){
         $scope.videoLoading = true;
         Video.save({url: $scope.url}).$promise.then(function(video){
             $state.goToVideo(video);
         });
     };
+    $scope.getMore = function () {
+        getLast();
+    };
+
+    function getLast() {
+        $scope.lastLoading = true;
+        $api.resource.video.last(Math.ceil($scope.lastVideos.length / 8) + 1).then(function (lastVideos) {
+            if (!lastVideos.length) {
+                $scope.lastNoMore = true;
+                return
+            }
+            $scope.lastVideos.append(lastVideos);
+            var grouped = {};
+            angular.forEach($scope.lastVideos, function (v) {
+                var d = new Date(v.created_at);
+                var diff = Date.now() - d;
+                var header;
+                if (diff < 24*60*60000) {
+                    header = "Добавленные за последние сутки"
+                } else if (diff < 7*24*60*60000) {
+                    header = "Добавленные за последнюю неделю"
+                } else if (diff < 30*7*24*60*60000) {
+                    header = "Добавленные за последний месяц"
+                } else {
+                    header = "Добавленные раньше чем за месяц"
+                }
+                if (!grouped[header]) grouped[header] = [];
+                grouped[header].push(v)
+            });
+            $scope.last = grouped;
+            $scope.lastLoading = false;
+        })   
+    }
 }
 
 function ArticleController($scope, $stateParams, $state, $api) {

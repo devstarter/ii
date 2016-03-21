@@ -183,8 +183,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             },
             resource: {
                 video: {
-                    lastTen: function () {
-                        return api.get("resource/video/last-created")
+                    last: function (page) {
+                        return api.get("resource/video/last-created", {page: page})
                     }
                 }
             },
