@@ -6,6 +6,7 @@ import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Topic;
 import org.ayfaar.app.model.UID;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -44,9 +45,11 @@ public interface TopicProvider {
     void unlink(String linked);
     default void unlink(TopicProvider linked) {
         unlink(linked.name());
-   
+    }
+
     void merge(String mergeWith);
-     /**
+    void delete();
+    /**
      * @return все ресурсы связаные любыми линками с этой темой
      */
     TopicResources resources();

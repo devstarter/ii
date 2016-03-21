@@ -4,7 +4,8 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.utils.UriGenerator;
-import org.jetbrains.annotations.NotNull;import org.slf4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -168,18 +169,6 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
-        public void unlink(String linked){
-            final Link link = linksMap.remove(getByName(linked).topic());
-            linkDao.remove(link.getLinkId());
-        }
-
-        @Override
-        public void delete() {
-            commonDao.remove(topic);
-            topics.remove(topic().getUri());
-        }
-
-        @Override
         public void unlink(String linked) {
             final Link link = linksMap.remove(getByName(linked).topic());
             linkDao.remove(link.getLinkId());
@@ -211,7 +200,8 @@ class TopicServiceImpl implements TopicService {
             reload();
         }
 
-           public TopicResources resources() {
+        @Override
+        public TopicResources resources() {
             final TopicResources resources = new TopicResources();
             resources.video.addAll(prepareResource(VideoResource.class));
             resources.item.addAll(prepareResource(Item.class));

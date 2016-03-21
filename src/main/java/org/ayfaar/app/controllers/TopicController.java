@@ -147,8 +147,10 @@ public class TopicController {
 
     @RequestMapping("add-child")
     public void addChild(@RequestParam String name, @RequestParam String child) {
-        if(topicService.hasTopic(name)&&topicService.hasTopic(child)){            boolean alreadyParent = topicService.getByName(child).children().anyMatch(c -> c.name().equals(name));
-            if (alreadyParent) {                throw new RuntimeException("The parent has a child for the given name");
+        if (topicService.hasTopic(name) && topicService.hasTopic(child)) {
+            boolean alreadyParent = topicService.getByName(child).children().anyMatch(c -> c.name().equals(name));
+            if (alreadyParent) {
+                throw new RuntimeException("The parent has a child for the given name");
             }
         }
         topicService.findOrCreate(name).addChild(child);

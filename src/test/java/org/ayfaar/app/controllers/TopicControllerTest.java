@@ -22,18 +22,17 @@ public class TopicControllerTest {
         addChild("1", "2");
         addChild("1", "10");
         addChild("5", "1");
-        addChild("1", "10");
-        addChild("5", "1");
 
         given().param("name", "1").
-        when().get("/api/topic").
-        then().
-            log().all().
-            statusCode(HttpStatus.SC_OK).
-            body("name", Matchers.is("1")).
-            body("uri", Matchers.is("тема:1")).
-            body("children", Matchers.hasItems("2", "10")).
-            body("parents", Matchers.hasItem("5"))        ;
+                when().get("/api/topic").
+                then().
+                log().all().
+                statusCode(HttpStatus.SC_OK).
+                body("name", Matchers.is("1")).
+                body("uri", Matchers.is("тема:1")).
+                body("children", Matchers.hasItems("2", "10")).
+                body("parents", Matchers.hasItem("5"))
+        ;
     }
 
 
@@ -68,9 +67,10 @@ public class TopicControllerTest {
 
     @Test(expected = AssertionError.class)
     public void testAddChildWrong() {
-      addChild("1", "2");
+        addChild("1", "2");
         //Expected RuntimeException: The parent has a child for the given name
-        addChild("2", "1");    }
+        addChild("2", "1");
+    }
 
     @Test
     public void testUnLink() {
@@ -98,7 +98,7 @@ public class TopicControllerTest {
         ;
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testMerge() {
         addChild("1011", "2012");
         addChild("101", "2011");
@@ -130,8 +130,8 @@ public class TopicControllerTest {
                 log().all().
                 statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR).
                 body("status", Matchers.is("error")).
-                body("code",Matchers.is("UNDEFINED")).
-                body("message", Matchers.is("java.lang.RuntimeException: Topic for 1011 not found"))
+                body("error.code",Matchers.is("TOPIC_NOT_FOUND")).
+                body("error.message", Matchers.is("org.ayfaar.app.utils.exceptions.TopicNotFoundException: Topic for 1011 not found"))
         ;
     }
 
@@ -168,7 +168,8 @@ public class TopicControllerTest {
                 log().all().
                 statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR).
                 body("status", Matchers.is("error")).
-                body("error.code", Matchers.is("UNDEFINED")).
-                body("error.message", Matchers.is("java.lang.RuntimeException: Topic for 1011 not found"))
+                body("error.code", Matchers.is("TOPIC_NOT_FOUND")).
+                body("error.message", Matchers.is("org.ayfaar.app.utils.exceptions.TopicNotFoundException: Topic for 1011 not found"))
         ;
-    }}
+    }
+}
