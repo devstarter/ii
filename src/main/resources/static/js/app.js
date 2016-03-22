@@ -105,7 +105,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 }).then(function(response){
                         deferred.resolve(response.data)
                     },function(response){
-                        errorService.resolve(response.error);
+                        errorService.resolve(response.data.error);
                         deferred.reject(response);
                     });
                 return deferred.promise;
@@ -122,7 +122,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 }).then(function(response){
                         deferred.resolve(response.data)
                     },function(response){
-                        if (!skipError) errorService.resolve(response.error);
+                        if (!skipError) errorService.resolve(response.data.error);
                         deferred.reject(response);
                     });
                 return deferred.promise;
@@ -383,7 +383,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                             message = "Пользователь не найден";
                             break;
                         case "TOPIC_NOT_FOUND":
-                            message = "Тема не найден";
+                            message = "Тема не найдена";
                             break;
                         case "PASSWORD_NOT_VALID":
                             message = "Пароль не верный";
