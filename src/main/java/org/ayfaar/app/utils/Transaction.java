@@ -19,6 +19,7 @@ public class Transaction implements Runnable {
                 rollbackChain.add(0, operation.rollback);
             } catch (Exception e) {
                 rollbackChain.forEach(Runnable::run);
+                throw new RuntimeException("Transaction aborted and reverted", e);
             }
         });
     }
