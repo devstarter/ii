@@ -4,6 +4,8 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.utils.UriGenerator;
+import org.ayfaar.app.utils.exceptions.Exceptions;
+import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +17,16 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static org.ayfaar.app.utils.StreamUtils.single;
+
 @Component
 class TopicServiceImpl implements TopicService {
     private static final Logger logger = LoggerFactory.getLogger(TopicServiceImpl.class);
 
-    private LinkedHashMap<String, TopicProviderImpl> topics = new LinkedHashMap<>();
+    /**
+     * Key is topic uri in lower case
+     */
+    private TopicsMap topics = new TopicsMap();
 
     @Inject CommonDao commonDao;
     @Inject LinkDao linkDao;
@@ -59,14 +66,31 @@ class TopicServiceImpl implements TopicService {
 
     @NotNull
     @Override
-    public TopicProvider findOrCreate(String name) {
-        return Optional.ofNullable(topics.get(UriGenerator.generate(Topic.class, name)))
+    public Optional<TopicProvider> get(String uri, boolean caseSensitive) {
+        if (!caseSensitive) return get(uri);
+        return topics.values().parallelStream()
+                .filter(p -> p.uri().equals(uri))
+                .collect(single());
+    }
+
+    @NotNull
+    @Override
+    public TopicProvider findOrCreate(String name, boolean caseSensitive) {
+        return get(UriGenerator.generate(Topic.class, name), caseSensitive)
                 .orElseGet(() -> {
                     final Topic topic = commonDao.save(new Topic(name));
                     final TopicProviderImpl provider = new TopicProviderImpl(topic);
                     topics.put(provider.uri(), provider);
                     return provider;
                 });
+    }
+
+    @NotNull
+    @Override
+    public TopicProvider getByName(String name, boolean caseSensitive) {
+        if (!caseSensitive) return getByName(name);
+        return get(UriGenerator.generate(Topic.class, name), caseSensitive)
+                .orElseThrow(() -> new LogicalException(Exceptions.TOPIC_NOT_FOUND, name));
     }
 
     @Override
@@ -76,7 +100,7 @@ class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public boolean hasTopic(String name) {
+    public boolean exist(String name) {
         return topics.values().stream().anyMatch(c -> c.name().equals(name));
     }
 
@@ -181,7 +205,8 @@ class TopicServiceImpl implements TopicService {
 
         @Override
         public TopicProviderImpl merge(String mergeInto) {
-            final TopicProvider provider = findOrCreate(mergeInto);
+            commonDao.remove(topic); // remove from db for case sensitive case
+            final TopicProvider provider = findOrCreate(mergeInto, true);
             linksMap.values().stream()
                     .forEach(link -> {
                         // заменяем ссылки на старый топик на ссылки на новый
@@ -242,6 +267,18 @@ class TopicServiceImpl implements TopicService {
                 number = item.getNumber();
                 uri = item.getUri();
             }
+        }
+    }
+
+    private class TopicsMap extends LinkedHashMap<String, TopicProviderImpl> {
+        @Override
+        public TopicProviderImpl put(String key, TopicProviderImpl value) {
+            return super.put(key.toLowerCase(), value);
+        }
+
+        @Override
+        public TopicProviderImpl get(Object key) {
+            return super.get(((String) key).toLowerCase());
         }
     }
 }

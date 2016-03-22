@@ -147,7 +147,7 @@ public class TopicController {
 
     @RequestMapping("add-child")
     public void addChild(@RequestParam String name, @RequestParam String child) {
-        if (topicService.hasTopic(name) && topicService.hasTopic(child)) {
+        if (topicService.exist(name) && topicService.exist(child)) {
             boolean alreadyParent = topicService.getByName(child).children().anyMatch(c -> c.name().equals(name));
             if (alreadyParent) {
                 throw new RuntimeException("The parent has a child for the given name");
@@ -164,7 +164,7 @@ public class TopicController {
     @RequestMapping("merge")
     // Слияние двух веток
     public void merge(@RequestParam String main, @RequestParam String mergeInto) {
-        topicService.getByName(main).merge(mergeInto).delete();
+        topicService.getByName(main, true).merge(mergeInto);
     }
 
     @RequestMapping("add-related")

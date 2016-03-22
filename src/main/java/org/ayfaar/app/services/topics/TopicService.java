@@ -11,8 +11,17 @@ import java.util.Optional;
 public interface TopicService {
     @NotNull
     Optional<TopicProvider> get(String uri);
+
     @NotNull
-    TopicProvider findOrCreate(String name);
+    Optional<TopicProvider> get(String uri, boolean caseSensitive);
+
+    @NotNull
+    default TopicProvider findOrCreate(String name) {
+        return findOrCreate(name, false);
+    }
+
+    @NotNull
+    TopicProvider findOrCreate(String name, boolean caseSensitive);
 
     /**
      * Throw exception on topic not found
@@ -22,11 +31,14 @@ public interface TopicService {
     @NotNull
     default TopicProvider getByName(String name){
         return get(UriGenerator.generate(Topic.class, name))
-                .orElseThrow(() -> new LogicalException((Exceptions.TOPIC_NOT_FOUND), name));
+                .orElseThrow(() -> new LogicalException(Exceptions.TOPIC_NOT_FOUND, name));
     }
+
+    @NotNull
+    TopicProvider getByName(String name, boolean caseSensitive);
 
     void reload();
 
 
-    boolean hasTopic(String name);
+    boolean exist(String name);
 }
