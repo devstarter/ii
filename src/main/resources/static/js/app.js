@@ -382,6 +382,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                         case "USER_NOT_FOUND":
                             message = "Пользователь не найден";
                             break;
+                        case "TOPIC_NOT_FOUND":
+                            message = "Тема не найден";
+                            break;
                         case "PASSWORD_NOT_VALID":
                             message = "Пароль не верный";
                             break;

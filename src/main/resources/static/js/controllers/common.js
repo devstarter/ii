@@ -5,12 +5,13 @@ function DocumentController($scope, $stateParams, $api, messager, $state) {
             $scope.docLoading = false;
             if (doc.id) {
                 $scope.doc = doc;
+                document.title = doc.name;
             } else {
                 $scope.showUrlInput = true;
             }
         }, function(response){
             $scope.docLoading = false;
-            messager.error("Ошибка добавления документа");
+            messager.error("Ошибка загрузки документа");
         });
     } else {
         $scope.showUrlInput = true;
@@ -159,6 +160,7 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
             $scope.videoLoading = false;
             if (video.id) {
                 $scope.video = video;
+                document.title = video.title;
             } else {
                 $scope.showUrlInput = true;
             }
