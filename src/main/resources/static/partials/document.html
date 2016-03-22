@@ -8,12 +8,9 @@
         </div>
         <div ng-show="docLoading"><img src="static/images/ajax-loader.gif"/>Добавление...</div>
         <div style="padding-top: 20px">
-            <span class="grey">Последние 8 добавленных документов</span>
+            <span class="grey">Последние 9 добавленных документов</span>
             <div class="row">
-                <div ng-repeat="doc in last" ii-ref="doc" class="col-md-3" style="height: 250px">
-                    <img ng-src="https://i.ytimg.com/vi/{{doc.id}}/mqdefault.jpg" style="display: block; padding: 5px;width: 170px;"/>
-                    <a style="font-size: small">{{doc.title}}</a>
-                </div>
+                <document-card ng-repeat="doc in last" doc="doc" class="col-md-4"></document-card>
             </div>
         </div>
         <div style="clear: both"></div>
@@ -26,7 +23,7 @@
         </div>
         <!--<a href="{{doc.download_url}}"  target="_blank" class="btn btn-default">Скачать</a>-->
         <br>
-        <google code="doc.id"></google>
+        <google-doc id="doc.id"></google-doc>
         <br>
         <topics owner-uri="doc.uri"></topics>
     </div>

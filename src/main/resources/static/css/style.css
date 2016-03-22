@@ -1,3 +1,30 @@
+.card {
+    background: #fff;
+    border-radius: 2px;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+    color: #272727;
+    display: block;
+    margin: 16px 0;
+    overflow: hidden;
+    position: relative;
+    vertical-align: top;
+    height: 200px;
+    width: 210px;
+}
+.card.document {
+    height: 380px;
+}
+.card:hover {
+    box-shadow: 0 8px 20px 0 rgba(0,0,0,0.16),0 8px 40px 0 rgba(0,0,0,0.12);
+}
+.card img {
+    width: 210px;
+}
+.card div {
+    padding: 10px;
+    font-size: 90%;
+    color: darkblue;
+}
 .nopadding {padding: 0}
 .small {
     font-size: small;

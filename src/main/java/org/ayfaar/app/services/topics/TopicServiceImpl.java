@@ -13,7 +13,6 @@ import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -83,7 +82,7 @@ class TopicServiceImpl implements TopicService {
 
     private class TopicProviderImpl implements TopicProvider {
         private final Topic topic;
-        protected Map<UID, Link> linksMap = new HashMap<>();
+        private Map<UID, Link> linksMap = new HashMap<>();
 
         private TopicProviderImpl(Topic topic) {
             Assert.notNull(topic);
@@ -205,21 +204,44 @@ class TopicServiceImpl implements TopicService {
         public TopicResources resources() {
             final TopicResources resources = new TopicResources();
             resources.video.addAll(prepareResource(VideoResource.class));
-            resources.item.addAll(prepareResource(Item.class));
+            resources.item.addAll(prepareItemResource());
             resources.itemsRange.addAll(prepareResource(ItemsRange.class));
             resources.document.addAll(prepareResource(Document.class));
             return resources;
         }
 
-        private Collection<? extends ResourcePresentation> prepareResource(Class<? extends UID> resourceClass) {
-            return linksMap.entrySet().stream()
+        private Collection<ResourcePresentation<ItemResourcePresentation>> prepareItemResource() {
+            List<ResourcePresentation<ItemResourcePresentation>> list = new LinkedList<>();
+            //noinspection unchecked
+            linksMap.entrySet().stream()
+                    .filter(e -> e.getKey() instanceof Item)
+                    .map(e -> new ResourcePresentation(new ItemResourcePresentation((Item) e.getKey()), e.getValue()))
+                    .forEach(list::add);
+            return list;
+        }
+
+        private <T> List<ResourcePresentation<T>> prepareResource(Class<T> resourceClass) {
+            List<ResourcePresentation<T>> list = new LinkedList<>();
+            //noinspection unchecked
+            linksMap.entrySet().stream()
                     .filter(e -> e.getKey().getClass().isAssignableFrom(resourceClass))
                     .map(e -> new ResourcePresentation(e.getKey(), e.getValue()))
-                    .collect(Collectors.toList());
+                    .forEach(list::add);
+            return list;
         }
 
         private void registerLink(Link link, UID uid) {
             linksMap.put(uid, link);
+        }
+
+        private class ItemResourcePresentation {
+            public final String number;
+            public final String uri;
+
+            private ItemResourcePresentation(Item item) {
+                number = item.getNumber();
+                uri = item.getUri();
+            }
         }
     }
 }

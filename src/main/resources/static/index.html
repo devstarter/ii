@@ -53,6 +53,18 @@
         <div ng-transclude></div>
     </div>
 </script>
+<script type="text/ng-template" id="card-video">
+    <div ii-ref="video" class="card">
+        <img ng-src="https://i.ytimg.com/vi/{{video.id}}/mqdefault.jpg"/>
+        <div title="{{video.title}}">{{video.title | cut:true:50}}</div>
+    </div>
+</script>
+<script type="text/ng-template" id="card-document">
+    <div ii-ref="doc" class="card document">
+        <img ng-src="{{doc.thumbnail.replace('s220', 's300')}}"/>
+        <div title="{{doc.name}}">{{doc.name | cut:true:50}}</div>
+    </div>
+</script>
 <script type="text/ng-template" id="modal-prompt.html">
     <div class="modal-header">
         <h3 class="modal-title">{{title}}</h3>

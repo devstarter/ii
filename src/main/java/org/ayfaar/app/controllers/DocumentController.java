@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.ayfaar.app.utils.UriGenerator.generate;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping("api/document")
@@ -51,7 +52,7 @@ public class DocumentController {
     }
 
     @RequestMapping("last")
-    public List<Document> getLast(@PageableDefault(size = 8) Pageable pageable) {
+    public List<Document> getLast(@PageableDefault(size = 9, sort = "createdAt", direction = DESC) Pageable pageable) {
         return commonDao.getPage(Document.class, pageable);
     }
 }

@@ -11,10 +11,7 @@
             <div ng-repeat="(header, videos) in last">
                 <span class="grey">{{header}}</span>
                 <div class="row">
-                    <div ng-repeat="video in videos" ii-ref="video" class="col-md-3" style="height: 200px">
-                        <img ng-src="https://i.ytimg.com/vi/{{video.id}}/mqdefault.jpg" style="display: block; padding: 5px;width: 170px;"/>
-                        <a style="font-size: small" title="{{video.title}}">{{video.title | cut:true:50}}</a>
-                    </div>
+                    <video-card ng-repeat="video in videos" video="video" class="col-md-4"></video-card>
                 </div>
             </div>
             <a ng-click="getMore()" ng-hide="lastNoMore" class="btn btn-default" ng-class="lastLoading ? 'disabled' : ''">{{lastLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>

@@ -1,10 +1,7 @@
 package org.ayfaar.app.services.topics;
 
 import lombok.Builder;
-import org.ayfaar.app.model.Link;
-import org.ayfaar.app.model.LinkType;
-import org.ayfaar.app.model.Topic;
-import org.ayfaar.app.model.UID;
+import org.ayfaar.app.model.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -68,17 +65,17 @@ public interface TopicProvider {
         public List<ResourcePresentation> document = new LinkedList<>();
     }
 
-    class ResourcePresentation {
+    class ResourcePresentation<T> {
         public String quote;
         public String comment;
         public Float rate;
-        public Resource resource;
+        public T resource;
 
-        ResourcePresentation(UID uid, Link link) {
+        ResourcePresentation(T uid, Link link) {
             quote = link.getQuote();
             comment = link.getComment();
             rate = link.getRate();
-            resource = Resource.builder().title(uid.toTitle()).uri(uid.getUri()).build();
+            resource = uid;
         }
 
         @Builder

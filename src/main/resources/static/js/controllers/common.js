@@ -55,6 +55,9 @@ function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt
     $scope.addVideoResource = function () {
         $state.goToVideo("")
     };
+    $scope.addDocResource = function () {
+        $state.goToDoc("")
+    };
     $scope.merge = function () {
         $topicPrompt.prompt().then(function (topic) {
             modal.confirm("Подтвердите объединение тем", "Текущая тема \""+$scope.name+"\" будет удалена из системы, а всё что с ней связанно будет перенесено в выбранную тему (\""+topic+"\"). Подтвержаете объединение?", "Объединить")
@@ -180,7 +183,7 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
 
     function getLast() {
         $scope.lastLoading = true;
-        $api.resource.video.last(Math.ceil($scope.lastVideos.length / 8) + 1).then(function (lastVideos) {
+        $api.resource.video.last(Math.ceil($scope.lastVideos.length / 6) + 1).then(function (lastVideos) {
             if (!lastVideos.length) {
                 $scope.lastNoMore = true;
                 return

@@ -25,9 +25,9 @@
     <div ng-show="resources.video" class="children">
         <span class="gray">Прикреплённые видео</span>
         <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addVideoResource()" title="Прикрепить видео"></i>
-        <span class="linked-topic" ng-repeat="video in resources.video">
-            <a class="btn btn-link" ii-ref="video.resource">{{video.resource.title}}</a>
-        </span>
+        <div class="row">
+            <video-card ng-repeat="link in resources.video" video="link.resource" class="col-md-4"></video-card>
+        </div>
     </div>
     <a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>
 </div>
@@ -38,14 +38,23 @@
         <div ng-repeat="item in resources.item">
             <blockquote ng-show="item.quote">
                 <div ii-bind="item.quote"></div>
-                <cite>&mdash; <a ii-ref="item.resource">{{item.resource.title}}</a>
+                <cite>&mdash; <a ii-ref="item.resource">{{item.resource.number}}</a>
                 </cite>
             </blockquote>
-            <a ng-hide="item.quote" ii-ref="item.resource">{{item.resource.title}}</a>
+            <a ng-hide="item.quote" ii-ref="item.resource">{{item.resource.number}}</a>
         </div>
     </div>
     <!--<a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>-->
 </div>
+<div ng-show="resources.document.length" class="children">
+    <span class="gray">Прикреплённые документы</span>
+    <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addDocResource()" title="Прикрепить документ"></i>
+    <div class="row">
+        <document-card ng-repeat="link in resources.document" doc="link.resource" class="col-md-4"></document-card>
+    </div>
+</div>
+<a ng-hide="resources.document.length" class="btn btn-link" ng-click="addDocResource()">Прикрепить документ</a>
+
 <style type="text/css">
     .title .h {visibility: hidden}
     .title:hover .h {visibility: visible}

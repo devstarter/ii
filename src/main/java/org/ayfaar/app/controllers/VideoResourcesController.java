@@ -45,7 +45,7 @@ public class VideoResourcesController {
     }
 
     @RequestMapping("last-created")
-    public List<VideoResource> lastCreated(@PageableDefault(size = 8, sort = "createdAt", direction = DESC) Pageable pageable) throws Exception {
+    public List<VideoResource> lastCreated(@PageableDefault(size = 6, sort = "createdAt", direction = DESC) Pageable pageable) throws Exception {
         return commonDao.getPage(VideoResource.class, pageable);
     }
 

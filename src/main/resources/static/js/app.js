@@ -287,6 +287,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 if (uri.indexOf("видео:") === 0) {
                     return 'video'
                 }
+                if (uri.indexOf("документ:") === 0) {
+                    return 'document'
+                }
             }
         };
         return service;
@@ -705,14 +708,14 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             }
         };
     })
-    .directive('google', function($sce) {
+    .directive('googleDoc', function($sce) {
         return {
             restrict: 'EA',
-            scope: { code: '=' },
+            scope: { id: '=' },
             replace: true,
             template: '<div style="height:600px;"><iframe src="{{url}}" width="700" height="600" frameborder="0" allowfullscreen></iframe></div>',
             link: function (scope) {
-                scope.$watch('code', function (id) {
+                scope.$watch('id', function (id) {
                     if (id) {
                         scope.url = $sce.trustAsResourceUrl("https://drive.google.com/file/d/"+id+"/preview");
                     }
@@ -808,6 +811,18 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     '<a class="btn btn-link" ii-ref="parent">{{parent._label}}</a>{{$last ? "" : "/"}}</span>'
         }
     })
+    .directive("videoCard", function () {
+        return {
+            scope: { video: '='},
+            templateUrl: "card-video"    
+        }
+    })
+    .directive("documentCard", function () {
+        return {
+            scope: { doc: '='},
+            templateUrl: "card-document"    
+        }
+    })
     .run(function($state, entityService, $rootScope, analytics){
         var originStateGo = $state.go;
         $state.go = function(to, params, options) {
@@ -834,6 +849,12 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                             to.id = to.uri.replace("видео:youtube:", "")
                         }
                         originStateGo.bind($state)("resource-video", {id: to.id});
+                        return;
+                    case "document":
+                        if (!to.id) {
+                            to.id = to.uri.replace("документ:google:", "")
+                        }
+                        originStateGo.bind($state)("document", {id: to.id});
                         return;
                 }
             } else {
