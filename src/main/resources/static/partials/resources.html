@@ -14,7 +14,7 @@
                     <video-card ng-repeat="video in videos" video="video" class="col-md-4"></video-card>
                 </div>
             </div>
-            <a ng-click="getMore()" ng-hide="lastNoMore" class="btn btn-default" ng-class="lastLoading ? 'disabled' : ''">{{lastLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>
+            <a ng-click="getMore()" ng-hide="lastNoMore" class="btn btn-link" ng-class="lastLoading ? 'disabled' : ''">{{lastLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>
         </div>
         <div style="clear: both"></div>
     </div>

@@ -21,7 +21,7 @@ import static org.ayfaar.app.utils.hibernate.EnumHibernateType.ENUM;
 @Getter @Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class VideoResource extends UID {
+public class VideoResource extends UID implements Comparable<VideoResource> {
     @Column(unique = true, nullable = false)
     @NonNull
     private String id;
@@ -39,5 +39,10 @@ public class VideoResource extends UID {
     @Override
     public String toTitle() {
         return title;
+    }
+
+    @Override
+    public int compareTo(VideoResource o) {
+        return title.compareTo(o.title);
     }
 }

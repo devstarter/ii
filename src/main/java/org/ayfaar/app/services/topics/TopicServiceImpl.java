@@ -251,7 +251,8 @@ class TopicServiceImpl implements TopicService {
             linksMap.entrySet().stream()
                     .filter(e -> e.getKey().getClass().isAssignableFrom(resourceClass))
                     .map(e -> new ResourcePresentation(e.getKey(), e.getValue()))
-                    .forEach(list::add);
+                    .sorted()
+                    .forEachOrdered(list::add);
             return list;
         }
 

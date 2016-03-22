@@ -794,8 +794,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 };
                 function getTopics() {
                     if (!scope.ownerUri) return;
+                    scope.loading = true;
                     $api.topic.getFor(scope.ownerUri).then(function(topics){
                         scope.topics = topics;
+                    })['finally'](function () {
+                        scope.loading = false;
                     });
                 }
                 scope.openSelector = function () {
@@ -807,6 +810,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 scope.newTopic = {}
             }
         };
+    })
+    .directive('loading-indicator', function() {
+        return {
+            template: '<div><img src="static/images/ajax-loader.gif"/>Загрузка...</div>'
+        }
     })
     .directive('parents', function(entityService) {
         return {
@@ -870,6 +878,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
         $state.goToDoc = function(doc) {
             originStateGo.bind($state)("document", {id: doc.id})
         };
+        $state.goToMainTopic = function() {
+            $state.goToTopic("Методика МИЦИАР");
+        };
         $state.goToTopic = function(topicName) {
             originStateGo.bind($state)("topic", {name: topicName})
         };
@@ -906,7 +917,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 }
             }
 
-            return value + (tail || ' …');
+            return value + (tail || '…');
         };
     });
 

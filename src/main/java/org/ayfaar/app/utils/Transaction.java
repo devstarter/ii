@@ -3,7 +3,7 @@ package org.ayfaar.app.utils;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Transaction {
+public class Transaction implements Runnable {
     private List<Operation> register = new LinkedList<>();
 
     public Transaction register(Runnable run, Runnable rollback) {

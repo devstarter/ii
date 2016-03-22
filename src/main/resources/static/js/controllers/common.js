@@ -27,19 +27,22 @@ function DocumentController($scope, $stateParams, $api, messager, $state) {
     };
     $scope.last = [];
 }
-function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt, messager) {
+function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt, messager, $timeout) {
     $scope.name = $stateParams.name;
     document.title = $scope.name;
-    $scope.loading = true;
 
     function load() {
+    $scope.loading = true;
         $api.topic.get($scope.name, true).then(function(topic){
-            $scope.loading = false;
             copyObjectTo(topic, $scope);
             document.title = $scope.name;
+        }, function () {
+            $state.goToMainTopic();
+        })['finally'](function () {
+            $scope.loading = false;
         });
     }
-    load();
+    $timeout(load);
     $scope.unlink = function (linkedTopic) {
         $api.topic.unlink($scope.name, linkedTopic).then(load);
     };
@@ -148,7 +151,7 @@ function TaggerController($scope, $stateParams, $api) {
         });
     };
 }
-function ResourcesController($scope, $stateParams, $state, Video, Topic, errorService, $api, $modal, $topicSelector) {
+function ResourcesController($scope, $stateParams, $state, Video, Topic, errorService, $api, $timeout) {
     $scope.$root.hideLoop = true;
     $scope.topics = [];
     $scope.newTopic = {};
@@ -156,7 +159,7 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
 
     if ($stateParams.id) {
         $scope.videoLoading = true;
-        Video.get({id: $stateParams.id}, function(video){
+        $timeout(Video.get({id: $stateParams.id}, function(video){
             $scope.videoLoading = false;
             if (video.id) {
                 $scope.video = video;
@@ -167,7 +170,7 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
         }, function(response){
             $scope.videoLoading = false;
             errorService.resolve("Ошибка добавления видео: " + response.error);
-        });
+        }));
     } else {
         $scope.showUrlInput = true;
         getLast();

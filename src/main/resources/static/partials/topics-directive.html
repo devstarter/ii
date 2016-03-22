@@ -1,5 +1,6 @@
-<span ng-hide="topics.length">Не указано ни одной темы</span>
+<span ng-hide="loading || topics.length">Не указано ни одной темы</span>
 <h3 ng-show="topics.length" class="grey">Прикреплённые темы:</h3>
+<div ng-show="loading"><img src="static/images/ajax-loader.gif"/>Загрузка тем...</div>
 <div ng-repeat="topic in topics" class="topic">
     <rating ng-click="updateRate(topic)" ng-model="topic.rate" max="3" class="gray"></rating>
     <a topic-ref="topic">{{topic.name}}</a>

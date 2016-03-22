@@ -34,7 +34,7 @@
 <header ii-header ng-hide="hideLoop"></header>
 
 <div ui-view></div>
-<div style="position: absolute; right: 0;top: 35px; width: 400px">
+<div style="position: absolute; right: 0;top: 35px; width: 400px;z-index: 999">
     <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
 </div>
 <script>

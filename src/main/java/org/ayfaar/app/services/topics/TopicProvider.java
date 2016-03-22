@@ -1,7 +1,10 @@
 package org.ayfaar.app.services.topics;
 
 import lombok.Builder;
-import org.ayfaar.app.model.*;
+import org.ayfaar.app.model.Link;
+import org.ayfaar.app.model.LinkType;
+import org.ayfaar.app.model.Topic;
+import org.ayfaar.app.model.UID;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -65,7 +68,7 @@ public interface TopicProvider {
         public List<ResourcePresentation> document = new LinkedList<>();
     }
 
-    class ResourcePresentation<T> {
+    class ResourcePresentation<T> implements Comparable<ResourcePresentation<T>> {
         public String quote;
         public String comment;
         public Float rate;
@@ -76,6 +79,11 @@ public interface TopicProvider {
             comment = link.getComment();
             rate = link.getRate();
             resource = uid;
+        }
+
+        @Override
+        public int compareTo(ResourcePresentation<T> o) {
+            return resource instanceof Comparable ? ((Comparable<T>) resource).compareTo(o.resource) : 0;
         }
 
         @Builder

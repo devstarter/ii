@@ -2,59 +2,61 @@
     <span class="gray">Тема:</span>
     <h1 class="inline" style="padding-bottom: 20px">{{name}}</h1>
     <br>
-    <a ng-hide="parents" class="h btn btn-default" ng-click="addParent()">Добавить родительскую тему</a>
-    <a ng-hide="children" class="h btn btn-default" ng-click="addChild()">Добавить дочернюю тему</a>
-    <a class="h btn btn-default" ng-click="merge()">Объединение</a>
+    <a ng-hide="loading || parents" class="h btn btn-default" ng-click="addParent()">Добавить родительскую тему</a>
+    <a ng-hide="loading || children" class="h btn btn-default" ng-click="addChild()">Добавить дочернюю тему</a>
+    <a class="h btn btn-link" ng-click="merge()">Объединить с другой темой</a>
 </div>
-<div ng-show="parents" class="parents h" style="padding-top: 20px">
-    <span class="gray">Родительские темы:</span>
-    <a ng-repeat="parent in parents" topic-ref="parent">{{parent}}{{$last ? '' : ', '}}</a>
-    <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addParent()" title="Добавить родительскую тему"></i>
-</div>
-<div style="padding-top: 20px">
-    <div ng-show="children" class="children">
-        <span class="gray">Дочерние темы</span>
-        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addChild()" title="Добавить дочернюю тему"></i>
-        <span class="linked-topic" ng-repeat="child in children">
-            <h4 class="topic" topic-ref="child" title="{{child}}">{{child | cut:true:70}}</h4>
-            <a class="btn glyphicon glyphicon-remove" ng-click="unlink(child)" title="Удалить связь с темой"></a>
-        </span>
+<div ng-show="loading"><img src="static/images/ajax-loader.gif"/>Загрузка...</div>
+<div ng-hide="loading">
+    <div ng-show="parents" class="parents h" style="padding-top: 20px">
+        <span class="gray">Родительские темы:</span>
+        <a ng-repeat="parent in parents" topic-ref="parent">{{parent}}{{$last ? '' : ', '}}</a>
+        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addParent()" title="Добавить родительскую тему"></i>
     </div>
-</div>
-<div style="padding-top: 20px">
-    <div ng-show="resources.video" class="children">
-        <span class="gray">Прикреплённые видео</span>
-        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addVideoResource()" title="Прикрепить видео"></i>
+    <div style="padding-top: 20px">
+        <div ng-show="children" class="children">
+            <span class="gray">Дочерние темы</span>
+            <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addChild()" title="Добавить дочернюю тему"></i>
+            <span class="linked-topic" ng-repeat="child in children">
+                <h4 class="topic" topic-ref="child" title="{{child}}">{{child | cut:true:70}}</h4>
+                <a class="btn glyphicon glyphicon-remove" ng-click="unlink(child)" title="Удалить связь с темой"></a>
+            </span>
+        </div>
+    </div>
+    <div style="padding-top: 20px">
+        <div ng-show="resources.video" class="children">
+            <span class="gray">Прикреплённые видео</span>
+            <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addVideoResource()" title="Прикрепить видео"></i>
+            <div class="row">
+                <video-card ng-repeat="link in resources.video" video="link.resource" class="col-md-4"></video-card>
+            </div>
+        </div>
+        <a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>
+    </div>
+    <div style="padding-top: 20px">
+        <div ng-show="resources.item" class="children">
+            <span class="gray">Прикреплённые абзацы</span>
+            <!--<i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addItemResource()" title="Добавить абзац"></i>-->
+            <div ng-repeat="item in resources.item">
+                <blockquote ng-show="item.quote">
+                    <div ii-bind="item.quote"></div>
+                    <cite>&mdash; <a ii-ref="item.resource">{{item.resource.number}}</a>
+                    </cite>
+                </blockquote>
+                <a ng-hide="item.quote" ii-ref="item.resource">{{item.resource.number}}</a>
+            </div>
+        </div>
+        <!--<a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>-->
+    </div>
+    <div ng-show="resources.document.length" class="children">
+        <span class="gray">Прикреплённые документы</span>
+        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addDocResource()" title="Прикрепить документ"></i>
         <div class="row">
-            <video-card ng-repeat="link in resources.video" video="link.resource" class="col-md-4"></video-card>
+            <document-card ng-repeat="link in resources.document" doc="link.resource" class="col-md-4"></document-card>
         </div>
     </div>
-    <a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>
+    <a ng-hide="resources.document.length" class="btn btn-link" ng-click="addDocResource()">Прикрепить документ</a>
 </div>
-<div style="padding-top: 20px">
-    <div ng-show="resources.item" class="children">
-        <span class="gray">Прикреплённые абзацы</span>
-        <!--<i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addItemResource()" title="Добавить абзац"></i>-->
-        <div ng-repeat="item in resources.item">
-            <blockquote ng-show="item.quote">
-                <div ii-bind="item.quote"></div>
-                <cite>&mdash; <a ii-ref="item.resource">{{item.resource.number}}</a>
-                </cite>
-            </blockquote>
-            <a ng-hide="item.quote" ii-ref="item.resource">{{item.resource.number}}</a>
-        </div>
-    </div>
-    <!--<a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>-->
-</div>
-<div ng-show="resources.document.length" class="children">
-    <span class="gray">Прикреплённые документы</span>
-    <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addDocResource()" title="Прикрепить документ"></i>
-    <div class="row">
-        <document-card ng-repeat="link in resources.document" doc="link.resource" class="col-md-4"></document-card>
-    </div>
-</div>
-<a ng-hide="resources.document.length" class="btn btn-link" ng-click="addDocResource()">Прикрепить документ</a>
-
 <style type="text/css">
     .title .h {visibility: hidden}
     .title:hover .h {visibility: visible}
