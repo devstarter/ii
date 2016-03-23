@@ -55,11 +55,9 @@
 2. Качаем [последний дамп данных](https://github.com/devstarter/ii/tree/master/db)
 3. Импортируем дамп
 
-Запускаем проект (не обязательно):
+Запускаем проект:
 
-1. Добавляем Run Configuration для Tomcat в IDEA
-2. Запускаем эту конфигурацию
+Конфигурация в IDEA [Run/Debug Configuration](https://cloud.githubusercontent.com/assets/1183619/14000544/b469080e-f152-11e5-9a3a-c1acb737b5d8.png)
 
-Подробнее в видео https://www.youtube.com/watch?v=mbwN4eaES78
 
 [![Презетация](http://img.youtube.com/vi/__ibkaMRHZI/0.jpg)](http://youtu.be/__ibkaMRHZI)
