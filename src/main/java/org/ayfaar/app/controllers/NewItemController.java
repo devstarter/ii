@@ -2,7 +2,6 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.utils.CategoryService;
 import org.ayfaar.app.utils.TermsMarker;
 import org.ayfaar.app.utils.TermsTaggingUpdater;
 import org.springframework.context.ApplicationEventPublisher;

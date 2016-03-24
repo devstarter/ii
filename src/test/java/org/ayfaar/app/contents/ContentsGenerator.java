@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.ayfaar.app.SpringTestConfiguration;
-import org.ayfaar.app.utils.CategoryService;
 import org.ayfaar.app.utils.contents.CategoryPresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
