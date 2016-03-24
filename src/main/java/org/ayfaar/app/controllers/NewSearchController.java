@@ -8,6 +8,7 @@ import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.controllers.search.cache.DBCache;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.CategoryService;
 import org.ayfaar.app.utils.RegExpUtils;
 import org.ayfaar.app.utils.StringUtils;
 import org.ayfaar.app.utils.TermService;

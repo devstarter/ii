@@ -4,6 +4,7 @@ import org.ayfaar.app.controllers.ItemController;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.utils.CategoryService;
 import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
