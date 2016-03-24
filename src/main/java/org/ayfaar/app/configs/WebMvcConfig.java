@@ -64,6 +64,7 @@ public class WebMvcConfig extends WebMvcAutoConfiguration.WebMvcAutoConfiguratio
                 .resourceChain(useResourceCache)
                 .addResolver(new CustomPathResourceResolver())
                 .addTransformer(new AppCacheManifestTransformer());
+
     }
 
     private class CustomPathResourceResolver extends PathResourceResolver {
@@ -73,6 +74,8 @@ public class WebMvcConfig extends WebMvcAutoConfiguration.WebMvcAutoConfiguratio
                 // don't change path
             } else if (requestPath.startsWith("static/")) {
                 requestPath = requestPath.replaceFirst("static/", "");
+            } else if (requestPath.startsWith("sitemap.xml")) {
+                requestPath = requestPath.replaceFirst("static/sitemap.xml", "sitemap.xml");
             } else {
                 requestPath = "index.html";
             }

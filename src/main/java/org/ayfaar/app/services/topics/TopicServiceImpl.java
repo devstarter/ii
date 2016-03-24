@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.ayfaar.app.utils.StreamUtils.single;
@@ -102,6 +103,11 @@ class TopicServiceImpl implements TopicService {
     @Override
     public boolean exist(String name) {
         return topics.values().stream().anyMatch(c -> c.name().equals(name));
+    }
+
+    @Override
+    public List<String> getAllNames(){
+        return topics.values().stream().map(topicProvider -> topicProvider.topic().getName()).collect(Collectors.toList());
     }
 
     private class TopicProviderImpl implements TopicProvider {
