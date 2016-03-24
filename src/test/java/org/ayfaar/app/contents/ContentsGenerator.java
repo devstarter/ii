@@ -16,6 +16,9 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.*;
 
+/**
+ * fixme: НЕ ЗАПУСКАЕТСЯ КОНТЕКСТ, сделать по аналогии с org.ayfaar.app.contents.ContentsGenerator
+ */
 public class ContentsGenerator {
 	private static final Logger logger = LoggerFactory.getLogger(ContentsGenerator.class);
 
