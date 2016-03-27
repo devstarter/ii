@@ -22,6 +22,7 @@
     <script src="static/lib/angular-ui-router.min.js"></script>
     <script src="static/lib/ui-bootstrap/ui-bootstrap-0.11.2.min.js"></script>
 
+    <script async src="static/lib/require/require.min.js"></script>
     <script src="static/js/controllers/common.js"></script>
     <script src="static/js/controllers/term.js"></script>
     <script src="static/js/app.js"></script>
@@ -56,13 +57,13 @@
 <script type="text/ng-template" id="card-video">
     <div ii-ref="video" class="card">
         <img ng-src="https://i.ytimg.com/vi/{{video.id}}/mqdefault.jpg"/>
-        <div title="{{video.title}}">{{video.title | cut:true:50}}</div>
+        <div tooltip="{{video.title}}">{{video.title | cut:true:50}}</div>
     </div>
 </script>
 <script type="text/ng-template" id="card-document">
     <div ii-ref="doc" class="card document">
         <img ng-src="{{doc.thumbnail.replace('s220', 's300')}}"/>
-        <div title="{{doc.name}}">{{doc.name | cut:true:50}}</div>
+        <div tooltip="{{doc.name}}">{{doc.name | cut:true:50}}</div>
     </div>
 </script>
 <script type="text/ng-template" id="modal-prompt.html">
@@ -75,6 +76,27 @@
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="cancel()">Отменить</button>
         <button class="btn btn-primary" ng-click="act()">{{action}}</button>
+    </div>
+</script>
+<script type="text/ng-template" id="modal-auth.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Представтесь через социальные тести</h3>
+    </div>
+    <div class="modal-body">
+        <div ng-hide="user" style="text-align: center">
+            <img class="btn" src="static/images/facebook.png" ng-click="authenticate('facebook')"/>
+            <img class="btn" src="static/images/vk.png" ng-click="authenticate('vk')"/>
+        </div>
+        <div ng-show="user">
+            <img ng-src="{{user.thumbnail}}" style="float: left; padding-right: 10px;"/>
+            <div>{{user.name}}</div>
+            <div>{{user.email}}</div>
+            <div style="clear: both"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()">Отменить</button>
+        <button class="btn btn-primary" ng-click="registrate()">Представится</button>
     </div>
 </script>
 <script type="text/ng-template" id="contribute-form.html">

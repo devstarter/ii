@@ -229,6 +229,14 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 last: function () {
                     return api.get("document/last")
                 }
+            },
+            auth: {
+                registrate: function (user) {
+                    return api.post("auth", user)
+                },
+                getCurrentUser: function () {
+                    return api.get("auth/current-user")
+                }
             }
         };
         function serializeGet(obj) {
@@ -369,6 +377,70 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                         };
                     }
                 }).result;
+            }
+        }
+    })
+    .service('auth', function($modal, $api, $rootScope, $q) {
+        return {
+            isAuthenticated: function () {
+                return $rootScope.user;
+            },
+            authenticate: function () {
+                var deferred = $q.defer();
+                if ($rootScope.user)
+                    deferred.resolve($rootScope.user);
+                else
+                    $api.auth.getCurrentUser().then(function (user) {
+                        if (user) {
+                            $rootScope.user = user;
+                            deferred.resolve(user);
+                        }
+                        else {
+                            if (typeof hello === 'undefined') {
+                                requirejs(["static/lib/hello/hello.min.js"], function (hello) {
+                                    hello.init({
+                                        facebook: "917074828411840",
+                                        vk: "5371182",
+                                        google: ""
+                                    }, {redirect_uri: "static/lib/hello/redirect.html"});
+                                    openAuthModal()
+                                });
+                            } else {
+                                openAuthModal()
+                            }
+                        }
+                    });
+
+                function openAuthModal() {
+                    $modal.open({
+                        templateUrl: 'modal-auth.html',
+                        controller: function ($scope, $modalInstance) {
+                            $scope.authenticate = function (provider) {
+                                hello(provider).login({force: false, scope: 'email'}).then(function (auth) {
+                                    hello(provider).api('me').then(function (user) {
+                                        $scope.user = angular.merge({
+                                            access_token: auth.authResponse.access_token,
+                                            auth_provider: auth.network
+                                        }, user);
+                                        $scope.$apply();
+                                    });
+                                });
+                            };
+                            $scope.registrate = function () {
+                                $api.auth.registrate($scope.user).then(function () {
+                                    $rootScope.user = $scope.user;
+                                    $modalInstance.close($scope.user);
+                                    deferred.resolve($scope.user);
+                                });
+                            };
+                            $scope.cancel = function () {
+                                $modalInstance.dismiss('cancel');
+                                deferred.reject();
+                            };
+                        }
+                    })
+                }
+                return deferred.promise;
             }
         }
     })

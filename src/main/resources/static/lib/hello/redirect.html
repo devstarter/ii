@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Авторизация...</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+</head>
+<body>
+
+	<h2>Пожалуйста закройте это окно чтобы продолжить</h2>
+	<script>
+		window.onbeforeunload = function(){
+			document.getElementsByTagName('h2')[0].innerHTML="Перенаправление, пожалуйста подождите";
+		}
+	</script>
+	<script src="hello.min.js"></script>
+</body>
+</html>

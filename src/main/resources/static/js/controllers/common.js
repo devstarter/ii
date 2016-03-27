@@ -86,12 +86,17 @@ function CategoryController($scope, $stateParams, $api, $state) {
         document.title = $scope.name;
     });
 }
-function HomeController($scope, $state) {
+function HomeController($scope, $state, auth) {
     $scope.search = function(query) {
         if (query) {
             $state.goToTerm(query);
         }
     };
+    $scope.auth = function () {
+        auth.authenticate().then(function (user) {
+            $scope.user = user;
+        });
+    }
 }
 function ItemController($scope, $stateParams, $state, $api) {
     $scope.number = $stateParams.number.trim();

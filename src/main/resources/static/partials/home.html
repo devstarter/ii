@@ -33,5 +33,7 @@
             <a href="15.16855"><b>Том 15.</b> Осознанный Путь к Человеческим Мирам «личностного» Бессмертия</a>
         </div>
         <span style="color: grey;text-align: center;display: block;padding-top: 10px">Творчеством автора является только текст нумерованных абзацев, всё остальное - результат работы коллектива читателей</span>
+        <a class="btn btn-link" style="text-align: center; display: block" ng-click="auth()" ng-hide="user">Представиться</a>
+        <div ng-show="user" style="text-align: center;"><img ng-src="{{user.thumbnail}}" style="width: 30px;height: 30px;border-radius: 50%;"/> {{user.name}}</div>
     </div>
 </div>
