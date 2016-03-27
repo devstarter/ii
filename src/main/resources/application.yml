@@ -1,10 +1,15 @@
 # DB
 spring:
   datasource:
-    url: jdbc:mysql://${OPENSHIFT_EXTMYSQL_DB_HOST}:${OPENSHIFT_EXTMYSQL_DB_PORT}/${OPENSHIFT_EXTAPP_NAME}?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    url: jdbc:mysql://${OPENSHIFT_EXTMYSQL_DB_HOST}:${OPENSHIFT_EXTMYSQL_DB_PORT}/${OPENSHIFT_EXTAPP_NAME}?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true
     username: ${OPENSHIFT_EXTMYSQL_DB_USERNAME}
     password: ${OPENSHIFT_EXTMYSQL_DB_PASSWORD}
     platform: org.hibernate.dialect.MySQL5Dialect
+    test-while-idle: true
+    test-on-borrow: true
+    validation-query: SELECT 1
+    time-between-eviction-runs-millis: 5000
+    min-evictable-idle-time-millis: 60000
   jackson:
     property-naming-strategy: CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
     serialization-inclusion: non_empty
