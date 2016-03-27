@@ -144,14 +144,15 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
-        public Stream<TopicProvider> children() {
+        public Stream<? extends TopicProvider> children() {
             return linksMap.values().stream()
                     .filter(link ->
                             link.getUid1() instanceof Topic
                             && link.getUid2() instanceof Topic
                             && link.getUid1().getUri().equals(uri())
                             && link.getType() == LinkType.CHILD)
-                    .map(l -> new TopicProviderImpl((Topic) l.getUid2()));
+                    .map(l -> new TopicProviderImpl((Topic) l.getUid2()))
+                    .sorted((o1, o2) -> o1.name().compareTo(o2.name()));
         }
 
         @Override

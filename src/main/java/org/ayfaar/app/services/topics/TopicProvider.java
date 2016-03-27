@@ -23,7 +23,7 @@ public interface TopicProvider {
         return link(type, uid, comment, null, null);
     }
 
-    Stream<TopicProvider> children();
+    Stream<? extends TopicProvider> children();
     Stream<TopicProvider> parents();
     Stream<TopicProvider> related();
 
@@ -52,6 +52,8 @@ public interface TopicProvider {
     /**
      * @return все ресурсы связаные любыми линками с этой темой
      */
+    // todo: return only 6 resources for each type and create new method fo loading rest with paging.
+    // And return flag hasMore in each ResourcePresentation
     TopicResources resources();
 
     default void link(UID uid) {
