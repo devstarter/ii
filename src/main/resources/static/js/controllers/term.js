@@ -155,14 +155,14 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
             for(var i in r.quotes) {
                 r.quotes[i].uri = "ии:пункт:"+r.quotes[i].number;
             }
-            $scope.foundQuotes = $scope.foundQuotes ? $scope.foundQuotes.concat(r.quotes) : r.quotes;
+            $scope.foundQuotes = $scope.foundQuotes ? $scope.foundQuotes.concat(r.quotes) : (r.quotes ? r.quotes : []);
             if ($scope.foundQuotes.length == 0) {
                 // no result
                 $scope.noResult = $scope.foundQuotes.length == 0;
                 if (ga) ga('send', 'event', 'not-found', $scope.query);
             }
             $scope.showLoadMore = r.hasMore;
-            if (!r.quotes.length) {
+            if (r.quotes && !r.quotes.length) {
                 pageCounter = 0;
             }
         })['finally'](function(){
