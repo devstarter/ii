@@ -209,4 +209,23 @@ public class TopicController {
         public List<String> related;
         public TopicProvider.TopicResources resources;
     }
+
+    @RequestMapping("reload")
+    public void reload() {
+        topicService.reload();
+    }
+
+    @RequestMapping("bulk/link")
+    //todo implement
+    public void bulkLinkResources(String topicName, List<String> resourceUris) {
+        // link each resource to topicName
+        throw new RuntimeException("Unimplemented");
+    }
+
+    @RequestMapping("bulk/unlink")
+    //todo implement
+    public void bulkUnlinkResources(String topicName, List<String> resourceUris) {
+        // unlink each resource from topicName
+        throw new RuntimeException("Unimplemented");
+    }
 }

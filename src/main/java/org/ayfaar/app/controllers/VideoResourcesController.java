@@ -22,6 +22,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 @RequestMapping("api/resource/video")
+//todo: rename
 public class VideoResourcesController {
 
     @Inject CommonDao commonDao;

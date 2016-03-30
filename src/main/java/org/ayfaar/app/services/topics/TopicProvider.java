@@ -94,4 +94,9 @@ public interface TopicProvider {
             public String title;
         }
     }
+
+    // todo implement
+    default boolean hasGrandParent(String name) {
+        throw new RuntimeException("Unimplemented");
+    }
 }

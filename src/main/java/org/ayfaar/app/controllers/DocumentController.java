@@ -17,6 +17,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping("api/document")
+//todo: rename, update author etc
 public class DocumentController {
     @Inject CommonDao commonDao;
     @Inject GoogleService googleService;
