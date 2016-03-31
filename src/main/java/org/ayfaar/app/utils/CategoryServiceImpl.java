@@ -278,5 +278,10 @@ public class CategoryServiceImpl implements CategoryService {
 	private double convertItemNumber(String value) {
         return value != null ? Double.parseDouble(getValueFromUri(Item.class, value)) : 0.0;
     }
+
+    @Override
+    public Map<String, CategoryProvider> getAll(){
+        return categoryMap;
+    }
 }
 

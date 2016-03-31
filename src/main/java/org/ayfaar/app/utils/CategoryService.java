@@ -4,6 +4,7 @@ package org.ayfaar.app.utils;
 import org.ayfaar.app.model.Category;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CategoryService {
     CategoryProvider getByName(String name);
@@ -12,6 +13,8 @@ public interface CategoryService {
     void reload();
 
 	CategoryProvider getByUri(String uri);
+
+    Map<String, CategoryProvider> getAll();
 
     interface CategoryProvider {
         Category getCategory();

@@ -7,6 +7,8 @@ import org.ayfaar.app.model.ItemsRange;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Topic;
 import org.ayfaar.app.model.UID;
+import org.ayfaar.app.services.moderation.ModerationService;
+import org.ayfaar.app.services.moderation.Action;
 import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.utils.UriGenerator;
@@ -27,6 +29,7 @@ public class TopicController {
     @Inject CommonDao commonDao;
     @Inject LinkDao linkDao;
     @Inject TopicService topicService;
+    @Inject ModerationService moderationService;
 
     @RequestMapping("for/{uri}")
     public List<LinkedTopicPresentation> getForUri(@PathVariable String uri) throws Exception {
@@ -64,6 +67,7 @@ public class TopicController {
     @RequestMapping(value = "import", method = POST)
     public void importTopics(@RequestBody String topics) throws Exception {
         hasLength(topics);
+        moderationService.confirm(Action.TOPIC_CREATE);
         final Set<String> uniqueNames = new HashSet<>(Arrays.asList(topics.split("\n")));
         for (String name : uniqueNames) {
             if (!name.isEmpty()) commonDao.save(new Topic(name));
@@ -79,6 +83,7 @@ public class TopicController {
                         @RequestParam(required = false) Float rate) throws Exception {
         UID uid = commonDao.get(UriGenerator.getClassByUri(uri), uri);
         final TopicProvider topic = topicService.findOrCreate(name);
+        moderationService.confirm(Action.TOPIC_LINK_RESOURCE);
         topic.link(null, uid, comment, quote, rate);
         return topic.topic();
     }
@@ -92,9 +97,19 @@ public class TopicController {
                         @RequestParam(required = false) String comment,
                         @RequestParam(required = false) Float rate) throws Exception {
         ItemsRange itemsRange = ItemsRange.builder().from(from).to(to).description(rangeName).build();
-        itemsRange = commonDao.save(itemsRange);
+        final String itemsRangeUri = UriGenerator.generate(itemsRange);
+        ItemsRange range = commonDao.get(ItemsRange.class, itemsRangeUri);
+        if (range == null) {
+            moderationService.confirm(Action.ITEMS_RANGE_CREATE);
+            range = commonDao.save(itemsRange);
+        } else {
+            moderationService.confirm(Action.ITEMS_RANGE_UPDATE);
+            range.setDescription(rangeName);
+        }
+
         final TopicProvider topic = topicService.findOrCreate(topicName);
-        topic.link(null, itemsRange, comment, quote, rate);
+        moderationService.confirm(Action.TOPIC_LINK_RESOURCE);
+        topic.link(null, range, comment, quote, rate);
     }
 
     @RequestMapping(value = "rate", method = POST)
@@ -147,6 +162,7 @@ public class TopicController {
 
     @RequestMapping("add-child")
     public void addChild(@RequestParam String name, @RequestParam String child) {
+        moderationService.confirm(Action.TOPIC_ADD_CHILD);
         if (topicService.exist(name) && topicService.exist(child)) {
             boolean alreadyParent = topicService.getByName(child).children().anyMatch(c -> c.name().equals(name));
             if (alreadyParent) {

@@ -1,6 +1,7 @@
 package org.ayfaar.app.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
@@ -14,7 +15,6 @@ import org.springframework.web.servlet.resource.AppCacheManifestTransformer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +30,9 @@ public class WebMvcConfig extends WebMvcAutoConfiguration.WebMvcAutoConfiguratio
 
     @Autowired
     private Environment env;
+
+    @Value("${sitemap-dir}")
+    private String sitemapDir;
 
     @Bean
     public ResourceUrlEncodingFilter resourceUrlEncodingFilter() {
@@ -59,7 +62,7 @@ public class WebMvcConfig extends WebMvcAutoConfiguration.WebMvcAutoConfiguratio
         Integer cachePeriod = devMode ? 0 : null;
 
         registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:static/")
+                .addResourceLocations("classpath:static/", "file:"+sitemapDir)
                 .setCachePeriod(cachePeriod)
                 .resourceChain(useResourceCache)
                 .addResolver(new CustomPathResourceResolver())
@@ -69,7 +72,7 @@ public class WebMvcConfig extends WebMvcAutoConfiguration.WebMvcAutoConfiguratio
     private class CustomPathResourceResolver extends PathResourceResolver {
         @Override
         public Resource resolveResource(HttpServletRequest request, String requestPath, List<? extends Resource> locations, ResourceResolverChain chain) {
-            if (requestPath.startsWith("template/")) {
+            if (requestPath.startsWith("template/") || requestPath.equals("sitemap.xml")) {
                 // don't change path
             } else if (requestPath.startsWith("static/")) {
                 requestPath = requestPath.replaceFirst("static/", "");

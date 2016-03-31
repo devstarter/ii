@@ -6,7 +6,7 @@ import org.ayfaar.app.utils.exceptions.Exceptions;
 import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
+import java.util.*;
 
 public interface TopicService {
     @NotNull
@@ -41,4 +41,6 @@ public interface TopicService {
 
 
     boolean exist(String name);
+
+    List<String> getAllNames();
 }
