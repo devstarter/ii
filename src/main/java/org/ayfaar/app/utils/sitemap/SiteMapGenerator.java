@@ -39,22 +39,19 @@ public class SiteMapGenerator {
         this.resourceLoader = resourceLoader;
     }
 
-    private void generateSiteMap(Stream<String> urls) throws MalformedURLException {
-        Resource resource = resourceLoader.getResource(sitemapDir);
-
-        File sitemapDirObj = null;
-        try {
-            sitemapDirObj = resource.getFile();
-        } catch (IOException e) {
-            log.error("Error locating sitemap dir `{}`", sitemapDir, e);
+    private void generateSiteMap(Stream<String> urls) throws IOException {
+        Resource resource = resourceLoader.getResource("file:" + sitemapDir);
+        if (!resource.exists()) {
+            throw new RuntimeException("Error locating sitemap dir "+sitemapDir);
         }
+        File sitemapDirObj = resource.getFile();
 
         WebSitemapGenerator wsg = new WebSitemapGenerator(baseUrl, sitemapDirObj);
         urls.forEach(s -> {
             try {
                 wsg.addUrl(s);
             } catch (MalformedURLException e) {
-                log.error("Url resolving error", e);
+                throw new RuntimeException(e);
             }
         });
         wsg.write();
@@ -63,14 +60,9 @@ public class SiteMapGenerator {
 
     @Scheduled(cron="0 0 0 * * *") // every day at 0 hours
     @RequestMapping("update-sitemap")
-    public void createSiteMap(){
+    public void createSiteMap() throws IOException {
         log.info("Sitemap generation started");
-        Stream<String> streamURLs = urlGenerator.getURLs();
-        try {
-            generateSiteMap(streamURLs);
-        } catch (MalformedURLException e) {
-            log.error("Url resolving error", e);
-        }
+        generateSiteMap(urlGenerator.getURLs());
         log.info("Sitemap generation finished");
     }
 }
