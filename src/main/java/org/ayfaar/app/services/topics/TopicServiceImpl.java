@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 import static org.ayfaar.app.utils.StreamUtils.single;
 
-@Component
+@Component("topicService")
 class TopicServiceImpl implements TopicService {
     private static final Logger logger = LoggerFactory.getLogger(TopicServiceImpl.class);
 
@@ -82,7 +82,7 @@ class TopicServiceImpl implements TopicService {
     public TopicProvider findOrCreate(String name, boolean caseSensitive) {
         return get(UriGenerator.generate(Topic.class, name), caseSensitive)
                 .orElseGet(() -> {
-                    moderationService.confirm(Action.TOPIC_CREATE);
+                    moderationService.check(Action.TOPIC_CREATE);
                     final Topic topic = commonDao.save(new Topic(name));
                     final TopicProviderImpl provider = new TopicProviderImpl(topic);
                     topics.put(provider.uri(), provider);
@@ -94,7 +94,7 @@ class TopicServiceImpl implements TopicService {
     @Override
     public TopicProvider getByName(String name, boolean caseSensitive) {
         if (!caseSensitive) return getByName(name);
-        return get(UriGenerator.generate(Topic.class, name), caseSensitive)
+        return get(UriGenerator.generate(Topic.class, name), true)
                 .orElseThrow(() -> new LogicalException(Exceptions.TOPIC_NOT_FOUND, name));
     }
 
@@ -182,8 +182,6 @@ class TopicServiceImpl implements TopicService {
                     .filter(entry -> entry.getKey() instanceof Topic && entry.getValue().getType() == null)
                     .map(e -> new TopicProviderImpl((Topic) e.getKey()));
         }
-
-
 
         @NotNull
         @Override

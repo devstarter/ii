@@ -11,10 +11,12 @@ public enum Action {
     TOPIC_CREATE        (TOPIC, ADMIN),
     TOPIC_ADD_CHILD     (TOPIC, ADMIN),
     TOPIC_LINK_RESOURCE (TOPIC),
+    TOPIC_RESOURCE_LINK_UPDATE(TOPIC),
 
     ITEMS_RANGE (EDITOR),
     ITEMS_RANGE_CREATE  (ITEMS_RANGE),
-    ITEMS_RANGE_UPDATE  (ITEMS_RANGE);
+    ITEMS_RANGE_UPDATE  (ITEMS_RANGE),
+    ;
 
     private Action parent = null;
     private AccessLevel requiredAccessLevel;
@@ -74,5 +76,14 @@ public enum Action {
 
     private void addChild(Action child) {
         this.children.add(child);
+    }
+
+    public AccessLevel getRequiredAccessLevel() {
+        return requiredAccessLevel != null ? requiredAccessLevel : parent.getRequiredAccessLevel();
+    }
+
+    @Override
+    public String toString() {
+        return name()+" with access "+getRequiredAccessLevel().name();
     }
 }

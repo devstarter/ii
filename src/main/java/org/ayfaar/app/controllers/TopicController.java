@@ -1,14 +1,16 @@
 package org.ayfaar.app.controllers;
 
 import lombok.Builder;
+import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.ItemsRange;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Topic;
 import org.ayfaar.app.model.UID;
-import org.ayfaar.app.services.moderation.ModerationService;
+import org.ayfaar.app.services.links.LinkService;
 import org.ayfaar.app.services.moderation.Action;
+import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.utils.UriGenerator;
@@ -30,6 +32,7 @@ public class TopicController {
     @Inject LinkDao linkDao;
     @Inject TopicService topicService;
     @Inject ModerationService moderationService;
+    @Inject LinkService linkService;
 
     @RequestMapping("for/{uri}")
     public List<LinkedTopicPresentation> getForUri(@PathVariable String uri) throws Exception {
@@ -65,17 +68,18 @@ public class TopicController {
     }
 
     @RequestMapping(value = "import", method = POST)
+    @Moderated(value = Action.TOPIC_CREATE, command = "@topicController.importTopics")
     public void importTopics(@RequestBody String topics) throws Exception {
         hasLength(topics);
-        moderationService.confirm(Action.TOPIC_CREATE);
         final Set<String> uniqueNames = new HashSet<>(Arrays.asList(topics.split("\n")));
-        for (String name : uniqueNames) {
-            if (!name.isEmpty()) commonDao.save(new Topic(name));
-        }
+        uniqueNames.stream()
+                .filter(name -> !name.isEmpty())
+                .forEachOrdered(name -> commonDao.save(new Topic(name)));
         topicService.reload();
     }
 
     @RequestMapping(value = "for", method = POST)
+    @Moderated(value = Action.TOPIC_LINK_RESOURCE, command = "@topicController.addFor")
     public Topic addFor(@RequestParam String uri,
                         @RequestParam String name,
                         @RequestParam(required = false) String quote,
@@ -83,57 +87,44 @@ public class TopicController {
                         @RequestParam(required = false) Float rate) throws Exception {
         UID uid = commonDao.get(UriGenerator.getClassByUri(uri), uri);
         final TopicProvider topic = topicService.findOrCreate(name);
-        moderationService.confirm(Action.TOPIC_LINK_RESOURCE);
         topic.link(null, uid, comment, quote, rate);
         return topic.topic();
     }
 
     @RequestMapping(value = "for/items-range", method = POST)
+    @Moderated(value = Action.TOPIC_LINK_RESOURCE, command = "@topicController.addFor")
     public void addFor(@RequestParam String from,
-                        @RequestParam String to,
-                        @RequestParam String topicName,
-                        @RequestParam(required = false) String rangeName,
-                        @RequestParam(required = false) String quote,
-                        @RequestParam(required = false) String comment,
-                        @RequestParam(required = false) Float rate) throws Exception {
+                       @RequestParam String to,
+                       @RequestParam String topicName,
+                       @RequestParam(required = false) String rangeName,
+                       @RequestParam(required = false) String quote,
+                       @RequestParam(required = false) String comment,
+                       @RequestParam(required = false) Float rate) throws Exception {
         ItemsRange itemsRange = ItemsRange.builder().from(from).to(to).description(rangeName).build();
         final String itemsRangeUri = UriGenerator.generate(itemsRange);
         ItemsRange range = commonDao.get(ItemsRange.class, itemsRangeUri);
         if (range == null) {
-            moderationService.confirm(Action.ITEMS_RANGE_CREATE);
+            moderationService.check(Action.ITEMS_RANGE_CREATE);
             range = commonDao.save(itemsRange);
         } else {
-            moderationService.confirm(Action.ITEMS_RANGE_UPDATE);
+            moderationService.check(Action.ITEMS_RANGE_UPDATE);
             range.setDescription(rangeName);
         }
 
         final TopicProvider topic = topicService.findOrCreate(topicName);
-        moderationService.confirm(Action.TOPIC_LINK_RESOURCE);
         topic.link(null, range, comment, quote, rate);
     }
 
     @RequestMapping(value = "rate", method = POST)
-    public void rate(@RequestParam String forUri, @RequestParam String topicUri, @RequestParam Float rate) throws Exception {
-        final List<Link> links = linkDao.getAllLinks(forUri);
-        for (Link link : links) {
-            if ((link.getUid1() instanceof Topic && link.getUid1().getUri().equals(topicUri)) ||
-                    (link.getUid2() instanceof Topic && link.getUid2().getUri().equals(topicUri))) {
-                link.setRate(rate);
-                linkDao.save(link);
-            }
-        }
+    @Moderated(value = Action.TOPIC_RESOURCE_LINK_UPDATE, command = "@topicController.updateRate")
+    public void updateRate(@RequestParam String forUri, @RequestParam String topicUri, @RequestParam Float rate) throws Exception {
+        linkService.getByUris(forUri, topicUri).updater().rate(rate).commit();
     }
 
     @RequestMapping(value = "update-comment", method = POST)
+    @Moderated(value = Action.TOPIC_RESOURCE_LINK_UPDATE, command = "@topicController.updateComment")
     public void updateComment(@RequestParam String forUri, @RequestParam String name, @RequestParam String comment) throws Exception {
-        final List<Link> links = linkDao.getAllLinks(forUri);
-        for (Link link : links) {
-            if ((link.getUid1() instanceof Topic && ((Topic) link.getUid1()).getName().equals(name)) ||
-                    (link.getUid2() instanceof Topic && ((Topic) link.getUid2()).getName().equals(name))) {
-                link.setComment(comment);
-                linkDao.save(link);
-            }
-        }
+        linkService.getByUris(forUri, UriGenerator.generate(Topic.class, name)).updater().comment(comment).commit();
     }
 
     @RequestMapping(value = "for", method = DELETE)
@@ -161,8 +152,8 @@ public class TopicController {
     }
 
     @RequestMapping("add-child")
+    @Moderated(value = Action.TOPIC_ADD_CHILD, command = "@topicController.addChild")
     public void addChild(@RequestParam String name, @RequestParam String child) {
-        moderationService.confirm(Action.TOPIC_ADD_CHILD);
         if (topicService.exist(name) && topicService.exist(child)) {
             boolean alreadyParent = topicService.getByName(child).children().anyMatch(c -> c.name().equals(name));
             if (alreadyParent) {

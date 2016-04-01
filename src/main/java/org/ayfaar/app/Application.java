@@ -7,6 +7,7 @@ import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -17,6 +18,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan("org.ayfaar.app")
 @ImportResource({"classpath:hibernate.xml", "classpath:spring-basic.xml"})
 @EnableCaching
+@EnableAspectJAutoProxy
 @Slf4j
 public class Application {
     public static void main(String[] args) {

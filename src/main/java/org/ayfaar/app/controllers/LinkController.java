@@ -11,6 +11,7 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
+import org.ayfaar.app.services.links.LinkService;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.TermsMarker;
@@ -38,6 +39,7 @@ public class LinkController {
     @Autowired TermMorphDao termMorphDao;
     @Autowired TermsMarker termsMarker;
     @Autowired ApplicationEventPublisher eventPublisher;
+    @Autowired LinkService linkService;
 
 
     @RequestMapping(value = "addQuote", method = POST)
@@ -110,4 +112,26 @@ public class LinkController {
     public List<Link> getLast(@PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable) {
         return linkDao.getPage(pageable);
     }
+
+    @RequestMapping("update/rate")
+    public void updateRate(@RequestParam String uri1,
+                           @RequestParam String uri2,
+                           @RequestParam Float value) {
+        linkService.getByUris(uri1, uri2).updater().rate(value).commit();
+    }
+
+    @RequestMapping("update/comment")
+    public void updateComment(@RequestParam String uri1,
+                              @RequestParam String uri2,
+                              @RequestParam String value) {
+        linkService.getByUris(uri1, uri2).updater().comment(value).commit();
+    }
+
+    @RequestMapping("update/quote")
+    public void updateQuote(@RequestParam String uri1,
+                            @RequestParam String uri2,
+                            @RequestParam String value) {
+        linkService.getByUris(uri1, uri2).updater().quote(value).commit();
+    }
+
 }
