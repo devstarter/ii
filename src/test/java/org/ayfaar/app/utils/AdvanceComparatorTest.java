@@ -12,10 +12,10 @@ public class AdvanceComparatorTest {
     @Test
     public void compare() {
         final List<String> list = Arrays.asList(
-                "Как все появилось. Часть 14. Пространственно-Временные Континуумы. Планетарный ПВК",
-                "Как все появилось. Часть 6. Образование Фокусов Самосознания и Резомиралов",
-                "Как все появилось. Часть 1. Текст для примера",
-                "Как все появилось. Часть 10. Пространственно Временные Континуумы. Образование Форм Самосознаний");
+                "Как всё появилось. Часть 14. Пространственно-Временные Континуумы. Планетарный ПВК",
+                "Как всё появилось. Часть 6. Образование Фокусов Самосознания и Резомиралов",
+                "Как всё появилось. Часть 1. Текст для примера",
+                "Как всё появилось. Часть 10. Пространственно Временные Континуумы. Образование Форм Самосознаний");
 
         Collections.sort(list, new AdvanceComparator());
 
@@ -40,8 +40,8 @@ public class AdvanceComparatorTest {
         System.out.println(list1.get(1));
         System.out.println(list1.get(2));
 
-        Assert.assertTrue(list1.get(0).contains("1."));
-        Assert.assertTrue(list1.get(1).contains("10."));
-        Assert.assertTrue(list1.get(2).contains("14."));
+        Assert.assertTrue(list1.get(0).contains(" 1."));
+        Assert.assertTrue(list1.get(1).contains(" 10."));
+        Assert.assertTrue(list1.get(2).contains(" 14."));
     }
 }
