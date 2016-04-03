@@ -2,6 +2,7 @@ package org.ayfaar.app.model;
 
 import lombok.*;
 import org.ayfaar.app.annotations.Uri;
+import org.ayfaar.app.utils.AdvanceComparator;
 import org.ayfaar.app.utils.Language;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -43,6 +44,6 @@ public class VideoResource extends UID implements Comparable<VideoResource> {
 
     @Override
     public int compareTo(VideoResource o) {
-        return title.compareTo(o.title);
+        return AdvanceComparator.INSTANCE.compare(title, o.title);
     }
 }
