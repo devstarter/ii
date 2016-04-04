@@ -49,7 +49,7 @@ public class Link {
     }
 
     public Link(UID uid1, UID uid2, Byte type) {
-        this(uid1, uid2, LinkType.getEnum(type));
+        this(uid1, uid2, type == null ? null : LinkType.getEnum(type));
     }
 
     public Link(UID uid1, UID uid2, LinkType type) {
