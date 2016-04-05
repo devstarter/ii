@@ -55,9 +55,7 @@ public class TermController {
             throw new QuietException(format("Термин `%s` отсутствует", termName));
         }
 
-        if (provider.hasMainTerm()) {
-            provider = provider.getMainTermProvider();
-        }
+        provider = provider.getMainTerm().orElse(provider);
 
         ModelMap modelMap = new ModelMap();//(ModelMap) getModelMap(term);
 
@@ -128,12 +126,7 @@ public class TermController {
                 }
             }
         }
-        sort(quotes, new Comparator<ModelMap>() {
-            @Override
-            public int compare(ModelMap o1, ModelMap o2) {
-                return ((String) o1.get("uri")).compareTo((String) o2.get("uri"));
-            }
-        });
+        sort(quotes, (o1, o2) -> ((String) o1.get("uri")).compareTo((String) o2.get("uri")));
 
         // mark quotes with strong
         List<String> allAliasesWithAllMorphs = provider.getAllAliasesWithAllMorphs();
@@ -153,12 +146,7 @@ public class TermController {
     }
 
     private Object toPlainObjectWithoutContent(Set<UID> related) {
-        return convertToPlainObjects(related, new ValueObjectUtils.Modifier<UID>() {
-            @Override
-            public void modify(UID entity, ModelMap map) {
-                map.remove("content");
-            }
-        });
+        return convertToPlainObjects(related, (entity, map) -> map.remove("content"));
     }
 
     private ModelMap getQuote(Link link, UID source, boolean mark) {
@@ -185,12 +173,7 @@ public class TermController {
                 }
             }
         }
-        return convertToPlainObjects(related, new ValueObjectUtils.Modifier<UID>() {
-            @Override
-            public void modify(UID entity, ModelMap map) {
-                map.remove("content");
-            }
-        });
+        return convertToPlainObjects(related, (entity, map) -> map.remove("content"));
     }
 
 //    @RequestMapping(value = "/", method = POST)
@@ -238,11 +221,8 @@ public class TermController {
         }
 
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                termService.reload();
-            }
+        new Thread(() -> {
+            termService.reload();
         }).start();
 
         return term;

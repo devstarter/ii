@@ -22,9 +22,7 @@ import java.util.regex.Pattern;
 
 import static java.util.Collections.sort;
 import static java.util.regex.Pattern.compile;
-import static org.ayfaar.app.model.LinkType.ABBREVIATION;
-import static org.ayfaar.app.model.LinkType.ALIAS;
-import static org.ayfaar.app.model.LinkType.CODE;
+import static org.ayfaar.app.model.LinkType.*;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
 @Component
@@ -134,8 +132,8 @@ public class TermServiceImpl implements TermService {
             return codes.size() > 0 ? codes.get(0) : null;
         }
 
-        public TermProvider getMainTermProvider() {
-            return hasMainTerm() ? aliasesMap.get(getValueFromUri(Term.class, mainTermUri).toLowerCase()) : null;
+        public Optional<TermProvider> getMainTerm() {
+            return Optional.ofNullable(hasMainTerm() ? aliasesMap.get(getValueFromUri(Term.class, mainTermUri).toLowerCase()) : null);
         }
 
         public List<String> getMorphs() {
@@ -178,6 +176,12 @@ public class TermServiceImpl implements TermService {
             List<String> list = getMorphs();
             List<String> aliasesSearchQueries = getAllMorphs(getAllAliases());
             list.addAll(aliasesSearchQueries);
+            return list;
+        }
+
+        public List<String> getAllAliasesAndAbbreviationsWithAllMorphs() {
+            final List<String> list = getAllAliasesWithAllMorphs();
+            list.addAll(getAllMorphs(getAbbreviations()));
             return list;
         }
 

@@ -47,7 +47,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
         TermProvider provider = aliasesMap.new TermProviderImpl(
                 "ии:термин:Тензор", "ии:термин:Тензор напряжённости", false);
 
-        TermProvider mainProvider = provider.getMainTermProvider();
+        TermProvider mainProvider = provider.getMainTerm().get();
         assertNotNull(mainProvider);
         assertEquals("ии:термин:Тензор напряжённости", mainProvider.getUri());
     }
@@ -63,8 +63,8 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
         assertFalse(provider.isAbbreviation());
         assertFalse(provider.isAlias());
         assertTrue(provider.hasMainTerm());
-        assertNotNull(provider.getMainTermProvider());
-        assertEquals(UriGenerator.generate(Term.class, "Коллективный Космический Разум"), provider.getMainTermProvider().getUri());
+        assertNotNull(provider.getMainTerm());
+        assertEquals(UriGenerator.generate(Term.class, "Коллективный Космический Разум"), provider.getMainTerm().get().getUri());
         assertEquals("ТОО-УУ", provider.getTerm().getName());
 //        assertEquals(0, provider.getAliases().size());
         assertEquals(0, provider.getAbbreviations().size());
@@ -101,7 +101,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
     @Test
     public void testRA() {
         final TermProvider ra = termService.getTermProvider("РА");
-        assertTrue(ra.getMainTermProvider().hasShortDescription());
+        assertTrue(ra.getMainTerm().get().hasShortDescription());
     }
 
     @Test
@@ -111,7 +111,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
         final TermProvider abbr = termService.getTermProvider("РА");
 
         assertEquals(morph, origin);
-        assertEquals(abbr.getMainTermProvider(), origin);
+        assertEquals(abbr.getMainTerm().get(), origin);
     }
 
     @Test

@@ -69,7 +69,7 @@ public class TermsMarker {
                     //String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
                     //пока забыли о  title="...."
                     final TermProvider termProvider = entry.getValue();
-                    final TermProvider mainTermProvider = termProvider.getMainTermProvider();
+                    final TermProvider mainTermProvider = termProvider.getMainTerm().get();
                     boolean hasMainTerm = termProvider.hasMainTerm();
                     boolean hasShortDescription = hasMainTerm ? mainTermProvider.hasShortDescription() : termProvider.hasShortDescription();
 

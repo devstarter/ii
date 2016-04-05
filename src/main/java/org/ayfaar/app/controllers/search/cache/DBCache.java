@@ -44,7 +44,7 @@ public class DBCache extends ConcurrentMapCache {
                 final TermService.TermProvider provider = termService.getTermProvider(searchKey.query);
                 String termUri = null;
                 if (provider != null) {
-                    termUri = provider.hasMainTerm() ? provider.getMainTermProvider().getUri() : provider.getUri();
+                    termUri = provider.getMainTerm().orElse(provider).getUri();
                 }
 
                 if (termUri != null) {
@@ -85,7 +85,7 @@ public class DBCache extends ConcurrentMapCache {
         if (key instanceof SearchCacheKey && ((SearchCacheKey) key).page == 0) {
             TermService.TermProvider provider = termService.getTermProvider(((SearchCacheKey) key).query);
             if(provider != null && ((SearchCacheKey) key).page == 0) {
-                uid = provider.hasMainTerm() ? provider.getMainTermProvider().getTerm() : provider.getTerm();
+                uid = provider.getMainTerm().orElse(provider).getTerm();
             }
         } else if(key instanceof ContentsCacheKey) {
             String name = ((ContentsCacheKey) key).categoryName;

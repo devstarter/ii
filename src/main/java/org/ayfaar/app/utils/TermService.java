@@ -5,6 +5,7 @@ import org.ayfaar.app.model.Term;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Интерфейс взаимодействия с предварительно загруженными всеми терминами
@@ -23,7 +24,7 @@ public interface TermService {
         String getName();
         String getUri();
         boolean hasShortDescription();
-        TermProvider getMainTermProvider();
+        Optional<TermProvider> getMainTerm();
         Term getTerm();
         List<String> getMorphs();
         List<TermProvider> getAliases();
@@ -36,5 +37,6 @@ public interface TermService {
         boolean isCode();
         boolean hasCode();
         List<String> getAllAliasesWithAllMorphs();
+        List<String> getAllAliasesAndAbbreviationsWithAllMorphs();
     }
 }

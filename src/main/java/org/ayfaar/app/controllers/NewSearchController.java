@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -97,12 +98,13 @@ public class NewSearchController {
     @ResponseBody
     public Object inCategories(@RequestParam String query) {
         TermProvider provider = termService.getTermProvider(query);
+        provider = provider.getMainTerm().orElse(provider);
         List<String> searchQueries;
         if (provider == null) {
 			query = query.replace("*", RegExpUtils.w+"+");
-            searchQueries = asList(query);
+            searchQueries = Collections.singletonList(query);
         } else {
-            searchQueries = provider.getAllAliasesWithAllMorphs();
+            searchQueries = provider.getAllAliasesAndAbbreviationsWithAllMorphs();
         }
 		List<CategoryService.CategoryProvider> foundCategoryProviders = categoryService.descriptionContains(searchQueries);
 

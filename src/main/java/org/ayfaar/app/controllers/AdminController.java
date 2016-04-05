@@ -22,7 +22,7 @@ public class AdminController {
         Set<TermsMap.TermProvider> primeTerms = new LinkedHashSet<TermsMap.TermProvider>();
 
         for (Map.Entry<String, TermsMap.TermProvider> entry : termsMap.getAll()) {
-            final TermsMap.TermProvider mainTerm = entry.getValue().getMainTermProvider();
+            final TermsMap.TermProvider mainTerm = entry.getValue().getMainTerm();
             if (mainTerm != null) primeTerms.add(mainTerm);
         }
 
