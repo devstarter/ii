@@ -31,28 +31,29 @@ public class TopicControllerTest {
             body("name", Matchers.is("1")).
             body("uri", Matchers.is("тема:1")).
             body("children", Matchers.hasItems("2", "10")).
-            body("parents", Matchers.hasItem("5"))        ;
+            body("parents", Matchers.hasItem("5"))
+        ;
     }
 
 
     private void addChild(String name, String child) {
         given().
                 params("name", name, "child", child).
-                when().
+        when().
                 get("/api/topic/add-child").
-                then().
+        then().
                 statusCode(HttpStatus.SC_OK);
     }
 
     @Test
     public void testAddFor() {
         given().
-                contentType("application/x-www-form-urlencoded; charset=UTF-8"). // это чтобы русский понимал в параметрах
-                param("name", "1"). // имя темы
-                param("uri", "видео:youtube:_8vYBLrOq-w"). // uri объекта к которому прилинковать тему
-                when().
-                post("/api/topic/for").
-                then().
+            contentType("application/x-www-form-urlencoded; charset=UTF-8"). // это чтобы русский понимал в параметрах
+            param("name", "1"). // имя темы
+            param("uri", "видео:youtube:_8vYBLrOq-w"). // uri объекта к которому прилинковать тему
+        when().
+            post("/api/topic/for").
+        then().
                 log().all().
                 statusCode(HttpStatus.SC_OK)
         ;
@@ -66,9 +67,10 @@ public class TopicControllerTest {
 
     @Test(expected = AssertionError.class)
     public void testAddChildWrong() {
-      addChild("1", "2");
+        addChild("1", "2");
         //Expected RuntimeException: The parent has a child for the given name
-        addChild("2", "1");    }
+        addChild("2", "1");
+    }
 
     @Test
     public void testUnLink() {
@@ -77,11 +79,11 @@ public class TopicControllerTest {
 
         given().
                 params("name", "1", "linked", "2").
-                when().
-                get("/api/topic/unlink").
-                then().
-                log().all().
-                statusCode(HttpStatus.SC_OK)
+        when().
+            get("/api/topic/unlink").
+        then().
+            log().all().
+            statusCode(HttpStatus.SC_OK)
         ;
 
         given().param("name", "1").
@@ -169,4 +171,5 @@ public class TopicControllerTest {
                 body("error.code", Matchers.is("TOPIC_NOT_FOUND")).
                 body("error.message", Matchers.is("org.ayfaar.app.utils.exceptions.LogicalException: Topic for 1011 not found"))
         ;
-    }}
+    }
+}

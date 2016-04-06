@@ -90,12 +90,12 @@ public class TopicController {
 
     @RequestMapping(value = "for/items-range", method = POST)
     public void addFor(@RequestParam String from,
-                       @RequestParam String to,
-                       @RequestParam String topicName,
-                       @RequestParam(required = false) String rangeName,
-                       @RequestParam(required = false) String quote,
-                       @RequestParam(required = false) String comment,
-                       @RequestParam(required = false) Float rate) throws Exception {
+                        @RequestParam String to,
+                        @RequestParam String topicName,
+                        @RequestParam(required = false) String rangeName,
+                        @RequestParam(required = false) String quote,
+                        @RequestParam(required = false) String comment,
+                        @RequestParam(required = false) Float rate) throws Exception {
         ItemsRange itemsRange = ItemsRange.builder().from(from).to(to).description(rangeName).build();
         final String itemsRangeUri = UriGenerator.generate(itemsRange);
         ItemsRange range = commonDao.get(ItemsRange.class, itemsRangeUri);
@@ -162,11 +162,13 @@ public class TopicController {
 
     @RequestMapping("add-child")
     public void addChild(@RequestParam String name, @RequestParam String child) {
- moderationService.confirm(Action.TOPIC_ADD_CHILD);
+        moderationService.confirm(Action.TOPIC_ADD_CHILD);
         if (topicService.exist(name) && topicService.exist(child)) {
             boolean alreadyParent = topicService.getByName(child).children().anyMatch(c -> c.name().equals(name));
             if (alreadyParent) {
-                throw new RuntimeException("The parent has a child for the given name");            }        }
+                throw new RuntimeException("The parent has a child for the given name");
+            }
+        }
         topicService.findOrCreate(name).addChild(child);
     }
 
