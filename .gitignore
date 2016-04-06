@@ -1,7 +1,6 @@
-app.iml
+/src/test/java/org/ayfaar/app/utils/GeneratorURLTest.java
 debug.properties
 target
 /II.rar
 /src/test/test.iml
 /.idea
-/src/main/resources/application-dev.yml
