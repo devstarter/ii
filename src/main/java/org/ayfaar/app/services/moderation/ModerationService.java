@@ -88,7 +88,7 @@ public class ModerationService {
     }
 
     private AccessLevel getCurrentAccessLevel() {
-        return AccessLevel.EDITOR;
+        return AccessLevel.ROLE_ADMIN;
     }
 
     private String getCurrentUserEmail() {

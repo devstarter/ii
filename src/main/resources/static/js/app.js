@@ -235,7 +235,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     return api.post("auth", user)
                 },
                 getCurrentUser: function () {
-                    return api.get("auth/current-user")
+                    return api.get("auth/current")
                 }
             }
         };

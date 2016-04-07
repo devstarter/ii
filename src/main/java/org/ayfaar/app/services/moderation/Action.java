@@ -3,17 +3,17 @@ package org.ayfaar.app.services.moderation;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ayfaar.app.services.moderation.AccessLevel.ADMIN;
-import static org.ayfaar.app.services.moderation.AccessLevel.EDITOR;
+import static org.ayfaar.app.services.moderation.AccessLevel.ROLE_ADMIN;
+import static org.ayfaar.app.services.moderation.AccessLevel.ROLE_EDITOR;
 
 public enum Action {
-    TOPIC (EDITOR),
-    TOPIC_CREATE        (TOPIC, ADMIN),
-    TOPIC_ADD_CHILD     (TOPIC, ADMIN),
+    TOPIC (ROLE_EDITOR),
+    TOPIC_CREATE        (TOPIC, ROLE_ADMIN),
+    TOPIC_ADD_CHILD     (TOPIC, ROLE_ADMIN),
     TOPIC_LINK_RESOURCE (TOPIC),
     TOPIC_RESOURCE_LINK_UPDATE(TOPIC),
 
-    ITEMS_RANGE (EDITOR),
+    ITEMS_RANGE (ROLE_EDITOR),
     ITEMS_RANGE_CREATE  (ITEMS_RANGE),
     ITEMS_RANGE_UPDATE  (ITEMS_RANGE),
     ;
