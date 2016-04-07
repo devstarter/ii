@@ -63,6 +63,10 @@ public class AuthController {
                     .providerId(id)
                     .build()));
 
+        if (!user.getAccessToken().equals(access_token)){
+            user.setAccessToken(access_token);
+            commonDao.save(user);
+        }
         Authentication request = new UsernamePasswordAuthenticationToken(user, null);
         Authentication authentication = customAuthenticationProvider.authenticate(request);
         SecurityContextHolder.getContext().setAuthentication(authentication);
