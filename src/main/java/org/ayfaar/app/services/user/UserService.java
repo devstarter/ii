@@ -6,5 +6,5 @@ import org.ayfaar.app.model.User;
 public interface UserService {
     User getUserByEmail(String email);
 
-    User createOrUpdate(AuthController.UserPresentation userPresentation);
+    User createOrUpdate(User user);
 }

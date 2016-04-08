@@ -1,7 +1,6 @@
 
 package org.ayfaar.app.services.user;
 
-import org.ayfaar.app.controllers.AuthController.UserPresentation;
 import org.ayfaar.app.dao.UserDao;
 import org.ayfaar.app.model.User;
 import org.springframework.stereotype.Service;
@@ -24,13 +23,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createOrUpdate(UserPresentation userPresentation){
-        User user = new User();
-        user.setEmail(userPresentation.email);
-        user.setFirstname(userPresentation.firstname);
-        user.setLastname(userPresentation.lastname);
-        user.setId(userPresentation.id);
-        user.setRole("ROLE_USER");
+    public User createOrUpdate(User user){
         return userDao.save(user);
     }
 }

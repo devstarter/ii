@@ -2,13 +2,14 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.model.CustomUser;
 import org.ayfaar.app.model.Role;
+import org.ayfaar.app.model.User;
 import org.ayfaar.app.services.user.CustomUserService;
 import org.ayfaar.app.services.user.UserServiceImpl;
+import org.ayfaar.app.utils.authentication.CustomAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,12 +25,16 @@ import java.util.Map;
 @RestController
 @RequestMapping("api/auth")
 public class AuthController {
-    UserPresentation userPresentation = new UserPresentation();
+
+    @Inject
+    UserServiceImpl userService;
+    @Inject
+    CustomUserService customUserService;
+
     @RequestMapping(method = RequestMethod.POST)
     /**
      * Регистрируем нового пользователя и/или (если такой уже есть) назначаем его текущим для этой сессии
      */
-    //@PreAuthorize("hasRole('USER')")
     public void auth(@RequestParam Map<String,String> requestParams) throws IOException {
         /**
          Пример входных данных (requestParams):
@@ -46,65 +51,74 @@ public class AuthController {
          verified:true
          auth_provider:vk
          */
-
+        UserPresentation userPresentation = new UserPresentation();
         userPresentation.email = requestParams.get("email");
         userPresentation.firstname = requestParams.get("first_name");
         userPresentation.id = Long.valueOf(requestParams.get("id"));
         userPresentation.lastname = requestParams.get("last_name");
+        userPresentation.name = requestParams.get("name");
+        userPresentation.thumbnail = requestParams.get("thumbnail");
+        userPresentation.authProvider = requestParams.get("auth_provider");
 
-        createOrUpdateUser(); //Обновляем или сохраняем в базу
-        setAuthentication(userPresentation.firstname, "");//Аутентификация
+        getCurrentUser(userPresentation);
+        setAuthentication(userPresentation.email);//Аутентификация по EMAIL!!!!!!!!!!!!
 
     }
 
-    @RequestMapping("current-user")
-    public UserPresentation getCurrentUser() {
-        return null;
+    private User getCurrentUser( UserPresentation userPresentation) {
+        User user = new User();
+        user.setEmail(userPresentation.email);
+        user.setFirstname(userPresentation.firstname);
+        user.setLastname(userPresentation.lastname);
+        user.setId(userPresentation.id);
+        user.setName(userPresentation.name);
+        user.setThumbnail(userPresentation.thumbnail);
+        user.setAuthProvider(userPresentation.authProvider);
+        user.setRole("ROLE_USER");
+        createOrUpdateUser(user);
+        return user;
     }
 
-    public class UserPresentation {
-        public Long id;
-        public String firstname;
-        public String lastname;
-        public String email;
+    private class UserPresentation {
+        private Long id;
+        private String firstname;
+        private String lastname;
+        private String email;
+        private String name;
+        private String thumbnail;
+        private String authProvider;
     }
 
-    @Inject
-    UserServiceImpl userService;
 
-    public void createOrUpdateUser(){
-        userService.createOrUpdate(userPresentation);
+    private void createOrUpdateUser(User user){//Обновляем или сохраняем в базу
+        userService.createOrUpdate(user);
     }
 
     @RequestMapping("principal")
     public String getCurrentUser(ModelMap model){
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof CustomUser) {
-            return ((CustomUser)principal).getFirstName();
-        }else return principal.toString();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null){
+            return "Current user is not authentificated";
+        }else {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof CustomUser) return ((CustomUser) principal).getFirstName();
+            else return principal.toString();
+        }
 
     }
 
-    @RequestMapping("current")
-    public String getCurrentUserName(@AuthenticationPrincipal CustomUser customUser){
-        return customUser.getUsername();
-    }
 
     //Аутентификация
-    private AuthenticationManager authenticationManager;
-    @Inject
-    CustomUserService customUserService;
-
-    public List<Role> getAuthorities() {
-        List<Role> authorities = customUserService.loadUserByUsername(userPresentation.firstname).getAuthorities();
+    private List<Role> getAuthorities(String name) {
+        List<Role> authorities = customUserService.loadUserByUsername(name).getAuthorities();
         return authorities;
     }
 
-
-    public Authentication setAuthentication(String name, String password) {
-
+    private Authentication setAuthentication(String name) {
+        AuthenticationManager authenticationManager;
         authenticationManager = new SampleAuthenticationManager();
-        Authentication request = new UsernamePasswordAuthenticationToken(name, password, getAuthorities());
+        //Authentication request = new UsernamePasswordAuthenticationToken(name, null, getAuthorities(name));
+        Authentication request = new CustomAuthenticationToken(name, getAuthorities(name));
         Authentication result = authenticationManager.authenticate(request);
         SecurityContextHolder.getContext().setAuthentication(result);
         return SecurityContextHolder.getContext().getAuthentication();
@@ -114,8 +128,9 @@ public class AuthController {
 
         public Authentication authenticate(Authentication auth) throws AuthenticationException {
 
-            return new UsernamePasswordAuthenticationToken(auth.getName(),
-                    auth.getCredentials(), getAuthorities());
+//            return new UsernamePasswordAuthenticationToken(auth.getName(),
+//                    auth.getCredentials(), getAuthorities(auth.getName()));
+            return new CustomAuthenticationToken(auth.getName(), getAuthorities(auth.getName()));
 
         }
     }

@@ -17,7 +17,7 @@ public class UserDaoImpl extends AbstractHibernateDAO<User> implements UserDao{
     @Override
     public User getUserByEmail(String email) {
         return (User) criteria()
-                .add(eq("firstname", email))
+                .add(eq("email", email))
                 .uniqueResult();
     }
 

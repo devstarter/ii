@@ -1,68 +1,35 @@
 package org.ayfaar.app.model;
 
 import javax.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
+@Getter @Setter
 public class User {
-
+    @Id
+    @Column(nullable = false, unique = true)
+    private String email;
     @Column()
     private Long id;
+    @Column()
+    private String role;
     @Column()
     private String firstname;
     @Column()
     private String lastname;
-    @Id
-    @Column(nullable = false, unique = true)
-    private String email;
-
     @Column()
-    private String role;
+    private String name;
+    @Column()
+    private String thumbnail;
+    @Column()
+    private String authProvider;
 
     public User(String email) {
         this.email = email;
     }
 
     public User() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 }

@@ -21,7 +21,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private CustomUserService userService;
 
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
+        String username = (String) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
 
         CustomUser user = userService.loadUserByUsername(username);
@@ -36,7 +36,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
 
-        return new UsernamePasswordAuthenticationToken(user, password, authorities);
+        return new CustomAuthenticationToken(user, authorities);
     }
 
     public boolean supports(Class<?> arg0) {
