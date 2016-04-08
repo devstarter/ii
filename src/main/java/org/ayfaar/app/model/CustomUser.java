@@ -10,8 +10,8 @@ public class CustomUser implements UserDetails {
     private String username;
     private String password;
     private String email;
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
 
     /* Spring Security related fields*/
     private List<Role> authorities;

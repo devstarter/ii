@@ -7,20 +7,16 @@ import org.ayfaar.app.services.user.CustomUserService;
 import org.ayfaar.app.services.user.UserServiceImpl;
 import org.ayfaar.app.utils.authentication.CustomAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
+import lombok.Getter;
+import lombok.Setter;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/auth")
@@ -35,7 +31,7 @@ public class AuthController {
     /**
      * Регистрируем нового пользователя и/или (если такой уже есть) назначаем его текущим для этой сессии
      */
-    public void auth(@RequestParam Map<String,String> requestParams) throws IOException {
+    public void auth(UserPresentation userPresentation) throws IOException{//@RequestParam Map<String,String> requestParams) throws IOException {
         /**
          Пример входных данных (requestParams):
 
@@ -51,14 +47,14 @@ public class AuthController {
          verified:true
          auth_provider:vk
          */
-        UserPresentation userPresentation = new UserPresentation();
-        userPresentation.email = requestParams.get("email");
-        userPresentation.firstname = requestParams.get("first_name");
-        userPresentation.id = Long.valueOf(requestParams.get("id"));
-        userPresentation.lastname = requestParams.get("last_name");
-        userPresentation.name = requestParams.get("name");
-        userPresentation.thumbnail = requestParams.get("thumbnail");
-        userPresentation.authProvider = requestParams.get("auth_provider");
+
+        userPresentation.getEmail();
+        userPresentation.getFirst_name();
+        userPresentation.getId();
+        userPresentation.getLast_name();
+        userPresentation.getThumbnail();
+        userPresentation.getName();
+        userPresentation.getAuth_provider();
 
         getCurrentUser(userPresentation);
         setAuthentication(userPresentation.email);//Аутентификация по EMAIL!!!!!!!!!!!!
@@ -68,25 +64,28 @@ public class AuthController {
     private User getCurrentUser( UserPresentation userPresentation) {
         User user = new User();
         user.setEmail(userPresentation.email);
-        user.setFirstname(userPresentation.firstname);
-        user.setLastname(userPresentation.lastname);
+        user.setFirstname(userPresentation.first_name);
+        user.setLastname(userPresentation.last_name);
         user.setId(userPresentation.id);
         user.setName(userPresentation.name);
         user.setThumbnail(userPresentation.thumbnail);
-        user.setAuthProvider(userPresentation.authProvider);
+        user.setAuthprovider(userPresentation.auth_provider);
         user.setRole("ROLE_USER");
         createOrUpdateUser(user);
         return user;
     }
-
-    private class UserPresentation {
+    @Getter @Setter
+    public static class UserPresentation {
         private Long id;
-        private String firstname;
-        private String lastname;
+        private String first_name;
+        private String last_name;
         private String email;
         private String name;
         private String thumbnail;
-        private String authProvider;
+        private String auth_provider;
+
+        public UserPresentation() {
+        }
     }
 
 
@@ -101,7 +100,7 @@ public class AuthController {
             return "Current user is not authentificated";
         }else {
             Object principal = authentication.getPrincipal();
-            if (principal instanceof CustomUser) return ((CustomUser) principal).getFirstName();
+            if (principal instanceof CustomUser) return ((CustomUser) principal).getFirstname();
             else return principal.toString();
         }
 
@@ -128,10 +127,7 @@ public class AuthController {
 
         public Authentication authenticate(Authentication auth) throws AuthenticationException {
 
-//            return new UsernamePasswordAuthenticationToken(auth.getName(),
-//                    auth.getCredentials(), getAuthorities(auth.getName()));
             return new CustomAuthenticationToken(auth.getName(), getAuthorities(auth.getName()));
-
         }
     }
 }

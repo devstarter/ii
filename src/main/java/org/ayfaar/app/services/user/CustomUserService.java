@@ -2,7 +2,6 @@ package org.ayfaar.app.services.user;
 
 
 import org.ayfaar.app.dao.UserDao;
-import org.ayfaar.app.dao.impl.CustomUserDAOImpl;
 import org.ayfaar.app.model.CustomUser;
 import org.ayfaar.app.model.Role;
 import org.ayfaar.app.model.User;
@@ -26,8 +25,8 @@ public class CustomUserService implements UserDetailsService {
 
         User userByEmail = userDao.getUserByEmail(email);
 
-        customUser.setFirstName(userByEmail.getEmail());
-        customUser.setLastName(userByEmail.getLastname());
+        customUser.setFirstname(userByEmail.getEmail());
+        customUser.setLastname(userByEmail.getLastname());
         customUser.setUsername(userByEmail.getEmail());//Аутентификация по EMAIL!!!!!!!!!!!!
         customUser.setPassword(""); //нужен только для LoginForm
         Role r = new Role();

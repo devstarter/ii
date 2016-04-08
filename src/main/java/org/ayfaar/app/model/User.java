@@ -24,7 +24,7 @@ public class User {
     @Column()
     private String thumbnail;
     @Column()
-    private String authProvider;
+    private String authprovider;
 
     public User(String email) {
         this.email = email;
