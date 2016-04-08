@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class LoginController {
-    @RequestMapping(value="/login", method = RequestMethod.GET)
+//    @RequestMapping(value="/login", method = RequestMethod.GET)
     public String securedHome(ModelMap model) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CustomUser user=null;
