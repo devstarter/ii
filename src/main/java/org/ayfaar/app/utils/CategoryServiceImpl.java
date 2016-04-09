@@ -137,6 +137,11 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         @Override
+        public String getName() {
+            return category.getName();
+        }
+
+        @Override
         public String getParentUri() {
             return category.getParent();
         }

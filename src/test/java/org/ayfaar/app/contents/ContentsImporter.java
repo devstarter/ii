@@ -2,6 +2,8 @@ package org.ayfaar.app.contents;
 
 
 import lombok.extern.log4j.Log4j;
+import one.util.streamex.StreamEx;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -10,9 +12,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.ayfaar.app.Application;
 import org.ayfaar.app.controllers.ItemController;
 import org.ayfaar.app.dao.CommonDao;
+import org.ayfaar.app.dao.ItemDao;
+import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.ItemsRange;
 import org.ayfaar.app.utils.RomanNumber;
+import org.ayfaar.app.utils.StringUtils;
+import org.ayfaar.app.utils.UriGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -25,8 +31,7 @@ import javax.inject.Inject;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("dev")
@@ -36,19 +41,21 @@ import java.util.List;
 public class ContentsImporter {
 
     @Inject CommonDao commonDao;
+    @Inject ItemDao itemDao;
 
     @Test
     public void main() throws IOException, XLSParsingException {
         log.info("Открытие файла оглавлений");
-        InputStream in = new FileInputStream("./src/test/resources/content/5tom-content.xlsx");
-        log.info("Считывание данных"); //todo также в таком же стиле
+        InputStream in = new FileInputStream("./src/test/resources/content/content.xlsx");
+        log.info("Считывание данных");
         List<ItemBook> list = fillListItemBooks(in);
         in.close();
         System.out.println();
-        List<ItemsRange> itemsRanges = getItemsRange(list); //получили готовый массив ItemsRange
+        saveItems(list); //получили готовый массив ItemsRange
         System.out.println();
         //todo: сформировать объекты Category, проставить itemRange.category ссылку на URI категории главы
         //todo: сохранить в БД
+
     }
 
     private static ItemBook getTom(Sheet sheet) throws XLSParsingException{
@@ -65,7 +72,9 @@ public class ContentsImporter {
             }
             //название тома берем из следующей строки
             if(sheet.getRow(1).getCell(1,Row.RETURN_BLANK_AS_NULL) != null){
-                itemBook.setTitle(sheet.getRow(1).getCell(1).toString());
+                String title = sheet.getRow(1).getCell(1).toString();
+                title = title.replaceAll("^Книга[^\\–]+–(.+)$", "$1");
+                itemBook.setTitle(title);
             }else{
                 throw new IncorrectRowException("Ячейка \"B2\" должна содержать название тома");
             }
@@ -76,20 +85,25 @@ public class ContentsImporter {
     }
 
     //парсим xlsx
-    private static List<ItemBook> fillListItemBooks(InputStream in) throws IOException, XLSParsingException {
+    private List<ItemBook> fillListItemBooks(InputStream in) throws IOException, XLSParsingException {
         // Using XSSF for xlsx format, for xls use HSSF
         Workbook workbook = new XSSFWorkbook(in);
         int numberOfSheets = workbook.getNumberOfSheets();
 
         List<ItemBook> categories = new ArrayList<>();
         //создаем список со всеми категориями
+        Map<SectionType, ItemBook> currentItems = new HashMap<>();
+//        Map<SectionType, ItemBook> prevItems = new HashMap<>();
         for (int i = 0; i < numberOfSheets; i++) {
             Sheet sheet = workbook.getSheetAt(i);
-
+            if (!sheet.getSheetName().contains("Том")) continue;
             //на листе только один том, при этом номер в 1-й строке, название во 2-й строке
-            categories.add(getTom(sheet)); //добавили том
-
-            for (Row row : sheet) {
+            final ItemBook tom = getTom(sheet);
+            categories.add(tom); //добавили том
+            currentItems.put(SectionType.Tom, tom);
+            final Iterator<Row> rowIterator = sheet.rowIterator();
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
                 if (row.getRowNum() == 0 || row.getRowNum() == 1){
                     continue; //номер и название тома добавили выше (хардкод)
                 }
@@ -105,12 +119,27 @@ public class ContentsImporter {
                 //если есть значение в 1-м столбце - тогда это параграф
                 if (cell_0 != null) {
                     if (cell_1 == null || cell_2 == null){
+                        if (cell_0.toString().startsWith("0.")) continue;
                         throw new IncorrectRowException("Неверная строка №"+(row.getRowNum() + 1) + " для параграфа, не заполнено либо название, либо номер абзаца");
                     }
                     itemBook.setCategoryNumber(cell_0.toString().trim());
                     itemBook.setType(SectionType.Paragraph);
                     itemBook.setTitle(cell_1.toString().trim());
-                    itemBook.setItemNumber(cell_2.toString().trim());
+                    String itemNumber = cell_2.toString().trim();
+                    if (itemNumber.endsWith(".0")) {
+                        itemNumber = itemNumber.replace(".0", "");
+                    }
+                    if (itemNumber.contains("-")) {
+                        itemNumber = itemNumber.replaceAll("^([^\\-]+)-.+$", "$1"); // 10001-10006 -> 10001
+                    }
+                    if (!itemNumber.contains(".")) {
+                        itemNumber = tom.getCategoryNumber() + "." + itemNumber; // 10001 -> 10.10001
+                    }
+                    itemNumber = itemNumber.replaceAll("^(\\d+\\.)(\\d{3})$", "$10$2"); //1.786 -> 1.0786
+                    itemBook.setItemNumber(itemNumber);
+                    itemBook.setParent(currentItems.get(SectionType.Chapter));
+                    itemBook.setPrev(putOrReplace(currentItems, itemBook));
+                    currentItems.get(SectionType.Chapter).setStartIfEmpty(itemBook);
                 } else { //первый столбец пустой - тогда это том, раздел или глава. Т.к. том может быть только в первых 2 стрках, то остается только "раздел" или "глава"
                     if (cell_1 == null){ // добавить проверку на пустую строку
                         //неверная строка для раздела или тома(в данном случае будет заполнен 3-й столббец, иначе бы прошли по условию когда все ячейки пустые)
@@ -121,18 +150,36 @@ public class ContentsImporter {
                     String str = cell_1.toString();
                     if(str.toLowerCase().startsWith("раздел ")) {
                         int newLine = str.indexOf("\n");
-                        String numberOfSection = str.substring("раздел ".length(),newLine).trim();
+                        String numberOfSection;
+                        String title;
+                        if (newLine > 0) {
+                            numberOfSection = str.substring("раздел ".length(),newLine).trim();
+                            title = str.substring(newLine + 1, str.length()).trim();
+                        } else {
+                            numberOfSection = str.toLowerCase().replace("раздел ", "").trim().toUpperCase();
+                            row = rowIterator.next();
+                            title = row.getCell(1,Row.RETURN_BLANK_AS_NULL).toString();
+                        }
+                        numberOfSection = StringUtils.trim(numberOfSection, ".").replace("Х", "X");
                         itemBook.setCategoryNumber(numberOfSection);
-                        itemBook.setTitle(str.substring(newLine + 1, str.length()).trim());
+                        itemBook.setTitle(title);
                         itemBook.setType(SectionType.Section);
+                        itemBook.setParent(currentItems.get(SectionType.Tom));
+                        itemBook.setPrev(putOrReplace(currentItems, itemBook));
+                        currentItems.get(SectionType.Tom).setStartIfEmpty(itemBook);
                     } else if(str.toLowerCase().startsWith("глава ")){
                         int dot = str.indexOf(".");
                         String numberOfChapter = str.substring("глава ".length(),dot).trim();
+                        numberOfChapter = numberOfChapter.replace("№", "");
                         itemBook.setCategoryNumber(numberOfChapter);
                         itemBook.setTitle(str.substring(dot + 1, str.length()).trim());
                         itemBook.setType(SectionType.Chapter);
+                        itemBook.setParent(currentItems.get(SectionType.Section));
+                        itemBook.setPrev(putOrReplace(currentItems, itemBook));
+                        currentItems.get(SectionType.Section).setStartIfEmpty(itemBook);
                     }else {
-                        throw new IncorrectRowException("Неверная строка №" + (row.getRowNum() + 1) + ". Данная строка не являесят ни Томом, ни разделом, ни главой, ни параграфом");
+                        continue; // just ignore
+//                        throw new IncorrectRowException("Неверная строка №" + (row.getRowNum() + 1) + ". Данная строка не являесят ни Томом, ни разделом, ни главой, ни параграфом");
                     }
                 }
                 validate(itemBook);
@@ -142,72 +189,128 @@ public class ContentsImporter {
         return categories;
     }
 
-    private static void validate(ItemBook itemBook) {
-        Assert.hasLength(itemBook.getTitle(), "..."); //todo: ... заменить на текст
-        Assert.isTrue(itemBook.getTitle().length() < 500);
-        Assert.hasLength(itemBook.getCategoryNumber(), "...");
-        Assert.notNull(itemBook.getType(), "...");
-        if (itemBook.type == SectionType.Paragraph)
-            Assert.isTrue(Item.isItemNumber(itemBook.getItemNumber()), "...");
+    private ItemBook putOrReplace(Map<SectionType, ItemBook> map, ItemBook item) {
+        return map.containsKey(item.type) ? map.replace(item.type, item) : map.put(item.type, item);
     }
 
-    private static List<ItemsRange> getItemsRange(List<ItemBook> itemBookList) throws XLSParsingException{
-        List<ItemsRange> itemsRanges = new ArrayList<>(itemBookList.size());//чтобы не тратить время на увеличение массива
-        String currentTom  = "", currentSection = "", currentChapter = "";
-        for (int i = 0; i < itemBookList.size() - 1; i++) { // вычли единицу потому что не понятно как для последнего абзаца считать диапазон
-            switch (itemBookList.get(i).getType()){
-                case Tom:
-                    currentTom = itemBookList.get(i).getCategoryNumber();
-                    break;
-                case Section:
-                    currentSection = String.valueOf(RomanNumber.parse(itemBookList.get(i).getCategoryNumber()));
-                    break;
-                case Chapter:
-                    currentChapter = itemBookList.get(i).getCategoryNumber();
-                    break;
-                case Paragraph:
-                    int k = getStep(itemBookList, i);
-                    String lastItem = ItemController.getPrev(itemBookList.get(k).getItemNumber());
-                    String code;
-                    if(!(currentTom.isEmpty() || currentSection.isEmpty() || currentChapter.isEmpty())){
-                        code = currentTom + "." + currentSection + "." + itemBookList.get(i).getCategoryNumber();
-                    }else {
-                        //Том (currentTom) не может быть пустым, потому что словили бы исключение в методе fillListItemBooks.
-                        throw new IncorrectSheetException("Лист с томом №" + currentTom + "неверной структуры. Для параграфа №"
-                            + itemBookList.get(i).getItemNumber() +" нет либо раздела, либо главы.");
-                    }
-
-                    ItemsRange itemsRange = new ItemsRange(itemBookList.get(i).getItemNumber(),
-                                                            lastItem,
-                                                            code,
-                                                            itemBookList.get(i).getTitle());
-//                    itemsRange.setUri(UriGenerator.generate(ItemsRange.class, code));
-                    validate(itemsRange);
-                    itemsRanges.add(itemsRange);
-                    break;
-            }
+    private void validate(ItemBook itemBook) {
+        Assert.hasLength(itemBook.getTitle(), "..."); //todo: ... заменить на текст
+        Assert.hasLength(itemBook.getCategoryNumber(), "...");
+        Assert.notNull(itemBook.getType(), "...");
+        if (itemBook.type == SectionType.Paragraph) {
+            Assert.notNull(itemBook.getParent(), "...");
+            String itemNumber = itemBook.getItemNumber();
+            Assert.isTrue(Item.isItemNumber(itemNumber), itemNumber + " not a item number");
         }
-        return itemsRanges;
+        if (itemBook.type == SectionType.Section) {
+            Assert.isTrue(RomanNumber.parse(itemBook.getCategoryNumber()) > 0);
+        }
+        if (itemBook.type == SectionType.Chapter) {
+            Assert.isTrue(NumberUtils.isNumber(itemBook.getCategoryNumber()), itemBook.getCategoryNumber() + " not a number");
+        }
+    }
+
+    private void saveItems(List<ItemBook> itemBookList) throws XLSParsingException{
+        Map<ItemBook, Category> categories = new LinkedHashMap<>();
+        List<ItemsRange> ranges = new ArrayList<>();
+        Map<ItemBook, ItemsRange> itemRange = new LinkedHashMap<>();
+
+        itemBookList.forEach(item -> {
+            String name = null;
+            if (item.getType() == SectionType.Paragraph) {
+                name = String.format("%s.%s.%s",
+                        RomanNumber.parse(item.getParent().getParent().getCategoryNumber()),
+                        item.getParent().getCategoryNumber(),
+                        item.getCategoryNumber());
+                name = StringUtils.trim(name, ".");
+
+                ItemsRange itemsRange = commonDao.getOpt(ItemsRange.class, UriGenerator.generate(ItemsRange.class, name))
+                        .orElse(ItemsRange.builder().code(name).build());
+                itemsRange.setDescription(item.getTitle());
+                itemsRange.setFrom(item.getItemNumber());
+                itemsRange.setCategory(categories.get(item.getParent()).getUri());
+                validate(itemsRange);
+                ranges.add(commonDao.save(itemsRange));
+                itemRange.put(item, itemsRange);
+            } else {
+                switch (item.getType()) {
+                    case Tom:
+                        name = "Том " + item.getCategoryNumber();
+                        break;
+                    case Section:
+                        name = String.format("%s/Раздел %s",
+                                Integer.valueOf(item.getParent().getCategoryNumber()) > 9 ? "БДК" : "Основы",
+                                item.getCategoryNumber());
+                        break;
+                    case Chapter:
+                        name = String.format("%s/Раздел %s/Глава %s",
+                                Integer.valueOf(item.getParent().getParent().getCategoryNumber()) > 9 ? "БДК" : "Основы",
+                                item.getParent().getCategoryNumber(),
+                                item.getCategoryNumber());
+                        break;
+                }
+                String uri = UriGenerator.generate(Category.class, name);
+                Category category = commonDao.getOpt(Category.class, uri).orElse(Category.builder().name(name).build());
+                category.setDescription(item.getTitle());
+                if (item.getType() == SectionType.Tom) {
+                    String parentName = Integer.valueOf(item.getCategoryNumber()) > 9 ? "БДК" : "Основы";
+                    String parentUri = UriGenerator.generate(Category.class, parentName);
+                    category.setParent(parentUri);
+                } else {
+                    category.setParent(categories.get(item.getParent()).getUri());
+                }
+                categories.put(item, commonDao.save(category));
+            }
+        });
+
+        final Map<SectionType, List<Map.Entry<ItemBook, Category>>> typeCategoryMap = StreamEx.of(categories.entrySet()).groupingBy(e -> e.getKey().getType());
+
+        StreamEx.of(typeCategoryMap.entrySet()).forEachOrdered(e -> {
+            final Iterator<Category> iterator = StreamEx.of(e.getValue())
+                    .map(Map.Entry::getValue)
+                    .iterator();
+            Category current = null;
+            while (iterator.hasNext()) {
+                final Category next = iterator.next();
+                if (current != null) {
+                    current.setNext(next.getUri());
+                    commonDao.save(current);
+                }
+                current = next;
+            }
+        });
+
+        final Iterator<ItemsRange> iterator = ranges.iterator();
+        ItemsRange current = null;
+        while (iterator.hasNext()) {
+            final ItemsRange next = iterator.next();
+            if (current != null) {
+                current.setTo(ItemController.getPrev(next.getFrom()));
+                commonDao.save(current);
+            }
+            current = next;
+        }
+        final String tomLastItemNumber = itemDao.getTomLastItemNumber(current.getFrom().replaceAll("^(\\d+)\\.\\d+", "$1"));
+        current.setTo(tomLastItemNumber);
+        commonDao.save(current);
+
+        categories.forEach((item, category) -> {
+            String start;
+            if (item.type == SectionType.Chapter) {
+                start = item.getStart() == null ? null : itemRange.get(item.getStart()).getUri();
+            } else {
+                start = categories.get(item.getStart()).getUri();
+            }
+            category.setStart(start);
+            commonDao.save(category);
+        });
     }
 
     private static void validate(ItemsRange range) {
         Assert.isTrue(Item.isItemNumber(range.getFrom()), "...");
-        Assert.isTrue(Item.isItemNumber(range.getTo()), "...");
-        Assert.isTrue(range.getCode().matches("^(\\d+\\.){3}\\d+$"), "...");
+//        Assert.isTrue(Item.isItemNumber(range.getTo()), "...");
+        Assert.isTrue(range.getCode().matches("^(\\d+\\.){3}\\d+$"), "Неверный код "+range.getCode());
         Assert.hasLength(range.getDescription(), "...");
-        Assert.isTrue(range.getDescription().length() < 500, "...");
-    }
-
-    private static int getStep(List<ItemBook> itemBookList, int i) throws XLSParsingException{
-        int k = i + 1;
-        if (k < itemBookList.size()){
-            if(itemBookList.get(k).getType() != SectionType.Paragraph){
-                k = getStep(itemBookList,k); //если следующее значение тоже НЕ параграф, тогда рекурсивно проверяем "следующее-следующее" значение
-            }
-        }else{
-            throw new IncorrectSheetException("Лист с томом №" + itemBookList.get(0).getCategoryNumber() + "неверной структуры. Для параграфа №"
-                    + itemBookList.get(k).getItemNumber() +" нет конечного диапазона абзаца.");
-        }
-        return k;
+        Assert.hasLength(range.getCategory(), "...");
     }
 }

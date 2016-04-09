@@ -3,39 +3,32 @@ package org.ayfaar.app.contents;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.io.FileUtils;
-import org.ayfaar.app.SpringTestConfiguration;
+import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.utils.CategoryService;
 import org.ayfaar.app.utils.contents.CategoryPresentation;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.*;
 
-/**
- * fixme: НЕ ЗАПУСКАЕТСЯ КОНТЕКСТ, сделать по аналогии с org.ayfaar.app.contents.ContentsGenerator
- */
-public class ContentsGenerator {
+public class ContentsGenerator extends IntegrationTest {
 	private static final Logger logger = LoggerFactory.getLogger(ContentsGenerator.class);
 
-	public static void main(String[] args) throws Exception {
-		// задаём профайл для загрузки только нужных бинов
-		System.setProperty("spring.profiles.active", ContentsGeneratorConfig.CONTEXT_GENERATOR_PROFILE);
-		// создаём контекст тестового окружения
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
-		// получаем сервис для работы с категориями
-		CategoryService categoryService = ctx.getBean(CategoryService.class);
-		// движок html шаблонов. Про диалект шаблонов: http://www.thymeleaf.org/doc/articles/standarddialect5minutes.html
-		TemplateEngine templateEngine = ctx.getBean(TemplateEngine.class);
+	@Inject CategoryService categoryService;
+	@Inject TemplateEngine templateEngine;
 
+	@Test
+	public void main() throws Exception {
 		// переменные видимые в шаблоне
 		Map<String, Object> values = new HashMap<>();
 		// провейдер категории "Том 4"
-		CategoryService.CategoryProvider rootCategoryProvider = categoryService.getByName("Том 4");
+		CategoryService.CategoryProvider rootCategoryProvider = categoryService.getByName("Том 12");
 		logger.trace("Загруженная категория: " + rootCategoryProvider.extractCategoryName());
 		// в этом объект нужно положить всю нужную в шаблоне информацию о категрии (имя, описание, дочерние категории...)
 		CategoryPresentation rootCategoryPresentation = null; //
@@ -52,14 +45,7 @@ public class ContentsGenerator {
 //		logger.trace("Результат работы шаблонизатора: \n" + html);
 		logger.trace("Генерация шаблона окончена.");
 		// записываем полученный результат в html файл для просмотра его в браузере.
-		// вариант записи в файл - какой больше понравится
-
-//		FileOutputStream fileOutputStream = new FileOutputStream("html.html");
-//		fileOutputStream.write(html.getBytes("UTF-8"));
-//		fileOutputStream.flush();
-//		fileOutputStream.close();
-
-		FileUtils.writeStringToFile(new File("html.html"), html, Charset.forName("UTF-8"));
+		FileUtils.writeStringToFile(new File(rootCategoryProvider.getName()+".html"), html, Charset.forName("UTF-8"));
 	}
 
 
@@ -79,7 +65,7 @@ public class ContentsGenerator {
 			String name = provider.extractCategoryName();
 			String paragraphCode = null;
 			if (provider.isParagraph()) {
-			 	paragraphCode = provider.getCode();
+			 	paragraphCode = name;
 				name = name.replaceAll("^\\d+\\.\\d+\\.(\\d+\\.\\d+)$", "$1"); // оставляем только две последние цифры
 			}
 			// рекурсивно заполняем список, со всеми вложенными детьми

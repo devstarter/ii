@@ -20,6 +20,7 @@ public interface CategoryService {
         Category getCategory();
         CategoryProvider getNext();
         String getUri();
+        String getName();
         String getParentUri();
         String getDescription();
         boolean isParagraph();

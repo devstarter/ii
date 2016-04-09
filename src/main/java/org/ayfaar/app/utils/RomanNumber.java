@@ -23,11 +23,11 @@ public class RomanNumber {
      */
 
     public static int parse(String str) {
+        if (str == null) {
+            throw new IllegalArgumentException("Expect not null string");
+        }
         if (str.isEmpty()) {
             throw new NullPointerException("String is empty");
-        }
-        if (str == null) {
-            throw new NullPointerException("Nullpointer Exception");
         }
         String in = str.toUpperCase().replaceAll(" ", "");
 

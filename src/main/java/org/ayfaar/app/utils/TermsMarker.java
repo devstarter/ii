@@ -25,7 +25,6 @@ public class TermsMarker {
      *
      * @param content исходный текст с терминами
      * @return текст с тегами терминов
-     * @see org.ayfaar.app.synchronization.mediawiki.TermSync#markTerms
      */
     public String mark(String content) {
         if (content == null || content.isEmpty()) return content;
@@ -69,12 +68,12 @@ public class TermsMarker {
                     //String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
                     //пока забыли о  title="...."
                     final TermProvider termProvider = entry.getValue();
-                    final TermProvider mainTermProvider = termProvider.getMainTerm().get();
                     boolean hasMainTerm = termProvider.hasMainTerm();
+                    final TermProvider mainTermProvider = hasMainTerm ? termProvider.getMainTerm().get() : null;
                     boolean hasShortDescription = hasMainTerm ? mainTermProvider.hasShortDescription() : termProvider.hasShortDescription();
 
                     String attributes = hasShortDescription ? " has-short-description=\"true\"" : "";
-                    attributes += termProvider.hasMainTerm() ?  format(" title=\"%s\"", mainTermProvider.getName()) : "";
+                    attributes += hasMainTerm ?  format(" title=\"%s\"", mainTermProvider.getName()) : "";
 
                     String replacer = format("%s%s<term id=\"%s\"%s>%s</term>%s",
                             charBefore,

@@ -1,5 +1,6 @@
 package org.ayfaar.app.model;
 
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.ayfaar.app.annotations.Uri;
 
@@ -34,6 +35,11 @@ public class Category extends UID {
     public Category(String name, String description, String parent) {
         this(name, parent);
         this.description = description;
+    }
+    @Builder
+    public Category(String name, String description, String parent, String next) {
+        this(name, parent, description);
+        this.next = next;
     }
 
     public Category(String name) {

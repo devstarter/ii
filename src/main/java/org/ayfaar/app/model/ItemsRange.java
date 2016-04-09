@@ -35,14 +35,16 @@ public class ItemsRange extends UID {
     private String code;
     @Column(columnDefinition = "TEXT")
     private String description;
+    private String category; // uri of parent category
     private Date createdAt = new Date();
 
     @Builder
-    public ItemsRange(String from, String to, String code, String description) {
+    public ItemsRange(String from, String to, String code, String description, String category) {
         this.from = from;
         this.to = to;
         this.code = code;
         this.description = description;
+        this.category = category;
         if (this.code == null) this.code = this.from + "-" + this.to;
     }
 

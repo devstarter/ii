@@ -18,7 +18,7 @@ public class StringUtils {
         }
         return text.trim();
     }
-
+    // todo startsWith, array of subjects
     public static String trim(String text, String subjectToTrim) {
         if (text == null || text.isEmpty()) {
             return text;

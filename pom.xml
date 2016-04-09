@@ -26,9 +26,15 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<junit.version>4.11</junit.version>
 		<poi.version>3.9</poi.version>
+		<streamex.version>0.6.0</streamex.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>one.util</groupId>
+			<artifactId>streamex</artifactId>
+			<version>${streamex.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>

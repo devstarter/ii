@@ -5,38 +5,21 @@
       xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout">
     <head>
         <style type="text/css">
-            .titul{
-                background-color:rgb(149,179,215);
-            }
-            h1{
-                background-color:rgb(149,179,215);
-                color:rgb(15,0,130);
-                font-size:200%;
-            }
-            h2{
-                background-color:rgb(149,179,215);
-                color:rgb(15,0,130);
-                font-size:200%;
-            }
-            h3{
-                background-color:rgb(149,179,215);
-                color:rgb(15,0,130);
-                font-size:200%;
+            table.position td {
+                padding: 10px;
             }
             h4{
                 background-color: RGB(219,229,241);
                 font-weight: bold;
                 color:rgb(15,0,130);
-                font-size: x-large;
+                font-size: 18px;
                 margin: 0;
+                padding: 10px;
             }
             h5{
                 background-color:rgb(149,179,215);
                 color:rgb(15,0,130);
                 font-size:200%;
-            }
-            .position{
-                text-align: center;
             }
             .position_table{
                 text-align: left;
@@ -55,8 +38,8 @@
                 font-weight: bold;
                 color:rgb(15,0,130);
             }.conf_of_font{
-                color:rgb(15,0,130);
-            }
+                 color:rgb(15,0,130);
+             }
             .razdel_color{
                 background-color: RGB(219,229,241);
             }
@@ -67,23 +50,11 @@
             .paragraph:hover{
                 background: rgb(229, 248, 255);
             }
-            table{
+            table.position {
                 border-collapse: collapse;
-                border: 0px;
+                border: 0;
                 width: 100%;
-            }
-            .column1{
-                padding: 2%;
-            }
-            .column2{
-                padding: 1%;
-            }
-            .column3{
-                padding: 2%;
-            }
-            body{
-                margin: 0;
-                padding: 0;
+                text-align: center;
             }
         </style>
         <title>Содержание</title>
@@ -91,11 +62,11 @@
     </head>
     <body>
         <div class="position" th:with="site=('http://ii.ayfaar.org/')">
-            <div class="titul">
+            <!--<div class="titul">
                     <h1>Содержание</h1>
                     <h2>Ииссидология. <span th:text="${data.name}"></span></h2>
                     <h3 th:text="${data.description}"></h3>
-            </div>
+            </div>-->
             <div th:each="razdel : ${data.children}" >
                 <table class="position">
                     <tr>
@@ -128,5 +99,6 @@
                 </table>
             </div>
         </div>
+        <p style="padding-bottom: 20px">* Данное содержание не является оригинальным материалом Ориса. Содержание составлено группой редакторов в целях ускорения поиска тематических материалов.</p>
     </body>
 </html>

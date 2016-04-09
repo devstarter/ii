@@ -36,6 +36,14 @@ public class ItemDaoImpl extends AbstractHibernateDAO<Item> implements ItemDao {
                 .list();
     }
 
+    @Override
+    public String getTomLastItemNumber(String tom) {
+        return (String) criteria()
+                .add(Restrictions.like("number", tom + ".%"))
+                .setProjection(Projections.max("number"))
+                .uniqueResult();
+    }
+
     /*@Override
     public List<Item> find(String query) {
 	    query = query.toLowerCase().replaceAll("\\*", "["+w+"]*");
