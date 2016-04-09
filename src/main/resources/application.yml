@@ -35,3 +35,6 @@ mail.password: some
 pushbullet.key: v1Izhxi9HgremmZ8ZqEyAh0xbW7xJHLYWYujz0VEpiRR6
 pushbullet.channel: ii
 google.api.key: ${GOOGLE_API_KEY:'no_key'}
+security.user.name: userTest@qq.qq
+security.user.password: userTest
+#debug: true
