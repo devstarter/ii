@@ -22,7 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 //.antMatchers("/api/auth").permitAll()
                 .antMatchers("/static/old/adm.html")
-                .access("hasRole('ADMIN')")//.and().formLogin()
+                .access("hasRole('ADMIN')")//.and().formLogin() //во всех остальных местах ROLE_ADMIN
                 //.failureUrl("/")
 //                .usernameParameter("username")
 //                .passwordParameter("password")

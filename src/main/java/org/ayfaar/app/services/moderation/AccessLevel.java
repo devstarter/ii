@@ -1,7 +1,7 @@
 package org.ayfaar.app.services.moderation;
 
 public enum AccessLevel {
-    ADMIN(0), EDITOR(1);
+    ROLE_ADMIN(0), ROLE_EDITOR(1);
 
     private int precedence;
 
