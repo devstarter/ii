@@ -1,6 +1,7 @@
 package org.ayfaar.app.services.user;
 
 
+import org.ayfaar.app.dao.BasicCrudDao;
 import org.ayfaar.app.dao.UserDao;
 import org.ayfaar.app.model.CustomUser;
 import org.ayfaar.app.model.User;
@@ -17,14 +18,13 @@ import java.util.List;
 public class CustomUserService implements UserDetailsService {
 
     @Autowired
-    UserDao userDao;
+    BasicCrudDao<User> basicCrudDao;
 
     public CustomUser loadUserByUsername(String email) throws UsernameNotFoundException {
-        //return userDao.loadUserByUsername(username);
+
         CustomUser customUser = new CustomUser();
 
-        User userByEmail = userDao.getUserByEmail(email);
-
+        User userByEmail = basicCrudDao.get("email", email);
         customUser.setFirstname(userByEmail.getEmail());
         customUser.setLastname(userByEmail.getLast_name());
         customUser.setUsername(userByEmail.getEmail());//Аутентификация по EMAIL!!!!!!!!!!!!

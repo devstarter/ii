@@ -1,15 +1,16 @@
 package org.ayfaar.app.controllers;
 
-import org.ayfaar.app.model.CustomUser;
+import org.ayfaar.app.dao.BasicCrudDao;
+import org.ayfaar.app.dao.UserDao;
 import org.ayfaar.app.model.User;
 import org.ayfaar.app.services.moderation.AccessLevel;
 import org.ayfaar.app.services.user.CustomUserService;
-import org.ayfaar.app.services.user.UserServiceImpl;
-import org.ayfaar.app.utils.authentication.CustomAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,9 @@ import java.util.List;
 public class AuthController {
 
     @Inject
-    UserServiceImpl userService;
+    UserDao userDao;
+    @Inject
+    BasicCrudDao<User> basicCrudDao;
     @Inject
     CustomUserService customUserService;
 
@@ -47,23 +50,17 @@ public class AuthController {
          auth_provider:vk
          */
         createOrUpdateUser(user);
-        setAuthentication(user.getEmail());//Аутентификация по EMAIL!!!!!!!!!!!!
-
+        setAuthentication(user);
     }
 
     private void createOrUpdateUser(User user){//Обновляем или сохраняем в базу
         user.setRole(AccessLevel.ROLE_EDITOR);
-        userService.createOrUpdate(user);
+        basicCrudDao.save(user);
     }
 
-    @RequestMapping("principal")
-    public String getCurrentUser(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null){
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof CustomUser) return ((CustomUser) principal).getFirstname();
-            else return principal.toString();
-        }else return null;
+    @RequestMapping("current")
+    public User getCurrentUser(@AuthenticationPrincipal User currentUser){
+        return currentUser;
     }
 
     //Аутентификация
@@ -72,10 +69,10 @@ public class AuthController {
         return authorities;
     }
 
-    private Authentication setAuthentication(String email) {
+    private Authentication setAuthentication(User user) {
         AuthenticationManager authenticationManager;
         authenticationManager = new SampleAuthenticationManager();
-        Authentication request = new CustomAuthenticationToken(email, getAuthorities(email));
+        Authentication request = new UsernamePasswordAuthenticationToken(user, null, getAuthorities(user.getEmail()));
         Authentication result = authenticationManager.authenticate(request);
         SecurityContextHolder.getContext().setAuthentication(result);
         return SecurityContextHolder.getContext().getAuthentication();
@@ -85,7 +82,7 @@ public class AuthController {
 
         public Authentication authenticate(Authentication auth) throws AuthenticationException {
 
-            return new CustomAuthenticationToken(auth.getName(), getAuthorities(auth.getName()));
+            return new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), auth.getAuthorities());
         }
     }
 }

@@ -21,25 +21,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private CustomUserService userService;
 
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = (String) authentication.getPrincipal();
-        String password = (String) authentication.getCredentials();
+        String email = (String) authentication.getPrincipal();
 
-        CustomUser user = userService.loadUserByUsername(username);
-
-        if (user == null || !user.getUsername().equalsIgnoreCase(username)) {
-            throw new BadCredentialsException("Username not found.");
-        }
-
-        if (!password.equals(user.getPassword())) {
-            throw new BadCredentialsException("Wrong password.");
-        }
-
+        CustomUser user = userService.loadUserByUsername(email);
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
 
-        return new CustomAuthenticationToken(user, authorities);
+        return new UsernamePasswordAuthenticationToken(email, null, authorities);
     }
 
-    public boolean supports(Class<?> arg0) {
+    @Override
+    public boolean supports(Class<?> authentication) {
         return true;
     }
 
