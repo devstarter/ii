@@ -46,7 +46,7 @@ public class NewSearchControllerUnitTest {
         String q = "время";
         TermProvider provider = aliasesMap.new TermProviderImpl(q, null, false);
 
-        when(termsMap.getTermProvider(q)).thenReturn(provider);
+        when(termsMap.get(q)).thenReturn(provider);
 
         List<String> morphs = asList(q);
         when(controller.getAllMorphs(anyList())).thenReturn(morphs);

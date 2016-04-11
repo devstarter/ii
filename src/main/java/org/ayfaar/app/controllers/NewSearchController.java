@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.ayfaar.app.utils.TermService.TermProvider;
@@ -57,16 +58,16 @@ public class NewSearchController {
         page.setHasMore(false);
 
         // 3. Определить термин ли это
-        TermProvider provider = termService.getTermProvider(query);
+        Optional<TermProvider> providerOpt = termService.get(query);
         // 3.1. Если да, Получить все синониме термина
         List<Item> foundItems;
         // указывает сколько результатов поиска нужно пропустить, то есть когда ищем следующую страницу
         int skipResults = pageNumber*PAGE_SIZE;
 
         List<String> searchQueries;
-        if (provider != null) {
+        if (providerOpt.isPresent()) {
             // 3.2. Получить все падежи по всем терминам
-            searchQueries = provider.getAllAliasesWithAllMorphs();
+            searchQueries = providerOpt.get().getAllAliasesWithAllMorphs();
             // 4. Произвести поиск
             foundItems = searchDao.findInItems(searchQueries, skipResults, PAGE_SIZE + 1, startFrom);
 
@@ -97,14 +98,15 @@ public class NewSearchController {
     @RequestMapping("categories")
     @ResponseBody
     public Object inCategories(@RequestParam String query) {
-        TermProvider provider = termService.getTermProvider(query);
-        provider = provider.getMainTerm().orElse(provider);
+        final Optional<TermProvider> providerOpt = termService.get(query);
         List<String> searchQueries;
-        if (provider == null) {
+        if (providerOpt.isPresent()) {
+            TermProvider provider = providerOpt.get();
+            provider = provider.getMainTerm().orElse(provider);
+            searchQueries = provider.getAllAliasesAndAbbreviationsWithAllMorphs();
+        } else {
 			query = query.replace("*", RegExpUtils.w+"+");
             searchQueries = Collections.singletonList(query);
-        } else {
-            searchQueries = provider.getAllAliasesAndAbbreviationsWithAllMorphs();
         }
 		List<CategoryService.CategoryProvider> foundCategoryProviders = categoryService.descriptionContains(searchQueries);
 

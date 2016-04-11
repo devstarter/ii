@@ -9,22 +9,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.ayfaar.app.utils.TermService.TermProvider;
 import static org.junit.Assert.*;
 
+@SuppressWarnings({"OptionalGetWithoutIsPresent", "SpringJavaAutowiredMembersInspection"})
 public class NewAliasesMapIntegrationTest extends IntegrationTest{
-    @Autowired
-    private TermServiceImpl aliasesMap;
-    @Autowired
-    private TermService termService;
+    @Autowired TermServiceImpl aliasesMap;
+    @Autowired TermService termService;
 
     @Test
     public void testGetTermProvider() {
-        TermProvider provider = termService.getTermProvider("Чистое Качество");
+        Optional<TermProvider> provider = termService.get("Чистое Качество");
 
         assertNotNull(provider);
-        assertEquals("ии:термин:Чистое Качество", provider.getUri());
+        assertEquals("ии:термин:Чистое Качество", provider.get().getUri());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetTypeOfTerm() {
-        final TermProvider provider = termService.getTermProvider("ТОО-УУ");
+        final TermProvider provider = termService.get("ТОО-УУ").get();
 
         assertEquals("ТОО-УУ", provider.getName());
         assertEquals(UriGenerator.generate(Term.class, "ТОО-УУ"), provider.getUri());
@@ -74,7 +74,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetAliases() {
-        TermProvider provider = termService.getTermProvider("Конфективное ССС-Состояние");
+        TermProvider provider = termService.get("Конфективное ССС-Состояние").get();
 
         List<TermProvider> aliases = provider.getAliases();
         assertEquals("ии:термин:Конфективный", aliases.get(0).getUri());
@@ -83,7 +83,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetAbbreviations() {
-        TermProvider provider = termService.getTermProvider("ФЛУУ-ЛУУ-комплекс");
+        TermProvider provider = termService.get("ФЛУУ-ЛУУ-комплекс").get();
 
         List<TermProvider> abbreviations = provider.getAbbreviations();
         assertEquals("ии:термин:ФЛК", abbreviations.get(0).getUri());
@@ -92,7 +92,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetCodes() {
-        TermProvider provider = termService.getTermProvider("Мобиллюрасцитный Дубликатор Сектора");
+        TermProvider provider = termService.get("Мобиллюрасцитный Дубликатор Сектора").get();
 
         TermProvider code = provider.getCode();
         assertEquals("ии:термин:ЮЮ-ИИЙ-ССС-ЮЮ", code.getUri());
@@ -100,15 +100,15 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testRA() {
-        final TermProvider ra = termService.getTermProvider("РА");
+        final TermProvider ra = termService.get("РА").get();
         assertTrue(ra.getMainTerm().get().hasShortDescription());
     }
 
     @Test
     public void sameTermProviders() {
-        final TermProvider morph = termService.getTermProvider("резонационной Активности");
-        final TermProvider origin = termService.getTermProvider("резонационная Активность");
-        final TermProvider abbr = termService.getTermProvider("РА");
+        final TermProvider morph = termService.get("резонационной Активности").get();
+        final TermProvider origin = termService.get("резонационная Активность").get();
+        final TermProvider abbr = termService.get("РА").get();
 
         assertEquals(morph, origin);
         assertEquals(abbr.getMainTerm().get(), origin);
@@ -116,7 +116,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
 
     @Test
     public void testGetMorphs() {
-        TermProvider provider = termService.getTermProvider("Время");
+        TermProvider provider = termService.get("Время").get();
         List<String> morphs = provider.getMorphs();
 
         assertEquals(8, morphs.size());

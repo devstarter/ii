@@ -5,7 +5,6 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.events.NewTermEvent;
-import org.ayfaar.app.events.QuietException;
 import org.ayfaar.app.events.TermUpdatedEvent;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.utils.*;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.util.*;
 
-import static java.lang.String.format;
 import static java.util.Collections.sort;
 import static org.ayfaar.app.model.LinkType.*;
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
@@ -50,16 +48,13 @@ public class TermController {
     @ResponseBody
     public ModelMap get(@RequestParam("name") String termName, @RequestParam(required = false) boolean mark) {
         termName = termName.replace("_", " ");
-        TermService.TermProvider provider = termService.getTermProvider(termName);
-        if (provider == null) {
-            throw new QuietException(format("Термин `%s` отсутствует", termName));
+        Optional<TermService.TermProvider> providerOpt = termService.getMainOrThis(termName);
+        if (!providerOpt.isPresent()) {
+            return null;
         }
 
-        provider = provider.getMainTerm().orElse(provider);
-
         ModelMap modelMap = new ModelMap();//(ModelMap) getModelMap(term);
-
-        Term term = provider.getTerm();
+        Term term = providerOpt.get().getTerm();
 
         modelMap.put("uri", term.getUri());
         modelMap.put("name", term.getName());
@@ -129,7 +124,7 @@ public class TermController {
         sort(quotes, (o1, o2) -> ((String) o1.get("uri")).compareTo((String) o2.get("uri")));
 
         // mark quotes with strong
-        List<String> allAliasesWithAllMorphs = provider.getAllAliasesWithAllMorphs();
+        List<String> allAliasesWithAllMorphs = providerOpt.get().getAllAliasesWithAllMorphs();
         for (ModelMap quote : quotes) {
             String text = (String) quote.get("quote");
             if (text == null || text.isEmpty() || text.contains("strong")) continue;

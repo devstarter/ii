@@ -76,11 +76,11 @@ public class SearchController {
             items = commonDao.findInAllContent(query, page*pageSize, pageSize);
         } else {
 
-            TermService.TermProvider provider = termService.getTermProvider(query);
 
             Term term = null;
-            if (provider != null) {
-                term = provider.getTerm();
+            Optional<TermService.TermProvider> providerOpt = termService.get(query);
+            if (providerOpt.isPresent()) {
+                term = providerOpt.get().getTerm();
             } else {
                 for (Map.Entry<String, TermService.TermProvider> entry : termService.getAll()) {
                     if (entry.getKey().equals(query)) {

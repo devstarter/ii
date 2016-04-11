@@ -52,7 +52,7 @@ public class LinkController {
         }
         Term term = termDao.getByName(termName);
         if (term == null) {
-            if (termService.getTermProvider(termName) != null) {
+            if (termService.get(termName) != null) {
                 term = termService.getTerm(termName);
             } else {
                 term = termController.add(termName);

@@ -23,6 +23,8 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
     $scope.loading = true;
 
     $api.term.get(query).then(function (data) {
+        if (!data) return noTermHandler();
+        
         $scope.termFound = true;
         copyObjectTo(data, $scope);
         if (data && !data.description && !data.shortDescription && !data.quotes.length && !data.related.length) {
@@ -47,14 +49,16 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
         $scope.showQuotes = data.quotes.length < 3;
         $scope.showCategories = data.categories.length < 3;
         //$scope.$root.hideLoop = false;
-    }, function () {
-        $scope.editMode = true;
-        //$scope.$root.hideLoop = true;
-        $scope.search();
-    })
+    }, noTermHandler)
     ['finally'](function () {
         $scope.loading = false;
     });
+
+    function noTermHandler() {
+        $scope.editMode = true;
+        //$scope.$root.hideLoop = true;
+        $scope.search();
+    }
 
     $scope.searchCallback = function() {
         return $api.search.suggestions($scope.name)

@@ -209,8 +209,17 @@ public class TermServiceImpl implements TermService {
 
 
     @Override
-    public TermProvider getTermProvider(String name) {
-        return aliasesMap.get(name.toLowerCase());
+    public Optional<TermProvider> get(String name) {
+        return Optional.ofNullable(aliasesMap.get(name.toLowerCase()));
+    }
+
+    @Override
+    public Optional<TermProvider> getMainOrThis(String name) {
+        final Optional<TermProvider> providerOpt = get(name);
+        if (providerOpt.isPresent() && providerOpt.get().getMainTerm().isPresent()) {
+            return providerOpt.get().getMainTerm();
+        }
+        return providerOpt;
     }
 
     @Override

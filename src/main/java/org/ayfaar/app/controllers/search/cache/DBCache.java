@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.util.Optional;
 
 
 @Component
@@ -41,12 +42,11 @@ public class DBCache extends ConcurrentMapCache {
             SearchCacheKey searchKey = (SearchCacheKey) key;
             boolean isTerm = false;
             if (searchKey.page == 0 && (searchKey.startFrom == null || searchKey.startFrom.isEmpty())) {
-                final TermService.TermProvider provider = termService.getTermProvider(searchKey.query);
+                final Optional<TermService.TermProvider> providerOpt = termService.getMainOrThis(searchKey.query);
                 String termUri = null;
-                if (provider != null) {
-                    termUri = provider.getMainTerm().orElse(provider).getUri();
+                if (providerOpt.isPresent()) {
+                    termUri = providerOpt.get().getUri();
                 }
-
                 if (termUri != null) {
                     cacheEntity = commonDao.get(CacheEntity.class, termUri);
                     isTerm = true;
@@ -83,9 +83,9 @@ public class DBCache extends ConcurrentMapCache {
         }
 
         if (key instanceof SearchCacheKey && ((SearchCacheKey) key).page == 0) {
-            TermService.TermProvider provider = termService.getTermProvider(((SearchCacheKey) key).query);
-            if(provider != null && ((SearchCacheKey) key).page == 0) {
-                uid = provider.getMainTerm().orElse(provider).getTerm();
+            Optional<TermService.TermProvider> providerOpt = termService.getMainOrThis(((SearchCacheKey) key).query);
+            if(providerOpt.isPresent() && ((SearchCacheKey) key).page == 0) {
+                uid = providerOpt.get().getTerm();
             }
         } else if(key instanceof ContentsCacheKey) {
             String name = ((ContentsCacheKey) key).categoryName;
