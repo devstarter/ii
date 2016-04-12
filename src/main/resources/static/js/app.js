@@ -1010,6 +1010,7 @@ function getUrl(uri) {
     url = url.replace("категория:", "c/");
     url = url.replace("ии:термин:", "");
     url = url.replace("ии:пункт:", "");
+    url = url.replace("ии:пункты:", "");
     url = url.replace("видео:youtube:", "resource/video/");
     return url;
 }

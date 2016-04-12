@@ -1,104 +1,85 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:th="http://www.thymeleaf.org"
-      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout">
-    <head>
-        <style type="text/css">
-            table.position td {
-                padding: 10px;
-            }
-            h4{
-                background-color: RGB(219,229,241);
-                font-weight: bold;
-                color:rgb(15,0,130);
-                font-size: 18px;
-                margin: 0;
-                padding: 10px;
-            }
-            h5{
-                background-color:rgb(149,179,215);
-                color:rgb(15,0,130);
-                font-size:200%;
-            }
-            .position_table{
-                text-align: left;
-            }
-            .font_of_glava{
-                font-weight: bold;
-                color:rgb(15,0,130);
-                font-size: large;
-            }
-            .font_of_razdel{
-                font-weight: bold;
-                color:rgb(15,0,130);
-                font-size: x-large;
-            }
-            .conf_of_font_bold{
-                font-weight: bold;
-                color:rgb(15,0,130);
-            }.conf_of_font{
-                 color:rgb(15,0,130);
-             }
-            .razdel_color{
-                background-color: RGB(219,229,241);
-            }
-            .paragraph {
-                color:rgb(15,0,130);
-                cursor: pointer;
-            }
-            .paragraph:hover{
-                background: rgb(229, 248, 255);
-            }
-            table.position {
-                border-collapse: collapse;
-                border: 0;
-                width: 100%;
-                text-align: center;
-            }
-        </style>
-        <title>Содержание</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    </head>
-    <body>
-        <div class="position" th:with="site=('http://ii.ayfaar.org/')">
-            <!--<div class="titul">
-                    <h1>Содержание</h1>
-                    <h2>Ииссидология. <span th:text="${data.name}"></span></h2>
-                    <h3 th:text="${data.description}"></h3>
-            </div>-->
-            <div th:each="razdel : ${data.children}" >
-                <table class="position">
-                    <tr>
-                        <td class="column1"></td>
-                        <td >
-                            <h4>
-                                <div th:text="${razdel.name}"></div>
-                                <div th:text="${razdel.description}"></div>
-                            </h4>
-                        </td>
-                        <td class="column3"></td>
-                    </tr>
-                    <div th:each="glava : ${razdel.children}" >
-                        <tr>
-                            <td class="column1"></td>
-                            <td >
-                                <div class="position_table">
-                                    <span class="font_of_glava" th:text="${glava.name}"></span>.
-                                    <span class="font_of_glava" th:text="${glava.description}"></span>
-                                </div>
-                            </td>
-                            <td class="column3"></td>
-                        </tr>
-                        <tr th:each="paragraf : ${glava.children}" class="paragraph" th:onclick="'window.open(\'' + @{${site}} + ${paragraf.code} + '\');'" title="Перейти к тексту этого паргарафа">
-                            <td class="column1" th:text="${paragraf.name}" ></td>
-                            <td class="position_table" th:text="${paragraf.description}"></td>
-                            <td class="column3" th:text="${paragraf.uri}"></td>
-                        </tr>
+<style type="text/css">
+    table.position td {
+        padding: 10px;
+    }
+    h4{
+        background-color: RGB(219,229,241);
+        font-weight: bold;
+        color:rgb(15,0,130);
+        font-size: 18px;
+        margin: 0;
+        padding: 10px;
+    }
+    h5{
+        background-color:rgb(149,179,215);
+        color:rgb(15,0,130);
+        font-size:200%;
+    }
+    .position_table{
+        text-align: left;
+    }
+    .font_of_glava{
+        font-weight: bold;
+        color:rgb(15,0,130);
+        font-size: large;
+    }
+    .font_of_razdel{
+        font-weight: bold;
+        color:rgb(15,0,130);
+        font-size: x-large;
+    }
+    .conf_of_font_bold{
+        font-weight: bold;
+        color:rgb(15,0,130);
+    }.conf_of_font{
+         color:rgb(15,0,130);
+     }
+    .razdel_color{
+        background-color: RGB(219,229,241);
+    }
+    .paragraph {
+        color:rgb(15,0,130);
+        cursor: pointer;
+    }
+    .paragraph:hover{
+        background: rgb(229, 248, 255);
+    }
+    table.position {
+        border-collapse: collapse;
+        border: 0;
+        width: 100%;
+        text-align: center;
+    }
+</style>
+<div th:each="razdel : ${data.children}"  th:with="site=('http://ii.ayfaar.org/')">
+    <table class="position">
+        <tr>
+            <td class="column1"></td>
+            <td >
+                <h4>
+                    <div th:text="${razdel.name}"></div>
+                    <div th:text="${razdel.description}"></div>
+                </h4>
+            </td>
+            <td class="column3"></td>
+        </tr>
+        <div th:each="glava : ${razdel.children}" >
+            <tr>
+                <td class="column1"></td>
+                <td >
+                    <div class="position_table">
+                        <span class="font_of_glava" th:text="${glava.name}"></span>.
+                        <span class="font_of_glava" th:text="${glava.description}"></span>
                     </div>
-                </table>
-            </div>
+                </td>
+                <td class="column3"></td>
+            </tr>
+            <tr th:each="paragraf : ${glava.children}" class="paragraph" th:onclick="'window.open(\'' + @{${site}} + ${paragraf.code} + '\');'" title="Перейти к тексту этого паргарафа">
+                <td class="column1" th:text="${paragraf.name}" ></td>
+                <td class="position_table" th:text="${paragraf.description}"></td>
+                <td class="column3" th:text="${paragraf.uri}"></td>
+            </tr>
         </div>
-        <p style="padding-bottom: 20px">* Данное содержание не является оригинальным материалом Ориса. Содержание составлено группой редакторов в целях ускорения поиска тематических материалов.</p>
-    </body>
-</html>
+    </table>
+</div>
+<p style="padding-bottom: 20px">* Данное содержание не является оригинальным материалом Ориса. Содержание составлено группой редакторов в целях ускорения поиска тематических материалов.</p>
