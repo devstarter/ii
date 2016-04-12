@@ -99,6 +99,9 @@ public class ContentsImporter {
             if (!sheet.getSheetName().contains("Том")) continue;
             //на листе только один том, при этом номер в 1-й строке, название во 2-й строке
             final ItemBook tom = getTom(sheet);
+
+            if (tom.getCategoryNumber().equals("5")) continue; // пропускаем 5 том
+
             categories.add(tom); //добавили том
             currentItems.put(SectionType.Tom, tom);
             final Iterator<Row> rowIterator = sheet.rowIterator();
@@ -280,20 +283,23 @@ public class ContentsImporter {
             }
         });
 
-        final Iterator<ItemsRange> iterator = ranges.iterator();
-        ItemsRange current = null;
-        while (iterator.hasNext()) {
-            final ItemsRange next = iterator.next();
-            if (current != null) {
-                current.setTo(ItemController.getPrev(next.getFrom()));
-                commonDao.save(current);
-            }
-            current = next;
-        }
-        final String tomLastItemNumber = itemDao.getTomLastItemNumber(current.getFrom().replaceAll("^(\\d+)\\.\\d+", "$1"));
-        current.setTo(tomLastItemNumber);
-        commonDao.save(current);
+        final Map<String, List<ItemsRange>> rangesByTom = StreamEx.of(ranges).groupingBy(r -> r.getFrom().replaceAll("^(\\d+)\\.\\d+", "$1"));
 
+        rangesByTom.entrySet().forEach(e -> {
+            final Iterator<ItemsRange> iterator = e.getValue().iterator();
+            ItemsRange current = null;
+            while (iterator.hasNext()) {
+                final ItemsRange next = iterator.next();
+                if (current != null) {
+                    current.setTo(ItemController.getPrev(next.getFrom()));
+                    commonDao.save(current);
+                }
+                current = next;
+            }
+            final String tomLastItemNumber = itemDao.getTomLastItemNumber(e.getKey());
+            current.setTo(tomLastItemNumber);
+            commonDao.save(current);
+        });
         categories.forEach((item, category) -> {
             String start;
             if (item.type == SectionType.Chapter) {

@@ -18,9 +18,9 @@ public class ContentsHelperTest extends IntegrationTest {
 
 /*    @Test
     public void testGetChildren() {
-        List<Category> sections = contentsHelper.getChildren(categoryDao.get("name", "Том 10"));
-        List<Category> chapters = contentsHelper.getChildren(categoryDao.get("name", "БДК / Раздел I"));
-        List<Category> paragraphs = contentsHelper.getChildren(categoryDao.get("name", "БДК / Раздел I / Глава 1"));
+        List<Category> sections = contentsHelper.children(categoryDao.get("name", "Том 10"));
+        List<Category> chapters = contentsHelper.children(categoryDao.get("name", "БДК / Раздел I"));
+        List<Category> paragraphs = contentsHelper.children(categoryDao.get("name", "БДК / Раздел I / Глава 1"));
         assertEquals(6, sections.size());
         assertEquals(4, chapters.size());
         assertEquals(10, paragraphs.size());
@@ -49,7 +49,7 @@ public class ContentsHelperTest extends IntegrationTest {
 
         assertEquals(4, parentPresentations.size());
         assertEquals("Глава 1", parentPresentations.get(0).getName());
-        assertNull(parentPresentations.get(0).getChildren());
+        assertNull(parentPresentations.get(0).children());
         assertNull(parentPresentations.get(0).parents());
         assertEquals("Раздел I", parentPresentations.get(1).getName());
         assertEquals("Том 10", parentPresentations.get(2).getName());

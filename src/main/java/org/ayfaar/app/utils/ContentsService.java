@@ -28,7 +28,7 @@ public interface ContentsService {
         boolean isTom();
         boolean isCikl();
         boolean isContentsRoot();
-        List<? extends ContentsProvider> getChildren();
+        List<? extends ContentsProvider> children();
         String extractCategoryName();
         CategoryProvider getParent();
 

@@ -100,7 +100,7 @@ public class ContentsServiceImpl implements ContentsService {
         public Optional<? extends ParagraphProvider> next() {
             final CategoryProvider category = getCategoryByUri(itemsRange.getCategory())
                     .orElseThrow(() -> new RuntimeException("Category "+itemsRange.getCategory()+" not found in cache"));
-            final Iterator<? extends ContentsProvider> iterator = category.getChildren().iterator();
+            final Iterator<? extends ContentsProvider> iterator = category.children().iterator();
             while (iterator.hasNext()) {
                 ContentsProvider child = iterator.next();
                 if (child == this) return iterator.hasNext() ? Optional.of((Paragraph) iterator.next()) : Optional.empty();
@@ -112,7 +112,7 @@ public class ContentsServiceImpl implements ContentsService {
         public Optional<? extends ParagraphProvider> previous() {
             final CategoryProvider category = getCategoryByUri(itemsRange.getCategory())
                     .orElseThrow(() -> new RuntimeException("Category "+itemsRange.getCategory()+" not found in cache"));
-            final ListIterator<? extends ContentsProvider> iterator = category.getChildren().listIterator();
+            final ListIterator<? extends ContentsProvider> iterator = category.children().listIterator();
             while (iterator.hasPrevious()) {
                 ContentsProvider child = iterator.previous();
                 if (child == this) return iterator.hasPrevious() ? Optional.of((Paragraph) iterator.previous()) : Optional.empty();
@@ -202,7 +202,7 @@ public class ContentsServiceImpl implements ContentsService {
                 .filter(p -> pattern.matcher(p.itemsRange.getDescription()).find())
                 .toList();
 
-        foundParagraphs.sort((o1, o2) -> o1.start.compareTo(((Paragraph) o2).start));
+        foundParagraphs.sort((o1, o2) -> o1.start.compareTo(o2.start));
 
         foundCategories.addAll(foundParagraphs);
 
@@ -267,7 +267,7 @@ public class ContentsServiceImpl implements ContentsService {
 		}
 
 		@Override
-        public List<ContentsProvider> getChildren() {
+        public List<ContentsProvider> children() {
             List<ContentsProvider> children = new ArrayList<>();
             if (category.getStart() != null) {
                 CategoryProvider child = categoryMap.get(getValueFromUri(Category.class, category.getStart()));
@@ -281,7 +281,10 @@ public class ContentsServiceImpl implements ContentsService {
                     }
                 }
             }
-            final List<Paragraph> paragraphs = paragraphs().filter(p -> p.itemsRange.getCategory().equals(uri())).toList();
+            final List<Paragraph> paragraphs = paragraphs()
+                    .filter(p -> p.itemsRange.getCategory().equals(uri()))
+                    .sortedByDouble(Paragraph::getStart)
+                    .toList();
             children.addAll(paragraphs);
             return children;
         }
@@ -348,14 +351,14 @@ public class ContentsServiceImpl implements ContentsService {
 
 		@Override
 		public String startItemNumber() {
-			return getStartItemNumberOfChildren(getChildren());
+			return getStartItemNumberOfChildren(children());
 		}
 
 		private String getStartItemNumberOfChildren(List<? extends ContentsProvider> categories) {
 			if (categories.isEmpty()) return null;
 			ContentsProvider firstCat = categories.get(0);
 			return firstCat instanceof CategoryProvider
-                    ? getStartItemNumberOfChildren(((CategoryProvider) firstCat).getChildren())
+                    ? getStartItemNumberOfChildren(((CategoryProvider) firstCat).children())
                     : null;
 		}
 

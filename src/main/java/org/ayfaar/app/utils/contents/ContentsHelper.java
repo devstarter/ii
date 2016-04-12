@@ -43,7 +43,7 @@ public class ContentsHelper {
             return new CategoryPresentation(extractCategoryName(c.code()), c.uri(),
                     marker.mark(trim(c.description())), c.previousUri(), c.nextUri(),
                     createParentPresentation(c.parents()),
-                    createChildrenPresentation(c.getChildren(), 0));
+                    createChildrenPresentation(c.children(), 0));
         }
     }
 
@@ -58,7 +58,7 @@ public class ContentsHelper {
             if (category instanceof CategoryProvider) {
                 childrenPresentations.add(new CategoryPresentation(
                         extractCategoryName(category.code()), category.uri(), category.description(),
-                        createChildrenPresentation(((CategoryProvider) category).getChildren(), count)));
+                        createChildrenPresentation(((CategoryProvider) category).children(), count)));
 
             } else if (count < 2) {
                 childrenPresentations.add(new CategoryPresentation(category.code(),
