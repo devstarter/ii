@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.util.Date;
 
 @RestController
 @RequestMapping("api/auth")
@@ -46,7 +47,7 @@ public class AuthController {
                      @RequestParam String name,
                      @RequestParam String picture,
                      @RequestParam String thumbnail,
-                     @RequestParam String timezone,
+                     @RequestParam(required=false) String timezone,
                      @RequestParam Long id,
                      @RequestParam OAuthProvider auth_provider) throws IOException{
         User user = commonDao.getOpt(User.class, email).orElseGet(() -> commonDao.save(
@@ -65,8 +66,9 @@ public class AuthController {
 
         if (!user.getAccessToken().equals(access_token)){
             user.setAccessToken(access_token);
-            commonDao.save(user);
         }
+        user.setLastVisitAt(new Date());
+        commonDao.save(user);
         Authentication request = new UsernamePasswordAuthenticationToken(user, null);
         Authentication authentication = customAuthenticationProvider.authenticate(request);
         SecurityContextHolder.getContext().setAuthentication(authentication);

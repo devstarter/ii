@@ -6,7 +6,7 @@ public enum Exceptions {
     ITEM_NOT_FOUND("Item {} not found"),
     CONFIRMATION_REQUIRED("Action {} require confirmation"),
     LINK_NOT_FOUND("Link for {} and {} not found"),
-    EMAIL_NOT_FOUND("Email {} not found");
+    EMAIL_NOT_FOUND("User with email {} not found");
     //OTHER_CODE("Description");
 
 

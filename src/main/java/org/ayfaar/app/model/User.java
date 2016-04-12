@@ -29,6 +29,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private AccessLevel role = AccessLevel.ROLE_AUTHENTICATED;
     private Date createdAt = new Date();
+    private Date lastVisitAt;
     private Long providerId;
 
     @Builder
