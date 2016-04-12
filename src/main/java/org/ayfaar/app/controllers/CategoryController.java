@@ -6,7 +6,7 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Category;
-import org.ayfaar.app.utils.CategoryService;
+import org.ayfaar.app.utils.ContentsService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.ayfaar.app.utils.contents.ContentsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,8 @@ public class CategoryController {
     @Autowired LinkDao linkDao;
     @Autowired ItemDao itemDao;
     @Autowired ContentsHelper contentsHelper;
-    @Autowired CategoryService categoryService;
+    @Autowired
+    ContentsService contentsService;
 
     @ContentsCache //fixme временно пока идёт активная работа с ним
     @RequestMapping
@@ -72,6 +73,6 @@ public class CategoryController {
 
     @RequestMapping("reload")
     public void reload() {
-        categoryService.reload();
+        contentsService.reload();
     }
 }

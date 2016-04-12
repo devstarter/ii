@@ -6,7 +6,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +46,6 @@ public class CommonDaoImpl implements CommonDao {
     @Override
     public <E> Optional<E> getOpt(Class<E> clazz, Serializable id) {
         return Optional.ofNullable(get(clazz, id));
-    }
-
-    @Override
-    public <E> E getRandom(Class<E> clazz) {
-        return (E) sessionFactory.getCurrentSession().createCriteria(clazz)
-            .add(Restrictions.sqlRestriction("1=1 order by rand()"))
-            .setMaxResults(1)
-            .list().get(0);
     }
 
     @Nullable
@@ -126,14 +117,6 @@ public class CommonDaoImpl implements CommonDao {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public void remove(Object entity) {
         remove(entity.getClass(), (Serializable) getPrimaryKeyValue(entity));
-    }
-
-    @Override
-    public <E> E getByCode(Class<E> className, String code) {
-        return (E) sessionFactory.getCurrentSession()
-                .createCriteria(className)
-                .add(eq("code", code))
-                .uniqueResult();
     }
 
     protected <E> List<E> list(Criteria criteria) {
@@ -217,15 +200,6 @@ public class CommonDaoImpl implements CommonDao {
         return list(sessionFactory.getCurrentSession()
                 .createCriteria(className)
                 .add(ilike(field, value))
-                .setMaxResults(limit)
-        );
-    }
-
-    @Override
-    public <E> List<E> getOrdered(Class<E> clazz, String field, boolean ascending, int limit) {
-        return list(sessionFactory.getCurrentSession()
-                .createCriteria(clazz)
-                .addOrder(ascending ? Order.asc(field) : Order.desc(field))
                 .setMaxResults(limit)
         );
     }

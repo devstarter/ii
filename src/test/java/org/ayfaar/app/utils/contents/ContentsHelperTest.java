@@ -2,13 +2,9 @@ package org.ayfaar.app.utils.contents;
 
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.dao.CategoryDao;
-import org.ayfaar.app.model.Category;
-import org.ayfaar.app.model.Item;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,7 +24,7 @@ public class ContentsHelperTest extends IntegrationTest {
         assertEquals(6, sections.size());
         assertEquals(4, chapters.size());
         assertEquals(10, paragraphs.size());
-    }*/
+    }
 
     @Test
     public void testGetItems() {
@@ -37,7 +33,7 @@ public class ContentsHelperTest extends IntegrationTest {
         assertEquals(15, items.size());
         assertEquals("10.10045", items.get(0).getNumber());
         assertEquals("10.10059", items.get(14).getNumber());
-    }
+    }*/
 
     @Test
     public void testExtractCategoryName() {
@@ -48,13 +44,13 @@ public class ContentsHelperTest extends IntegrationTest {
 /*    @Test
     public void testGetParents() {
         Category category = categoryDao.get("name", "Параграф 10.1.1.6");
-        List<Category> parents = contentsHelper.getParents(category);
+        List<Category> parents = contentsHelper.parents(category);
         List<CategoryPresentation> parentPresentations = contentsHelper.createParentPresentation(parents);
 
         assertEquals(4, parentPresentations.size());
         assertEquals("Глава 1", parentPresentations.get(0).getName());
         assertNull(parentPresentations.get(0).getChildren());
-        assertNull(parentPresentations.get(0).getParents());
+        assertNull(parentPresentations.get(0).parents());
         assertEquals("Раздел I", parentPresentations.get(1).getName());
         assertEquals("Том 10", parentPresentations.get(2).getName());
         assertEquals("БДК", parentPresentations.get(3).getName());

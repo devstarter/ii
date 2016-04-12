@@ -68,7 +68,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    public User getCurrentUser(){
+    public static User getCurrentUser(){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal instanceof User ? (User) principal : null;
     }

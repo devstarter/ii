@@ -2,7 +2,7 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.utils.CategoryService;
+import org.ayfaar.app.utils.ContentsService;
 import org.ayfaar.app.utils.TermsMarker;
 import org.ayfaar.app.utils.TermsTaggingUpdater;
 import org.springframework.context.ApplicationEventPublisher;
@@ -16,10 +16,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static org.ayfaar.app.controllers.ItemController.getPrev;
-import static org.ayfaar.app.utils.CategoryService.CategoryProvider;
 import static org.ayfaar.app.utils.UriGenerator.generate;
 import static org.springframework.util.Assert.notNull;
 
@@ -29,7 +30,8 @@ public class NewItemController {
 
     private static final int MAXIMUM_RANGE_SIZE = 200;
     @Inject ItemDao itemDao;
-    @Inject CategoryService categoryService;
+    @Inject
+    ContentsService contentsService;
     @Inject TermsMarker termsMarker;
     @Inject AsyncTaskExecutor taskExecutor;
     @Inject TermsTaggingUpdater taggingUpdater;
@@ -42,12 +44,9 @@ public class NewItemController {
         notNull(item, format("Item `%s` not found", number));
 
         if (item.getNext() != null) {
-            taskExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    final Item nextItem = itemDao.get(item.getNext());
-                    taggingUpdater.update(nextItem);
-                }
+            taskExecutor.execute(() -> {
+                final Item nextItem = itemDao.get(item.getNext());
+                taggingUpdater.update(nextItem);
             });
         }
 
@@ -75,7 +74,7 @@ public class NewItemController {
         List<ItemPresentation> items = new ArrayList<ItemPresentation>();
 
         final ItemPresentation itemPresentation = new ItemPresentation(item);
-//        itemPresentation.parents = getParents(item.getNumber());
+//        itemPresentation.parents = parents(item.getNumber());
         items.add(itemPresentation);
 
         while (!item.getNumber().equals(to)) {
@@ -140,13 +139,14 @@ public class NewItemController {
     }
 
      private List<ParentPresentation> getParents(String number) {
-         List<ParentPresentation> parents = new ArrayList<ParentPresentation>();
-         CategoryProvider provider = categoryService.getByItemNumber(number);
-         if (provider != null) {
-             parents.add(new ParentPresentation(provider.extractCategoryName(), provider.getUri()));
-             for (CategoryProvider parent : provider.getParents()) {
-                 parents.add(new ParentPresentation(parent.extractCategoryName(), parent.getUri()));
-             }
+         List<ParentPresentation> parents = new ArrayList<>();
+         Optional<? extends ContentsService.ParagraphProvider> providerOpt = contentsService.getByItemNumber(number);
+         if (providerOpt.isPresent()) {
+             final ContentsService.ParagraphProvider provider = providerOpt.get();
+             parents.add(new ParentPresentation(provider.code(), provider.uri()));
+             parents.addAll(provider.parents().stream()
+                     .map(parent -> new ParentPresentation(parent.extractCategoryName(), parent.uri()))
+                     .collect(Collectors.toList()));
          }
          return parents;
     }

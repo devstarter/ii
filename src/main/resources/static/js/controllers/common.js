@@ -139,7 +139,7 @@ function ParagraphController($scope, $stateParams, $api, $state) {
         $state.go($scope.next);
     };
 
-    $api.category.get("параграф:"+$scope.number)
+    $api.category.get($scope.number)
         .then(function(paragrapg){
             $scope.loading = false;
             copyObjectTo(paragrapg, $scope);

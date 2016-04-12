@@ -265,12 +265,12 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                         return uri.replace("ии:термин:", "");
                     case 'item':
                         return uri.replace("ии:пункт:", "");
-                    case 'paragraph':
-                        return uri.replace("категория:параграф:", "");
                     case 'category':
                         return uri.replace("категория:", "");
                     case 'article':
                         return uri.replace("статья:", "");
+                    case 'paragraph':
+                        return uri.replace("ии:пункты:", "");
                     case 'video':
                         return object ? object.title : "Undefined";
                 }
@@ -283,9 +283,6 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 if (uri.indexOf("ии:пункт:") === 0) {
                     return 'item'
                 }
-                if (uri.indexOf("категория:параграф:") === 0) {
-                    return 'paragraph'
-                }
                 if (uri.indexOf("категория:") === 0) {
                     return 'category'
                 }
@@ -297,6 +294,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 }
                 if (uri.indexOf("документ:") === 0) {
                     return 'document'
+                }
+                if (uri.indexOf("ии:пункты:") === 0) {
+                    return 'paragraph'
                 }
             }
         };

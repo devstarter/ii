@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Data
@@ -26,12 +27,12 @@ public class CategoryPresentation {
         this.children = children;
     }
 
-    public CategoryPresentation(String name, String uri, String description, String previous, String next,
-                                 List<CategoryPresentation> parents, List<CategoryPresentation> children){
+    public CategoryPresentation(String name, String uri, String description, Optional<String> previous, Optional<String> next,
+                                List<CategoryPresentation> parents, List<CategoryPresentation> children){
 
         this(name, uri, description, children);
-        this.previous = previous;
-        this.next= next;
+        this.previous = previous.isPresent() ? previous.get() : null;
+        this.next= next.isPresent() ? next.get() : null;
         this.parents = parents;
     }
 

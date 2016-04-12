@@ -8,7 +8,9 @@ import org.ayfaar.app.controllers.search.SearchResultPage;
 import org.ayfaar.app.controllers.search.cache.DBCache;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
-import org.ayfaar.app.utils.CategoryService;
+import org.ayfaar.app.utils.ContentsService;
+import org.ayfaar.app.utils.ContentsService.CategoryProvider;
+import org.ayfaar.app.utils.ContentsService.ContentsProvider;
 import org.ayfaar.app.utils.RegExpUtils;
 import org.ayfaar.app.utils.StringUtils;
 import org.ayfaar.app.utils.TermService;
@@ -34,7 +36,8 @@ public class NewSearchController {
     @Inject SearchQuotesHelper handleItems;
     @Inject SearchDao searchDao;
     @Inject TermService termService;
-    @Inject CategoryService categoryService;
+    @Inject
+    ContentsService contentsService;
     @Inject DBCache cache;
 //    @Inject ApplicationEventPublisher eventPublisher;
 //    @Inject CacheUpdater cacheUpdater;
@@ -108,12 +111,12 @@ public class NewSearchController {
 			query = query.replace("*", RegExpUtils.w+"+");
             searchQueries = Collections.singletonList(query);
         }
-		List<CategoryService.CategoryProvider> foundCategoryProviders = categoryService.descriptionContains(searchQueries);
+		List<? extends ContentsProvider> foundCategoryProviders = contentsService.descriptionContains(searchQueries);
 
 		List<FoundCategoryPresentation> presentations = new ArrayList<FoundCategoryPresentation>();
-		for (CategoryService.CategoryProvider p : foundCategoryProviders) {
-			String strongMarkedDescription = StringUtils.markWithStrong(p.getDescription(), searchQueries);
-			FoundCategoryPresentation presentation = new FoundCategoryPresentation(p.getPath(), p.getUri(), strongMarkedDescription);
+		for (ContentsService.ContentsProvider p : foundCategoryProviders) {
+			String strongMarkedDescription = StringUtils.markWithStrong(p.description(), searchQueries);
+			FoundCategoryPresentation presentation = new FoundCategoryPresentation(p instanceof CategoryProvider ? ((CategoryProvider) p).path() : null, p.uri(), strongMarkedDescription);
 			presentations.add(presentation);
 		}
 

@@ -248,7 +248,7 @@ public class TermController {
                     }
                 }
                /* for (Map.Entry<String, Term> entry : aliases.entrySet()) {
-                    if (primeTerm.getUri().equals(entry.getValue().generateUri())) continue;
+                    if (primeTerm.uri().equals(entry.getValue().generateUri())) continue;
                     commonDao.save(new Link(primeTerm, entry.getValue(), Link.ALIAS, Link.MORPHEME_WEIGHT));
                 }*/
             }

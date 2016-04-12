@@ -219,8 +219,8 @@ public class ContentsImporter {
             String name = null;
             if (item.getType() == SectionType.Paragraph) {
                 name = String.format("%s.%s.%s",
+                        item.getParent().getParent().getParent().getCategoryNumber(),
                         RomanNumber.parse(item.getParent().getParent().getCategoryNumber()),
-                        item.getParent().getCategoryNumber(),
                         item.getCategoryNumber());
                 name = StringUtils.trim(name, ".");
 

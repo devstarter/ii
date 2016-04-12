@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.ayfaar.app.IntegrationTest;
-import org.ayfaar.app.utils.CategoryService;
+import org.ayfaar.app.utils.ContentsService;
+import org.ayfaar.app.utils.ContentsService.ContentsProvider;
+import org.ayfaar.app.utils.ContentsService.ParagraphProvider;
 import org.ayfaar.app.utils.contents.CategoryPresentation;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -20,7 +22,8 @@ import java.util.*;
 public class ContentsGenerator extends IntegrationTest {
 	private static final Logger logger = LoggerFactory.getLogger(ContentsGenerator.class);
 
-	@Inject CategoryService categoryService;
+	@Inject
+	ContentsService contentsService;
 	@Inject TemplateEngine templateEngine;
 
 	@Test
@@ -28,7 +31,8 @@ public class ContentsGenerator extends IntegrationTest {
 		// переменные видимые в шаблоне
 		Map<String, Object> values = new HashMap<>();
 		// провейдер категории "Том 4"
-		CategoryService.CategoryProvider rootCategoryProvider = categoryService.getByName("Том 12");
+		Optional<? extends ContentsProvider> rootCategoryProviderOpt = contentsService.get("Том 1");
+		ContentsService.CategoryProvider rootCategoryProvider = (ContentsService.CategoryProvider) rootCategoryProviderOpt.get();
 		logger.trace("Загруженная категория: " + rootCategoryProvider.extractCategoryName());
 		// в этом объект нужно положить всю нужную в шаблоне информацию о категрии (имя, описание, дочерние категории...)
 		CategoryPresentation rootCategoryPresentation = null; //
@@ -37,7 +41,7 @@ public class ContentsGenerator extends IntegrationTest {
 		String rootCategoryPresentationName;
 		rootCategoryPresentationName = rootCategoryProvider.getParentUri().substring(rootCategoryProvider.getParentUri().indexOf(":")+1)+"."+rootCategoryProvider.extractCategoryName();
 		rootCategoryPresentation =  new CategoryPresentation(rootCategoryPresentationName,
-				rootCategoryProvider.getUri(),rootCategoryProvider.getDescription(), categoryPresentationList);
+				rootCategoryProvider.uri(),rootCategoryProvider.description(), categoryPresentationList);
 		// делаем объект категории доступным для шаблона по пути "data"
 		values.put("data", rootCategoryPresentation);
 		// заполняем шаблон данными и получаем результат в виде html с данными
@@ -45,7 +49,7 @@ public class ContentsGenerator extends IntegrationTest {
 //		logger.trace("Результат работы шаблонизатора: \n" + html);
 		logger.trace("Генерация шаблона окончена.");
 		// записываем полученный результат в html файл для просмотра его в браузере.
-		FileUtils.writeStringToFile(new File(rootCategoryProvider.getName()+".html"), html, Charset.forName("UTF-8"));
+		FileUtils.writeStringToFile(new File(rootCategoryProvider.name()+".html"), html, Charset.forName("UTF-8"));
 	}
 
 
@@ -57,20 +61,27 @@ public class ContentsGenerator extends IntegrationTest {
 	 * из детей которого получаем список.
      * @return ArrayList, содержащий все объекты класса CategoryPresentation
 	 */
-	public static List<CategoryPresentation> fillCategoryPresentationList(List<CategoryService.CategoryProvider> rootCategoryProvider){
+	public static List<CategoryPresentation> fillCategoryPresentationList(List<? extends ContentsProvider> rootCategoryProvider){
 		// рекурсивно заполняем список сategoryPresentationList
 		List<CategoryPresentation> сategoryPresentationList = new ArrayList<>();
-		for (CategoryService.CategoryProvider provider : rootCategoryProvider){
+		for (ContentsProvider provider : rootCategoryProvider){
 			// заполняем поле name, которое содержит название параграфа, главы и т.д.
-			String name = provider.extractCategoryName();
+			String name = null;
 			String paragraphCode = null;
-			if (provider.isParagraph()) {
-			 	paragraphCode = name;
-				name = name.replaceAll("^\\d+\\.\\d+\\.(\\d+\\.\\d+)$", "$1"); // оставляем только две последние цифры
+			if (provider instanceof ContentsService.CategoryProvider) {
+				name = ((ContentsService.CategoryProvider) provider).extractCategoryName();
+			}
+			if (provider instanceof ParagraphProvider) {
+			 	paragraphCode = provider.code();
+				name = paragraphCode.replaceAll("^\\d+\\.\\d+\\.(\\d+\\.\\d+)$", "$1"); // оставляем только две последние цифры
 			}
 			// рекурсивно заполняем список, со всеми вложенными детьми
-			сategoryPresentationList.add(new CategoryPresentationExt(name, provider.getStartItemNumber(),
-					provider.getDescription(), fillCategoryPresentationList(provider.getChildren()), paragraphCode));
+			сategoryPresentationList.add(new CategoryPresentationExt(name, provider.startItemNumber(),
+					provider.description(),
+					provider instanceof ContentsService.CategoryProvider
+							? fillCategoryPresentationList(((ContentsService.CategoryProvider) provider).getChildren())
+							: Collections.emptyList(),
+					paragraphCode));
 		}
 		return сategoryPresentationList;
 	}

@@ -36,7 +36,7 @@ public class ItemsImporterDocx {
 
             if (o instanceof P) {
                 if (currentItem != null) {
-                    createNextItem(ItemController.getNext(currentItem.getNumber()));
+                    createNextItem(ItemController.next(currentItem.getNumber()));
                 }
                 for (Object r : ((P) o).getContent()) {
                     if (r instanceof R) {
