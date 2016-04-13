@@ -96,7 +96,8 @@ function HomeController($scope, $state, auth) {
         auth.authenticate().then(function (user) {
             $scope.user = user;
         });
-    }
+    };
+    $scope.goToCabinet = $state.goToCabinet;
 }
 function ItemController($scope, $stateParams, $state, $api) {
     $scope.number = $stateParams.number.trim();
@@ -236,6 +237,24 @@ function ArticleController($scope, $stateParams, $state, $api) {
         document.title = a.name;
         copyObjectTo(a, $scope);
     });
+}
+
+function CabinetController($scope, $api, $rootScope, auth) {
+    if (!auth.isAuthenticated()) auth.authenticate().then(onAuthenticated);
+    else onAuthenticated();
+
+    function onAuthenticated() {
+        $scope.user = $rootScope.user;
+        loadStatus();
+        $scope.confirm = function (id) {
+            $api.moderation.confirm(id).then(loadStatus);
+        }
+    }
+    function loadStatus() {
+        $api.moderation.status().then(function (status) {
+            $scope.status = status;
+        });
+    }
 }
 
 

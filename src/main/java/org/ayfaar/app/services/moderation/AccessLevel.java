@@ -1,7 +1,10 @@
 package org.ayfaar.app.services.moderation;
 
+import one.util.streamex.StreamEx;
+
 import java.util.Optional;
-import java.util.stream.Stream;
+
+import static one.util.streamex.MoreCollectors.onlyOne;
 
 public enum AccessLevel {
     ROLE_ADMIN(0), ROLE_EDITOR(1), ROLE_AUTHENTICATED(2), ROLE_ANONYMOUS(999);
@@ -13,8 +16,9 @@ public enum AccessLevel {
     }
 
     public static Optional<AccessLevel> fromPrecedence(int precedence) {
-        return Stream.of(AccessLevel.values())
-                .filter(accessLevel->accessLevel.getPrecedence()==precedence).findFirst();
+        return StreamEx.of(AccessLevel.values())
+                .filter(accessLevel -> accessLevel.getPrecedence() == precedence)
+                .collect(onlyOne());
     }
 
     public int getPrecedence() {

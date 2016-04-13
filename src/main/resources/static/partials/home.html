@@ -34,6 +34,6 @@
         </div>
         <span style="color: grey;text-align: center;display: block;padding-top: 10px">Творчеством автора является только текст нумерованных абзацев, всё остальное - результат работы коллектива читателей</span>
         <a class="btn btn-link" style="text-align: center; display: block" ng-click="auth()" ng-hide="user">Представиться</a>
-        <div ng-show="user" style="text-align: center;"><img ng-src="{{user.thumbnail}}" style="width: 30px;height: 30px;border-radius: 50%;"/> {{user.name}}</div>
+        <div ng-show="user" style="text-align: center;display: block" ng-click="goToCabinet()" class="btn"><img ng-src="{{user.thumbnail}}" style="width: 30px;height: 30px;border-radius: 50%;"/> {{user.name}}</div>
     </div>
 </div>

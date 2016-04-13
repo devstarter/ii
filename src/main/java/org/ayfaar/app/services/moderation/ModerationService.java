@@ -2,8 +2,9 @@ package org.ayfaar.app.services.moderation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.annotations.Moderated;
+import org.ayfaar.app.controllers.AuthController;
 import org.ayfaar.app.dao.CommonDao;
-import org.ayfaar.app.model.SystemEvent;
+import org.ayfaar.app.model.PendingAction;
 import org.ayfaar.app.utils.exceptions.ConfirmationRequiredException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.expression.BeanFactoryResolver;
@@ -13,7 +14,10 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 
+import java.util.Date;
+
 import static java.lang.String.format;
+import static org.ayfaar.app.controllers.AuthController.getCurrentAccessLevel;
 
 
 @Service
@@ -52,12 +56,12 @@ public class ModerationService {
         final MethodEntry entry = threadLocal.get();
         if (entry == null) throw new RuntimeException("No moderated method for action "+action);
 
-        final SystemEvent event = new SystemEvent();
-        event.setMessage(format("Action %s for user %s required confirmation", action, getCurrentUserEmail()));
-        event.setUser(getCurrentUserEmail());
-        event.setCommand(buildCommand(entry));
-        event.setAction(action);
-        commonDao.save(event);
+        final PendingAction pendingAction = new PendingAction();
+        pendingAction.setMessage(format("Action %s for user %s required confirmation", action, getCurrentUserEmail()));
+        pendingAction.setInitiatedBy(getCurrentUserEmail());
+        pendingAction.setCommand(buildCommand(entry));
+        pendingAction.setAction(action);
+        commonDao.save(pendingAction);
     }
 
     private String buildCommand(MethodEntry entry) {
@@ -77,22 +81,19 @@ public class ModerationService {
         return command.substring(0, command.lastIndexOf(",")) + ")";
     }
 
-    public void confirm(SystemEvent event) {
-        if (!getCurrentAccessLevel().accept(event.getAction().getRequiredAccessLevel()))
-            throw new ConfirmationRequiredException(event.getAction());
+    public void confirm(PendingAction action) {
+        if (!getCurrentAccessLevel().accept(action.getAction().getRequiredAccessLevel()))
+            throw new ConfirmationRequiredException(action.getAction());
         // perform command
-        parser.parseExpression(event.getCommand()).getValue(context);
-        log.info("{} confirmed by user {}", event.getMessage(), getCurrentUserEmail());
-        event.setConfirmedByUser(getCurrentUserEmail());
-        commonDao.save(event);
-    }
-
-    private AccessLevel getCurrentAccessLevel() {
-        return AccessLevel.ROLE_ADMIN;
+        parser.parseExpression(action.getCommand()).getValue(context);
+        log.info("{} confirmed by user {}", action.getMessage(), getCurrentUserEmail());
+        action.setConfirmedBy(getCurrentUserEmail());
+        action.setConfirmedAt(new Date());
+        commonDao.save(action);
     }
 
     private String getCurrentUserEmail() {
-        return "sllouyssgort@gmail.com";
+        return AuthController.getCurrentUser().get().getEmail();
     }
 
     void checkMethod(Moderated moderated, Object[] args) {

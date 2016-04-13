@@ -3,6 +3,7 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.configs.SecurityConfig;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.User;
+import org.ayfaar.app.services.moderation.AccessLevel;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/auth")
@@ -75,13 +77,18 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    public static User getCurrentUser(){
+    public static Optional<User> getCurrentUser(){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal instanceof User ? (User) principal : null;
+        return principal instanceof User ? Optional.of((User) principal) : Optional.empty();
     }
 
     @RequestMapping("current")
     public User getCurrentUser(@AuthenticationPrincipal User currentUser){
         return currentUser;
+    }
+
+    public static AccessLevel getCurrentAccessLevel() {
+        return AccessLevel.ROLE_ADMIN;
+//        return getCurrentUser().isPresent() ? getCurrentUser().get().getRole() : AccessLevel.ROLE_ANONYMOUS;
     }
 }
