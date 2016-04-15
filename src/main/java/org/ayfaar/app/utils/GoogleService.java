@@ -21,7 +21,7 @@ public class GoogleService {
 
     @Inject RestTemplate restTemplate;
 
-    public VideoInfo getVideoInfo(String id) throws ParseException {
+    public VideoInfo getVideoInfo(String id) {
         final Map response = restTemplate.getForObject("https://content.googleapis.com/youtube/v3/videos?part={part}&id={id}&key={key}",
                 Map.class, "snippet", id, API_KEY);
         //noinspection unchecked
@@ -29,7 +29,11 @@ public class GoogleService {
         if (items.isEmpty()) throw new RuntimeException("Video private or removed");
         final Map snippet = (Map) items.get(0).get("snippet");
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        return new VideoInfo((String) snippet.get("title"), dateFormat.parse((String) snippet.get("publishedAt")));
+        try {
+            return new VideoInfo((String) snippet.get("title"), dateFormat.parse((String) snippet.get("publishedAt")));
+        } catch (ParseException e) {
+            throw new RuntimeException("Video date parsing error", e);
+        }
     }
 
     public static String extractVideoIdFromYoutubeUrl(String url) {

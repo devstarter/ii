@@ -54,13 +54,14 @@ public class VideoResourcesController {
     public VideoResource add(@RequestParam String url) throws Exception {
         hasLength(url);
         final String videoId = extractVideoIdFromYoutubeUrl(url);
-        VideoResource video = commonDao.get(VideoResource.class, "id", videoId);
-        if (video != null) return video;
-        final GoogleService.VideoInfo info = youtubeService.getVideoInfo(videoId);
-        video = new VideoResource(videoId, Language.ru);
-        video.setTitle(info.title);
-        video.setPublishedAt(info.publishedAt);
-        return commonDao.save(video);
+        return commonDao.getOpt(VideoResource.class, "id", videoId).orElseGet(() -> {
+            final GoogleService.VideoInfo info = youtubeService.getVideoInfo(videoId);
+            final VideoResource video = new VideoResource(videoId, Language.ru);
+            video.setTitle(info.title);
+            video.setPublishedAt(info.publishedAt);
+            AuthController.getCurrentUser().ifPresent(u -> video.setCreatedBy(u.getId()));
+            return commonDao.save(video);
+        });
     }
 
 }

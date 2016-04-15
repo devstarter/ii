@@ -33,6 +33,7 @@ public class Link {
     private String comment;
     private Float rate;
     private Date createdAt = new Date();
+    private Integer createdBy;
 
     @ManyToOne
     private UID uid1;
@@ -74,12 +75,13 @@ public class Link {
     }
 
     @Builder
-    public Link(UID uid1, UID uid2, LinkType type, String comment, String quote, Float rate) {
+    public Link(UID uid1, UID uid2, LinkType type, String comment, String quote, Float rate, Integer createdBy) {
         this.quote = quote;
         this.rate = rate;
         this.uid1 = uid1;
         this.uid2 = uid2;
         this.type = type;
         this.comment = comment;
+        this.createdBy = createdBy;
     }
 }

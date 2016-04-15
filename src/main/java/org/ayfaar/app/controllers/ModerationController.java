@@ -49,7 +49,7 @@ public class ModerationController {
         public PendingActionPresentation(PendingAction action) {
             id = action.getId();
             text = action.getMessage();
-            initiatedBy = userService.getPresentation(action.getInitiatedBy()).get();
+            initiatedBy = userService.getPresentation(action.getInitiatedBy());
         }
     }
 

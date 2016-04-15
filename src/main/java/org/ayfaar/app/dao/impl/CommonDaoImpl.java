@@ -64,6 +64,11 @@ public class CommonDaoImpl implements CommonDao {
     }
 
     @Override
+    public <E> Optional<E> getOpt(Class<E> clazz, String property, Object value) {
+        return Optional.ofNullable(get(clazz, property, value));
+    }
+
+    @Override
     public <E> List<E> getList(Class<E> clazz, String property, Object value) {
         return sessionFactory.getCurrentSession()
                 .createCriteria(clazz).add(value == null ? isNull(property) : eq(property, value))

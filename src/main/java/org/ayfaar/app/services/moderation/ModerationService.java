@@ -57,8 +57,8 @@ public class ModerationService {
         if (entry == null) throw new RuntimeException("No moderated method for action "+action);
 
         final PendingAction pendingAction = new PendingAction();
-        pendingAction.setMessage(format("Action %s for user %s required confirmation", action, getCurrentUserEmail()));
-        pendingAction.setInitiatedBy(getCurrentUserEmail());
+        pendingAction.setMessage(format("Action %s for user %s required confirmation", action, getCurrentUserId()));
+        pendingAction.setInitiatedBy(getCurrentUserId());
         pendingAction.setCommand(buildCommand(entry));
         pendingAction.setAction(action);
         commonDao.save(pendingAction);
@@ -86,14 +86,14 @@ public class ModerationService {
             throw new ConfirmationRequiredException(action.getAction());
         // perform command
         parser.parseExpression(action.getCommand()).getValue(context);
-        log.info("{} confirmed by user {}", action.getMessage(), getCurrentUserEmail());
-        action.setConfirmedBy(getCurrentUserEmail());
+        log.info("{} confirmed by user {}", action.getMessage(), getCurrentUserId());
+        action.setConfirmedBy(getCurrentUserId());
         action.setConfirmedAt(new Date());
         commonDao.save(action);
     }
 
-    private String getCurrentUserEmail() {
-        return AuthController.getCurrentUser().get().getEmail();
+    private Integer getCurrentUserId() {
+        return AuthController.getCurrentUser().get().getId();
     }
 
     void checkMethod(Moderated moderated, Object[] args) {

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.ayfaar.app.controllers.OAuthProvider;
-import org.ayfaar.app.services.moderation.AccessLevel;
+import org.ayfaar.app.services.moderation.UserRole;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,11 +15,15 @@ import java.util.Date;
 @NoArgsConstructor
 public class User {
     @Id
+    @GeneratedValue
+    private Integer id;
     @Column(nullable = false, unique = true)
     private String email;
+    @Column(nullable = false, unique = true)
     private String accessToken;
     private String firstName;
     private String lastName;
+    @Column(nullable = false, unique = true)
     private String name;
     private String picture;
     private String timezone;
@@ -27,7 +31,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private OAuthProvider oauthProvider;
     @Enumerated(EnumType.STRING)
-    private AccessLevel role = AccessLevel.ROLE_AUTHENTICATED;
+    private UserRole role = UserRole.ROLE_AUTHENTICATED;
     private Date createdAt = new Date();
     private Date lastVisitAt;
     private Long providerId;

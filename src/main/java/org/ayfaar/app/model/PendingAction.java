@@ -19,12 +19,12 @@ public class PendingAction {
     @Column(nullable = false)
     private String message;
     @Column(nullable = false)
-    private String initiatedBy;
+    private Integer initiatedBy;
     @Column(columnDefinition = "text", nullable = false)
     private String command;
     private Date createdAt = new Date();
     @Enumerated(EnumType.STRING)
     private Action action;
     private Date confirmedAt;
-    private String confirmedBy;
+    private Integer confirmedBy;
 }

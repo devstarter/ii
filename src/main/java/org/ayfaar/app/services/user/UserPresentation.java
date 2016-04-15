@@ -1,9 +1,14 @@
 package org.ayfaar.app.services.user;
 
-public class UserPresentation {
-    private String email;
+import org.ayfaar.app.services.moderation.UserRole;
 
-    public UserPresentation(String email) {
-        this.email = email;
+public class UserPresentation {
+    private Integer id;
+    private String email;
+    private String name;
+    private UserRole role;
+
+    public UserPresentation() {
+
     }
 }

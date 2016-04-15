@@ -2,13 +2,14 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.User;
-import org.ayfaar.app.services.moderation.AccessLevel;
+import org.ayfaar.app.services.moderation.UserRole;
 import org.ayfaar.app.utils.exceptions.Exceptions;
 import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.util.List;
@@ -35,9 +36,22 @@ public class UserController {
     @RequestMapping(value = "update-role", method = RequestMethod.POST)
     public void updateRole(@RequestParam String email, @RequestParam int numRole){
         User user = commonDao.getOpt(User.class, email).orElseThrow(() -> new LogicalException(Exceptions.USER_NOT_FOUND, email));
-        final AccessLevel accessLevel = AccessLevel.fromPrecedence(numRole)
+        final UserRole accessLevel = UserRole.fromPrecedence(numRole)
                 .orElseThrow(() -> new LogicalException(Exceptions.ROLE_NOT_FOUND, numRole));
         user.setRole(accessLevel);
         commonDao.save(user);
+    }
+
+    @RequestMapping("current")
+    public User getCurrent(@AuthenticationPrincipal User current){
+        return current;
+    }
+
+    @RequestMapping("current/rename")
+    @Secured("authenticated")
+    public User renameCurrent(@AuthenticationPrincipal User current, @RequestParam String name){
+        current.setName(name);
+        commonDao.save(current);
+        return current;
     }
 }

@@ -97,22 +97,48 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
 //        var apiUrl = "https://ii.ayfaar.org/api/";
         function authenticate() {
             var auth = $injector.get("auth");
-            if (!auth.isAuthenticated()) auth.authenticate(function () {
-                return modal.confirm("Действие нуждается в авторизации", "Представтесь пожалуйста системе для выполнения данного действия. Это займёт пару секунд.", "Представится")
-            })
+            if (auth.isAuthenticated()) {
+                var d = $q.defer();
+                d.resolve();
+                return d.promise;
+            } else {
+                return auth.authenticate(function () {
+                    return modal.confirm("Действие нуждается в авторизации", "Представтесь пожалуйста системе для выполнения данного действия. Это займёт пару секунд.", "Представится")
+                })
+            }
         }
         function moderatedAction(response) {
             if (response.data.error.code == "CONFIRMATION_REQUIRED") {
-                modal.message("Действие нуждвется в подтверждении", "Данное действиет будет исполненно после подтверждения модератором системы");
+                modal.message("Действие нуждается в подтверждении", "Данное действиет будет исполненно после подтверждения модератором системы");
                 return true;
             }
         }
         var api = {
+            authGet: function (url, data) {
+                var deferred = $q.defer();
+                authenticate().then(function () {
+                    api.get(url, data).then(function (response) {
+                        deferred.resolve(response)
+                    }, function (error) {
+                        deferred.reject(error)
+                    })
+                });
+                return deferred.promise
+            },
+            authPost: function (url, data) {
+                var deferred = $q.defer();
+                authenticate().then(function () {
+                    api.post(url, data).then(function (response) {
+                        deferred.resolve(response)
+                    }, function (error) {
+                        deferred.reject(error)
+                    })
+                });
+                return deferred.promise
+            },
             post: function(url, data) {
                 var deferred = $q.defer();
                 var cache = data && typeof data._cache !== 'undefined' ? data._cache : false;
-                var authRequired = data && typeof data._auth !== 'undefined' ? data._auth : false;
-                if (authRequired) authenticate();
                 if (data) delete data._cache;
                 $http({
                     url: apiUrl+url,
@@ -134,8 +160,6 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             get: function(url, data, skipError) {
                 var deferred = $q.defer();
                 var cache = data && typeof data._cache !== 'undefined' ? data._cache : false;
-                var authRequired = data && typeof data._auth !== 'undefined' ? data._auth : false;
-                if (authRequired) authenticate();
                 if (data) delete data._cache;
                 $http({
                     url: apiUrl+url+serializeGet(data),
@@ -208,6 +232,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             },
             resource: {
                 video: {
+                    add: function (url) {
+                        return api.authPost("resource/video", {url: url})
+                    },
                     last: function (page) {
                         return api.get("resource/video/last-created", {page: page})
                     }
@@ -241,7 +268,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     return api.get("topic", {name: name, includeResources: includeResources ? "true" : "false"})
                 },
                 addChild: function (parent, child) {
-                    return api.get("topic/add-child", {name: parent, child: child, _auth: true})
+                    return api.authGet("topic/add-child", {name: parent, child: child})
                 }
             },
             document: {
@@ -258,9 +285,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             auth: {
                 registrate: function (user) {
                     return api.post("auth", user)
-                },
-                getCurrentUser: function () {
-                    return api.get("auth/current")
+                }
+            },
+            user: {
+                getCurrent: function () {
+                    return api.get("user/current")
                 }
             },
             moderation: {
@@ -435,7 +464,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 if ($rootScope.user)
                     deferred.resolve($rootScope.user);
                 else
-                    $api.auth.getCurrentUser().then(function (user) {
+                    $api.user.getCurrent().then(function (user) {
                         if (user) {
                             $rootScope.user = user;
                             deferred.resolve(user);

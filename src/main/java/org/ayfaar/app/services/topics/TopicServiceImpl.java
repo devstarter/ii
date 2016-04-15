@@ -1,5 +1,6 @@
 package org.ayfaar.app.services.topics;
 
+import org.ayfaar.app.controllers.AuthController;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.*;
@@ -137,17 +138,20 @@ class TopicServiceImpl implements TopicService {
 
             // link = linkRepository.save(new Link(topic, uid, type, comment)); this throw error
 
-            link = linkDao.save(Link.builder()
+            link = Link.builder()
                     .uid1(topic)
                     .uid2(uid)
                     .type(type)
                     .comment(comment)
                     .quote(quote)
                     .rate(rate)
-                    .build());
+                    .build();
+            Link finalLink = link;
+            AuthController.getCurrentUser().ifPresent(u -> finalLink.setCreatedBy(u.getId()));
             if (uid instanceof Topic) {
                 topics.get(uid.getUri()).registerLink(link, topic);
             }
+            linkDao.save(link);
             registerLink(link, uid);
 
             return link;

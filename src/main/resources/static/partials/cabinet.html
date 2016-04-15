@@ -1,4 +1,4 @@
-<div>
+<div ng-show="user">
     <img ng-src="{{user.thumbnail}}" style="width: 30px;height: 30px;border-radius: 50%;"/> {{user.name}}
 
     <h2>Действия нуждающиеся в подтверждении</h2>
@@ -7,3 +7,4 @@
         <a class="btn btn-default" ng-click="confirm(action.id)">Подтвердить</a>
     </div>
 </div>
+<h1 ng-hide="user">Для доступа требуется авторизация</h1>

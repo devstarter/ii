@@ -3,8 +3,8 @@ package org.ayfaar.app.services.moderation;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ayfaar.app.services.moderation.AccessLevel.ROLE_ADMIN;
-import static org.ayfaar.app.services.moderation.AccessLevel.ROLE_EDITOR;
+import static org.ayfaar.app.services.moderation.UserRole.ROLE_ADMIN;
+import static org.ayfaar.app.services.moderation.UserRole.ROLE_EDITOR;
 
 public enum Action {
     TOPIC (ROLE_EDITOR),
@@ -19,7 +19,7 @@ public enum Action {
     ;
 
     private Action parent = null;
-    private AccessLevel requiredAccessLevel;
+    private UserRole requiredAccessLevel;
     private List<Action> children = new ArrayList<>();
 
 
@@ -29,10 +29,10 @@ public enum Action {
     Action(Action parent) {
         this(parent, null);
     }
-    Action(AccessLevel requiredAccessLevel) {
+    Action(UserRole requiredAccessLevel) {
         this(null, requiredAccessLevel);
     }
-    Action(Action parent, AccessLevel requiredAccessLevel) {
+    Action(Action parent, UserRole requiredAccessLevel) {
         this.parent = parent;
         this.requiredAccessLevel = requiredAccessLevel;
         if (this.parent != null) {
@@ -78,7 +78,7 @@ public enum Action {
         this.children.add(child);
     }
 
-    public AccessLevel getRequiredAccessLevel() {
+    public UserRole getRequiredAccessLevel() {
         return requiredAccessLevel != null ? requiredAccessLevel : parent.getRequiredAccessLevel();
     }
 

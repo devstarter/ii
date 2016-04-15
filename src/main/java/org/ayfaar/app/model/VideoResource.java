@@ -4,17 +4,9 @@ import lombok.*;
 import org.ayfaar.app.annotations.Uri;
 import org.ayfaar.app.utils.AdvanceComparator;
 import org.ayfaar.app.utils.Language;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-
+import javax.persistence.*;
 import java.util.Date;
-
-import static org.ayfaar.app.utils.hibernate.EnumHibernateType.CLASS;
-import static org.ayfaar.app.utils.hibernate.EnumHibernateType.ENUM;
 
 @Entity
 @PrimaryKeyJoinColumn(name="uri")
@@ -26,16 +18,16 @@ public class VideoResource extends UID implements Comparable<VideoResource> {
     @Column(unique = true, nullable = false)
     @NonNull
     private String id;
-
     private String title;
 
     @NonNull
     @Column(nullable = false)
-    @Type(type = ENUM, parameters = @Parameter(name = CLASS, value = "org.ayfaar.app.utils.Language"))
+    @Enumerated(EnumType.STRING)
     private Language lang;
 
     private Date publishedAt = new Date();
     private Date createdAt = new Date();
+    private Integer createdBy;
 
     @Override
     public String toTitle() {

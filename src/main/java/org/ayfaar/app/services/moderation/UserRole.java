@@ -6,17 +6,17 @@ import java.util.Optional;
 
 import static one.util.streamex.MoreCollectors.onlyOne;
 
-public enum AccessLevel {
+public enum UserRole {
     ROLE_ADMIN(0), ROLE_EDITOR(1), ROLE_AUTHENTICATED(2), ROLE_ANONYMOUS(999);
 
     private int precedence;
 
-    AccessLevel(int precedence) {
+    UserRole(int precedence) {
         this.precedence = precedence;
     }
 
-    public static Optional<AccessLevel> fromPrecedence(int precedence) {
-        return StreamEx.of(AccessLevel.values())
+    public static Optional<UserRole> fromPrecedence(int precedence) {
+        return StreamEx.of(UserRole.values())
                 .filter(accessLevel -> accessLevel.getPrecedence() == precedence)
                 .collect(onlyOne());
     }
@@ -25,7 +25,7 @@ public enum AccessLevel {
         return precedence;
     }
 
-    public boolean accept(AccessLevel requiredAccessLevel) {
+    public boolean accept(UserRole requiredAccessLevel) {
         return precedence <= requiredAccessLevel.precedence;
     }
 }

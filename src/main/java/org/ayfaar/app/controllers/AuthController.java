@@ -3,10 +3,9 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.configs.SecurityConfig;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.User;
-import org.ayfaar.app.services.moderation.AccessLevel;
+import org.ayfaar.app.services.moderation.UserRole;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,7 +51,7 @@ public class AuthController {
                      @RequestParam(required=false) String timezone,
                      @RequestParam Long id,
                      @RequestParam OAuthProvider auth_provider) throws IOException{
-        User user = commonDao.getOpt(User.class, email).orElse(
+        User user = commonDao.getOpt(User.class, "email", email).orElse(
                 User.builder()
                     .accessToken(access_token)
                     .email(email)
@@ -82,13 +81,8 @@ public class AuthController {
         return principal instanceof User ? Optional.of((User) principal) : Optional.empty();
     }
 
-    @RequestMapping("current")
-    public User getCurrentUser(@AuthenticationPrincipal User currentUser){
-        return currentUser;
-    }
-
-    public static AccessLevel getCurrentAccessLevel() {
-        return AccessLevel.ROLE_ADMIN;
-//        return getCurrentUser().isPresent() ? getCurrentUser().get().getRole() : AccessLevel.ROLE_ANONYMOUS;
+    public static UserRole getCurrentAccessLevel() {
+        return UserRole.ROLE_ADMIN;
+//        return getCurrentUser().isPresent() ? getCurrentUser().get().getRole() : UserRole.ROLE_ANONYMOUS;
     }
 }

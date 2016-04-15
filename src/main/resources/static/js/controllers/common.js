@@ -184,7 +184,7 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
 
     $scope.save = function(){
         $scope.videoLoading = true;
-        Video.save({url: $scope.url}).$promise.then(function(video){
+        $api.resource.video.add($scope.url).then(function(video){
             $state.goToVideo(video);
         });
     };
