@@ -51,6 +51,11 @@ public class AdvanceComparatorTest {
     public void testNumberTail() {
         final List<String> list = asList("12.9.1.1", "12.9.1.2", "12.9.1.10");
         list.sort(AdvanceComparator.INSTANCE);
+
+        System.out.println(list.get(0));
+        System.out.println(list.get(1));
+        System.out.println(list.get(2));
+
         assertEquals("12.9.1.1", list.get(0));
         assertEquals("12.9.1.2", list.get(1));
         assertEquals("12.9.1.10", list.get(2));
