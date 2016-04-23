@@ -66,14 +66,14 @@ public class AdvanceComparator implements Comparator<String> {
 
                 //найдем индекс последнего цифрового символа в последовательности в строке o1, увеличенный на 1
                 int index11 = index1;
-                while (Character.isDigit(o1.charAt(++index11))) {
-
+                while ((index11 < lengthFirstStr) && (Character.isDigit(o1.charAt(index11)))) {
+                    index11++;
                 }
 
                 //найдем индекс последнего цифрового символа в последовательности в строке o2, увеличенный на 1
                 int index21 = index2;
-                while (Character.isDigit(o2.charAt(++index21))){
-
+                while ((index21 < lengthSecondStr) && (Character.isDigit(o2.charAt(index21)))){
+                    index21++;
                 }
 
                 //получим числовые значения в строках и сравним их
