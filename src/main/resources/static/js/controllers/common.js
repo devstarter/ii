@@ -194,7 +194,7 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
 
     function getLast() {
         $scope.lastLoading = true;
-        $api.resource.video.last(Math.ceil($scope.lastVideos.length / 6) + 1).then(function (lastVideos) {
+        $api.resource.video.last(Math.ceil($scope.lastVideos.length / 6)).then(function (lastVideos) {
             if (!lastVideos.length) {
                 $scope.lastNoMore = true;
                 return

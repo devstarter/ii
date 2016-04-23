@@ -3,7 +3,7 @@ if (hash) {
     window.location.hash = '';
     window.location.pathname = window.location.pathname + hash.replace("#?", "").replace("#", "");
 }
-var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bootstrap'])
+var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCookies', 'ui.bootstrap'])
     .config(function($locationProvider, $urlRouterProvider, $stateProvider, config) {
         if (config.useHtml5Mode) $locationProvider.html5Mode(true).hashPrefix('!');
         $urlRouterProvider.otherwise("@");
@@ -92,7 +92,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             }
         }
     })
-    .factory("$api", function($rootScope, $state, $http, errorService, $q, config, $httpParamSerializer, $injector, modal){
+    .factory("$api", function($rootScope, $state, $http, errorService, $q, config, $httpParamSerializer, $injector, modal, $cookies){
         var apiUrl = config.apiUrl;
 //        var apiUrl = "https://ii.ayfaar.org/api/";
         function authenticate() {
@@ -102,7 +102,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 d.resolve();
                 return d.promise;
             } else {
-                return auth.authenticate(function () {
+                var wasAuthenticated = $cookies.getObject("auth_provider");
+                return auth.authenticate(wasAuthenticated ? null : function () {
                     return modal.confirm("Действие нуждается в авторизации", "Представтесь пожалуйста системе для выполнения данного действия. Это займёт пару секунд.", "Представится")
                 })
             }
@@ -190,7 +191,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             },
             term: {
                 link: function(term1, term2, type) {
-                    return api.post("link/addAlias", {term1: term1, term2: term2, type: type});
+                    return api.authPost("link/addAlias", {term1: term1, term2: term2, type: type});
                 },
                 get: function(name) {
                     return api.get('term/', {name: name, mark: true, _cache: true}, true);
@@ -227,7 +228,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     return api.get("suggestions/"+query)
                 },
                 quote: function(uri, term, quote) {
-                    return api.post("search/rate/+", {uri: uri, query: term, quote: quote})
+                    return api.authPost("search/rate/+", {uri: uri, query: term, quote: quote})
                 }
             },
             resource: {
@@ -245,16 +246,16 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     return api.get("topic/for/"+uri)
                 },
                 merge: function (main, mergeInto) {
-                    return api.get("topic/merge", {main: main, mergeInto: mergeInto})
+                    return api.authGet("topic/merge", {main: main, mergeInto: mergeInto})
                 },
                 updateComment: function (forUri, topicName, comment) {
-                    return api.post("topic/update-comment", {forUri: forUri, name: topicName, comment: comment})  
+                    return api.authPost("topic/update-comment", {forUri: forUri, name: topicName, comment: comment})
                 },
                 addFor: function (objectUri, topicName, comment, rate) {
-                    return api.post("topic/for", {name: topicName, uri: objectUri, comment: comment, rate: rate})
+                    return api.authPost("topic/for", {name: topicName, uri: objectUri, comment: comment, rate: rate})
                 },
                 unlink: function (main, linked) {
-                    return api.get("topic/unlink", {name: main, linked: linked})
+                    return api.authGet("topic/unlink", {name: main, linked: linked})
                 },
                 suggest: function (q) {
                     return api.get("topic/suggest", {q: q})  
@@ -276,7 +277,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     return api.get("document/"+id)
                 },
                 add: function (url) {
-                    return api.post("document", {url: url})
+                    return api.authPost("document", {url: url})
                 },
                 last: function () {
                     return api.get("document/last")
@@ -294,10 +295,10 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             },
             moderation: {
                 status: function () {
-                    return api.get("moderation/status")
+                    return api.authGet("moderation/status")
                 },
                 confirm: function (id) {
-                    return api.get("moderation/"+id+"/confirm")   
+                    return api.authGet("moderation/"+id+"/confirm")
                 }
             }
         };
@@ -454,7 +455,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             }
         }
     })
-    .service('auth', function($modal, $api, $rootScope, $q, modal) {
+    .service('auth', function($modal, $api, $rootScope, $q, modal, $cookies) {
         return {
             isAuthenticated: function () {
                 return typeof $rootScope.user !== 'undefined' ? $rootScope.user : false;
@@ -484,27 +485,48 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                                 facebook: "917074828411840",
                                 vk: "5371182",
                                 google: ""
-                            }, {redirect_uri: "static/lib/hello/redirect.html"});
+                            }, {redirect_uri: "/static/lib/hello/redirect.html"});
+
                             openAuthModal()
                         });
                     } else {
                         openAuthModal()
                     }
                 }
+                function helloAuthenticate(provider) {
+                    var deferred = $q.defer();
+                    hello(provider).login({force: false, scope: 'email'}).then(function (auth) {
+                        hello(provider).api('me').then(function (user) {
+                            user = angular.merge({
+                                access_token: auth.authResponse.access_token,
+                                auth_provider: auth.network
+                            }, user);
+                            deferred.resolve(user);
+                        });
+                    });
+                    return deferred.promise;
+                }
 
                 function openAuthModal() {
+                    var provider = $cookies.getObject("auth_provider");
+                    if (provider) {
+                        helloAuthenticate(provider).then(function (user) {
+                            $api.auth.registrate(user).then(function () {
+                                $rootScope.user = user;
+                                deferred.resolve(user);
+                            });
+                        });
+                        return
+                    }
+
                     $modal.open({
                         templateUrl: 'modal-auth.html',
                         controller: function ($scope, $modalInstance) {
-                            $scope.authenticate = function (provider) {
-                                hello(provider).login({force: false, scope: 'email'}).then(function (auth) {
-                                    hello(provider).api('me').then(function (user) {
-                                        $scope.user = angular.merge({
-                                            access_token: auth.authResponse.access_token,
-                                            auth_provider: auth.network
-                                        }, user);
-                                        $scope.$apply();
-                                    });
+                            $scope.authenticate = function(provider) {
+                                helloAuthenticate(provider).then(function (user) {
+                                    $scope.user = user;
+                                    $scope.$apply();
+                                    $cookies.putObject("auth_provider", provider);
                                 });
                             };
                             $scope.registrate = function () {
