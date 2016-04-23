@@ -525,7 +525,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                             $scope.authenticate = function(provider) {
                                 helloAuthenticate(provider).then(function (user) {
                                     $scope.user = user;
-                                    $scope.$apply();
+                                    // $scope.$apply();
                                     $cookies.putObject("auth_provider", provider);
                                 });
                             };
