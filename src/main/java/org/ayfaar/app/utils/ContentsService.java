@@ -36,7 +36,6 @@ public interface ContentsService {
         Optional<? extends ContentsProvider> getPrevious();
 
         Optional<? extends CategoryProvider> next();
-        String path();
     }
 
     interface ParagraphProvider extends ContentsProvider {
@@ -57,5 +56,6 @@ public interface ContentsService {
         String name();
         Optional<? extends ContentsProvider> next();
         List<? extends CategoryProvider> parents();
+        String path();
     }
 }
