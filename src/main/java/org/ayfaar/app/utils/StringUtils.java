@@ -50,4 +50,8 @@ public class StringUtils {
 					.replaceAll("<strong>$0</strong>");
 		return text;
     }
+
+    public static String firstUpper(String s) {
+        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+    }
 }
