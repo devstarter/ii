@@ -47,7 +47,4 @@ public class VideoResource extends UID implements Comparable<VideoResource> {
         return AdvanceComparator.INSTANCE.compare(title, o.title);
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
 }
