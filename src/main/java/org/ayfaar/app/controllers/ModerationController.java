@@ -3,6 +3,7 @@ package org.ayfaar.app.controllers;
 import lombok.Builder;
 import one.util.streamex.StreamEx;
 import org.ayfaar.app.dao.CommonDao;
+import org.ayfaar.app.model.ActionLog;
 import org.ayfaar.app.model.PendingAction;
 import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.user.UserPresentation;
@@ -23,17 +24,20 @@ public class ModerationController {
     @Inject ModerationService service;
     @Inject UserService userService;
 
-    @RequestMapping("status")
-    public CurrentStatus get() {
+    @RequestMapping("pending_actions")
+    public List<PendingActionPresentation> getPendingActions() {
         // show only my users (this user can be linked with another as children for personal moderation)
-        final List<PendingActionPresentation> pendingActions = StreamEx.of(commonDao.getList(PendingAction.class, "confirmedBy", null))
+        return StreamEx.of(commonDao.getList(PendingAction.class, "confirmedBy", null))
                 .filter(a -> AuthController.getCurrentAccessLevel().accept(a.getAction().getRequiredAccessLevel()))
                 .sortedBy(PendingAction::getId).reverseSorted()
                 .map(PendingActionPresentation::new)
                 .toList();
-        return CurrentStatus.builder()
-                .pendingActions(pendingActions)
-                .build();
+    }
+
+    @RequestMapping("last_actions")
+    public List<ActionLog> getLastActions() {
+        // организовать постраничную выдачу ActionLog, сначала выдавать самые последние
+        return null;
     }
 
     @RequestMapping("{id}/confirm")
