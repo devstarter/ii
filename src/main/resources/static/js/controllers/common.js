@@ -96,7 +96,8 @@ function HomeController($scope, $state, auth) {
         auth.authenticate().then(function (user) {
             $scope.user = user;
         });
-    }
+    };
+    $scope.goToCabinet = $state.goToCabinet;
 }
 function ItemController($scope, $stateParams, $state, $api) {
     $scope.number = $stateParams.number.trim();
@@ -183,7 +184,7 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
 
     $scope.save = function(){
         $scope.videoLoading = true;
-        Video.save({url: $scope.url}).$promise.then(function(video){
+        $api.resource.video.add($scope.url).then(function(video){
             $state.goToVideo(video);
         });
     };
@@ -193,7 +194,7 @@ function ResourcesController($scope, $stateParams, $state, Video, Topic, errorSe
 
     function getLast() {
         $scope.lastLoading = true;
-        $api.resource.video.last(Math.ceil($scope.lastVideos.length / 6) + 1).then(function (lastVideos) {
+        $api.resource.video.last(Math.ceil($scope.lastVideos.length / 6)).then(function (lastVideos) {
             if (!lastVideos.length) {
                 $scope.lastNoMore = true;
                 return
@@ -236,6 +237,24 @@ function ArticleController($scope, $stateParams, $state, $api) {
         document.title = a.name;
         copyObjectTo(a, $scope);
     });
+}
+
+function CabinetController($scope, $api, $rootScope, auth) {
+    if (!auth.isAuthenticated()) auth.authenticate().then(onAuthenticated);
+    else onAuthenticated();
+
+    function onAuthenticated() {
+        $scope.user = $rootScope.user;
+        loadStatus();
+        $scope.confirm = function (id) {
+            $api.moderation.confirm(id).then(loadStatus);
+        }
+    }
+    function loadStatus() {
+        $api.moderation.status().then(function (status) {
+            $scope.status = status;
+        });
+    }
 }
 
 

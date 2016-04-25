@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface TopicProvider {
@@ -61,6 +62,8 @@ public interface TopicProvider {
     }
 
     Link link(LinkType linkType, UID uid, String comment, String quote, Float rate);
+
+    Optional<? extends TopicProvider> getChild(String child);
 
 
     class TopicResources {

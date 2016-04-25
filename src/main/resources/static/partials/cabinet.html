@@ -1,0 +1,10 @@
+<div ng-show="user">
+    <img ng-src="{{user.thumbnail}}" style="width: 30px;height: 30px;border-radius: 50%;"/> {{user.name}}
+
+    <h2>Действия нуждающиеся в подтверждении</h2>
+    <div ng-repeat="action in status.pending_actions">
+        <div>{{action.text}}</div>
+        <a class="btn btn-default" ng-click="confirm(action.id)">Подтвердить</a>
+    </div>
+</div>
+<h1 ng-hide="user">Для доступа требуется авторизация</h1>

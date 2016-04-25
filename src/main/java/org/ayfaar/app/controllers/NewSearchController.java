@@ -9,7 +9,6 @@ import org.ayfaar.app.controllers.search.cache.DBCache;
 import org.ayfaar.app.dao.SearchDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ContentsService;
-import org.ayfaar.app.utils.ContentsService.CategoryProvider;
 import org.ayfaar.app.utils.ContentsService.ContentsProvider;
 import org.ayfaar.app.utils.RegExpUtils;
 import org.ayfaar.app.utils.StringUtils;
@@ -113,10 +112,10 @@ public class NewSearchController {
         }
 		List<? extends ContentsProvider> foundCategoryProviders = contentsService.descriptionContains(searchQueries);
 
-		List<FoundCategoryPresentation> presentations = new ArrayList<FoundCategoryPresentation>();
+		List<FoundCategoryPresentation> presentations = new ArrayList<>();
 		for (ContentsService.ContentsProvider p : foundCategoryProviders) {
 			String strongMarkedDescription = StringUtils.markWithStrong(p.description(), searchQueries);
-			FoundCategoryPresentation presentation = new FoundCategoryPresentation(p instanceof CategoryProvider ? ((CategoryProvider) p).path() : null, p.uri(), strongMarkedDescription);
+			FoundCategoryPresentation presentation = new FoundCategoryPresentation(p.path(), p.uri(), strongMarkedDescription);
 			presentations.add(presentation);
 		}
 

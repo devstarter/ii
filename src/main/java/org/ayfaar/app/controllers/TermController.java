@@ -40,8 +40,8 @@ public class TermController {
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     @ResponseBody
-    public void add(Term term) {
-        add(term.getName(), term.getShortDescription(), term.getDescription());
+    public Term add(Term term) {
+        return add(term.getName(), term.getShortDescription(), term.getDescription());
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)

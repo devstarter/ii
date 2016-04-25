@@ -3,8 +3,8 @@ package org.ayfaar.app.services.moderation;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ayfaar.app.services.moderation.AccessLevel.ROLE_ADMIN;
-import static org.ayfaar.app.services.moderation.AccessLevel.ROLE_EDITOR;
+import static org.ayfaar.app.services.moderation.UserRole.ROLE_ADMIN;
+import static org.ayfaar.app.services.moderation.UserRole.ROLE_EDITOR;
 
 public enum Action {
     TOPIC (ROLE_EDITOR),
@@ -16,11 +16,13 @@ public enum Action {
     ITEMS_RANGE (ROLE_EDITOR),
     ITEMS_RANGE_CREATE  (ITEMS_RANGE),
     ITEMS_RANGE_UPDATE  (ITEMS_RANGE),
-    ;
+
+    VIDEO_ADDED("Добавлено видео '{}' (<uri>{}</uri>)");
 
     private Action parent = null;
-    private AccessLevel requiredAccessLevel;
+    private UserRole requiredAccessLevel;
     private List<Action> children = new ArrayList<>();
+    public String message;
 
 
     Action() {
@@ -29,15 +31,20 @@ public enum Action {
     Action(Action parent) {
         this(parent, null);
     }
-    Action(AccessLevel requiredAccessLevel) {
+    Action(UserRole requiredAccessLevel) {
         this(null, requiredAccessLevel);
     }
-    Action(Action parent, AccessLevel requiredAccessLevel) {
+    Action(Action parent, UserRole requiredAccessLevel) {
         this.parent = parent;
         this.requiredAccessLevel = requiredAccessLevel;
         if (this.parent != null) {
             this.parent.addChild(this);
         }
+    }
+
+
+    Action(String message) {
+        this.message = message;
     }
 
     public Action parent() {
@@ -78,7 +85,7 @@ public enum Action {
         this.children.add(child);
     }
 
-    public AccessLevel getRequiredAccessLevel() {
+    public UserRole getRequiredAccessLevel() {
         return requiredAccessLevel != null ? requiredAccessLevel : parent.getRequiredAccessLevel();
     }
 

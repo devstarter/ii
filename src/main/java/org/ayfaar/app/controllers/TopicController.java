@@ -160,7 +160,8 @@ public class TopicController {
                 throw new RuntimeException("The parent has a child for the given name");
             }
         }
-        topicService.findOrCreate(name).addChild(child);
+        final TopicProvider topic = topicService.findOrCreate(name);
+        if (!topic.getChild(child).isPresent()) topic.addChild(child);
     }
 
     @RequestMapping("unlink")

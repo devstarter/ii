@@ -46,7 +46,7 @@ public class ContentsImporter {
     @Test
     public void main() throws IOException, XLSParsingException {
         log.info("Открытие файла оглавлений");
-        InputStream in = new FileInputStream("./src/test/resources/content/ii-contents-2016.04.12.xlsx");
+        InputStream in = new FileInputStream("./src/test/resources/content/ii-contents-2016.04.13.xlsx");
         log.info("Считывание данных");
         List<ItemBook> list = fillListItemBooks(in);
         in.close();

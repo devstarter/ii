@@ -1,10 +1,12 @@
 package org.ayfaar.app.services.topics;
 
+import one.util.streamex.StreamEx;
+import org.ayfaar.app.controllers.AuthController;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.*;
-import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.moderation.Action;
+import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.ayfaar.app.utils.exceptions.Exceptions;
 import org.ayfaar.app.utils.exceptions.LogicalException;
@@ -20,6 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static one.util.streamex.MoreCollectors.onlyOne;
 import static org.ayfaar.app.utils.StreamUtils.single;
 
 @Component("topicService")
@@ -137,25 +140,33 @@ class TopicServiceImpl implements TopicService {
 
             // link = linkRepository.save(new Link(topic, uid, type, comment)); this throw error
 
-            link = linkDao.save(Link.builder()
+            link = Link.builder()
                     .uid1(topic)
                     .uid2(uid)
                     .type(type)
                     .comment(comment)
                     .quote(quote)
                     .rate(rate)
-                    .build());
+                    .build();
+            Link finalLink = link;
+            AuthController.getCurrentUser().ifPresent(u -> finalLink.setCreatedBy(u.getId()));
             if (uid instanceof Topic) {
                 topics.get(uid.getUri()).registerLink(link, topic);
             }
+            linkDao.save(link);
             registerLink(link, uid);
 
             return link;
         }
 
         @Override
+        public Optional<? extends TopicProvider> getChild(String child) {
+            return children().filter(p -> p.name().equals(child)).collect(onlyOne());
+        }
+
+        @Override
         public Stream<? extends TopicProvider> children() {
-            return linksMap.values().stream()
+            return StreamEx.of(linksMap.values())
                     .filter(link ->
                             link.getUid1() instanceof Topic
                             && link.getUid2() instanceof Topic

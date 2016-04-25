@@ -17,6 +17,7 @@
     <link href="static/css/icons/style.css" rel="stylesheet" type="text/css" />
 
     <script src="static/lib/angular/angular.min.js"></script>
+    <script src="static/lib/angular/angular-cookies.min.js"></script>
     <script src="static/lib/angular/angular-resource.min.js"></script>
     <script src="static/lib/angular/angular-sanitize.min.js"></script>
     <script src="static/lib/angular-ui-router.min.js"></script>
@@ -66,6 +67,17 @@
         <div title="{{doc.name}}">{{doc.name | cut:true:50}}</div>
     </div>
 </script>
+<script type="text/ng-template" id="modal-message.html">
+    <div class="modal-header">
+        <h3 class="modal-title">{{title}}</h3>
+    </div>
+    <div class="modal-body">
+        {{text}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ok()">OK</button>
+    </div>
+</script>
 <script type="text/ng-template" id="modal-prompt.html">
     <div class="modal-header">
         <h3 class="modal-title">{{title}}</h3>
@@ -84,8 +96,8 @@
     </div>
     <div class="modal-body">
         <div ng-hide="user" style="text-align: center">
-            <img class="btn" src="static/images/facebook.png" ng-click="authenticate('facebook')"/>
-            <img class="btn" src="static/images/vk.png" ng-click="authenticate('vk')"/>
+            <img alt="Facebook" title="Facebook" class="btn" src="static/images/facebook.png" ng-click="authenticate('facebook')" style="width: 154px;height: 142px"/>
+            <img alt="VK" title="VK" class="btn" src="static/images/vk.png" ng-click="authenticate('vk')" style="width: 154px;height: 142px"/>
         </div>
         <div ng-show="user">
             <img ng-src="{{user.thumbnail}}" style="float: left; padding-right: 10px;"/>
@@ -96,7 +108,7 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="cancel()">Отменить</button>
-        <button class="btn btn-primary" ng-click="registrate()">Представится</button>
+        <button class="btn btn-primary" ng-show="user" ng-click="registrate()">Представится</button>
     </div>
 </script>
 <script type="text/ng-template" id="contribute-form.html">

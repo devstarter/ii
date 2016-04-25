@@ -2,9 +2,12 @@ package org.ayfaar.app.services.moderation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.annotations.Moderated;
+import org.ayfaar.app.controllers.AuthController;
 import org.ayfaar.app.dao.CommonDao;
-import org.ayfaar.app.model.SystemEvent;
+import org.ayfaar.app.model.ActionLog;
+import org.ayfaar.app.model.PendingAction;
 import org.ayfaar.app.utils.exceptions.ConfirmationRequiredException;
+import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -12,8 +15,10 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.Date;
 
 import static java.lang.String.format;
+import static org.ayfaar.app.controllers.AuthController.getCurrentAccessLevel;
 
 
 @Service
@@ -33,13 +38,17 @@ public class ModerationService {
         parser = new SpelExpressionParser();
     }
 
-    /*public void notice(String action, Object... args) {
-        String message = MessageFormatter.arrayFormat(action, args).getMessage();
+    public void notice(Action action, Object... args) {
+        String message = MessageFormatter.arrayFormat(action.message, args).getMessage();
         log.info(message);
-        final SystemEvent event = new SystemEvent();
-        event.setMessage(message);
-        commonDao.save(event);
-    }*/
+        final ActionLog actionLog = new ActionLog();
+        // actionLog.setMessage(message);
+        // указать время создания ActionLog
+        // указать такущего пользователя
+        // указать action
+        // указать action
+        // commonDao.save(actionLog);
+    }
 
     public void check(Action action) {
         if (!getCurrentAccessLevel().accept(action.getRequiredAccessLevel())) {
@@ -52,12 +61,12 @@ public class ModerationService {
         final MethodEntry entry = threadLocal.get();
         if (entry == null) throw new RuntimeException("No moderated method for action "+action);
 
-        final SystemEvent event = new SystemEvent();
-        event.setMessage(format("Action %s for user %s required confirmation", action, getCurrentUserEmail()));
-        event.setUser(getCurrentUserEmail());
-        event.setCommand(buildCommand(entry));
-        event.setAction(action);
-        commonDao.save(event);
+        final PendingAction pendingAction = new PendingAction();
+        pendingAction.setMessage(format("Action %s for user %s required confirmation", action, getCurrentUserId()));
+        pendingAction.setInitiatedBy(getCurrentUserId());
+        pendingAction.setCommand(buildCommand(entry));
+        pendingAction.setAction(action);
+        commonDao.save(pendingAction);
     }
 
     private String buildCommand(MethodEntry entry) {
@@ -77,22 +86,19 @@ public class ModerationService {
         return command.substring(0, command.lastIndexOf(",")) + ")";
     }
 
-    public void confirm(SystemEvent event) {
-        if (!getCurrentAccessLevel().accept(event.getAction().getRequiredAccessLevel()))
-            throw new ConfirmationRequiredException(event.getAction());
+    public void confirm(PendingAction action) {
+        if (!getCurrentAccessLevel().accept(action.getAction().getRequiredAccessLevel()))
+            throw new ConfirmationRequiredException(action.getAction());
         // perform command
-        parser.parseExpression(event.getCommand()).getValue(context);
-        log.info("{} confirmed by user {}", event.getMessage(), getCurrentUserEmail());
-        event.setConfirmedByUser(getCurrentUserEmail());
-        commonDao.save(event);
+        parser.parseExpression(action.getCommand()).getValue(context);
+        log.info("{} confirmed by user {}", action.getMessage(), getCurrentUserId());
+        action.setConfirmedBy(getCurrentUserId());
+        action.setConfirmedAt(new Date());
+        commonDao.save(action);
     }
 
-    private AccessLevel getCurrentAccessLevel() {
-        return AccessLevel.ROLE_ADMIN;
-    }
-
-    private String getCurrentUserEmail() {
-        return "sllouyssgort@gmail.com";
+    private Integer getCurrentUserId() {
+        return AuthController.getCurrentUser().get().getId();
     }
 
     void checkMethod(Moderated moderated, Object[] args) {

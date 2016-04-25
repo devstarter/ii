@@ -3,7 +3,7 @@ if (hash) {
     window.location.hash = '';
     window.location.pathname = window.location.pathname + hash.replace("#?", "").replace("#", "");
 }
-var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bootstrap'])
+var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCookies', 'ui.bootstrap'])
     .config(function($locationProvider, $urlRouterProvider, $stateProvider, config) {
         if (config.useHtml5Mode) $locationProvider.html5Mode(true).hashPrefix('!');
         $urlRouterProvider.otherwise("@");
@@ -17,6 +17,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 onEnter: function($rootScope){
                     $rootScope.$broadcast('home-state-entered');
                 }
+            })
+            .state('cabinet', {
+                url: "/я",
+                templateUrl: "static/partials/cabinet.html",
+                controller: CabinetController
             })
             .state('document', {
                 url: "/d/{id}",
@@ -87,10 +92,51 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             }
         }
     })
-    .factory("$api", function($rootScope, $state, $http, errorService, $q, config, $httpParamSerializer){
+    .factory("$api", function($rootScope, $state, $http, errorService, $q, config, $httpParamSerializer, $injector, modal, $cookies){
         var apiUrl = config.apiUrl;
 //        var apiUrl = "https://ii.ayfaar.org/api/";
+        function authenticate() {
+            var auth = $injector.get("auth");
+            if (auth.isAuthenticated()) {
+                var d = $q.defer();
+                d.resolve();
+                return d.promise;
+            } else {
+                var wasAuthenticated = $cookies.getObject("auth_provider");
+                return auth.authenticate(wasAuthenticated ? null : function () {
+                    return modal.confirm("Действие нуждается в авторизации", "Представтесь пожалуйста системе для выполнения данного действия. Это займёт пару секунд.", "Представится")
+                })
+            }
+        }
+        function moderatedAction(response) {
+            if (response.data.error.code == "CONFIRMATION_REQUIRED") {
+                modal.message("Действие нуждается в подтверждении", "Данное действиет будет исполненно после подтверждения модератором системы");
+                return true;
+            }
+        }
         var api = {
+            authGet: function (url, data) {
+                var deferred = $q.defer();
+                authenticate().then(function () {
+                    api.get(url, data).then(function (response) {
+                        deferred.resolve(response)
+                    }, function (error) {
+                        deferred.reject(error)
+                    })
+                });
+                return deferred.promise
+            },
+            authPost: function (url, data) {
+                var deferred = $q.defer();
+                authenticate().then(function () {
+                    api.post(url, data).then(function (response) {
+                        deferred.resolve(response)
+                    }, function (error) {
+                        deferred.reject(error)
+                    })
+                });
+                return deferred.promise
+            },
             post: function(url, data) {
                 var deferred = $q.defer();
                 var cache = data && typeof data._cache !== 'undefined' ? data._cache : false;
@@ -105,7 +151,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 }).then(function(response){
                         deferred.resolve(response.data)
                     },function(response){
-                        errorService.resolve(response.data.error);
+                        if (!moderatedAction(response)) {
+                            errorService.resolve(response.data.error);
+                        }
                         deferred.reject(response);
                     });
                 return deferred.promise;
@@ -122,7 +170,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                 }).then(function(response){
                         deferred.resolve(response.data)
                     },function(response){
-                        if (!skipError) errorService.resolve(response.data.error);
+                        if (!moderatedAction(response) && !skipError) {
+                            errorService.resolve(response.data.error);
+                        }
                         deferred.reject(response);
                     });
                 return deferred.promise;
@@ -141,7 +191,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             },
             term: {
                 link: function(term1, term2, type) {
-                    return api.post("link/addAlias", {term1: term1, term2: term2, type: type});
+                    return api.authPost("link/addAlias", {term1: term1, term2: term2, type: type});
                 },
                 get: function(name) {
                     return api.get('term/', {name: name, mark: true, _cache: true}, true);
@@ -178,11 +228,14 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     return api.get("suggestions/"+query)
                 },
                 quote: function(uri, term, quote) {
-                    return api.post("search/rate/+", {uri: uri, query: term, quote: quote})
+                    return api.authPost("search/rate/+", {uri: uri, query: term, quote: quote})
                 }
             },
             resource: {
                 video: {
+                    add: function (url) {
+                        return api.authPost("resource/video", {url: url})
+                    },
                     last: function (page) {
                         return api.get("resource/video/last-created", {page: page})
                     }
@@ -193,16 +246,16 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     return api.get("topic/for/"+uri)
                 },
                 merge: function (main, mergeInto) {
-                    return api.get("topic/merge", {main: main, mergeInto: mergeInto})
+                    return api.authGet("topic/merge", {main: main, mergeInto: mergeInto})
                 },
                 updateComment: function (forUri, topicName, comment) {
-                    return api.post("topic/update-comment", {forUri: forUri, name: topicName, comment: comment})  
+                    return api.authPost("topic/update-comment", {forUri: forUri, name: topicName, comment: comment})
                 },
                 addFor: function (objectUri, topicName, comment, rate) {
-                    return api.post("topic/for", {name: topicName, uri: objectUri, comment: comment, rate: rate})
+                    return api.authPost("topic/for", {name: topicName, uri: objectUri, comment: comment, rate: rate})
                 },
                 unlink: function (main, linked) {
-                    return api.get("topic/unlink", {name: main, linked: linked})
+                    return api.authGet("topic/unlink", {name: main, linked: linked})
                 },
                 suggest: function (q) {
                     return api.get("topic/suggest", {q: q})  
@@ -216,7 +269,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     return api.get("topic", {name: name, includeResources: includeResources ? "true" : "false"})
                 },
                 addChild: function (parent, child) {
-                    return api.get("topic/add-child", {name: parent, child: child})
+                    return api.authGet("topic/add-child", {name: parent, child: child})
                 }
             },
             document: {
@@ -224,7 +277,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                     return api.get("document/"+id)
                 },
                 add: function (url) {
-                    return api.post("document", {url: url})
+                    return api.authPost("document", {url: url})
                 },
                 last: function () {
                     return api.get("document/last")
@@ -233,9 +286,19 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
             auth: {
                 registrate: function (user) {
                     return api.post("auth", user)
+                }
+            },
+            user: {
+                getCurrent: function () {
+                    return api.get("user/current")
+                }
+            },
+            moderation: {
+                status: function () {
+                    return api.authGet("moderation/status")
                 },
-                getCurrentUser: function () {
-                    return api.get("auth/current")
+                confirm: function (id) {
+                    return api.authGet("moderation/"+id+"/confirm")
                 }
             }
         };
@@ -377,53 +440,93 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
                         };
                     }
                 }).result;
+            },
+            message: function (title, text) {
+                return $modal.open({
+                    templateUrl: 'modal-message.html',
+                    controller: function ($scope, $modalInstance) {
+                        $scope.title = title;
+                        $scope.text = text;
+                        $scope.ok = function() {
+                            $modalInstance.close();
+                        };
+                    }
+                }).result;
             }
         }
     })
-    .service('auth', function($modal, $api, $rootScope, $q) {
+    .service('auth', function($modal, $api, $rootScope, $q, modal, $cookies) {
         return {
             isAuthenticated: function () {
-                return $rootScope.user;
+                return typeof $rootScope.user !== 'undefined' ? $rootScope.user : false;
             },
-            authenticate: function () {
+            authenticate: function (runBeforeOpenAuthWindow) {
                 var deferred = $q.defer();
                 if ($rootScope.user)
                     deferred.resolve($rootScope.user);
                 else
-                    $api.auth.getCurrentUser().then(function (user) {
+                    $api.user.getCurrent().then(function (user) {
                         if (user) {
                             $rootScope.user = user;
                             deferred.resolve(user);
                         }
+                        else if (runBeforeOpenAuthWindow) {
+                            runBeforeOpenAuthWindow().then(loadHelloAndOpenModal);
+                        }
                         else {
-                            if (typeof hello === 'undefined') {
-                                requirejs(["static/lib/hello/hello.min.js"], function (hello) {
-                                    hello.init({
-                                        facebook: "917074828411840",
-                                        vk: "5371182",
-                                        google: ""
-                                    }, {redirect_uri: "static/lib/hello/redirect.html"});
-                                    openAuthModal()
-                                });
-                            } else {
-                                openAuthModal()
-                            }
+                            loadHelloAndOpenModal();
                         }
                     });
 
+                function loadHelloAndOpenModal() {
+                    if (typeof hello === 'undefined') {
+                        requirejs(["static/lib/hello/hello.min.js"], function (hello) {
+                            hello.init({
+                                facebook: "917074828411840",
+                                vk: "5371182",
+                                google: ""
+                            }, {redirect_uri: "/static/lib/hello/redirect.html"});
+
+                            openAuthModal()
+                        });
+                    } else {
+                        openAuthModal()
+                    }
+                }
+                function helloAuthenticate(provider) {
+                    var deferred = $q.defer();
+                    hello(provider).login({force: false, scope: 'email'}).then(function (auth) {
+                        hello(provider).api('me').then(function (user) {
+                            user = angular.merge({
+                                access_token: auth.authResponse.access_token,
+                                auth_provider: auth.network
+                            }, user);
+                            deferred.resolve(user);
+                        });
+                    });
+                    return deferred.promise;
+                }
+
                 function openAuthModal() {
+                    var provider = $cookies.getObject("auth_provider");
+                    if (provider) {
+                        helloAuthenticate(provider).then(function (user) {
+                            $api.auth.registrate(user).then(function () {
+                                $rootScope.user = user;
+                                deferred.resolve(user);
+                            });
+                        });
+                        return
+                    }
+
                     $modal.open({
                         templateUrl: 'modal-auth.html',
                         controller: function ($scope, $modalInstance) {
-                            $scope.authenticate = function (provider) {
-                                hello(provider).login({force: false, scope: 'email'}).then(function (auth) {
-                                    hello(provider).api('me').then(function (user) {
-                                        $scope.user = angular.merge({
-                                            access_token: auth.authResponse.access_token,
-                                            auth_provider: auth.network
-                                        }, user);
-                                        $scope.$apply();
-                                    });
+                            $scope.authenticate = function(provider) {
+                                helloAuthenticate(provider).then(function (user) {
+                                    $scope.user = user;
+                                    // $scope.$apply();
+                                    $cookies.putObject("auth_provider", provider);
                                 });
                             };
                             $scope.registrate = function () {
@@ -967,6 +1070,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ui.bo
         };
         $state.goToHome = function() {
             originStateGo.bind($state)("home")
+        };
+        $state.goToCabinet = function() {
+            originStateGo.bind($state)("cabinet")
         };
 
         $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
