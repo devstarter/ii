@@ -1,7 +1,7 @@
 package org.ayfaar.app.services.videoResource;
 
-import java.util.List;
+import java.util.Map;
 
 public interface VideoResourceService {
-    public List<String> getAll();
+    Map<String, String> getAllUriNames();
 }

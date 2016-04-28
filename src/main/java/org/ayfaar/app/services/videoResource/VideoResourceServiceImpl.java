@@ -4,17 +4,17 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.VideoResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-@Component("videoResourceService")
+@Component()
 public class VideoResourceServiceImpl implements VideoResourceService {
     @Autowired
     CommonDao commonDao;
-    @Override
-    public List<String> getAll() {
 
-        return commonDao.getAll(VideoResource.class).stream().map(v -> v.getTitle()).collect(Collectors.toList());
+    @Override
+    public Map<String, String> getAllUriNames() {
+        return commonDao.getAll(VideoResource.class).stream().collect(Collectors.toMap(videoResource ->
+                videoResource.getUri(),videoResource -> videoResource.getTitle()));
     }
 }

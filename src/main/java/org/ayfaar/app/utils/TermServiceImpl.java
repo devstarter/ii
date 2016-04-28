@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.sort;
 import static java.util.regex.Pattern.compile;
@@ -39,12 +40,13 @@ public class TermServiceImpl implements TermService {
     private Map<String, LinkInfo> links;
     private Map<String, TermProvider> aliasesMap;
     private ArrayList<Map.Entry<String, TermProvider>> sortedList;
+    private List<Term> allTerms;
 
     @PostConstruct
     public void load() {
 		logger.info("Terms loading...");
         aliasesMap = new HashMap<>();
-
+        allTerms = commonDao.getAll(Term.class);
         List<TermMorph> allTermMorphs = commonDao.getAll(TermMorph.class);
         List<TermDao.TermInfo> termsInfo = termDao.getAllTermInfo();
         List<Link> allSynonyms = linkDao.getAllSynonyms();
@@ -225,6 +227,11 @@ public class TermServiceImpl implements TermService {
     @Override
     public List<Map.Entry<String, TermProvider>> getAll() {
         return sortedList;
+    }
+
+    @Override
+    public Map<String, String> getAllUriNames() {
+       return allTerms.stream().collect(Collectors.toMap(term -> term.getUri(), term -> term.getName()));
     }
 
     @Override
