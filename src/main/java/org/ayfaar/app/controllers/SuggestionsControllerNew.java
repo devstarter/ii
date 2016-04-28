@@ -1,26 +1,31 @@
 package org.ayfaar.app.controllers;
 
+import org.ayfaar.app.dao.TermDao;
+import org.ayfaar.app.model.Term;
 import org.ayfaar.app.services.document.DocumentService;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.services.videoResource.VideoResourceService;
 import org.ayfaar.app.utils.ContentsService;
 import org.ayfaar.app.utils.TermService;
+import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.UNICODE_CASE;
 
-@Controller
+@RestController
 @RequestMapping("api/suggestions2")
 public class SuggestionsControllerNew {
 
@@ -81,7 +86,8 @@ public class SuggestionsControllerNew {
 
             switch (item) {
                 case TERM:
-                    mapUriWithNames = termService.getAllUriNames();
+                    List<TermDao.TermInfo> allInfoTerms = termService.getAllInfoTerms();
+                    founded = getSuggestedTerms(queriesQueue.poll(), suggestions, allInfoTerms);
                     break;
                 case TOPIC:
                     mapUriWithNames = topicService.getAllUriNames();
@@ -96,8 +102,8 @@ public class SuggestionsControllerNew {
                     mapUriWithNames = videoResourceService.getAllUriNames();
                     break;
             }
+            if (item!=Suggestions.TERM)founded = getSuggestedItems(queriesQueue.poll(), suggestions, mapUriWithNames);
 
-            founded = getSuggestedItems(queriesQueue.poll(), suggestions, mapUriWithNames);
             suggestions.addAll(founded.subList(0, min(MAX_SUGGESTIONS - suggestions.size(), founded.size())));
         }
 
@@ -110,6 +116,22 @@ public class SuggestionsControllerNew {
 
         });
         return suggestions;
+    }
+
+    private List<Map.Entry<String,String>> getSuggestedTerms(String query, List<Map.Entry<String, String>> suggestions, List<TermDao.TermInfo> allInfoTerms) {
+        List<TermDao.TermInfo> temp = new ArrayList<>();
+        List<Map.Entry<String, String>> terms = new ArrayList<>();
+        Pattern pattern = Pattern.compile(query,CASE_INSENSITIVE + UNICODE_CASE);
+        for (TermDao.TermInfo infoTerm : allInfoTerms) {
+            String name = infoTerm.getName();
+            Matcher matcher = pattern.matcher(name);
+            if(matcher.find() && !suggestions.contains(name) && !terms.contains(name)) {
+                temp.add(infoTerm);
+            }
+        }
+        terms.addAll(temp.stream().collect(Collectors.toMap(termInfo -> UriGenerator.generate(Term.class, termInfo.getName()), termInfo -> termInfo.getName())).entrySet());
+        Collections.reverse(terms);
+        return terms;
     }
 
 
