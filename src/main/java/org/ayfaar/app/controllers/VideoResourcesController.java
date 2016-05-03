@@ -9,10 +9,7 @@ import org.ayfaar.app.utils.GoogleService;
 import org.ayfaar.app.utils.Language;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -66,6 +63,16 @@ public class VideoResourcesController {
             moderationService.notice(Action.VIDEO_ADDED, video.getTitle(), video.getUri());
             return video;
         });
+    }
+
+    @RequestMapping(value = "update-title", method = RequestMethod.POST)
+    public void updateTitle(@RequestParam String uri, @RequestParam String title) {
+        hasLength(uri);
+        VideoResource video = commonDao.get(VideoResource.class, "uri", uri);
+        if (video != null) {
+            video.setTitle(title);
+            commonDao.save(video);
+        }
     }
 
 }
