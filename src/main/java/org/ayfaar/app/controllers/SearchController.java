@@ -5,15 +5,12 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
-import org.ayfaar.app.events.SearchQuoteEvent;
 import org.ayfaar.app.utils.Content;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.TermsMarker;
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +23,7 @@ import static org.ayfaar.app.utils.RegExpUtils.w;
 import static org.ayfaar.app.utils.TermUtils.isCosmicCode;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
-@Controller
+@RestController
 @RequestMapping("api/search")
 public class SearchController {
     @Autowired TermService termService;
@@ -37,7 +34,7 @@ public class SearchController {
     @Autowired CommonDao commonDao;
     @Autowired TermMorphDao termMorphDao;
     @Autowired EmailNotifier notifier;
-    @Autowired ApplicationEventPublisher eventPublisher;
+//    @Autowired ApplicationEventPublisher eventPublisher;
     @Autowired TermsMarker termsMarker;
     @Autowired NewSearchController searchController;
 
@@ -240,7 +237,7 @@ public class SearchController {
                 }
             }
             //notifier.rate(term, item, quote, link != null ? link.getLinkId() : null);
-            eventPublisher.publishEvent(new SearchQuoteEvent(term, item, quote, link != null ? link.getLinkId() : null));
+//            eventPublisher.publishEvent(new SearchQuoteEvent(term, item, quote, link != null ? link.getLinkId() : null));
         }
     }
 }

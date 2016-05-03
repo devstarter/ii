@@ -147,6 +147,7 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
                 $scope.articles = r.articles;
                 $scope.exactMatchTerm = r.exactMatchTerm;
                 $scope.categories = r.categories;
+                $scope.showSCategories = r.categories.length < 3;
                 if (!r.categories.length) searchInContent();
             });
             $scope.loadingTerms = true;

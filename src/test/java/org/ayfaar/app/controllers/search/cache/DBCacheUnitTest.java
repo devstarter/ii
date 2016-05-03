@@ -20,15 +20,12 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cache.Cache;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.io.IOException;
 import java.util.Optional;
 
 import static org.ayfaar.app.utils.TermService.TermProvider;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.*;
 
@@ -41,7 +38,7 @@ public class DBCacheUnitTest {
     TermService termService;
     @Mock TermDao termDao;
     @Mock LinkDao linkDao;
-    @Mock ApplicationEventPublisher eventPublisher;
+//    @Mock ApplicationEventPublisher eventPublisher;
     @InjectMocks
     @Spy
     DBCache dbCache;
@@ -181,7 +178,7 @@ public class DBCacheUnitTest {
 
         dbCache.get(key);
 
-        verify(eventPublisher, times(1)).publishEvent(any(ApplicationEvent.class));
+//        verify(eventPublisher, times(1)).publishEvent(any(ApplicationEvent.class));
     }
 
     @Test
@@ -197,7 +194,7 @@ public class DBCacheUnitTest {
 
         dbCache.get(key);
 
-        verify(eventPublisher, never()).publishEvent(any(ApplicationEvent.class));
+//        verify(eventPublisher, never()).publishEvent(any(ApplicationEvent.class));
 
     }
 }

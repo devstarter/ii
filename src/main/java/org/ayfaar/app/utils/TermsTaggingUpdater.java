@@ -5,18 +5,14 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.dao.TermMorphDao;
-import org.ayfaar.app.events.SimplePushEvent;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-
-import static java.lang.String.format;
 
 @Component
 public class TermsTaggingUpdater {
@@ -30,8 +26,7 @@ public class TermsTaggingUpdater {
     private LinkDao linkDao;
     @Autowired
     private TermDao termDao;
-    @Autowired
-    ApplicationEventPublisher publisher;
+//    @Autowired ApplicationEventPublisher publisher;
 
     public void update(String termName) {
         long time = System.currentTimeMillis();
@@ -43,7 +38,7 @@ public class TermsTaggingUpdater {
         updateLinks(linkDao.getLike("quote", aliases, MatchMode.ANYWHERE));
 
         final String duration = DurationFormatUtils.formatDuration(System.currentTimeMillis() - time, "HH:mm:ss");
-        publisher.publishEvent(new SimplePushEvent(format("Тегирование для %s завершено за %s", termName, duration)));
+//        publisher.publishEvent(new SimplePushEvent(format("Тегирование для %s завершено за %s", termName, duration)));
     }
 
     public void updateAllContent() {
@@ -89,7 +84,7 @@ public class TermsTaggingUpdater {
         updateLinks(linkDao.getLike("quote", morphAlias, MatchMode.ANYWHERE));
 
         final String duration = DurationFormatUtils.formatDuration(System.currentTimeMillis() - time, "HH:mm:ss");
-        publisher.publishEvent(new SimplePushEvent(format("Тегирование для %s завершено за %s", morphAlias, duration)));
+//        publisher.publishEvent(new SimplePushEvent(format("Тегирование для %s завершено за %s", morphAlias, duration)));
     }
 
     public void update(Item item) {

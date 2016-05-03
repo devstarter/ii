@@ -3,14 +3,12 @@ package org.ayfaar.app.controllers.search.cache;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ayfaar.app.dao.CategoryDao;
 import org.ayfaar.app.dao.CommonDao;
-import org.ayfaar.app.events.SearchEvent;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.UID;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleValueWrapper;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -24,7 +22,7 @@ public class DBCache extends ConcurrentMapCache {
     @Inject TermService termService;
     @Inject CommonDao commonDao;
     @Inject CategoryDao categoryDao;
-    @Inject ApplicationEventPublisher eventPublisher;
+//    @Inject ApplicationEventPublisher eventPublisher;
 
     public DBCache() {
         super("DBCache");
@@ -53,7 +51,7 @@ public class DBCache extends ConcurrentMapCache {
                 }
             }
             if (!isTerm && searchKey.query.indexOf("Обсуждение:") != 0 && searchKey.query.indexOf("_") != 0) {
-                eventPublisher.publishEvent(new SearchEvent(searchKey));
+//                eventPublisher.publishEvent(new SearchEvent(searchKey));
             }
 
         } else if(key instanceof ContentsCacheKey) {

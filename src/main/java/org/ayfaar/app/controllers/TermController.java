@@ -4,12 +4,9 @@ import org.apache.commons.lang.WordUtils;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
-import org.ayfaar.app.events.NewTermEvent;
-import org.ayfaar.app.events.TermUpdatedEvent;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +31,7 @@ public class TermController {
     @Autowired TermServiceImpl aliasesMap;
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
-    @Inject ApplicationEventPublisher publisher;
+//    @Inject ApplicationEventPublisher publisher;
     @Inject NewSearchController searchController;
 
 
@@ -197,7 +194,7 @@ public class TermController {
             } else if (!TermUtils.isCosmicCode(termName)) {
                 findAliases(term, termName, "");
             }
-            publisher.publishEvent(new NewTermEvent(term));
+//            publisher.publishEvent(new NewTermEvent(term));
         } else {
             String oldShortDescription = null;
             if (shortDescription != null && !shortDescription.isEmpty()) {
@@ -212,7 +209,7 @@ public class TermController {
                 term.setTaggedDescription(termsMarker.mark(description));
             }
             termDao.save(term);
-            publisher.publishEvent(new TermUpdatedEvent(term, oldShortDescription, oldDescription));
+//            publisher.publishEvent(new TermUpdatedEvent(term, oldShortDescription, oldDescription));
         }
 
 
