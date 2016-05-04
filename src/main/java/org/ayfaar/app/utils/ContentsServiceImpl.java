@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
@@ -408,5 +409,10 @@ public class ContentsServiceImpl implements ContentsService {
         return paragraphs();
     }
 
+    @Override
+    public Map<String, String> getAllUriNames(){
+        return categoryMap.values().stream().collect(Collectors.toMap(categoryProvider ->
+                categoryProvider.getCategory().getUri(),categoryProvider -> categoryProvider.getCategory().getName()));
+    }
 }
 

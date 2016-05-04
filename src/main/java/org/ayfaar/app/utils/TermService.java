@@ -1,5 +1,6 @@
 package org.ayfaar.app.utils;
 
+import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Term;
 
@@ -16,6 +17,7 @@ public interface TermService {
      * (обычно в именительном падеже). Например "времени" => "Время", "времён" => "Время" и т. д.
      */
     List<Map.Entry<String, TermProvider>> getAll();
+    List<TermDao.TermInfo> getAllInfoTerms();
     Optional<TermProvider> get(String name);
     Optional<TermProvider> getMainOrThis(String name);
     Term getTerm(String name);
