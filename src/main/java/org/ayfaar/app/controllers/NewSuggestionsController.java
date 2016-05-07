@@ -1,5 +1,7 @@
 package org.ayfaar.app.controllers;
 
+import one.util.streamex.StreamEx;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.services.document.DocumentService;
@@ -15,9 +17,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
@@ -78,14 +80,17 @@ public class NewSuggestionsController {
         List<Map.Entry<String, String>> suggestions = new ArrayList<>();
 
         while (suggestions.size() < MAX_SUGGESTIONS && queriesQueue.peek() != null) {
-            List<Map.Entry<String, String>> founded = null;
+            List<? extends Map.Entry<String, String>> founded = null;
             Map<String, String> mapUriWithNames = null;
             // fixme: в некоторых методах getAllUriNames при каждом вызове getSuggestions, происходит запрос в БД для получения всех имён, это не рационально, я бы сделал логику кеширования имён и обновления кеша в случае добавления/изменения видео или документа
             // или можно сделать RegExp запрос в БД и тогда не нужен кеш вовсе, просто из соображений скорости я стараюсь уменьшить запросы в БД
             switch (item) {
                 case TERM:
-                    List<TermDao.TermInfo> allInfoTerms = termService.getAllInfoTerms();
-                    founded = getSuggestedTerms(queriesQueue.poll(), suggestions, allInfoTerms);
+                    Collection<TermDao.TermInfo> allInfoTerms = termService.getAllInfoTerms();
+                    final List<TermDao.TermInfo> suggested = getSuggested(queriesQueue.poll(), suggestions, allInfoTerms, TermDao.TermInfo::getName);
+                    founded = StreamEx.of(suggested)
+                            .map((i) -> new ImmutablePair<>(UriGenerator.generate(Term.class, i.getName()), i.getName()))
+                            .toList();
                     break;
                 case TOPIC:
                     mapUriWithNames = topicService.getAllUriNames();
@@ -101,7 +106,7 @@ public class NewSuggestionsController {
                     break;
             }
             if (item != Suggestions.TERM)
-                founded = getSuggestedItems(queriesQueue.poll(), suggestions, mapUriWithNames);
+                founded = getSuggested(queriesQueue.poll(), suggestions, mapUriWithNames.entrySet(), Map.Entry::getValue);
 
             suggestions.addAll(founded.subList(0, min(MAX_SUGGESTIONS - suggestions.size(), founded.size())));
         }
@@ -110,35 +115,15 @@ public class NewSuggestionsController {
         return suggestions;
     }
 
-    private List<Map.Entry<String, String>> getSuggestedTerms(String query, List<Map.Entry<String, String>> suggestions, List<TermDao.TermInfo> allInfoTerms) {
-        List<TermDao.TermInfo> temp = new ArrayList<>();
-        List<Map.Entry<String, String>> terms = new ArrayList<>();
-        Pattern pattern = Pattern.compile(query, CASE_INSENSITIVE + UNICODE_CASE);
-        for (TermDao.TermInfo infoTerm : allInfoTerms) {
-            String name = infoTerm.getName();
-            Matcher matcher = pattern.matcher(name);
-            // fixme: suggestions не может содержать просто стринг, будь внимательней к ворнингам :)
-            if (matcher.find() && !suggestions.contains(name) && !terms.contains(name)) {
-                temp.add(infoTerm);
-            }
-        }
-        terms.addAll(temp.stream().collect(Collectors.toMap(termInfo -> UriGenerator.generate(Term.class, termInfo.getName()), termInfo -> termInfo.getName())).entrySet());
-        Collections.reverse(terms);
-        return terms;
-    }
-
-
     protected static String addDuplications(String q) {
         return q.replaceAll("([A-Za-zА-Яа-яЁё])", "$1+-*$1*");
     }
 
-    private List<Map.Entry<String, String>> getSuggestedItems(String query, List<Map.Entry<String, String>> suggestions, Map<String, String> uriWithNames) {
-        List<Map.Entry<String, String>> list = new ArrayList<>();
-
+    private <T> List<T> getSuggested(String query, List<Map.Entry<String, String>> suggestions, Collection<T> uriWithNames, Function<T, String> nameProvider) {
+        List<T> list = new ArrayList<>();
         Pattern pattern = Pattern.compile(query, CASE_INSENSITIVE + UNICODE_CASE);
-        // fixme: дублирование логики
-        for (Map.Entry<String, String> entry : uriWithNames.entrySet()) {
-            String name = entry.getValue();
+        for (T entry : uriWithNames) {
+            String name = nameProvider.apply(entry);
             Matcher matcher = pattern.matcher(name);
             if (matcher.find() && !suggestions.contains(name) && !list.contains(name)) {
                 list.add(entry);
