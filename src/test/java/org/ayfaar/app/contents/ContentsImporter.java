@@ -50,12 +50,7 @@ public class ContentsImporter {
         log.info("Считывание данных");
         List<ItemBook> list = fillListItemBooks(in);
         in.close();
-        System.out.println();
         saveItems(list); //получили готовый массив ItemsRange
-        System.out.println();
-        //todo: сформировать объекты Category, проставить itemRange.category ссылку на URI категории главы
-        //todo: сохранить в БД
-
     }
 
     private static ItemBook getTom(Sheet sheet) throws XLSParsingException{

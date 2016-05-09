@@ -5,6 +5,7 @@ import one.util.streamex.StreamEx;
 import org.ayfaar.app.model.Category;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ContentsService {
@@ -20,6 +21,8 @@ public interface ContentsService {
     StreamEx<? extends CategoryProvider> getAllCategories();
 
     StreamEx<? extends ParagraphProvider> getAllParagraphs();
+
+    Map<String, String> getAllUriNames();
 
     interface CategoryProvider extends ContentsProvider {
         Category getCategory();

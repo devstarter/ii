@@ -5,7 +5,6 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ContentsService;
 import org.ayfaar.app.utils.TermsMarker;
 import org.ayfaar.app.utils.TermsTaggingUpdater;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +34,7 @@ public class NewItemController {
     @Inject TermsMarker termsMarker;
     @Inject AsyncTaskExecutor taskExecutor;
     @Inject TermsTaggingUpdater taggingUpdater;
-    @Inject ApplicationEventPublisher eventPublisher;
+//    @Inject ApplicationEventPublisher eventPublisher;
 
     @RequestMapping
     @ResponseBody

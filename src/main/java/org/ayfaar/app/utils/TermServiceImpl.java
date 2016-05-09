@@ -39,14 +39,14 @@ public class TermServiceImpl implements TermService {
     private Map<String, LinkInfo> links;
     private Map<String, TermProvider> aliasesMap;
     private ArrayList<Map.Entry<String, TermProvider>> sortedList;
+    private List<TermDao.TermInfo> termsInfo;
 
     @PostConstruct
     public void load() {
 		logger.info("Terms loading...");
         aliasesMap = new HashMap<>();
-
         List<TermMorph> allTermMorphs = commonDao.getAll(TermMorph.class);
-        List<TermDao.TermInfo> termsInfo = termDao.getAllTermInfo();
+        termsInfo = termDao.getAllTermInfo();
         List<Link> allSynonyms = linkDao.getAllSynonyms();
 
         links = new HashMap<>();
@@ -225,6 +225,11 @@ public class TermServiceImpl implements TermService {
     @Override
     public List<Map.Entry<String, TermProvider>> getAll() {
         return sortedList;
+    }
+
+    @Override
+    public List<TermDao.TermInfo> getAllInfoTerms() {
+        return termsInfo;
     }
 
     @Override
