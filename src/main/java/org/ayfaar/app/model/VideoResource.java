@@ -38,5 +38,4 @@ public class VideoResource extends UID implements Comparable<VideoResource> {
     public int compareTo(VideoResource o) {
         return AdvanceComparator.INSTANCE.compare(title, o.title);
     }
-
 }

@@ -7,7 +7,6 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.ActionLog;
 import org.ayfaar.app.model.PendingAction;
 import org.ayfaar.app.utils.exceptions.ConfirmationRequiredException;
-import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -19,6 +18,7 @@ import java.util.Date;
 
 import static java.lang.String.format;
 import static org.ayfaar.app.controllers.AuthController.getCurrentAccessLevel;
+import static org.slf4j.helpers.MessageFormatter.arrayFormat;
 
 
 @Service
@@ -39,7 +39,7 @@ public class ModerationService {
     }
 
     public void notice(Action action, Object... args) {
-        String message = MessageFormatter.arrayFormat(action.message, args).getMessage();
+        String message = arrayFormat(action.message, args).getMessage();
         log.info(message);
         final ActionLog actionLog = new ActionLog();
         // actionLog.setMessage(message);
@@ -50,22 +50,29 @@ public class ModerationService {
         // commonDao.save(actionLog);
     }
 
-    public void check(Action action) {
+    public void check(Action action, Object... args) {
         if (!getCurrentAccessLevel().accept(action.getRequiredAccessLevel())) {
-            registerConfirmationRequirement(action);
+            registerConfirmationRequirement(action, args);
             throw new ConfirmationRequiredException(action);
         }
     }
 
-    private void registerConfirmationRequirement(Action action) {
+    private void registerConfirmationRequirement(Action action, Object[] args) {
         final MethodEntry entry = threadLocal.get();
-        if (entry == null) throw new RuntimeException("No moderated method for action "+action);
-
+        if (entry == null) throw new RuntimeException("No moderated method for action " + action);
+        Action rootAction = entry.action;
+        String actionText = "";
+        if (!rootAction.name().equals(action.name())) {
+            actionText += action.message != null ? arrayFormat(action.message, args).getMessage() : action.name();
+            actionText += " для ";
+        }
         final PendingAction pendingAction = new PendingAction();
-        pendingAction.setMessage(format("Action %s for user %s required confirmation", action, getCurrentUserId()));
+        actionText += rootAction.message != null ? arrayFormat(rootAction.message, entry.args).getMessage() : rootAction.name();
+
+        pendingAction.setMessage(format("%s пользователем %s", actionText, getCurrentUserName()));
         pendingAction.setInitiatedBy(getCurrentUserId());
         pendingAction.setCommand(buildCommand(entry));
-        pendingAction.setAction(action);
+        pendingAction.setAction(rootAction);
         commonDao.save(pendingAction);
     }
 
@@ -86,6 +93,10 @@ public class ModerationService {
         return command.substring(0, command.lastIndexOf(",")) + ")";
     }
 
+    public void cancel(Integer id) {
+        commonDao.remove(PendingAction.class, id);
+    }
+
     public void confirm(PendingAction action) {
         if (!getCurrentAccessLevel().accept(action.getAction().getRequiredAccessLevel()))
             throw new ConfirmationRequiredException(action.getAction());
@@ -101,12 +112,16 @@ public class ModerationService {
         return AuthController.getCurrentUser().get().getId();
     }
 
+    private String getCurrentUserName() {
+        return AuthController.getCurrentUser().get().getName();
+    }
+
     void checkMethod(Moderated moderated, Object[] args) {
-        MethodEntry entry = threadLocal.get();
-        if (entry == null) {
-            entry = new MethodEntry(moderated.value(), moderated.command(), args);
-            threadLocal.set(entry);
-        }
-        check(moderated.value());
+//        MethodEntry entry = threadLocal.get();
+//        if (entry == null) {
+        MethodEntry entry = new MethodEntry(moderated.value(), moderated.command(), args);
+        threadLocal.set(entry);
+//        }
+        check(moderated.value(), args);
     }
 }

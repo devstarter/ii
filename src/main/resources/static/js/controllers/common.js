@@ -239,7 +239,7 @@ function ArticleController($scope, $stateParams, $state, $api) {
     });
 }
 
-function CabinetController($scope, $api, $rootScope, auth) {
+function CabinetController($scope, $api, $rootScope, auth, modal) {
     if (!auth.isAuthenticated()) auth.authenticate().then(onAuthenticated);
     else onAuthenticated();
 
@@ -251,8 +251,15 @@ function CabinetController($scope, $api, $rootScope, auth) {
         }
     }
     function loadStatus() {
-        $api.moderation.status().then(function (status) {
-            $scope.status = status;
+        $api.moderation.pendingActions().then(function (pendingActions) {
+            $scope.pendingActions = pendingActions;
+        });
+    }
+    $scope.updateName = function() {
+        modal.prompt("Изменение имени", $scope.user.name, "Изменить").then(function (name) {
+            $api.user.rename(name).then(function () {
+                $scope.user.name = name;
+            });
         });
     }
 }

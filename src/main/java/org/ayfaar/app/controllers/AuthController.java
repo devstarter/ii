@@ -41,16 +41,16 @@ public class AuthController {
      verified:true
      auth_provider:vk
      */
-    public void auth(@RequestParam String access_token,
-                     @RequestParam String email,
-                     @RequestParam String first_name,
-                     @RequestParam String last_name,
-                     @RequestParam String name,
-                     @RequestParam String picture,
-                     @RequestParam String thumbnail,
-                     @RequestParam(required=false) String timezone,
-                     @RequestParam Long id,
-                     @RequestParam OAuthProvider auth_provider) throws IOException{
+    public User registrate(@RequestParam String access_token,
+                           @RequestParam String email,
+                           @RequestParam String first_name,
+                           @RequestParam String last_name,
+                           @RequestParam String name,
+                           @RequestParam String picture,
+                           @RequestParam String thumbnail,
+                           @RequestParam(required=false) String timezone,
+                           @RequestParam Long id,
+                           @RequestParam OAuthProvider auth_provider) throws IOException{
         User user = commonDao.getOpt(User.class, "email", email).orElse(
                 User.builder()
                     .accessToken(access_token)
@@ -74,6 +74,7 @@ public class AuthController {
         Authentication request = new UsernamePasswordAuthenticationToken(user, null);
         Authentication authentication = customAuthenticationProvider.authenticate(request);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        return user;
     }
 
     public static Optional<User> getCurrentUser(){
@@ -82,7 +83,7 @@ public class AuthController {
     }
 
     public static UserRole getCurrentAccessLevel() {
-        return UserRole.ROLE_ADMIN;
-//        return getCurrentUser().isPresent() ? getCurrentUser().get().getRole() : UserRole.ROLE_ANONYMOUS;
+//        return UserRole.ROLE_ADMIN;
+        return getCurrentUser().isPresent() ? getCurrentUser().get().getRole() : UserRole.ROLE_ANONYMOUS;
     }
 }

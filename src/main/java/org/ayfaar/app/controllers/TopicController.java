@@ -153,7 +153,7 @@ public class TopicController {
 
     @RequestMapping("add-child")
     @Moderated(value = Action.TOPIC_ADD_CHILD, command = "@topicController.addChild")
-    public void addChild(@RequestParam String name, @RequestParam String child) {
+    public void addChild(@RequestParam String child, @RequestParam String name) {
         if (topicService.exist(name) && topicService.exist(child)) {
             boolean alreadyParent = topicService.getByName(child).children().anyMatch(c -> c.name().equals(name));
             if (alreadyParent) {

@@ -29,14 +29,14 @@ public class CategoryController {
     @Autowired LinkDao linkDao;
     @Autowired ItemDao itemDao;
     @Autowired ContentsHelper contentsHelper;
-    @Autowired
-    ContentsService contentsService;
+    @Autowired ContentsService contentsService;
 
-    @ContentsCache //fixme временно пока идёт активная работа с ним
+    @ContentsCache
     @RequestMapping
     @ResponseBody
     public Object getContents(@RequestParam("name") String name) {
         name = UriGenerator.getValueFromUri(Category.class, name);
+        name = name.replace("параграф:", "");
         return contentsHelper.createContents(name);
     }
 

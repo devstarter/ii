@@ -1,9 +1,10 @@
 <div ng-show="user">
-    <img ng-src="{{user.thumbnail}}" style="width: 30px;height: 30px;border-radius: 50%;"/> {{user.name}}
+    <img ng-src="{{user.thumbnail}}" style="border-radius: 50%;"/>
+    {{user.name}} <i ng-click="updateName()" class="btn glyphicon glyphicon-pencil" title="Изменить имя"></i>
 
-    <h2>Действия нуждающиеся в подтверждении</h2>
-    <div ng-repeat="action in status.pending_actions">
-        <div>{{action.text}}</div>
+    <h2 ng-show="pendingActions.length">Действия нуждающиеся в подтверждении</h2>
+    <div ng-repeat="action in pendingActions" style="padding-top: 10px">
+        <span>{{action.text}}</span>
         <a class="btn btn-default" ng-click="confirm(action.id)">Подтвердить</a>
     </div>
 </div>

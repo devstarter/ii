@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import static java.lang.String.format;
 import static java.util.regex.Pattern.*;
 
-@Service
+//@Service
 public class TranslationService {
     private final String MARK_IN = "‹";
     private final String MARK_OUT = "›";

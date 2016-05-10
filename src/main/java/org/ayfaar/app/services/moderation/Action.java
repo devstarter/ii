@@ -8,8 +8,8 @@ import static org.ayfaar.app.services.moderation.UserRole.ROLE_EDITOR;
 
 public enum Action {
     TOPIC (ROLE_EDITOR),
-    TOPIC_CREATE        (TOPIC, ROLE_ADMIN),
-    TOPIC_ADD_CHILD     (TOPIC, ROLE_ADMIN),
+    TOPIC_CREATE        ("Создание темы `{}`", TOPIC, ROLE_ADMIN),
+    TOPIC_ADD_CHILD     ("Создание дочерней темы `{}` для `{}`", TOPIC, ROLE_ADMIN),
     TOPIC_LINK_RESOURCE (TOPIC),
     TOPIC_RESOURCE_LINK_UPDATE(TOPIC),
 
@@ -17,7 +17,8 @@ public enum Action {
     ITEMS_RANGE_CREATE  (ITEMS_RANGE),
     ITEMS_RANGE_UPDATE  (ITEMS_RANGE),
 
-    VIDEO_ADDED("Добавлено видео '{}' (<uri>{}</uri>)");
+    VIDEO_ADDED("Добавлено видео '{}' (<uri>{}</uri>)"),
+    USER_RENAME("Имя {} измененно на {}");
 
     private Action parent = null;
     private UserRole requiredAccessLevel;
@@ -25,16 +26,14 @@ public enum Action {
     public String message;
 
 
-    Action() {
-        this(null, null);
-    }
     Action(Action parent) {
-        this(parent, null);
+        this(null, parent, null);
     }
     Action(UserRole requiredAccessLevel) {
-        this(null, requiredAccessLevel);
+        this(null, null, requiredAccessLevel);
     }
-    Action(Action parent, UserRole requiredAccessLevel) {
+    Action(String message, Action parent, UserRole requiredAccessLevel) {
+        this.message = message;
         this.parent = parent;
         this.requiredAccessLevel = requiredAccessLevel;
         if (this.parent != null) {

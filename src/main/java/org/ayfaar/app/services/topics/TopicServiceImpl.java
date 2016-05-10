@@ -85,7 +85,7 @@ class TopicServiceImpl implements TopicService {
     public TopicProvider findOrCreate(String name, boolean caseSensitive) {
         return get(UriGenerator.generate(Topic.class, name), caseSensitive)
                 .orElseGet(() -> {
-                    moderationService.check(Action.TOPIC_CREATE);
+                    moderationService.check(Action.TOPIC_CREATE, name);
                     final Topic topic = commonDao.save(new Topic(name));
                     final TopicProviderImpl provider = new TopicProviderImpl(topic);
                     topics.put(provider.uri(), provider);

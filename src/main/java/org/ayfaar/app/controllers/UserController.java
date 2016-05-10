@@ -2,6 +2,8 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.User;
+import org.ayfaar.app.services.moderation.Action;
+import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.moderation.UserRole;
 import org.ayfaar.app.utils.exceptions.Exceptions;
 import org.ayfaar.app.utils.exceptions.LogicalException;
@@ -19,6 +21,7 @@ import java.util.List;
 @RequestMapping("api/user")
 public class UserController {
     @Inject CommonDao commonDao;
+    @Inject ModerationService moderationService;
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping
@@ -47,11 +50,13 @@ public class UserController {
         return current;
     }
 
-    @RequestMapping("current/rename")
+    @RequestMapping(value = "current/rename", method = RequestMethod.POST)
     @Secured("authenticated")
     public User renameCurrent(@AuthenticationPrincipal User current, @RequestParam String name){
+        final String oldName = current.getName();
         current.setName(name);
         commonDao.save(current);
+        moderationService.notice(Action.USER_RENAME, oldName, name);
         return current;
     }
 }

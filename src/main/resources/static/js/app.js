@@ -291,11 +291,14 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             user: {
                 getCurrent: function () {
                     return api.get("user/current")
+                },
+                rename: function (newName) {
+                    return api.authPost("user/current/rename", {name: newName})
                 }
             },
             moderation: {
-                status: function () {
-                    return api.authGet("moderation/status")
+                pendingActions: function () {
+                    return api.authGet("moderation/pending_actions")
                 },
                 confirm: function (id) {
                     return api.authGet("moderation/"+id+"/confirm")
@@ -511,7 +514,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     var provider = $cookies.getObject("auth_provider");
                     if (provider) {
                         helloAuthenticate(provider).then(function (user) {
-                            $api.auth.registrate(user).then(function () {
+                            $api.auth.registrate(user).then(function (user) {
                                 $rootScope.user = user;
                                 deferred.resolve(user);
                             });

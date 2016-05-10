@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.inject.Inject;
 import java.util.List;
 
+import static java.util.Comparator.comparingInt;
+
 @RestController
 @RequestMapping("api/moderation")
 @PreAuthorize("authenticated")
@@ -29,7 +31,7 @@ public class ModerationController {
         // show only my users (this user can be linked with another as children for personal moderation)
         return StreamEx.of(commonDao.getList(PendingAction.class, "confirmedBy", null))
                 .filter(a -> AuthController.getCurrentAccessLevel().accept(a.getAction().getRequiredAccessLevel()))
-                .sortedBy(PendingAction::getId).reverseSorted()
+                .reverseSorted(comparingInt(PendingAction::getId))
                 .map(PendingActionPresentation::new)
                 .toList();
     }
@@ -42,8 +44,13 @@ public class ModerationController {
 
     @RequestMapping("{id}/confirm")
     public void confirm(@PathVariable Integer id) {
-        final PendingAction event = commonDao.getOpt(PendingAction.class, id).get();
-        service.confirm(event);
+        final PendingAction action = commonDao.getOpt(PendingAction.class, id).get();
+        service.confirm(action);
+    }
+
+    @RequestMapping("{id}/cancel")
+    public void cancel(@PathVariable Integer id) {
+        service.cancel(id);
     }
 
     private class PendingActionPresentation {
