@@ -6,7 +6,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.ayfaar.app.model.Topic;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -23,7 +22,7 @@ public class TopicsExcelParser {
         int emptyCount = 0;
 
         try {
-            in = TopicsExcelParser.class.getResourceAsStream("/topics/Классификатор методики МИЦИАР.xlsx"); //from resource dir
+            in = TopicsExcelParser.class.getResourceAsStream("/topics/Классификатор методики МИЦИАР.xlsx");
             wb = new XSSFWorkbook(in);
         } catch (IOException e) {
             log.error("File is not find", e);
@@ -48,14 +47,13 @@ public class TopicsExcelParser {
                         break;
                     default:
                         if (cellIndex == 1) {
-                            list.add("EMPTY" + emptyCount); //if key is empty, add "EMPTY", если не нужно заменить " "
-                            emptyCount++;
+                            list.clear();
                             cellIndex++;
                         }
                         break;
                 }
             }
-            if (list.size() >= 1) {
+            if (list.size() >= 1 && list.get(1).length()==2) {
                 codeTopicMap.put(list.get(1), list.get(0));
             }
         }
