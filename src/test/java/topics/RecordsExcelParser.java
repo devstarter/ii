@@ -16,11 +16,14 @@ import java.util.*;
 @Slf4j
 public class RecordsExcelParser {
 
+    public static final int LAST_ROW_INDEX = 2471;
+
     public static List<Record> parse() {
 
         List<Record> records = new ArrayList<>();
         InputStream in;
         XSSFWorkbook wb = null;
+
 
         try {
             in = RecordsExcelParser.class.getResourceAsStream("/topics/2014-06-10_1, 2005-2013.xlsx");
@@ -33,6 +36,7 @@ public class RecordsExcelParser {
         Iterator<Row> rowIterator = sheet.iterator();
         List<String> list;
         boolean end = false;
+
         while (rowIterator.hasNext()&&!end) {
             int cellIndex = 0;
             Row row = rowIterator.next();
@@ -40,22 +44,23 @@ public class RecordsExcelParser {
             list = new ArrayList<>();
             Record record = new Record();
 
-            while (cellIterator.hasNext()&&cellIndex<13) {
+            while (cellIterator.hasNext()&&cellIndex < 13) {
                 cellIndex++;
                 Cell cell = cellIterator.next();
                 int columnIndex = cell.getColumnIndex();
                 int cellType = cell.getCellType();
-                if (cell.getRowIndex()==2471) end = true;
+                if (cell.getRowIndex() == LAST_ROW_INDEX) end = true;
+
                 switch (cellType) {
                     case Cell.CELL_TYPE_STRING:
                         String stringCellValue = cell.getStringCellValue();
-                        if (columnIndex ==4)
+
+                        if (columnIndex == 4)
                             record.setName(stringCellValue);
+
                         if (columnIndex == 12 && cell.getStringCellValue()!=null) {
                             String[] split = stringCellValue.split("[,;:.|'!?\\s]+");
-                            for (String s : split) {
-                                list.add(s);
-                            }
+                            for (String s : split) list.add(s);
                             record.setTopicCods(list);
                         }
                         break;
