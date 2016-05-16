@@ -8,6 +8,8 @@ import org.ayfaar.app.model.PendingAction;
 import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.user.UserPresentation;
 import org.ayfaar.app.services.user.UserService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import java.util.List;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping("api/moderation")
@@ -35,9 +39,9 @@ public class ModerationController {
     }
 
     @RequestMapping("last_actions")
-    public List<ActionLog> getLastActions() {
+    public List<ActionLog> getLastActions(@PageableDefault(size = 3, sort = "createdAt", direction = DESC) Pageable pageable) {
         // организовать постраничную выдачу ActionLog, сначала выдавать самые последние
-        return null;
+        return commonDao.getPage(ActionLog.class, pageable);
     }
 
     @RequestMapping("{id}/confirm")
