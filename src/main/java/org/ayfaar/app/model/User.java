@@ -38,8 +38,6 @@ public class User {
     private Date createdAt = new Date();
     private Date lastVisitAt;
     private Long providerId;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private Set<ActionLog> actionLogList = new HashSet<ActionLog>();
 
     @Builder
     public User(String email, String accessToken, String firstName, String lastName, String name, String picture, String thumbnail, String timezone, Long providerId, OAuthProvider oauthProvider) {

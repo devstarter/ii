@@ -43,12 +43,10 @@ public class ModerationService {
         log.info(message);
         final ActionLog actionLog = new ActionLog();
         actionLog.setMessage(message);
-        // указать время создания ActionLog
-        actionLog.setCreatedAt(new Date());
         // указать такущего пользователя
-        actionLog.setUser(AuthController.getCurrentUser().get());
+        actionLog.setUserId(getCurrentUserId());
         // указать action
-        actionLog.setAction(action.toString());
+        actionLog.setAction(action);
         commonDao.save(actionLog);
     }
 

@@ -3,6 +3,7 @@ package org.ayfaar.app.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.ayfaar.app.services.moderation.Action;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,12 +16,11 @@ public class ActionLog {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     @Column(nullable = false)
-    private Date createdAt;
+    private Date createdAt = new Date();
     @Column(nullable = false)
     private String message;
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
     @Column(nullable = false)
-    private String action;
+    private Integer userId;
+    @Column(nullable = false)
+    private Action action;
 }
