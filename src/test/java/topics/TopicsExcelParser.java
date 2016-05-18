@@ -10,16 +10,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-
 @Slf4j
 public class TopicsExcelParser {
 
     public static Map<String, String> parse() {
         Map<String, String> codeTopicMap = new HashMap<>();
-        Topic topic;
         InputStream in;
         XSSFWorkbook wb = null;
-        int emptyCount = 0;
 
         try {
             in = TopicsExcelParser.class.getResourceAsStream("/topics/Классификатор методики МИЦИАР.xlsx");
@@ -41,8 +38,17 @@ public class TopicsExcelParser {
                 int cellType = cell.getCellType();
                 switch (cellType) {
                     case Cell.CELL_TYPE_STRING:
-                        if (cellIndex < 2)
-                            list.add(cell.getStringCellValue());
+                        if (cellIndex < 2){
+                            String stringCellValue = cell.getStringCellValue();
+                            if (stringCellValue.endsWith(".")) {//если в файле нет точек вконце предложений - можно убрать этот if
+                                stringCellValue = stringCellValue.substring(0,stringCellValue.length()-1);
+                                //System.out.println(stringCellValue); //раскомментировать чтоб посмотреть проблемные строки)))
+                            }
+                            if (stringCellValue.equals("ИИССИИДИ-Центры и комплиментарной системе (общая инфо, что это такое)"))
+                                stringCellValue = "ИИССИИДИ-Центры и комплиментарная система (общая информация)"; //исправить в ексель и удалить if
+                            if (stringCellValue.equals("НУУЛЛ-ВВУ, как Образ человека, лишённого активности первых 4-ёх Уровней первых двух ИИ-Центров"))
+                                stringCellValue = "НУУЛЛ-ВВУ, как Образ человека, лишённого активности первых 4-ёх Уровней первых двух ИИ-Центров.НУУЛЛ-ВВУ как Эталон для ориентации направлений перефокусировок и Образ для работы с методиками"; //исправить в ексель и удалить if
+                            list.add(stringCellValue);}
                         cellIndex++;
                         break;
                     default:

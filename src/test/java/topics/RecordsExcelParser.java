@@ -5,22 +5,19 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.ayfaar.app.model.Record;
-import org.ayfaar.app.model.Topic;
-
+import org.ayfaar.app.model.RecordCodes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-
 
 @Slf4j
 public class RecordsExcelParser {
 
     public static final int LAST_ROW_INDEX = 2471;
 
-    public static List<Record> parse() {
+    public static List<RecordCodes> parse() {
 
-        List<Record> records = new ArrayList<>();
+        List<RecordCodes> recordCodes = new ArrayList<>();
         InputStream in;
         XSSFWorkbook wb = null;
 
@@ -42,7 +39,7 @@ public class RecordsExcelParser {
             Row row = rowIterator.next();
             Iterator<Cell> cellIterator = row.iterator();
             list = new ArrayList<>();
-            Record record = new Record();
+            RecordCodes recordCode = new RecordCodes();
 
             while (cellIterator.hasNext()&&cellIndex < 13) {
                 cellIndex++;
@@ -55,23 +52,28 @@ public class RecordsExcelParser {
                     case Cell.CELL_TYPE_STRING:
                         String stringCellValue = cell.getStringCellValue();
 
-                        if (columnIndex == 4)
-                            record.setName(stringCellValue);
+                        if (columnIndex == 4) {
+                            if (stringCellValue.length()>248) {
+                                stringCellValue = stringCellValue.substring(0, 240);
+                            }
+                            recordCode.setName(stringCellValue);
+                        }
 
                         if (columnIndex == 12 && cell.getStringCellValue()!=null) {
                             String[] split = stringCellValue.split("[,;:.|'!?\\s]+");
                             for (String s : split) list.add(s);
-                            record.setTopicCods(list);
+                            recordCode.setTopicCods(list);
                         }
                         break;
 
                     case Cell.CELL_TYPE_FORMULA:
-                        if (columnIndex == 3)record.setCode(cell.getStringCellValue());
+                        if (columnIndex == 3) recordCode.setCode(cell.getStringCellValue());
                         break;
                 }
             }
-            if (row.getRowNum()!=0)records.add(record);
+            if (row.getRowNum()!=0) recordCodes.add(recordCode);
         }
-        return records;
+        return recordCodes;
     }
+
 }

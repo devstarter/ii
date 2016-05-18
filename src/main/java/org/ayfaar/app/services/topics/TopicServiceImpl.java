@@ -258,6 +258,7 @@ class TopicServiceImpl implements TopicService {
             resources.item.addAll(prepareItemResource());
             resources.itemsRange.addAll(prepareResource(ItemsRange.class));
             resources.document.addAll(prepareResource(Document.class));
+            resources.record.addAll(prepareResource(Record.class));
             return resources;
         }
 

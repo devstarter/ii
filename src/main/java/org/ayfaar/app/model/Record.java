@@ -1,14 +1,28 @@
 package org.ayfaar.app.model;
 
-import java.util.List;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.ayfaar.app.annotations.Uri;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+import java.util.Date;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class Record {
+@PrimaryKeyJoinColumn(name="uri")
+@Uri(nameSpace = "record:", field = "code")
+public class Record extends UID{
 
-    String code;
-    String name;
-    List<String> topicCods;
+    private String code;
+    private String name;
+    private String recorderAt;
+    private Date createdAt;
+
+    @Override
+    public String toTitle() {
+        return code;
+    }
 }
