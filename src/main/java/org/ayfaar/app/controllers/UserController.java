@@ -5,7 +5,7 @@ import org.ayfaar.app.model.User;
 import org.ayfaar.app.services.moderation.Action;
 import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.moderation.UserRole;
-import org.ayfaar.app.utils.exceptions.Exceptions;
+import org.ayfaar.app.utils.exceptions.ExceptionCode;
 import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -32,15 +32,15 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping("{email}")
     public User getUserDetail(@PathVariable String email) {
-        return commonDao.getOpt(User.class, email).orElseThrow(() -> new LogicalException(Exceptions.USER_NOT_FOUND, email));
+        return commonDao.getOpt(User.class, email).orElseThrow(() -> new LogicalException(ExceptionCode.USER_NOT_FOUND, email));
     }
 
     @Secured("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "update-role", method = RequestMethod.POST)
     public void updateRole(@RequestParam String email, @RequestParam int numRole){
-        User user = commonDao.getOpt(User.class, email).orElseThrow(() -> new LogicalException(Exceptions.USER_NOT_FOUND, email));
+        User user = commonDao.getOpt(User.class, email).orElseThrow(() -> new LogicalException(ExceptionCode.USER_NOT_FOUND, email));
         final UserRole accessLevel = UserRole.fromPrecedence(numRole)
-                .orElseThrow(() -> new LogicalException(Exceptions.ROLE_NOT_FOUND, numRole));
+                .orElseThrow(() -> new LogicalException(ExceptionCode.ROLE_NOT_FOUND, numRole));
         user.setRole(accessLevel);
         commonDao.save(user);
     }

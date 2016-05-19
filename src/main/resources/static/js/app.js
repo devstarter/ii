@@ -149,13 +149,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     headers: { 'Content-Type': "application/x-www-form-urlencoded; charset=utf-8" },
                     transformRequest: $httpParamSerializer
                 }).then(function(response){
-                        deferred.resolve(response.data)
-                    },function(response){
-                        if (!moderatedAction(response)) {
-                            errorService.resolve(response.data.error);
-                        }
-                        deferred.reject(response);
-                    });
+                    deferred.resolve(response.data)
+                },function(response){
+                    if (!moderatedAction(response)) {
+                        errorService.resolve(response.data.error);
+                    }
+                    deferred.reject(response);
+                });
                 return deferred.promise;
             },
             get: function(url, data, skipError) {
@@ -168,13 +168,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     cache: cache,
                     timeout: 300000
                 }).then(function(response){
-                        deferred.resolve(response.data)
-                    },function(response){
-                        if (!moderatedAction(response) && !skipError) {
-                            errorService.resolve(response.data.error);
-                        }
-                        deferred.reject(response);
-                    });
+                    deferred.resolve(response.data)
+                },function(response){
+                    if (!moderatedAction(response) && !skipError) {
+                        errorService.resolve(response.data.error);
+                    }
+                    deferred.reject(response);
+                });
                 return deferred.promise;
             },
             item: {
@@ -258,7 +258,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     return api.authGet("topic/unlink", {name: main, linked: linked})
                 },
                 suggest: function (q) {
-                    return api.get("topic/suggest", {q: q})  
+                    return api.get("topic/suggest", {q: q})
                 },
                 /**
                  * @param name имя топика
@@ -341,7 +341,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     case 'paragraph':
                         return uri.replace("ии:пункты:", "");
                     case 'video':
-                        return object ? object.title : "Undefined";
+                        return object ? object.title : uri;
                 }
             },
             getType: function(uri) {
@@ -388,15 +388,15 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     })
                 }
             }
-             /*link: function(scope, element, attrs) {
-                var entity = scope[attrs.ngModel];
-                var name = entity.uri.replace("ии:термин:", "");
-                var uiSref = "term({name:'"+name+"'})";
-                attrs.$set('uiSref', uiSref);
-                element.removeAttr('ng-transclude');
-                element.append(name);
-                $compile(element)(scope);
-            }*/
+            /*link: function(scope, element, attrs) {
+             var entity = scope[attrs.ngModel];
+             var name = entity.uri.replace("ии:термин:", "");
+             var uiSref = "term({name:'"+name+"'})";
+             attrs.$set('uiSref', uiSref);
+             element.removeAttr('ng-transclude');
+             element.append(name);
+             $compile(element)(scope);
+             }*/
         };
     })
     .service('messager', function($rootScope) {
@@ -732,6 +732,17 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         };
     })
+    .directive('uri', function(entityService) {
+        return {
+            restrict: 'E',
+            compile : function(element, attr, linker) {
+                return function ($scope, $element, $attr) {
+                    var uri = $element.html();
+                    $element.html("<a href='"+getUrl(uri)+"'>"+entityService.getName(uri) + "</a>");
+                }
+            }
+        };
+    })
     .directive("iiBind", function($compile) {
         // inspired by http://stackoverflow.com/a/25516311/975169
         return {
@@ -760,27 +771,27 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     if (!getSelectionText()) {
                         alert("Выберете текст");
                     } else
-                    $modal.open({
-                        templateUrl: 'contribute-form.html',
-                        controller: function ($scope, $modalInstance) {
-                            $scope.text = getSelectionText();
-                            $scope.quote = function () {
-                                if (!$scope.term) {
-                                    alert("Укажите термин");
-                                    return;
+                        $modal.open({
+                            templateUrl: 'contribute-form.html',
+                            controller: function ($scope, $modalInstance) {
+                                $scope.text = getSelectionText();
+                                $scope.quote = function () {
+                                    if (!$scope.term) {
+                                        alert("Укажите термин");
+                                        return;
+                                    }
+                                    $api.search.quote(scope.uri, $scope.term, $scope.text).then(function () {
+                                        $modalInstance.close();
+                                    });
+                                };
+                                $scope.link = function (type) {
+                                    if (!$scope.term || !$scope.text) return;
+                                    return $api.term.link($scope.term, $scope.text, type).then(function () {
+                                        $modalInstance.close();
+                                    });
                                 }
-                                $api.search.quote(scope.uri, $scope.term, $scope.text).then(function () {
-                                    $modalInstance.close();
-                                });
-                            };
-                            $scope.link = function (type) {
-                                if (!$scope.term || !$scope.text) return;
-                                return $api.term.link($scope.term, $scope.text, type).then(function () {
-                                    $modalInstance.close();
-                                });
                             }
-                        }
-                    });
+                        });
                 })
             }
         }
@@ -799,7 +810,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         +"<span ng-click='collapse = !collapse' ng-show='collapse'>...</span>"
                         +"<span ng-hide='collapse'>"+$element.html()+"</span>"
                         +bracketSpan+")</span>"
-                    +"</span>";
+                        +"</span>";
                     $element.html("");
                     $element.append($compile(html)($scope));
                 }
@@ -821,11 +832,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
     })
     .factory('poster', function($httpParamSerializer) {
         return {
-                action: "save",
-                method: "POST",
-                isArray: false,
-                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
-                transformRequest: $httpParamSerializer
+            action: "save",
+            method: "POST",
+            isArray: false,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+            transformRequest: $httpParamSerializer
         }
     })
     .factory('Video', function($resource, config, poster) {
@@ -965,10 +976,10 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 scope.removeTopic = function (topic) {
                     modal.confirm("Подтверждение", "Коментарий и оценка будут утеряны. Вы уверены что желаете убрать тему?", "Убрать тему")
                         .then(function () {
-                        Topic.deleteForUri({uri: scope.ownerUri, topicUri: topic.uri}).$promise.then(function (topic) {
-                            getTopics();
-                        });
-                    })
+                            Topic.deleteForUri({uri: scope.ownerUri, topicUri: topic.uri}).$promise.then(function (topic) {
+                                getTopics();
+                            });
+                        })
                 };
                 scope.getSuggestions = function (q) {
                     return Topic.suggest({q: q}).$promise
@@ -1000,19 +1011,19 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
     .directive('parents', function(entityService) {
         return {
             template: '<span ng-repeat="parent in parents">' +
-                    '<a class="btn btn-link" ii-ref="parent">{{parent._label}}</a>{{$last ? "" : "/"}}</span>'
+            '<a class="btn btn-link" ii-ref="parent">{{parent._label}}</a>{{$last ? "" : "/"}}</span>'
         }
     })
     .directive("videoCard", function () {
         return {
             scope: { video: '='},
-            templateUrl: "card-video"    
+            templateUrl: "card-video"
         }
     })
     .directive("documentCard", function () {
         return {
             scope: { doc: '='},
-            templateUrl: "card-document"    
+            templateUrl: "card-document"
         }
     })
     .run(function($state, entityService, $rootScope, analytics){

@@ -7,10 +7,7 @@ import org.ayfaar.app.services.moderation.UserRole;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -21,13 +18,19 @@ import java.util.Optional;
 @RequestMapping("api/auth")
 public class AuthController {
 
-    @Inject CommonDao commonDao;
-    @Inject SecurityConfig.CustomAuthenticationProvider customAuthenticationProvider;
+    private final CommonDao commonDao;
+    private final SecurityConfig.CustomAuthenticationProvider customAuthenticationProvider;
+
+    @Inject
+    public AuthController(SecurityConfig.CustomAuthenticationProvider customAuthenticationProvider, CommonDao commonDao) {
+        this.customAuthenticationProvider = customAuthenticationProvider;
+        this.commonDao = commonDao;
+    }
 
     @RequestMapping(method = RequestMethod.POST)
-    /**
-     * Регистрируем нового пользователя и/или (если такой уже есть) назначаем его текущим для этой сессии
-     *
+    /*
+     Регистрируем нового пользователя и/или (если такой уже есть) назначаем его текущим для этой сессии
+
      Пример входных данных:
      access_token:CAANCEx9hQ8ABACe5zBAPE1fThMsaJDHQ0oolOvZCsiOAoFgbj65BiZC5qFG557wYl71CRLZBBipi1JeZCZABkeD7PuurKplra04wvaGSiNnHdnWQZAqZBt1sLtps38DDOJ0RAUNlSDKnMjAkt7bZClUtxLCCF1lQk4NLIXMtuxXiKkLCnojk7KtoQbZBRbPTqzdadfbifnGUrOAZDZD
      email:sllouyssgort@gmail.com
@@ -70,6 +73,16 @@ public class AuthController {
         }
         user.setLastVisitAt(new Date());
         commonDao.save(user);
+
+        Authentication request = new UsernamePasswordAuthenticationToken(user, null);
+        Authentication authentication = customAuthenticationProvider.authenticate(request);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return user;
+    }
+
+    @RequestMapping("login-as/{userId}")
+    public User loginAs(@PathVariable Integer userId) throws IOException{
+        User user = commonDao.getOpt(User.class, userId).get();
 
         Authentication request = new UsernamePasswordAuthenticationToken(user, null);
         Authentication authentication = customAuthenticationProvider.authenticate(request);

@@ -4,8 +4,8 @@
 
     <h2 ng-show="pendingActions.length">Действия нуждающиеся в подтверждении</h2>
     <div ng-repeat="action in pendingActions" style="padding-top: 10px">
-        <span>{{action.text}}</span>
-        <a class="btn btn-default" ng-click="confirm(action.id)">Подтвердить</a>
+        <span ii-bind="action.text"></span>
+        <a class="btn btn-default" ng-hide="action.owner" ng-click="confirm(action.id)">Подтвердить</a>
         <a class="btn btn-link" ng-click="cancel(action.id)">Отменить</a>
     </div>
 </div>
