@@ -161,7 +161,7 @@ class TopicServiceImpl implements TopicService {
             }
             linkDao.save(link);
             registerLink(link, uid);
-
+            moderationService.notice(Action.TOPIC_RESOURCE_LINKED, uri(), uid.getUri());
             return link;
         }
 
@@ -213,14 +213,18 @@ class TopicServiceImpl implements TopicService {
         }
 
         @Override
-        public void addChild(String name) {
-            addChild(findOrCreate(name));
+        public TopicProvider addChild(String name) {
+            final TopicProvider child = findOrCreate(name);
+            addChild(child);
+            return child;
         }
 
         @Override
-        public void unlink(String linked) {
-            final Link link = linksMap.remove(getByName(linked).topic());
+        public TopicProvider unlink(String linkedTopicName) {
+            final TopicProvider linkedTopic = getByName(linkedTopicName);
+            final Link link = linksMap.remove(linkedTopic.topic());
             linkDao.remove(link.getLinkId());
+            return linkedTopic;
         }
 
         @Override

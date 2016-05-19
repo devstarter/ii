@@ -35,6 +35,9 @@ public class TopicController {
     @Inject LinkService linkService;
 
     @RequestMapping("for/{uri}")
+    /**
+     * Get all topics with any UID by his uri
+     */
     public List<LinkedTopicPresentation> getForUri(@PathVariable String uri) throws Exception {
         hasLength(uri);
         final List<Link> links = linkDao.getAllLinks(uri);
@@ -92,7 +95,7 @@ public class TopicController {
     }
 
     @RequestMapping(value = "for/items-range", method = POST)
-    @Moderated(value = Action.TOPIC_LINK_RESOURCE, command = "@topicController.addFor")
+    @Moderated(value = Action.TOPIC_LINK_RANGE, command = "@topicController.addFor")
     public void addFor(@RequestParam String from,
                        @RequestParam String to,
                        @RequestParam String topicName,
@@ -128,6 +131,7 @@ public class TopicController {
     }
 
     @RequestMapping(value = "for", method = DELETE)
+    // todo move this logic to topic service
     public void deleteFor(@RequestParam String uri, @RequestParam String topicUri) throws Exception {
         hasLength(uri);
         hasLength(topicUri);
@@ -136,6 +140,7 @@ public class TopicController {
             if ((link.getUid1() instanceof Topic && link.getUid1().getUri().equals(topicUri)) ||
                     (link.getUid2() instanceof Topic && link.getUid2().getUri().equals(topicUri))) {
                 linkDao.remove(link.getLinkId());
+                moderationService.notice(Action.TOPIC_RESOURCE_UNLINKED, topicUri, uri);
                 return; // remove only first one
             }
         }
@@ -160,13 +165,17 @@ public class TopicController {
                 throw new RuntimeException("The parent has a child for the given name");
             }
         }
-        final TopicProvider topic = topicService.findOrCreate(name);
-        if (!topic.getChild(child).isPresent()) topic.addChild(child);
+        final TopicProvider parentTopic = topicService.findOrCreate(name);
+        if (!parentTopic.getChild(child).isPresent()) {
+            final TopicProvider childTopic = parentTopic.addChild(child);
+            moderationService.notice(Action.TOPIC_CHILD_ADDED, parentTopic.uri(), childTopic.uri());
+        }
     }
 
     @RequestMapping("unlink")
-    public void unlink(@RequestParam String name,@RequestParam String linked) {
-        topicService.getByName(name).unlink(linked);
+    public void unlink(@RequestParam String name, @RequestParam String linked) {
+        final TopicProvider unlinked = topicService.getByName(name).unlink(linked);
+        if (unlinked != null) moderationService.notice(Action.TOPIC_TOPIC_UNLINKED);
     }
 
     @RequestMapping("merge")

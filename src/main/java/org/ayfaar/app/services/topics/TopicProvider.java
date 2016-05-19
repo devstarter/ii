@@ -42,8 +42,8 @@ public interface TopicProvider {
     @NotNull
     String uri();
 
-    void addChild(String name);
-    void unlink(String linked);
+    TopicProvider addChild(String name);
+    TopicProvider unlink(String linkedTopicName);
     default void unlink(TopicProvider linked) {
         unlink(linked.name());
     }

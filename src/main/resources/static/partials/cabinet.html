@@ -6,6 +6,7 @@
     <div ng-repeat="action in pendingActions" style="padding-top: 10px">
         <span>{{action.text}}</span>
         <a class="btn btn-default" ng-click="confirm(action.id)">Подтвердить</a>
+        <a class="btn btn-link" ng-click="cancel(action.id)">Отменить</a>
     </div>
 </div>
 <h1 ng-hide="user">Для доступа требуется авторизация</h1>

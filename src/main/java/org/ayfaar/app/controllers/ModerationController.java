@@ -11,6 +11,7 @@ import org.ayfaar.app.services.user.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
@@ -48,7 +49,7 @@ public class ModerationController {
         service.confirm(action);
     }
 
-    @RequestMapping("{id}/cancel")
+    @RequestMapping(value = "{id}/cancel", method = RequestMethod.POST)
     public void cancel(@PathVariable Integer id) {
         service.cancel(id);
     }

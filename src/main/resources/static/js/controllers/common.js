@@ -249,6 +249,9 @@ function CabinetController($scope, $api, $rootScope, auth, modal) {
         $scope.confirm = function (id) {
             $api.moderation.confirm(id).then(loadStatus);
         }
+        $scope.cancel = function (id) {
+            $api.moderation.cancel(id).then(loadStatus);
+        }
     }
     function loadStatus() {
         $api.moderation.pendingActions().then(function (pendingActions) {

@@ -10,15 +10,20 @@ public enum Action {
     TOPIC (ROLE_EDITOR),
     TOPIC_CREATE        ("Создание темы `{}`", TOPIC, ROLE_ADMIN),
     TOPIC_ADD_CHILD     ("Создание дочерней темы `{}` для `{}`", TOPIC, ROLE_ADMIN),
-    TOPIC_LINK_RESOURCE (TOPIC),
+    TOPIC_LINK_RESOURCE ("Добавление ресурса <uri>{}</uri> к теме {}", TOPIC),
+    TOPIC_LINK_RANGE    ("Добавление диапалоза с {} по {} к теме {}", TOPIC),
     TOPIC_RESOURCE_LINK_UPDATE(TOPIC),
+    TOPIC_RESOURCE_LINKED("Тема <uri>{}</uri> прикреплена к <uri>{}</uri>"),
 
     ITEMS_RANGE (ROLE_EDITOR),
     ITEMS_RANGE_CREATE  (ITEMS_RANGE),
     ITEMS_RANGE_UPDATE  (ITEMS_RANGE),
 
     VIDEO_ADDED("Добавлено видео '{}' (<uri>{}</uri>)"),
-    USER_RENAME("Имя {} измененно на {}");
+    USER_RENAME("Имя {} измененно на {}"),
+    TOPIC_RESOURCE_UNLINKED("От темы <uri>{}</uri> отлинкован <uri>{}</uri>"),
+    TOPIC_CHILD_ADDED("Теме <uri>{}</uri> добавлена дочерняя тема <uri>{}</uri>"),
+    TOPIC_TOPIC_UNLINKED("От темы <uri>{}</uri> отинкована тема <uri>{}</uri>");
 
     private Action parent = null;
     private UserRole requiredAccessLevel;
@@ -44,6 +49,11 @@ public enum Action {
 
     Action(String message) {
         this.message = message;
+    }
+
+
+    Action(String message, Action parent) {
+        this(message, parent, null);
     }
 
     public Action parent() {

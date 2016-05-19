@@ -302,6 +302,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 },
                 confirm: function (id) {
                     return api.authGet("moderation/"+id+"/confirm")
+                },
+                cancel: function (id) {
+                    return api.authPost("moderation/"+id+"/cancel")
                 }
             }
         };
