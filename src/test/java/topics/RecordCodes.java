@@ -1,4 +1,4 @@
-package org.ayfaar.app.model;
+package topics;
 
 import java.util.List;
 import lombok.*;

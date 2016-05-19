@@ -23,6 +23,6 @@ public class Record extends UID{
 
     @Override
     public String toTitle() {
-        return code;
+        return name;
     }
 }

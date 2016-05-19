@@ -42,12 +42,11 @@ public class TopicsExcelParser {
                             String stringCellValue = cell.getStringCellValue();
                             if (stringCellValue.endsWith(".")) {//если в файле нет точек вконце предложений - можно убрать этот if
                                 stringCellValue = stringCellValue.substring(0,stringCellValue.length()-1);
-                                //System.out.println(stringCellValue); //раскомментировать чтоб посмотреть проблемные строки)))
+                                System.out.println(stringCellValue); //раскомментировать чтоб посмотреть проблемные строки)))
                             }
-                            if (stringCellValue.equals("ИИССИИДИ-Центры и комплиментарной системе (общая инфо, что это такое)"))
+
+                            if (stringCellValue.equals("ИИССИИДИ-Центры и комплиментарной системе (общая информация)")) //ошибка в словах "комплиментарной системе")))
                                 stringCellValue = "ИИССИИДИ-Центры и комплиментарная система (общая информация)"; //исправить в ексель и удалить if
-                            if (stringCellValue.equals("НУУЛЛ-ВВУ, как Образ человека, лишённого активности первых 4-ёх Уровней первых двух ИИ-Центров"))
-                                stringCellValue = "НУУЛЛ-ВВУ, как Образ человека, лишённого активности первых 4-ёх Уровней первых двух ИИ-Центров.НУУЛЛ-ВВУ как Эталон для ориентации направлений перефокусировок и Образ для работы с методиками"; //исправить в ексель и удалить if
                             list.add(stringCellValue);}
                         cellIndex++;
                         break;
