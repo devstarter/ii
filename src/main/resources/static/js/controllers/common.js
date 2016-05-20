@@ -157,11 +157,11 @@ function TaggerController($scope, $stateParams, $api) {
         });
     };
 }
-function ResourcesController($scope, $stateParams, $state, Video, Topic, errorService, $api, $timeout) {
-    $scope.$root.hideLoop = true;
+function ResourcesController($scope, $stateParams, $state, Video, errorService, $api, $timeout) {
     $scope.topics = [];
     $scope.newTopic = {};
     $scope.lastVideos = [];
+    document.title = "Последние видео ответы";
 
     if ($stateParams.id) {
         $scope.videoLoading = true;
@@ -248,9 +248,11 @@ function CabinetController($scope, $api, $rootScope, auth, modal) {
         loadStatus();
         $scope.confirm = function (id) {
             $api.moderation.confirm(id).then(loadStatus);
-        }
+        };
         $scope.cancel = function (id) {
-            $api.moderation.cancel(id).then(loadStatus);
+            modal.confirm("Подтверждение", "Вы уверены что желаете удалить это предложение?", "Удалить").then(function () {
+                $api.moderation.cancel(id).then(loadStatus);
+            });
         }
     }
     function loadStatus() {

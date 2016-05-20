@@ -52,12 +52,12 @@ public class ModerationService {
 
     public void check(Action action, Object... args) {
         if (!getCurrentAccessLevel().accept(action.getRequiredAccessLevel())) {
-            registerConfirmationRequirement(action, args);
-            throw new ConfirmationRequiredException(action);
+            final PendingAction pendingAction = registerConfirmationRequirement(action, args);
+            throw new ConfirmationRequiredException(pendingAction);
         }
     }
 
-    private void registerConfirmationRequirement(Action action, Object[] args) {
+    private PendingAction registerConfirmationRequirement(Action action, Object[] args) {
         final MethodEntry entry = threadLocal.get();
         if (entry == null) throw new RuntimeException("No moderated method for action " + action);
         Action rootAction = entry.action;
@@ -73,7 +73,7 @@ public class ModerationService {
         pendingAction.setInitiatedBy(getCurrentUserId());
         pendingAction.setCommand(buildCommand(entry));
         pendingAction.setAction(rootAction);
-        commonDao.save(pendingAction);
+        return commonDao.save(pendingAction);
     }
 
     private String buildCommand(MethodEntry entry) {
@@ -94,18 +94,23 @@ public class ModerationService {
     }
 
     public void cancel(Integer id) {
-        commonDao.remove(PendingAction.class, id);
+        final PendingAction pendingAction = commonDao.getOpt(PendingAction.class, id)
+                .orElseThrow(() -> new RuntimeException("Action not found"));
+        boolean ownAction = getCurrentUserId().equals(pendingAction.getInitiatedBy());
+        if (!ownAction && !getCurrentAccessLevel().accept(pendingAction.getAction().getRequiredAccessLevel()))
+            throw new ConfirmationRequiredException(pendingAction);
+        commonDao.remove(pendingAction);
     }
 
-    public void confirm(PendingAction action) {
-        if (!getCurrentAccessLevel().accept(action.getAction().getRequiredAccessLevel()))
-            throw new ConfirmationRequiredException(action.getAction());
+    public void confirm(PendingAction pendingAction) {
+        if (!getCurrentAccessLevel().accept(pendingAction.getAction().getRequiredAccessLevel()))
+            throw new ConfirmationRequiredException(pendingAction);
         // perform command
-        parser.parseExpression(action.getCommand()).getValue(context);
-        log.info("{} confirmed by user {}", action.getMessage(), getCurrentUserId());
-        action.setConfirmedBy(getCurrentUserId());
-        action.setConfirmedAt(new Date());
-        commonDao.save(action);
+        parser.parseExpression(pendingAction.getCommand()).getValue(context);
+        log.info("{} confirmed by user {}", pendingAction.getMessage(), getCurrentUserId());
+        pendingAction.setConfirmedBy(getCurrentUserId());
+        pendingAction.setConfirmedAt(new Date());
+        commonDao.save(pendingAction);
     }
 
     private Integer getCurrentUserId() {

@@ -8,7 +8,7 @@ import org.ayfaar.app.model.*;
 import org.ayfaar.app.services.moderation.Action;
 import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.utils.UriGenerator;
-import org.ayfaar.app.utils.exceptions.Exceptions;
+import org.ayfaar.app.utils.exceptions.ExceptionCode;
 import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -98,7 +98,7 @@ class TopicServiceImpl implements TopicService {
     public TopicProvider getByName(String name, boolean caseSensitive) {
         if (!caseSensitive) return getByName(name);
         return get(UriGenerator.generate(Topic.class, name), true)
-                .orElseThrow(() -> new LogicalException(Exceptions.TOPIC_NOT_FOUND, name));
+                .orElseThrow(() -> new LogicalException(ExceptionCode.TOPIC_NOT_FOUND, name));
     }
 
     @Override

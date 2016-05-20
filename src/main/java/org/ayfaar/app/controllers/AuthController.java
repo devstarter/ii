@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
@@ -81,13 +82,13 @@ public class AuthController {
     }
 
     @RequestMapping("login-as/{userId}")
-    public User loginAs(@PathVariable Integer userId) throws IOException{
+    public void loginAs(@PathVariable Integer userId, HttpServletResponse response) throws IOException{
         User user = commonDao.getOpt(User.class, userId).get();
 
         Authentication request = new UsernamePasswordAuthenticationToken(user, null);
         Authentication authentication = customAuthenticationProvider.authenticate(request);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return user;
+        response.sendRedirect("/%D1%8F");
     }
 
     public static Optional<User> getCurrentUser(){

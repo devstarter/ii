@@ -2,20 +2,20 @@ package org.ayfaar.app.utils.exceptions;
 
 import org.slf4j.helpers.MessageFormatter;
 
-public class LogicalException extends RuntimeException{
+public class LogicalException extends RuntimeException {
 
-    private Exceptions code;
+    private ExceptionCode code;
 
-    public LogicalException(Exceptions code, Object... params){
+    public LogicalException(ExceptionCode code, Object... params){
         super(MessageFormatter.arrayFormat(code.getMessage(), params).getMessage());
         this.code = code;
     }
 
-    public Exceptions getExceptions() {
+    public ExceptionCode getCode() {
         return code;
     }
 
-    public void setCode(Exceptions code) {
+    public void setCode(ExceptionCode code) {
         this.code = code;
     }
 }

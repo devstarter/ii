@@ -1,12 +1,12 @@
 package org.ayfaar.app.utils.exceptions;
 
-import org.ayfaar.app.services.moderation.Action;
+import org.ayfaar.app.model.PendingAction;
 
 public class ConfirmationRequiredException extends LogicalException {
-    public Action action;
+    public PendingAction action;
 
-    public ConfirmationRequiredException(Action action) {
-        super(Exceptions.CONFIRMATION_REQUIRED, action.toString());
+    public ConfirmationRequiredException(PendingAction action) {
+        super(ExceptionCode.CONFIRMATION_REQUIRED);
         this.action = action;
     }
 }

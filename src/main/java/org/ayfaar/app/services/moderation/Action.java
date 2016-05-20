@@ -8,22 +8,25 @@ import static org.ayfaar.app.services.moderation.UserRole.ROLE_EDITOR;
 
 public enum Action {
     TOPIC (ROLE_EDITOR),
-    TOPIC_CREATE        ("Создание темы `{}`", TOPIC, ROLE_ADMIN),
-    TOPIC_ADD_CHILD     ("Создание дочерней темы `{}` для `{}`", TOPIC, ROLE_ADMIN),
-    TOPIC_LINK_RESOURCE ("Добавление ресурса <uri>{}</uri> к теме {}", TOPIC),
-    TOPIC_LINK_RANGE    ("Добавление диапалоза с {} по {} к теме {}", TOPIC),
-    TOPIC_RESOURCE_LINK_UPDATE(TOPIC),
-    TOPIC_RESOURCE_LINKED("Тема <uri>{}</uri> прикреплена к <uri>{}</uri>"),
+    TOPIC_CREATE        ("Создание темы <topic>{}</topic>", TOPIC, ROLE_ADMIN),
+    TOPIC_ADD_CHILD     ("Создание дочерней темы <topic>{}</topic> для <topic>{}</topic>", TOPIC, ROLE_ADMIN),
+    TOPIC_LINK_RESOURCE ("Добавление ресурса <uri>{}</uri> к теме <topic>{}</topic>", TOPIC),
+    TOPIC_LINK_RANGE    ("Добавление диапалоза с {} по {} к теме <topic>{}</topic>", TOPIC),
+    TOPIC_RESOURCE_LINK_COMMENT_UPDATE("Обновление комментария в связке между <uri>{}</uri> и темой <topic>{}</topic>, новый коментарий: `{}` предложен", TOPIC),
+    TOPIC_RESOURCE_LINK_RATE_UPDATE("Обновление весового коэфициента в связке между <uri>{}</uri> и темой <topic>{}</topic>, новые значение: {} предложено", TOPIC),
+    TOPIC_RESOURCE_LINK_UPDATE(TOPIC), // for fix db problem
+    TOPIC_RESOURCE_LINKED("Тема <topic>{}</topic> прикреплена к <uri>{}</uri>"),
 
     ITEMS_RANGE (ROLE_EDITOR),
     ITEMS_RANGE_CREATE  (ITEMS_RANGE),
     ITEMS_RANGE_UPDATE  (ITEMS_RANGE),
 
     VIDEO_ADDED("Добавлено видео '{}' (<uri>{}</uri>)"),
-    USER_RENAME("Имя {} измененно на {}"),
-    TOPIC_RESOURCE_UNLINKED("От темы <uri>{}</uri> отлинкован <uri>{}</uri>"),
-    TOPIC_CHILD_ADDED("Теме <uri>{}</uri> добавлена дочерняя тема <uri>{}</uri>"),
-    TOPIC_TOPIC_UNLINKED("От темы <uri>{}</uri> отинкована тема <uri>{}</uri>");
+    USER_RENAME("Имя пользователя {} измененно на {}"),
+    TOPIC_RESOURCE_UNLINKED("От темы <topic>{}</topic> отлинкован <uri>{}</uri>"),
+    TOPIC_CHILD_ADDED("Теме <topic>{}</topic> добавлена дочерняя тема <topic>{}</topic>"),
+    TOPIC_TOPIC_UNLINKED("От темы <topic>{}</topic> отинкована тема <topic>{}</topic>"),
+    TOPIC_UNLINK_RESOURCE("Отмена связи между <uri>{}</uri> и темой <uri>{}</uri>", TOPIC);
 
     private Action parent = null;
     private UserRole requiredAccessLevel;

@@ -21,7 +21,6 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.hasLength;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -118,23 +117,24 @@ public class TopicController {
         topic.link(null, range, comment, quote, rate);
     }
 
-    @RequestMapping(value = "rate", method = POST)
-    @Moderated(value = Action.TOPIC_RESOURCE_LINK_UPDATE, command = "@topicController.updateRate")
-    public void updateRate(@RequestParam String forUri, @RequestParam String topicUri, @RequestParam Float rate) throws Exception {
-        linkService.getByUris(forUri, topicUri).updater().rate(rate).commit();
+    @RequestMapping(value = "update-rate", method = POST)
+    @Moderated(value = Action.TOPIC_RESOURCE_LINK_RATE_UPDATE, command = "@topicController.updateRate")
+    public void updateRate(@RequestParam String forUri, @RequestParam String name, @RequestParam Float rate) throws Exception {
+        linkService.getByUris(forUri, UriGenerator.generate(Topic.class, name)).updater().rate(rate).commit();
     }
 
     @RequestMapping(value = "update-comment", method = POST)
-    @Moderated(value = Action.TOPIC_RESOURCE_LINK_UPDATE, command = "@topicController.updateComment")
+    @Moderated(value = Action.TOPIC_RESOURCE_LINK_COMMENT_UPDATE, command = "@topicController.updateComment")
     public void updateComment(@RequestParam String forUri, @RequestParam String name, @RequestParam String comment) throws Exception {
         linkService.getByUris(forUri, UriGenerator.generate(Topic.class, name)).updater().comment(comment).commit();
     }
 
-    @RequestMapping(value = "for", method = DELETE)
-    // todo move this logic to topic service
-    public void deleteFor(@RequestParam String uri, @RequestParam String topicUri) throws Exception {
+    @RequestMapping(value = "unlink-uri", method = POST)
+    @Moderated(value = Action.TOPIC_UNLINK_RESOURCE, command = "@topicController.unlinkUri")
+    public void unlinkUri(@RequestParam String uri, @RequestParam String topicUri) throws Exception {
         hasLength(uri);
         hasLength(topicUri);
+        // todo move this logic to topic service
         final List<Link> links = linkDao.getAllLinks(uri);
         for (Link link : links) {
             if ((link.getUid1() instanceof Topic && link.getUid1().getUri().equals(topicUri)) ||
@@ -172,7 +172,7 @@ public class TopicController {
         }
     }
 
-    @RequestMapping("unlink")
+    @RequestMapping(value = "unlink", method = POST)
     public void unlink(@RequestParam String name, @RequestParam String linked) {
         final TopicProvider unlinked = topicService.getByName(name).unlink(linked);
         if (unlinked != null) moderationService.notice(Action.TOPIC_TOPIC_UNLINKED);

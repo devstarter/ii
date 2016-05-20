@@ -16,7 +16,7 @@ public class PendingAction {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text")
     private String message;
     @Column(nullable = false)
     private Integer initiatedBy;

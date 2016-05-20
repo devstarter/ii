@@ -2,7 +2,7 @@ package org.ayfaar.app.services.links;
 
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Link;
-import org.ayfaar.app.utils.exceptions.Exceptions;
+import org.ayfaar.app.utils.exceptions.ExceptionCode;
 import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ public class LinkService {
     }
 
     public LinkProvider getByUris(String uri1, String uri2) {
-        return findByUris(uri1, uri2).orElseThrow(() -> new LogicalException(Exceptions.LINK_NOT_FOUND, uri1, uri2));
+        return findByUris(uri1, uri2).orElseThrow(() -> new LogicalException(ExceptionCode.LINK_NOT_FOUND, uri1, uri2));
     }
 
     public Optional<LinkProvider> findByUris(String uri1, String uri2) {

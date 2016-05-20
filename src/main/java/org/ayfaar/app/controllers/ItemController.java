@@ -9,7 +9,7 @@ import org.ayfaar.app.model.Term;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.TermServiceImpl;
 import org.ayfaar.app.utils.TermsTaggingUpdater;
-import org.ayfaar.app.utils.exceptions.Exceptions;
+import org.ayfaar.app.utils.exceptions.ExceptionCode;
 import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,7 +60,7 @@ public class ItemController {
     @ResponseBody
     public ModelMap get(@PathVariable String number) {
         Item item = itemDao.getByNumber(number);
-        if (item == null) throw new LogicalException(Exceptions.ITEM_NOT_FOUND, number);
+        if (item == null) throw new LogicalException(ExceptionCode.ITEM_NOT_FOUND, number);
         ModelMap modelMap = (ModelMap) getModelMap(item);
 //        modelMap.put("linkedTerms", getLinkedTerms(item));
         Item next = itemDao.get(item.getNext());

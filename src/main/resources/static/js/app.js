@@ -242,6 +242,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 }
             },
             topic: {
+                suggest: function (q) {
+                    return api.get("topic/suggest", {q: q})
+                },
                 getFor: function (uri) {
                     return api.get("topic/for/"+uri)
                 },
@@ -251,11 +254,17 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 updateComment: function (forUri, topicName, comment) {
                     return api.authPost("topic/update-comment", {forUri: forUri, name: topicName, comment: comment})
                 },
+                updateRate: function (forUri, topicName, rate) {
+                    return api.authPost("topic/update-rate", {forUri: forUri, name: topicName, rate: rate})
+                },
                 addFor: function (objectUri, topicName, comment, rate) {
                     return api.authPost("topic/for", {name: topicName, uri: objectUri, comment: comment, rate: rate})
                 },
+                unlinkUri: function (objectUri, topicUri) {
+                    return api.authPost("topic/unlink-uri", {topicUri: topicUri, uri: objectUri})
+                },
                 unlink: function (main, linked) {
-                    return api.authGet("topic/unlink", {name: main, linked: linked})
+                    return api.authPost("topic/unlink", {name: main, linked: linked})
                 },
                 suggest: function (q) {
                     return api.get("topic/suggest", {q: q})
@@ -330,6 +339,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     uri = uriOrObject;
                 }
                 switch (service.getType(uri)) {
+                    case 'topic':
+                        return uri.replace("тема:", "");
                     case 'term':
                         return uri.replace("ии:термин:", "");
                     case 'item':
@@ -346,6 +357,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             },
             getType: function(uri) {
                 uri = uri.hasOwnProperty("uri") ? uri.uri : uri;
+                if (uri.indexOf("тема:") === 0) {
+                    return 'topic'
+                }
                 if (uri.indexOf("ии:термин:") === 0) {
                     return 'term'
                 }
@@ -743,6 +757,17 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         };
     })
+    .directive('topic', function(entityService) {
+        return {
+            restrict: 'E',
+            compile : function(element, attr, linker) {
+                return function ($scope, $element, $attr) {
+                    var topicName = $element.html();
+                    $element.html("<a href='"+getUrl("тема:"+topicName)+"'>"+topicName + "</a>");
+                }
+            }
+        };
+    })
     .directive("iiBind", function($compile) {
         // inspired by http://stackoverflow.com/a/25516311/975169
         return {
@@ -852,42 +877,6 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         });
     })
-    .factory('Topic', function($resource, config, poster, $httpParamSerializer) {
-        return $resource(config.apiUrl + "topic", {}, {
-            rate: {
-                method: "POST",
-                url: config.apiUrl + "topic/rate",
-                isArray: false,
-                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
-                transformRequest: $httpParamSerializer
-            },
-            suggest: {
-                method: "GET",
-                url: config.apiUrl + "topic/suggest",
-                isArray: true
-            },
-            getForUri: {
-                method: "GET",
-                url: config.apiUrl + "topic/for/:uri",
-                isArray: true
-            },
-            addForUri: {
-                method: "POST",
-                url: config.apiUrl + "topic/for",
-                isArray: false,
-                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
-                transformRequest: $httpParamSerializer
-            },
-            deleteForUri: {
-                method: "DELETE",
-                url: config.apiUrl + "topic/for",
-                isArray: false,
-                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
-                transformRequest: $httpParamSerializer
-            },
-            save: poster
-        });
-    })
     .directive('youtube', function($sce) {
         return {
             restrict: 'EA',
@@ -952,13 +941,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         };
     })
-    .directive("topics", function($topicSelector, Topic, $api, modal) {
+    .directive("topics", function($topicSelector, $api, modal) {
         return {
             scope: { ownerUri: '='},
             templateUrl: "static/partials/topics-directive.html",
             link: function(scope, element, attrs) {
                 scope.updateRate = function(topic){
-                    Topic.rate({forUri: scope.ownerUri, topicUri: topic.uri, rate: topic.rate})
+                    $api.topic.updateRate(scope.ownerUri, topic.name, topic.rate).then(getTopics);
                 };
                 scope.updateComment = function(topic){
                     modal.prompt("Редактирование коментария", topic.comment, "Сохранить").then(function (comment) {
@@ -976,13 +965,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 scope.removeTopic = function (topic) {
                     modal.confirm("Подтверждение", "Коментарий и оценка будут утеряны. Вы уверены что желаете убрать тему?", "Убрать тему")
                         .then(function () {
-                            Topic.deleteForUri({uri: scope.ownerUri, topicUri: topic.uri}).$promise.then(function (topic) {
-                                getTopics();
-                            });
+                            $api.topic.unlinkUri(scope.ownerUri, topic.uri).then(getTopics);
                         })
                 };
                 scope.getSuggestions = function (q) {
-                    return Topic.suggest({q: q}).$promise
+                    return $api.topic.suggest(q)
                 };
                 function getTopics() {
                     if (!scope.ownerUri) return;
@@ -1128,6 +1115,9 @@ function copyObjectTo(from, to) {
 }
 function getUrl(uri) {
     var url = uri.hasOwnProperty("uri") ? uri.uri : uri;
+    if (url.indexOf("тема:") == 0) {
+        return "t/" + encodeURIComponent(url.replace("тема:", ""))
+    }
     url = url.replace("статья:", "a/");
     url = url.replace("категория:параграф:", "");
     url = url.replace("категория:", "c/");
