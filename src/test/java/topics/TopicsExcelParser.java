@@ -22,7 +22,7 @@ public class TopicsExcelParser {
             in = TopicsExcelParser.class.getResourceAsStream("/topics/Классификатор методики МИЦИАР.xlsx");
             wb = new XSSFWorkbook(in);
         } catch (IOException e) {
-            log.error("File is not find", e);
+            log.error("File is not find ", e);
         }
 
         XSSFSheet sheet = wb.getSheetAt(0);
@@ -40,13 +40,6 @@ public class TopicsExcelParser {
                     case Cell.CELL_TYPE_STRING:
                         if (cellIndex < 2){
                             String stringCellValue = cell.getStringCellValue();
-                            if (stringCellValue.endsWith(".")) {//если в файле нет точек вконце предложений - можно убрать этот if
-                                stringCellValue = stringCellValue.substring(0,stringCellValue.length()-1);
-                                System.out.println(stringCellValue); //раскомментировать чтоб посмотреть проблемные строки)))
-                            }
-
-                            if (stringCellValue.equals("ИИССИИДИ-Центры и комплиментарной системе (общая информация)")) //ошибка в словах "комплиментарной системе")))
-                                stringCellValue = "ИИССИИДИ-Центры и комплиментарная система (общая информация)"; //исправить в ексель и удалить if
                             list.add(stringCellValue);}
                         cellIndex++;
                         break;

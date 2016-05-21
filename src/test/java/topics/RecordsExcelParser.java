@@ -53,9 +53,6 @@ public class RecordsExcelParser {
                         String stringCellValue = cell.getStringCellValue();
 
                         if (columnIndex == 4) {
-                            if (stringCellValue.length()>248) {
-                                stringCellValue = stringCellValue.substring(0, 240);
-                            }
                             recordCode.setName(stringCellValue);
                         }
 

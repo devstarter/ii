@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.ayfaar.app.annotations.Uri;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import java.util.Date;
@@ -17,9 +19,11 @@ import java.util.Date;
 public class Record extends UID{
 
     private String code;
+    @Column(length = 300)
     private String name;
-    private String recorderAt;
+    private Date recorderAt;
     private Date createdAt;
+    private String audioUrl;
 
     @Override
     public String toTitle() {
