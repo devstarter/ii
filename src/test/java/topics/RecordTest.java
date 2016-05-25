@@ -1,5 +1,6 @@
 package topics;
 
+import com.google.api.services.drive.model.File;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.map.HashedMap;
 import org.ayfaar.app.IntegrationTest;
@@ -7,15 +8,15 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Record;
 import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
+import org.ayfaar.app.utils.GoogleService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-
-import javax.inject.Inject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class RecordTest extends IntegrationTest {
@@ -24,21 +25,30 @@ public class RecordTest extends IntegrationTest {
     CommonDao commonDao;
     @Autowired
     TopicService topicService;
+    @Autowired
+    GoogleService googleService;
 
     Map<String, String> audioUrls;
+    Map<String, String> parseAudio;
+
+    String baseUrl = "http://ayfaar.org/media/k2/attachments/";
+    int baseUrlWithYearSize = 44;
 
     @Test
     public void saveAndCreateLink() throws Exception {
 
-        Map<String, String> parseAudio = FilesExcelParser.parse();
-        Map<String, String> parse = TopicsExcelParser.parse();
-        List<RecordCodes> recordCodes = RecordsExcelParser.parse();
+        parseAudio = FilesExcelParser.parse();                      //from files.xls
+        Map<String, String> parse = TopicsExcelParser.parse();      //from Классификатор методики МИЦИАР.xlsx
+        List<RecordCodes> recordCodes = RecordsExcelParser.parse(); //from 2014-06-10_1, 2005-2013.xlsx
 
         //GET AUDIO_URLS FOR RECORDS
         audioUrls = createAudioUrls(parseAudio);
 
         //CREATE RECORDS IN DB
-        recordCodes.stream().forEach(this::saveRecords);
+        recordCodes.stream().forEach(this::saveRecords); // --> 1
+
+        //if code is not found in list recordCodes -> create records from this codes/urls
+        saveNewRecordsFromFiles(audioUrls,recordCodes); // --> 2
 
         //CREATE LINKS
         for (RecordCodes recordCode : recordCodes) {
@@ -48,30 +58,63 @@ public class RecordTest extends IntegrationTest {
                         Optional<Record> record = null;
                         if (s.equals(stringStringEntry.getKey())){
                             record = commonDao.getOpt(Record.class, "code", recordCode.getCode());
-                            topicService.getByName(stringStringEntry.getValue()).link(record.get());
+                           if(record.isPresent())topicService.getByName(stringStringEntry.getValue()).link(record.get()); // --> 3
                         }
                     }
                 }
             }
         }
+        //ЕСЛИ НЕОБХОДИМО ДОКАЧАТЬ в ГУГЛ-ДРАЙВ раскомментировать!! и закомментировать строки --> 1,2,3 ))))))
+        //audioUrls.entrySet().stream().forEach(stringStringEntry -> uploadNewAudioToGDrive(stringStringEntry.getKey(),stringStringEntry.getValue())); // --> 4
+    }
+
+    private void uploadNewAudioToGDrive(String code, String url){
+        Optional<Record> record = commonDao.getOpt(Record.class, "code", code);
+        if(record.isPresent() && record.get().getAltAudioGid().isEmpty()){
+            File file = googleService.uploadToGoogleDrive(url);
+            record.get().setAltAudioGid(file.getId());
+            commonDao.save(record.get());
+        }
+    }
+
+    private void saveNewRecordsFromFiles(Map<String, String> audioUrls, List<RecordCodes> recordCodes) {
+        List<String> codes = recordCodes.stream().map(recordCode -> recordCode.getCode()).collect(Collectors.toList());
+        for (String s : audioUrls.keySet()) {
+            if (!codes.contains(s)) {
+                RecordCodes recordCodes1 = new RecordCodes();
+                recordCodes1.setName(parseAudio.get(audioUrls.get(s).substring(baseUrlWithYearSize)));
+                recordCodes1.setCode(s);
+                saveRecords(recordCodes1);
+            }
+        }
     }
 
     private void saveRecords(RecordCodes recordCode) {
-        Record record = new Record();
-        String name = recordCode.getName();
-        audioUrls.keySet().stream().filter(s ->
-                s.equals(recordCode.getCode())).forEach(s -> record.setAudioUrl(audioUrls.get(s)));
-        record.setName(name);
-        record.setCode(recordCode.getCode());
-        record.setCreatedAt(new Date());
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            Date date = format.parse(recordCode.getCode().substring(0,10));
-            record.setRecorderAt(date);
-        } catch (ParseException e) {
-            log.error("Date is not parse ", e);
+        Optional<Record> recordSave = commonDao.getOpt(Record.class, "code", recordCode.getCode());
+        Record record = null;
+        if (!recordSave.isPresent()) {
+            record = new Record();
+            String name = recordCode.getName();
+
+            for (String s : audioUrls.keySet()) {
+                if (s.equals(recordCode.getCode())) {
+                    record.setAudioUrl(audioUrls.get(s));
+                    File file = googleService.uploadToGoogleDrive(audioUrls.get(s));
+                    record.setAltAudioGid(file.getId());
+                }
+            }
+            record.setName(name);
+            record.setCode(recordCode.getCode());
+            record.setCreatedAt(new Date());
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                Date date = format.parse(recordCode.getCode().substring(0,10));
+                record.setRecorderAt(date);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            commonDao.save(record);
         }
-        commonDao.save(record);
     }
 
     @Test
@@ -90,11 +133,16 @@ public class RecordTest extends IntegrationTest {
         for (Map.Entry<String, String> stringStringEntry : parseAudio.entrySet()) {
             String nameFile = stringStringEntry.getKey();
             String code = stringStringEntry.getKey();
-            if(code.contains(".mp3")&&code.length()==16) code = new StringBuilder(code).insert(code.length()-5,0).toString();
-            if(code.contains(".mp3")&&code.length()==14) code = new StringBuilder(code).insert(code.length()-4,"_01").toString();
-            if (code.contains(".mp3")&&code.substring(0,1).equals("2")) {
-                String url = "http://ayfaar.org/media/k2/attachments/" + code.substring(0, 4) + "/" + nameFile;
-                urlAudioRecords.put(code.substring(0,code.length()-4),url);
+            if (code.contains(".mp3")&&nameFile.length() > 12) {
+                if(code.length()==16) code = new StringBuilder(code).insert(code.length()-5,0).toString(); //если в коде номера после даты меньше 10 и без нуля
+                if(code.length()==14) code = new StringBuilder(code).insert(code.length()-4,"_01").toString(); //если в коде только дата без порядкового номера
+                String yearForUrl = "0000"; //default
+                if (code.substring(0,1).equals("2")) {
+                    yearForUrl = code.substring(0, 4);
+                    //if (code.substring(0,1).equals("M")) yearForUrl = code.substring(code.length()-10, code.length()-6);
+                    String url = baseUrl + yearForUrl + "/" + nameFile;
+                    urlAudioRecords.put(code.substring(0, code.length() - 4), url);
+                }
             }
         }
         return urlAudioRecords;

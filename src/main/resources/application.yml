@@ -27,6 +27,7 @@ logging:
 
 site-base-url: 'http://ii.ayfaar.org'
 sitemap-dir: ${OPENSHIFT_DATA_DIR}
+drive-dir: ${OPENSHIFT_DATA_DIR}
 this-url: http://${server.address:localhost}:${server.port:8080}
 
 mail.user: some@gmail.com

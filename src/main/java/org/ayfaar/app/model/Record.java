@@ -24,6 +24,7 @@ public class Record extends UID{
     private Date recorderAt;
     private Date createdAt;
     private String audioUrl;
+    private String altAudioGid;
 
     @Override
     public String toTitle() {
