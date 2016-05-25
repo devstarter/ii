@@ -13,6 +13,7 @@ import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -37,6 +38,7 @@ class TopicServiceImpl implements TopicService {
     @Inject CommonDao commonDao;
     @Inject LinkDao linkDao;
     @Inject ModerationService moderationService;
+    @Inject Environment environment;
 
     @PostConstruct
     private void init() {
@@ -155,7 +157,10 @@ class TopicServiceImpl implements TopicService {
                     .rate(rate)
                     .build();
             Link finalLink = link;
+
+            if (!environment.acceptsProfiles("dev"))
             AuthController.getCurrentUser().ifPresent(u -> finalLink.setCreatedBy(u.getId()));
+
             if (uid instanceof Topic) {
                 topics.get(uid.getUri()).registerLink(link, topic);
             }
@@ -262,6 +267,7 @@ class TopicServiceImpl implements TopicService {
             resources.item.addAll(prepareItemResource());
             resources.itemsRange.addAll(prepareResource(ItemsRange.class));
             resources.document.addAll(prepareResource(Document.class));
+            resources.record.addAll(prepareResource(Record.class));
             return resources;
         }
 
