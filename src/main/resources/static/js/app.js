@@ -3,7 +3,7 @@ if (hash) {
     window.location.hash = '';
     window.location.pathname = window.location.pathname + hash.replace("#?", "").replace("#", "");
 }
-var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCookies', 'ui.bootstrap'])
+var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCookies', 'ui.bootstrap', 'ngAudio'])
     .config(function($locationProvider, $urlRouterProvider, $stateProvider, config) {
         if (config.useHtml5Mode) $locationProvider.html5Mode(true).hashPrefix('!');
         $urlRouterProvider.otherwise("@");
@@ -574,6 +574,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 if (error) {
                     message = error.message;
                     switch (error.code) {
+                        case "ACCESS_DENIED":
+                            message = "Представтесь пожалуйста";
+                            break;
                         case "USER_NOT_FOUND":
                             message = "Пользователь не найден";
                             break;
@@ -937,7 +940,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 $rootScope.$on('home-state-entered', function() {
                     scope.$root.hideLoop = true;
                     scope.visible = false;
-                })
+                });
+                $rootScope.$watch('audio', function () {
+                    scope.audio = $rootScope.audio;
+                });
+                scope.playPause = function () {
+                    scope.audio.play()
+                }
             }
         };
     })

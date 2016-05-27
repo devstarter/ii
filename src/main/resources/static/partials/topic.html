@@ -36,7 +36,6 @@
     <div style="padding-top: 20px">
         <div ng-show="resources.item" class="children">
             <span class="gray">Прикреплённые абзацы</span>
-            <!--<i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addItemResource()" title="Добавить абзац"></i>-->
             <div ng-repeat="item in resources.item">
                 <blockquote ng-show="item.quote">
                     <div ii-bind="item.quote"></div>
@@ -46,7 +45,6 @@
                 <a ng-hide="item.quote" ii-ref="item.resource">{{item.resource.number}}</a>
             </div>
         </div>
-        <!--<a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>-->
     </div>
     <div ng-show="resources.document.length" class="children">
         <span class="gray">Прикреплённые документы</span>
@@ -56,6 +54,16 @@
         </div>
     </div>
     <a ng-hide="resources.document.length" class="btn btn-link" ng-click="addDocResource()">Прикрепить документ</a>
+    <div ng-show="resources.record" class="children">
+        <span class="gray">Прикреплённые аудио записи</span>
+            <div ng-repeat="record in resources.record" title="{{record.resource.code}}" style="padding: 10px 0;">
+                <i ng-show="record.resource.audio_url" class="glyphicon"
+                   ng-class="record.played ? 'glyphicon-pause' : 'glyphicon-play'"
+                   ng-click="record.played ? audio.pause() : play(record)"
+                   style="width: 20px;font-size: 120%;"></i>
+                {{record.resource.name}} <span class="gray">{{record.resource.code}}</span>
+            </div>
+    </div>
 </div>
 <style type="text/css">
     .title .h {visibility: hidden}

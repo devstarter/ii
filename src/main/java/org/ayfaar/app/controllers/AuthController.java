@@ -92,6 +92,7 @@ public class AuthController {
     }
 
     public static Optional<User> getCurrentUser(){
+        if (SecurityContextHolder.getContext() == null || SecurityContextHolder.getContext().getAuthentication() == null) return Optional.empty();
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal instanceof User ? Optional.of((User) principal) : Optional.empty();
     }

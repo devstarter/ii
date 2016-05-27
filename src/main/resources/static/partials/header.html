@@ -7,6 +7,14 @@
            typeahead-on-select="expanded = false;$suggestionSelected($label)"
            on-enter="expanded = false" />
     <a ng-hide="expanded" class="icon-search" ng-click="expand()" title="Искать"></a>
+    <div ng-show="audio" style="display: table; width: 100%">
+        <i class="glyphicon" ng-class="audio.paused ? 'glyphicon-play' : 'glyphicon-pause'" ng-click="audio.paused ? audio.play() : audio.pause()"
+            style="display: table-cell;width: 20px;font-size: 170%;"></i>
+        <input class="ng-pristine ng-untouched ng-valid" type="range" min="0" max="1" step="0.01" ng-model="audio.progress"
+            style="display: table-cell;width: 550px" tooltip="{{audio.currentTime | trackTime}}">
+        <span style="display: table-cell;width: 1px;vertical-align: middle;padding: 2px">{{audio.currentTime | trackTime}}</span>
+        <input class="ng-pristine ng-untouched ng-valid" type="range" min="0" max="1" step="0.01" ng-model="audio.volume" style="display: table-cell;width: 50px">
+    </div>
 </div>
     <!--<aside ng-show="expanded">
     </aside>-->

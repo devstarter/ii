@@ -27,7 +27,7 @@ function DocumentController($scope, $stateParams, $api, messager, $state) {
     };
     $scope.last = [];
 }
-function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt, messager, $timeout) {
+function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt, messager, $timeout, ngAudio, $rootScope) {
     $scope.name = $stateParams.name;
     document.title = $scope.name;
 
@@ -73,6 +73,22 @@ function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt
                 })
         })
     };
+    $scope.play = function(record) {
+        if ($scope.currentPlayed) $scope.currentPlayed.played = false;
+        var volume = 0.5;
+        if ($rootScope.audio) {
+            volume = $rootScope.audio.volume;
+            $rootScope.audio.stop();
+        }
+        $rootScope.audio = ngAudio.load(record.resource.audio_url);
+        $rootScope.audio.volume = volume;
+        $rootScope.audio.play();
+        record.played = true;
+        $scope.currentPlayed = record;
+    };
+    $rootScope.$watch('audio.paused', function () {
+        if ($scope.currentPlayed) $scope.currentPlayed.played = !$rootScope.audio.paused;
+    })
 }
 function CategoryController($scope, $stateParams, $api, $state) {
 

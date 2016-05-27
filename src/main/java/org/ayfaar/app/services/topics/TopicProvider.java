@@ -71,6 +71,7 @@ public interface TopicProvider {
         public List<ResourcePresentation> item = new LinkedList<>();
         public List<ResourcePresentation> itemsRange = new LinkedList<>();
         public List<ResourcePresentation> document = new LinkedList<>();
+        public List<ResourcePresentation> record = new LinkedList<>();
     }
 
     class ResourcePresentation<T> implements Comparable<ResourcePresentation<T>> {

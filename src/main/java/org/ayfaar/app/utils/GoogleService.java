@@ -1,25 +1,69 @@
 package org.ayfaar.app.utils;
 
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.batch.BatchRequest;
+import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.googleapis.media.MediaHttpUploader;
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.InputStreamContent;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.store.FileDataStoreFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.Permission;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Component
 public class GoogleService {
     @Value("${google.api.key}") private String API_KEY;
+    @Value("${drive-dir}") private String driveDir;
 
-    @Inject RestTemplate restTemplate;
+    private static final String APPLICATION_NAME = "ii";
+    private static HttpTransport httpTransport;
+    private static FileDataStoreFactory dataStoreFactory;
+    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private static Drive drive;
+
+    private final ResourceLoader resourceLoader;
+    private final RestTemplate restTemplate;
+
+    @Inject
+    public GoogleService(ResourceLoader resourceLoader, RestTemplate restTemplate) {
+        this.resourceLoader = resourceLoader;
+        this.restTemplate = restTemplate;
+    }
 
     public VideoInfo getVideoInfo(String id) {
         final Map response = restTemplate.getForObject("https://content.googleapis.com/youtube/v3/videos?part={part}&id={id}&key={key}",
@@ -65,6 +109,100 @@ public class GoogleService {
         final DocInfo doc = restTemplate.getForObject("https://www.googleapis.com/drive/v2/files/{id}?key={key}", DocInfo.class, id, API_KEY);
         Assert.notNull(doc.title);
         return doc;
+    }
+
+    /** Authorizes the installed application to access user's protected data. */
+    private static Credential authorize() throws Exception {
+        // load client secrets
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY,
+                new InputStreamReader(GoogleService.class.getResourceAsStream("/client_secrets.json")));
+        if (clientSecrets.getDetails().getClientId().startsWith("Enter")
+                || clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
+            throw new RuntimeException("Enter Client ID and Secret from https://code.google.com/apis/console/?api=drive into .../client_secrets.json");
+        }
+        // set up authorization code flow
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                httpTransport, JSON_FACTORY, clientSecrets,
+                Collections.singleton(DriveScopes.DRIVE_FILE)).setDataStoreFactory(dataStoreFactory)
+                .build();
+        // authorize
+        return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+    }
+
+    public File uploadToGoogleDrive(String url, String title) throws Exception {
+        Resource resource = resourceLoader.getResource("file:" + driveDir);
+        if (!resource.exists()) {
+            throw new RuntimeException("Error locating Google Drive dir "+ driveDir);
+        }
+
+        java.io.File DATA_STORE_DIR = resource.getFile();
+        httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
+        // authorization
+        Credential credential = authorize();
+        // set up the global Drive instance
+        drive = new Drive.Builder(httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
+        // run command
+        return uploadFile(false, url, title);
+    }
+
+    /** Uploads a file using either resumable or direct media upload. */
+    private static File uploadFile(boolean useDirectUpload, String url, String title) throws IOException {
+
+        InputStream data;
+        data = new URL(url).openStream();
+
+        File fileMetadata = new File();
+        fileMetadata.setTitle(title);
+
+        InputStreamContent mediaContent = new InputStreamContent("audio/mpeg", new BufferedInputStream(data));
+
+        Drive.Files.Insert insert = drive.files().insert(fileMetadata, mediaContent);
+
+        MediaHttpUploader uploader = insert.getMediaHttpUploader();
+        uploader.setDirectUploadEnabled(useDirectUpload);
+        log.info("Uploading {}...", title);
+        File execute = insert.execute();
+        sharedAccess(execute.getId());
+        log.info("Done");
+        return execute;
+    }
+
+    private static void sharedAccess(String id){
+        JsonBatchCallback<Permission> callback = new JsonBatchCallback<Permission>() {
+            @Override
+            public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
+                throw new RuntimeException(e.getMessage());
+            }
+
+            @Override
+            public void onSuccess(Permission permission, HttpHeaders responseHeaders)throws IOException {
+                log.info("Permission ID: " + permission.getId());
+            }
+        };
+        BatchRequest batch = drive.batch();
+        Permission userPermission = new Permission()
+                .setType("anyone")
+                .setRole("reader");
+        try {
+            drive.permissions().insert(id, userPermission)
+                    .setFields("id")
+                    .queue(batch, callback);
+
+            batch.execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+//        Permission domainPermission = new Permission() //возможно понадобиться в дальнейшем
+//                .setType("domain")
+//                .setRole("reader")
+//                .setDomain("ii.ayfaar.org");
+//        drive.permissions().insert(fileId, domainPermission)
+//                .setFields("id")
+//                .queue(batch, callback);
+
+
     }
 
     public static class VideoInfo {

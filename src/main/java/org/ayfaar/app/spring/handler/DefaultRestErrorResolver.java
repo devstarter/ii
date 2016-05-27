@@ -2,9 +2,11 @@ package org.ayfaar.app.spring.handler;
 
 import org.ayfaar.app.events.QuietException;
 import org.ayfaar.app.utils.exceptions.ConfirmationRequiredException;
+import org.ayfaar.app.utils.exceptions.ExceptionCode;
 import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -24,6 +26,10 @@ public class DefaultRestErrorResolver implements RestErrorResolver {
                     ? ((ConfirmationRequiredException) ex).action.getId().toString()
                     : ex.toString();
             return new BusinessError(((LogicalException) ex).getCode().name(), message, null);
+        }
+
+        if (ex instanceof AccessDeniedException) {
+            return new BusinessError(ExceptionCode.ACCESS_DENIED.name());
         }
 
 //        ex.printStackTrace(System.out);
