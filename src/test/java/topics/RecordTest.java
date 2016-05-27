@@ -11,6 +11,9 @@ import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.utils.GoogleService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,7 +47,7 @@ public class RecordTest extends IntegrationTest {
         //GET AUDIO_URLS FOR RECORDS
         audioUrls = createAudioUrls(parseAudio);
 
-        //CREATE RECORDS IN DB
+        //CREATE RECORDS IN DB with Upload to GDrive
         recordCodes.stream().forEach(this::saveRecords); // --> 1
 
         //if code is not found in list recordCodes -> create records from this codes/urls
@@ -64,16 +67,24 @@ public class RecordTest extends IntegrationTest {
                 }
             }
         }
-        //ЕСЛИ НЕОБХОДИМО ДОКАЧАТЬ в ГУГЛ-ДРАЙВ раскомментировать!! и закомментировать строки --> 1,2,3 ))))))
-        //audioUrls.entrySet().stream().forEach(stringStringEntry -> uploadNewAudioToGDrive(stringStringEntry.getKey(),stringStringEntry.getValue())); // --> 4
+        //ЕСЛИ необходимо ТОЛЬКО ДОКАЧАТЬ в ГУГЛ-ДРАЙВ закомментировать строки --> 1,2,3 ))))))
+        audioUrls.entrySet().stream().forEach(stringStringEntry -> uploadNewAudioToGDrive(stringStringEntry.getKey(),stringStringEntry.getValue())); // --> 4
     }
 
     private void uploadNewAudioToGDrive(String code, String url){
         Optional<Record> record = commonDao.getOpt(Record.class, "code", code);
-        if(record.isPresent() && record.get().getAltAudioGid().isEmpty()){
-            File file = googleService.uploadToGoogleDrive(url);
-            record.get().setAltAudioGid(file.getId());
-            commonDao.save(record.get());
+        if(record.isPresent() && record.get().getAltAudioGid() == null){
+            File file = null;
+            try {
+                file = googleService.uploadToGoogleDrive(url);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (file != null) {
+                record.get().setAltAudioGid(file.getId());
+                commonDao.save(record.get());
+                log.info("<--Upload and save new id for record " + record.get().getCode() + "-->");
+            }
         }
     }
 
@@ -96,16 +107,11 @@ public class RecordTest extends IntegrationTest {
             record = new Record();
             String name = recordCode.getName();
 
-            for (String s : audioUrls.keySet()) {
-                if (s.equals(recordCode.getCode())) {
-                    record.setAudioUrl(audioUrls.get(s));
-                    File file = googleService.uploadToGoogleDrive(audioUrls.get(s));
-                    record.setAltAudioGid(file.getId());
-                }
-            }
+            record.setAudioUrl(audioUrls.get(recordCode.getCode()));
             record.setName(name);
             record.setCode(recordCode.getCode());
             record.setCreatedAt(new Date());
+
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 Date date = format.parse(recordCode.getCode().substring(0,10));
@@ -133,7 +139,7 @@ public class RecordTest extends IntegrationTest {
         for (Map.Entry<String, String> stringStringEntry : parseAudio.entrySet()) {
             String nameFile = stringStringEntry.getKey();
             String code = stringStringEntry.getKey();
-            if (code.contains(".mp3")&&nameFile.length() > 12) {
+            if (code.contains(".mp3")&&nameFile.length() > 12) {//отсекаем маленькие топики с названием типа ответ.мп3 пока с ними будет ясно
                 if(code.length()==16) code = new StringBuilder(code).insert(code.length()-5,0).toString(); //если в коде номера после даты меньше 10 и без нуля
                 if(code.length()==14) code = new StringBuilder(code).insert(code.length()-4,"_01").toString(); //если в коде только дата без порядкового номера
                 String yearForUrl = "0000"; //default

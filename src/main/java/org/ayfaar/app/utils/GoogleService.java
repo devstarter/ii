@@ -29,6 +29,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import javax.inject.Inject;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -168,28 +169,33 @@ public class GoogleService {
     }
 
     /** Uploads a file using either resumable or direct media upload. */
-    private static File uploadFile(boolean useDirectUpload, String url) throws IOException {
+    private static File uploadFile(boolean useDirectUpload, String url){
 
         InputStream data = null;
         try {
             data = new URL(url).openStream();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException();
+            log.warn(String.format("Url %s not accessible",url));
+            return null;
         }
 
         File fileMetadata = new File();
         fileMetadata.setTitle(extractName(url));
+        InputStreamContent mediaContent = new InputStreamContent("audio/mpeg", new BufferedInputStream(data));
 
-        InputStreamContent mediaContent =
-                new InputStreamContent("audio/mpeg",
-                        new BufferedInputStream(data));
+        Drive.Files.Insert insert = null;
+        File execute;
+        try {
+            insert = drive.files().insert(fileMetadata, mediaContent);
+            MediaHttpUploader uploader = insert.getMediaHttpUploader();
+            uploader.setDirectUploadEnabled(useDirectUpload);
+            execute = insert.execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        Drive.Files.Insert insert = drive.files().insert(fileMetadata, mediaContent);
-
-        MediaHttpUploader uploader = insert.getMediaHttpUploader();
-        uploader.setDirectUploadEnabled(useDirectUpload);
-        File execute = insert.execute();
-        sharedAccess(execute.getId());
+        sharedAccess(execute.getId()); //sharing files for all users
         return execute;
     }
 
