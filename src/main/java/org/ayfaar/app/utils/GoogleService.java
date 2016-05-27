@@ -150,7 +150,13 @@ public class GoogleService {
     private static File uploadFile(boolean useDirectUpload, String url, String title) throws IOException {
 
         InputStream data;
-        data = new URL(url).openStream();
+        try {
+            data = new URL(url).openStream();
+        } catch (IOException e) {
+            //throw new RuntimeException();
+            log.warn("Url {} not accessible",url);
+            return null;
+        }
 
         File fileMetadata = new File();
         fileMetadata.setTitle(title);

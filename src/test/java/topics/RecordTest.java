@@ -13,7 +13,6 @@ import org.ayfaar.app.utils.GoogleService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -92,12 +91,11 @@ public class RecordTest extends IntegrationTest {
             File file = null;
             try {
                 file = googleService.uploadToGoogleDrive(url, code);
+                if (file == null) return;
                 record.setAltAudioGid(file.getId());
                 commonDao.save(record);
-            } catch (IOException e) {
-                log.warn("Error loading "+url);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warn("File uploading error", e);
             }
         }
     }
