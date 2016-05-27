@@ -52,6 +52,7 @@ public class RecordTest extends IntegrationTest {
         log.info("Create audio urls...");
         audioUrls = createAudioUrls(publicRecords);
         log.info("Done");
+
         //CREATE RECORDS IN DB
         log.info("Save records in DB...");
         allSavedRecords = StreamEx.of(commonDao.getAll(Record.class)).toMap(Record::getCode, Function.identity());
@@ -78,7 +79,8 @@ public class RecordTest extends IntegrationTest {
             }
         }
 
-        //ЕСЛИ НЕОБХОДИМО ДОКАЧАТЬ в ГУГЛ-ДРАЙВ раскомментировать!! и закомментировать строки --> 1,2,3 ))))))
+
+        //ЕСЛИ необходимо ТОЛЬКО ДОКАЧАТЬ в ГУГЛ-ДРАЙВ закомментировать строки --> 1,2,3 ))))))
         audioUrls.entrySet().stream().forEach(codeUrlEntry -> uploadNewAudioToGDrive(codeUrlEntry.getKey(), codeUrlEntry.getValue())); // --> 4
     }
 
@@ -115,13 +117,6 @@ public class RecordTest extends IntegrationTest {
             Record record = new Record();
             String name = recordCode.getName();
 
-            /*audioUrls.keySet().stream()
-                    .filter(s -> s.equals(recordCode.getCode()))
-                    .forEachOrdered(s -> {
-                        record.setAudioUrl(audioUrls.get(s));
-                        File file = googleService.uploadToGoogleDrive(audioUrls.get(s), s);
-                        record.setAltAudioGid(file.getId());
-                    });*/
             record.setAudioUrl(audioUrls.get(recordCode.getCode()));
             record.setName(name);
             record.setCode(recordCode.getCode());
