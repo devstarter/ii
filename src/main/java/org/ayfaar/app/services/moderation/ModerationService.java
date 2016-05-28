@@ -42,12 +42,12 @@ public class ModerationService {
         String message = arrayFormat(action.message, args).getMessage();
         log.info(message);
         final ActionLog actionLog = new ActionLog();
-        // actionLog.setMessage(message);
-        // указать время создания ActionLog
+        actionLog.setMessage(message);
         // указать такущего пользователя
+        actionLog.setUserId(getCurrentUserId());
         // указать action
-        // указать action
-        // commonDao.save(actionLog);
+        actionLog.setAction(action);
+        commonDao.save(actionLog);
     }
 
     public void check(Action action, Object... args) {
