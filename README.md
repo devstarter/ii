@@ -45,9 +45,8 @@
 1. Зарегистрируйтесь в [GitHub](https://github.com)
 2. Сделайте Fork (копию) [этого кода](https://github.com/devstarter/ii) из своего акаунта
 3. Скачайте его на свой компьютер `git clone https://github.com/<ваш акаунт>/ii.git`
-4. Откройте проект с помощью IDEA
-5. Устанавите плагин [lombok](http://plugins.jetbrains.com/plugin/6317) для IDEA
-6. Запустите тест [RunTest.java](https://github.com/devstarter/ii/blob/master/src/test/java/RunTest.java)
+4. Устанавите плагин [lombok](http://plugins.jetbrains.com/plugin/6317) для IDEA
+5. [Открываем проект в IntelliJ IDEA](https://github.com/devstarter/ii/wiki/%D0%9E%D1%82%D0%BA%D1%80%D1%8B%D1%82%D0%B8%D0%B5-%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0-%D0%B2-IntelliJ-IDEA)
 
 Настраиваем базу данных (MySQL) [Видео](https://www.youtube.com/watch?v=l-ZGmR98d-4): 
 
