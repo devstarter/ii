@@ -20,10 +20,6 @@ import java.util.stream.Collectors;
 public class RecordController {
 
     @Inject
-    CommonDao commonDao;
-    @Inject
-    RecordService recordService;
-    @Inject
     TopicService topicService;
     @Inject
     RecordDao recordDao;
@@ -41,15 +37,15 @@ public class RecordController {
 
     private  Map<String, Object> getRecordsInfo(Record record) {
         Map<String, Object> recordsInfoMap = new HashMap<>();
-        List<String> topics;
         recordsInfoMap.put("code",record.getCode());
         recordsInfoMap.put("name",record.getName());
         recordsInfoMap.put("recorder_at",new SimpleDateFormat("yyyy-MM-dd").format(record.getRecorderAt()));
         recordsInfoMap.put("url",record.getAudioUrl());
         recordsInfoMap.put("uri",record.getUri());
 
-        topics = topicService.getAllTopicsLinkedWithUri(record.getUri());
-        recordsInfoMap.put("topics",topics);
+        List<String> topicsUri = topicService.getAllTopicsLinkedWithUri(record.getUri()).stream().map(topicProvider ->
+                topicProvider.topic().getUri()).collect(Collectors.toList());
+        recordsInfoMap.put("topics",topicsUri);
         return recordsInfoMap;
     }
 }

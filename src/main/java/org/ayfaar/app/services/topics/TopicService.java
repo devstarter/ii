@@ -42,7 +42,7 @@ public interface TopicService {
 
     boolean exist(String name);
 
-    List<String> getAllTopicsLinkedWithUri(String uri);
+    List<TopicProvider> getAllTopicsLinkedWithUri(String uri);
 
     List<String> getAllNames();
 
