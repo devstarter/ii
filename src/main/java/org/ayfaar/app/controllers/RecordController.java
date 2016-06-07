@@ -1,23 +1,14 @@
 package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.CommonDao;
-import org.ayfaar.app.dao.LinkDao;
-import org.ayfaar.app.model.Document;
-import org.ayfaar.app.model.Link;
+import org.ayfaar.app.dao.RecordDao;
 import org.ayfaar.app.model.Record;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.ayfaar.app.services.record.RecordService;
+import org.ayfaar.app.services.topics.TopicService;
+import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.util.*;
-import java.util.function.Predicate;
-
-import static org.ayfaar.app.utils.UriGenerator.generate;
-import static org.springframework.data.domain.Sort.Direction.DESC;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/record")
@@ -26,35 +17,35 @@ public class RecordController {
     @Inject
     CommonDao commonDao;
     @Inject
-    LinkDao linkDao;
+    RecordService recordService;
+    @Inject
+    TopicService topicService;
+    @Inject
+    RecordDao recordDao;
 
-    @RequestMapping("{code}")
-    public  Map<String,Object> get(@PathVariable String code) {
-        Map<String,Object> recordsInfoMap = new HashMap<>();
-        List<String> topics = new ArrayList<>();
-        Record record = commonDao.getOpt(Record.class, "code", code).get();
+    @RequestMapping()
+    public List<Map<String, Object>> get(   @RequestParam(required = false) String nameOrCode,
+                                            @RequestParam(required = false) String year,
+                                            @RequestParam(required = false, defaultValue = "false") boolean is_url) {
+
+        return getRecordsInfo(recordDao.get(nameOrCode, year, is_url));
+    }
+
+    private List<Map<String, Object>> getRecordsInfo(List<Record> records) {
+        return records.stream().map(record -> getRecordsInfo(record)).collect(Collectors.toList());
+    }
+
+    private  Map<String, Object> getRecordsInfo(Record record) {
+        Map<String, Object> recordsInfoMap = new HashMap<>();
+        List<String> topics;
         recordsInfoMap.put("code",record.getCode());
         recordsInfoMap.put("name",record.getName());
         recordsInfoMap.put("recorder_at",record.getRecorderAt());
         recordsInfoMap.put("url",record.getAudioUrl());
         recordsInfoMap.put("uri",record.getUri());
-        String uri = record.getUri();
-        List<Link> allLinks = linkDao.getAllLinks(uri);
-        for (Link link : allLinks) {
-            topics.add(link.getUid1().getUri());
-        }
+
+        topics = topicService.getAllTopicsLinkedWithUri(record.getUri());
         recordsInfoMap.put("topics",topics);
-
         return recordsInfoMap;
-    }
-
-    @RequestMapping("last")
-    public List<Record> getLast(@PageableDefault(size = 9, sort = "recorderAt", direction = DESC) Pageable pageable) {
-        return commonDao.getPage(Record.class, pageable);
-    }
-
-    @RequestMapping("getForUrlPresent")
-    public List<Record> getForUrlPresent(@PageableDefault(size = 9, sort = "audioUrl", direction = DESC) Pageable pageable) {
-        return commonDao.getPage(Record.class, pageable);
     }
 }
