@@ -263,7 +263,7 @@
 			<version>1.21.0</version>
 		</dependency>
 
-		<!--for parsing excel files-->
+		<!--for parsing word,excel files-->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
@@ -275,6 +275,11 @@
 			<artifactId>poi</artifactId>
 			<version>3.9</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-scratchpad</artifactId>
+			<version>3.9</version>
 		</dependency>
 
 	</dependencies>
