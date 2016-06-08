@@ -4,14 +4,10 @@ import org.ayfaar.app.dao.RecordDao;
 import org.ayfaar.app.model.Record;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class RecordDaoImpl extends AbstractHibernateDAO<Record> implements RecordDao {
@@ -25,7 +21,7 @@ public class RecordDaoImpl extends AbstractHibernateDAO<Record> implements Recor
 
         Criteria criteria = criteria(pageable);
 
-        if (nameOrCode!=null)
+        if (nameOrCode!=null || !nameOrCode.equals(""))
             criteria.add(Restrictions.or(
                 Restrictions.like("code", nameOrCode, MatchMode.ANYWHERE),
                 Restrictions.like("name", nameOrCode, MatchMode.ANYWHERE)));

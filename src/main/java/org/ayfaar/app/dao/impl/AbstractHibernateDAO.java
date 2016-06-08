@@ -271,13 +271,7 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
     @NotNull
     @Override
     public List<E> getPage(Pageable pageable) {
-        final Sort sort = pageable.getSort();
-        Optional<Sort.Order> order = Optional.ofNullable(sort.iterator().hasNext() ? sort.iterator().next() : null);
-        return getPage(
-                pageable.getOffset(),
-                pageable.getPageSize(),
-                order.orElseGet(() -> null).getProperty(),
-                order.orElseGet(() -> null).getDirection().name());
+        return list(criteria(pageable));
     }
 
     @NotNull
