@@ -4,6 +4,7 @@ import org.ayfaar.app.dao.RecordDao;
 import org.ayfaar.app.model.Record;
 import org.ayfaar.app.model.User;
 import org.ayfaar.app.services.moderation.UserRole;
+import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -29,13 +30,12 @@ public class RecordController {
     public List<Map<String, Object>> get(@RequestParam(required = false) String nameOrCode,
                                              @RequestParam(required = false) String year,
                                              @RequestParam(required = false) Boolean with_url,
-                                             @AuthenticationPrincipal User current,
+                                             @AuthenticationPrincipal User currentUser,
                                              @PageableDefault(sort = "recorderAt", direction = DESC) Pageable pageable) {
-        boolean defaultWithUrl = false;
-        if (current.getRole() != UserRole.ROLE_EDITOR || current.getRole() != UserRole.ROLE_ADMIN) defaultWithUrl = true;
-        if(with_url == null) with_url = defaultWithUrl;
+
+        with_url = with_url != null ? with_url : !currentUser.getRole().accept(UserRole.ROLE_EDITOR);
         List<Record> records = recordDao.get(nameOrCode, year, with_url, pageable);
-        return records.stream().map(record -> getRecordsInfo(record)).collect(Collectors.toList());
+        return records.stream().map(this::getRecordsInfo).collect(Collectors.toList());
     }
 
     private  Map<String, Object> getRecordsInfo(Record record) {
@@ -46,8 +46,7 @@ public class RecordController {
         recordsInfoMap.put("url",record.getAudioUrl());
         recordsInfoMap.put("uri",record.getUri());
 
-        List<String> topicsUri = topicService.getAllTopicsLinkedWithUri(record.getUri()).stream().map(topicProvider ->
-                topicProvider.topic().getUri()).collect(Collectors.toList());
+        List<String> topicsUri = topicService.getAllTopicsLinkedWithUri(record.getUri()).stream().map(TopicProvider::uri).collect(Collectors.toList());
         recordsInfoMap.put("topics",topicsUri);
         return recordsInfoMap;
     }
