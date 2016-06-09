@@ -21,10 +21,12 @@ public class Record extends UID{
     private String code;
     @Column(columnDefinition = "text")
     private String name;
-    private String audioUrl;
-    private String altAudioGid;
     private Date recorderAt;
     private Date createdAt;
+    private String audioUrl;
+    private String altAudioGid;
+    @Column(columnDefinition = "text")
+    private String text;
 
     @Override
     public String toTitle() {

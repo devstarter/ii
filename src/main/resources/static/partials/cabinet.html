@@ -1,6 +1,9 @@
 <div ng-show="user">
-    <img ng-src="{{user.thumbnail}}" style="border-radius: 50%;"/>
-    <span class="user-name pointer" ng-click="updateName()" title="Изменить имя">{{user.name}}<i class="btn glyphicon glyphicon-pencil edit-button"></i></span>
+    <img ng-src="{{user.thumbnail}}" style="border-radius: 50%;max-width: 100px"/>
+    <span class="user-name pointer" title="Изменить имя">{{user.name}}
+        <i ng-click="updateName()" class="btn glyphicon glyphicon-pencil edit-button"></i>
+        <a class="btn btn-link nopadding exit" href="/logout"><i class="glyphicon glyphicon-log-out"></i> Выйти</a>
+    </span>
 
     <h2 ng-show="pendingActions.length">Действия нуждающиеся в подтверждении</h2>
     <div ng-repeat="action in pendingActions" style="padding-top: 10px">
@@ -11,6 +14,6 @@
 </div>
 <h1 ng-hide="user">Для доступа требуется авторизация</h1>
 <style type="text/css">
-    .edit-button {visibility: hidden;}
-    .user-name:hover .edit-button {visibility: visible}
+    .edit-button, .exit {visibility: hidden;}
+    .user-name:hover .edit-button, .user-name:hover .exit {visibility: visible}
 </style>

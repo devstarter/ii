@@ -1,3 +1,29 @@
+function RecordController($scope, $stateParams, $api, messager, ngAudio, $rootScope) {
+    $scope.recordLoading = true;
+    $api.record.get($stateParams.code ? $stateParams.code : null, null, true).then(function(records){
+        $scope.recordLoading = false;
+        $scope.last = records;
+    }, function(response){
+        $scope.recordLoading = false;
+        messager.error("Ошибка загрузки ответа");
+    });
+    $scope.play = function(record) {
+        if ($scope.currentPlayed) $scope.currentPlayed.played = false;
+        var volume = 0.5;
+        if ($rootScope.audio) {
+            volume = $rootScope.audio.volume;
+            $rootScope.audio.stop();
+        }
+        $rootScope.audio = ngAudio.load(record.url);
+        $rootScope.audio.volume = volume;
+        $rootScope.audio.play();
+        record.played = true;
+        $scope.currentPlayed = record;
+        document.title = record.name;
+    };
+    $scope.last = [];
+}
+
 function DocumentController($scope, $stateParams, $api, messager, $state) {
     if ($stateParams.id) {
         $scope.docLoading = true;

@@ -1,0 +1,19 @@
+<div>
+    <a href="r/">← К списку</a>
+    <div ng-show="recordLoading"><img src="static/images/ajax-loader.gif"/>Загрузка...</div>
+    <div style="padding-top: 20px">
+        <span class="grey">Ответы</span>
+        <div ng-repeat="record in last">
+            <i ng-show="record.url" class="glyphicon"
+               ng-class="record.played ? 'glyphicon-pause' : 'glyphicon-play'"
+               ng-click="record.played ? audio.pause() : play(record)"
+               style="width: 20px;font-size: 120%;"></i>
+            {{record.name}} <span class="gray">{{record.code}}</span>
+        </div>
+    </div>
+    </div>
+</div>
+<style type="text/css">
+    .title .glyphicon {visibility: hidden}
+    .title:hover .glyphicon {visibility: visible}
+</style>

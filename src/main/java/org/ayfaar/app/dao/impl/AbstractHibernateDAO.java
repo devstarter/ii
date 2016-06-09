@@ -65,6 +65,24 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         return currentSession().createCriteria(entityClass);
     }
 
+    protected Criteria criteria(Pageable pageable) {
+        final Sort sort = pageable.getSort();
+        Optional<Sort.Order> order = Optional.ofNullable(sort != null && sort.iterator().hasNext() ? sort.iterator().next() : null);
+
+        Criteria criteria = currentSession().createCriteria(entityClass)
+                .setFirstResult(pageable.getOffset())
+                .setMaxResults(pageable.getPageSize());
+
+        String sortField = order.isPresent() ? order.get().getProperty() : null;
+        String sortDirection = order.isPresent() ? order.get().getDirection().name() : null;
+
+        if (sortField != null && !sortField.isEmpty()) {
+            criteria.addOrder("asc".equals(sortDirection) ? Order.asc(sortField) : Order.desc(sortField));
+        }
+
+        return criteria;
+    }
+
     protected Query query(String hql) {
         return currentSession().createQuery(hql);
     }
@@ -253,13 +271,7 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
     @NotNull
     @Override
     public List<E> getPage(Pageable pageable) {
-        final Sort sort = pageable.getSort();
-        Optional<Sort.Order> order = Optional.ofNullable(sort.iterator().hasNext() ? sort.iterator().next() : null);
-        return getPage(
-                pageable.getOffset(),
-                pageable.getPageSize(),
-                order.orElseGet(() -> null).getProperty(),
-                order.orElseGet(() -> null).getDirection().name());
+        return list(criteria(pageable));
     }
 
     @NotNull

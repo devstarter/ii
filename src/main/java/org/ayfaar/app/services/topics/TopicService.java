@@ -7,6 +7,7 @@ import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public interface TopicService {
     @NotNull
@@ -41,6 +42,8 @@ public interface TopicService {
 
 
     boolean exist(String name);
+
+    Stream<TopicProvider> getAllTopicsLinkedWithUri(String uri);
 
     List<String> getAllNames();
 

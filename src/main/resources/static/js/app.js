@@ -10,6 +10,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
         //
 //        // Now set up the states
         $stateProvider
+            .state('logout', {
+                url: "/logout",
+                controller: function($state, auth) {
+                    auth.logout();
+                    $state.goToHome()
+                }
+            })      
             .state('home', {
                 url: "/{at: @?}",
                 templateUrl: "static/partials/home.html",
@@ -27,6 +34,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 url: "/d/{id}",
                 templateUrl: "static/partials/document.html",
                 controller: DocumentController
+            })
+            .state('record', {
+                url: "/r/{code}",
+                templateUrl: "static/partials/record.html",
+                controller: RecordController
             })
             .state('topic', {
                 url: "/t/{name}",
@@ -292,6 +304,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     return api.get("document/last")
                 }
             },
+            record: {
+                get: function (nameOrCode, year, withUrl) {
+                    return api.get("record", {nameOrCode: nameOrCode, year: year, with_url: withUrl})
+                }
+            },
             auth: {
                 registrate: function (user) {
                     return api.post("auth", user)
@@ -477,6 +494,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
     })
     .service('auth', function($modal, $api, $rootScope, $q, modal, $cookies) {
         return {
+            logout: function () {
+                delete $rootScope.user
+            },
             isAuthenticated: function () {
                 return typeof $rootScope.user !== 'undefined' ? $rootScope.user : false;
             },
