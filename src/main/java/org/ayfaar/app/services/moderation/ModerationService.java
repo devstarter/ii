@@ -68,7 +68,7 @@ public class ModerationService {
         }
         final PendingAction pendingAction = new PendingAction();
         actionText += rootAction.message != null ? arrayFormat(rootAction.message, entry.args).getMessage() : rootAction.name();
-
+        // fixme: в случае отсутствия пользователя в getCurrentUserName() ошибка
         pendingAction.setMessage(format("%s пользователем %s", actionText, getCurrentUserName()));
         pendingAction.setInitiatedBy(getCurrentUserId());
         pendingAction.setCommand(buildCommand(entry));
@@ -118,6 +118,7 @@ public class ModerationService {
     }
 
     private String getCurrentUserName() {
+        // fixme: не продуман кейс отсутсвия пользователя
         return AuthController.getCurrentUser().get().getName();
     }
 

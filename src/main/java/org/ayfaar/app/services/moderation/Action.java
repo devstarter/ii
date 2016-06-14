@@ -21,12 +21,16 @@ public enum Action {
     ITEMS_RANGE_CREATE  (ITEMS_RANGE),
     ITEMS_RANGE_UPDATE  (ITEMS_RANGE),
 
-    VIDEO_ADDED("Добавлено видео '{}' (<uri>{}</uri>)"),
     USER_RENAME("Имя пользователя {} измененно на {}"),
     TOPIC_RESOURCE_UNLINKED("От темы <topic>{}</topic> отлинкован <uri>{}</uri>"),
     TOPIC_CHILD_ADDED("Теме <topic>{}</topic> добавлена дочерняя тема <topic>{}</topic>"),
     TOPIC_TOPIC_UNLINKED("От темы <topic>{}</topic> отинкована тема <topic>{}</topic>"),
-    TOPIC_UNLINK_RESOURCE("Отмена связи между <uri>{}</uri> и темой <uri>{}</uri>", TOPIC);
+    TOPIC_UNLINK_RESOURCE("Отмена связи между <uri>{}</uri> и темой <uri>{}</uri>", TOPIC),
+
+    VIDEO_ADDED("Добавлено видео '{}' (<uri>{}</uri>)"),
+    VIDEO_ADD("Добавление нового видео по ссылке {}", UserRole.ROLE_AUTHENTICATED),
+    VIDEO_REMOVE("Удаление видео <uri>видео:youtube:{}</uri>", UserRole.ROLE_EDITOR),
+    VIDEO_UPDATE_TITLE("Обновление названия видео <uri>{}</uri> на `{}`", UserRole.ROLE_EDITOR);
 
     private Action parent = null;
     private UserRole requiredAccessLevel;
@@ -39,6 +43,9 @@ public enum Action {
     }
     Action(UserRole requiredAccessLevel) {
         this(null, null, requiredAccessLevel);
+    }
+    Action(String message, UserRole requiredAccessLevel) {
+        this(message, null, requiredAccessLevel);
     }
     Action(String message, Action parent, UserRole requiredAccessLevel) {
         this.message = message;

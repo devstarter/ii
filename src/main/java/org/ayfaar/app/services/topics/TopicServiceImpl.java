@@ -114,7 +114,7 @@ class TopicServiceImpl implements TopicService {
         return topics.values().stream().anyMatch(c -> c.name().equals(name));
     }
     @Override
-    public Stream<TopicProvider> getAllTopicsLinkedWithUri(String uri){
+    public Stream<TopicProvider> getAllTopicsLinkedWith(String uri){
         return topics.values().stream()
                 .flatMap(topicProvider -> topicProvider.linksMap.values().stream()
                         .filter(link -> link.getUid2().getUri().equals(uri))

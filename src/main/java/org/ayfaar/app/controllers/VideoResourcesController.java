@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers;
 
+import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.VideoResource;
 import org.ayfaar.app.repositories.VideoResourceRepository;
@@ -49,6 +50,7 @@ public class VideoResourcesController {
     }
 
     @RequestMapping(method = POST)
+    @Moderated(value = Action.VIDEO_ADD, command = "@videoResourcesController.add")
     public VideoResource add(@RequestParam String url) throws Exception {
         hasLength(url);
         final String videoId = extractVideoIdFromYoutubeUrl(url);
@@ -65,6 +67,7 @@ public class VideoResourcesController {
     }
 
     @RequestMapping(value = "update-title", method = RequestMethod.POST)
+    @Moderated(value = Action.VIDEO_UPDATE_TITLE, command = "@videoResourcesController.updateTitle")
     public void updateTitle(@RequestParam String uri, @RequestParam String title) {
         hasLength(uri);
         VideoResource video = commonDao.get(VideoResource.class, "uri", uri);
@@ -74,4 +77,9 @@ public class VideoResourcesController {
         }
     }
 
+    @RequestMapping("{id}/remove")
+    @Moderated(value = Action.VIDEO_REMOVE, command = "@videoResourcesController.remove")
+    public void remove(@PathVariable String id) {
+        commonDao.getOpt(VideoResource.class, "id", id).ifPresent(video -> commonDao.remove(video));
+    }
 }

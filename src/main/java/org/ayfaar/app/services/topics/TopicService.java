@@ -43,7 +43,7 @@ public interface TopicService {
 
     boolean exist(String name);
 
-    Stream<TopicProvider> getAllTopicsLinkedWithUri(String uri);
+    Stream<TopicProvider> getAllTopicsLinkedWith(String uri);
 
     List<String> getAllNames();
 

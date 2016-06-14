@@ -34,11 +34,11 @@ public class RecordController {
     public List<Map<String, Object>> get(@RequestParam(required = false) String nameOrCode,
                                          @RequestParam(required = false) String year,
                                          @RequestParam(required = false) Boolean with_url,
-                                         @AuthenticationPrincipal Optional<User> currentUser,
+                                         @AuthenticationPrincipal User currentUser,
                                          @PageableDefault(sort = "recorderAt", direction = DESC) Pageable pageable) {
-        with_url = with_url == null && currentUser.isPresent()
-                ? currentUser.get().getRole().accept(UserRole.ROLE_EDITOR)
-                : with_url;
+        with_url = with_url != null
+                ? with_url
+                : currentUser == null || currentUser.getRole().accept(UserRole.ROLE_EDITOR);
         List<Record> records = recordDao.get(nameOrCode, year, with_url, pageable);
         return records.stream().map(this::getRecordsInfo).collect(Collectors.toList());
     }
@@ -51,7 +51,7 @@ public class RecordController {
         recordsInfoMap.put("url",record.getAudioUrl());
         recordsInfoMap.put("uri",record.getUri());
 
-        List<String> topicUris = topicService.getAllTopicsLinkedWithUri(record.getUri())
+        List<String> topicUris = topicService.getAllTopicsLinkedWith(record.getUri())
                 .map(TopicProvider::uri)
                 .collect(Collectors.toList());
         recordsInfoMap.put("topics", topicUris);

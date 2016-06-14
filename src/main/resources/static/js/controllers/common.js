@@ -1,6 +1,6 @@
 function RecordController($scope, $stateParams, $api, messager, ngAudio, $rootScope) {
     $scope.recordLoading = true;
-    $api.record.get($stateParams.code ? $stateParams.code : null, null, true).then(function(records){
+    $api.record.get($stateParams.code).then(function(records){
         $scope.recordLoading = false;
         $scope.last = records;
     }, function(response){

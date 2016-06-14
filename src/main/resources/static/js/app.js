@@ -306,7 +306,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             },
             record: {
                 get: function (nameOrCode, year, withUrl) {
-                    return api.get("record", {nameOrCode: nameOrCode, year: year, with_url: withUrl})
+                    var data = {};
+                    if (nameOrCode) data.nameOrCode = nameOrCode;
+                    if (year) data.year = year;
+                    if (withUrl) data.with_url = withUrl;
+                    return api.get("record", data)
                 }
             },
             auth: {
