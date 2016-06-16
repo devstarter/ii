@@ -113,7 +113,11 @@ class TopicServiceImpl implements TopicService {
     public boolean exist(String name) {
         return topics.values().stream().anyMatch(c -> c.name().equals(name));
     }
-
+    @Override
+    public List<TopicProvider> getAllTopicsLinkedWithUri(String uri){
+        return topics.values().stream().flatMap(topicProvider -> topicProvider.linksMap.values().stream().filter(link ->
+                        link.getUid2().getUri().equals(uri)).map(link -> get(link.getUid1().getUri()).get())).collect(Collectors.toList());
+    }
     @Override
     public List<String> getAllNames(){
         return topics.values().stream().map(topicProvider ->

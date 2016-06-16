@@ -42,6 +42,8 @@ public interface TopicService {
 
     boolean exist(String name);
 
+    List<TopicProvider> getAllTopicsLinkedWithUri(String uri);
+
     List<String> getAllNames();
 
     Map<String, String> getAllUriNames();
