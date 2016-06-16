@@ -21,6 +21,9 @@ public class RecordServiceImpl implements RecordService {
     RecordDao recordDao;
 
     List<Record> allRecords;
+    List<TermRecordFrequency> termRecordFrequencies;
+
+    private static final int MAX_TERM_LOADING = 3;
 
     @PostConstruct
     private void init() {
@@ -29,6 +32,10 @@ public class RecordServiceImpl implements RecordService {
         allRecords = commonDao.getAll(Record.class);
 
         log.info("Records loaded");
+
+        termRecordFrequencies = commonDao.getPage(TermRecordFrequency.class, 0, MAX_TERM_LOADING, "frequency", "desc");
+
+        log.info("Term-Record Frequencies loaded");
     }
 
     @Override
@@ -48,12 +55,12 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public List<String> getRecordsWithTerm(String term){
-        List<TermRecordFrequency> termRecordFrequencies = commonDao.getList(TermRecordFrequency.class, "term", term);
-        return termRecordFrequencies.stream().map(TermRecordFrequency::getRecord).collect(Collectors.toList());
+        return termRecordFrequencies.stream().filter(t ->
+                t.getTerm().equals(term)).map(TermRecordFrequency::getRecord).collect(Collectors.toList());
     }
 
     @Override
-    public List<TermRecordFrequency> getByFrequency(int pageSize){
-        return commonDao.getPage(TermRecordFrequency.class, 0, pageSize, "frequency", "desc");
+    public List<TermRecordFrequency> getByFrequency(){
+        return termRecordFrequencies;
     }
 }

@@ -13,5 +13,5 @@ public interface RecordService {
 
     List<String> getRecordsWithTerm(String term);
 
-    List<TermRecordFrequency> getByFrequency(int pageSize);
+    List<TermRecordFrequency> getByFrequency();
 }
