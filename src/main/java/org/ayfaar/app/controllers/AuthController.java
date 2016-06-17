@@ -90,15 +90,4 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         response.sendRedirect("/%D1%8F");
     }
-
-    public static Optional<User> getCurrentUser(){
-        if (SecurityContextHolder.getContext() == null || SecurityContextHolder.getContext().getAuthentication() == null) return Optional.empty();
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal instanceof User ? Optional.of((User) principal) : Optional.empty();
-    }
-
-    public static UserRole getCurrentAccessLevel() {
-//        return UserRole.ROLE_ADMIN;
-        return getCurrentUser().isPresent() ? getCurrentUser().get().getRole() : UserRole.ROLE_ANONYMOUS;
-    }
 }

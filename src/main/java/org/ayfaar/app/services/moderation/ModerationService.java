@@ -2,10 +2,10 @@ package org.ayfaar.app.services.moderation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.annotations.Moderated;
-import org.ayfaar.app.controllers.AuthController;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.ActionLog;
 import org.ayfaar.app.model.PendingAction;
+import org.ayfaar.app.utils.CurrentUserProvider;
 import org.ayfaar.app.utils.exceptions.ConfirmationRequiredException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.expression.BeanFactoryResolver;
@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import java.util.Date;
 
 import static java.lang.String.format;
-import static org.ayfaar.app.controllers.AuthController.getCurrentAccessLevel;
 import static org.slf4j.helpers.MessageFormatter.arrayFormat;
 
 
@@ -27,12 +26,14 @@ public class ModerationService {
     private final StandardEvaluationContext context;
     private final SpelExpressionParser parser;
     private final CommonDao commonDao;
+    private final CurrentUserProvider currentUserProvider;
 
     private final ThreadLocal<MethodEntry> threadLocal = new ThreadLocal<>();
 
     @Inject
-    protected ModerationService(CommonDao commonDao, BeanFactory beanFactory) {
+    protected ModerationService(CommonDao commonDao, BeanFactory beanFactory, CurrentUserProvider currentUserProvider) {
         this.commonDao = commonDao;
+        this.currentUserProvider = currentUserProvider;
         context = new StandardEvaluationContext();
         context.setBeanResolver(new BeanFactoryResolver(beanFactory));
         parser = new SpelExpressionParser();
@@ -51,7 +52,7 @@ public class ModerationService {
     }
 
     public void check(Action action, Object... args) {
-        if (!getCurrentAccessLevel().accept(action.getRequiredAccessLevel())) {
+        if (!currentUserProvider.getCurrentAccessLevel().accept(action.getRequiredAccessLevel())) {
             final PendingAction pendingAction = registerConfirmationRequirement(action, args);
             throw new ConfirmationRequiredException(pendingAction);
         }
@@ -97,13 +98,13 @@ public class ModerationService {
         final PendingAction pendingAction = commonDao.getOpt(PendingAction.class, id)
                 .orElseThrow(() -> new RuntimeException("Action not found"));
         boolean ownAction = getCurrentUserId().equals(pendingAction.getInitiatedBy());
-        if (!ownAction && !getCurrentAccessLevel().accept(pendingAction.getAction().getRequiredAccessLevel()))
+        if (!ownAction && !currentUserProvider.getCurrentAccessLevel().accept(pendingAction.getAction().getRequiredAccessLevel()))
             throw new ConfirmationRequiredException(pendingAction);
         commonDao.remove(pendingAction);
     }
 
     public void confirm(PendingAction pendingAction) {
-        if (!getCurrentAccessLevel().accept(pendingAction.getAction().getRequiredAccessLevel()))
+        if (!currentUserProvider.getCurrentAccessLevel().accept(pendingAction.getAction().getRequiredAccessLevel()))
             throw new ConfirmationRequiredException(pendingAction);
         // perform command
         parser.parseExpression(pendingAction.getCommand()).getValue(context);
@@ -114,12 +115,12 @@ public class ModerationService {
     }
 
     private Integer getCurrentUserId() {
-        return AuthController.getCurrentUser().get().getId();
+        return currentUserProvider.get().get().getId();
     }
 
     private String getCurrentUserName() {
         // fixme: не продуман кейс отсутсвия пользователя
-        return AuthController.getCurrentUser().get().getName();
+        return currentUserProvider.get().get().getName();
     }
 
     void checkMethod(Moderated moderated, Object[] args) {

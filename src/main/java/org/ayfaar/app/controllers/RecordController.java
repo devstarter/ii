@@ -35,7 +35,7 @@ public class RecordController {
                                          @RequestParam(required = false) String year,
                                          @RequestParam(required = false) Boolean with_url,
                                          @AuthenticationPrincipal User currentUser,
-                                         @PageableDefault(sort = "recorderAt", direction = DESC) Pageable pageable) {
+                                         @PageableDefault(sort = "recorderAt", direction = DESC, size = 30) Pageable pageable) {
         with_url = with_url != null
                 ? with_url
                 : currentUser == null || currentUser.getRole().accept(UserRole.ROLE_EDITOR);
@@ -52,7 +52,7 @@ public class RecordController {
         recordsInfoMap.put("uri",record.getUri());
 
         List<String> topicUris = topicService.getAllTopicsLinkedWith(record.getUri())
-                .map(TopicProvider::uri)
+                .map(TopicProvider::name)
                 .collect(Collectors.toList());
         recordsInfoMap.put("topics", topicUris);
         return recordsInfoMap;

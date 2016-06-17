@@ -1,12 +1,13 @@
 package org.ayfaar.app.services.topics;
 
 import one.util.streamex.StreamEx;
-import org.ayfaar.app.controllers.AuthController;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.services.moderation.Action;
 import org.ayfaar.app.services.moderation.ModerationService;
+import org.ayfaar.app.services.moderation.UserRole;
+import org.ayfaar.app.utils.CurrentUserProvider;
 import org.ayfaar.app.utils.UriGenerator;
 import org.ayfaar.app.utils.exceptions.ExceptionCode;
 import org.ayfaar.app.utils.exceptions.LogicalException;
@@ -39,6 +40,7 @@ class TopicServiceImpl implements TopicService {
     @Inject LinkDao linkDao;
     @Inject ModerationService moderationService;
     @Inject Environment environment;
+    @Inject CurrentUserProvider currentUserProvider;
 
     @PostConstruct
     private void init() {
@@ -165,7 +167,7 @@ class TopicServiceImpl implements TopicService {
             Link finalLink = link;
 
 //            if (!environment.acceptsProfiles("dev"))
-            AuthController.getCurrentUser().ifPresent(u -> finalLink.setCreatedBy(u.getId()));
+            currentUserProvider.get().ifPresent(u -> finalLink.setCreatedBy(u.getId()));
 
             if (uid instanceof Topic) {
                 topics.get(uid.getUri()).registerLink(link, topic);
@@ -274,6 +276,8 @@ class TopicServiceImpl implements TopicService {
             resources.itemsRange.addAll(prepareResource(ItemsRange.class));
             resources.document.addAll(prepareResource(Document.class));
             resources.record.addAll(StreamEx.of(prepareResource(Record.class))
+                    .filter(r -> r.resource.getAudioUrl() != null ||
+                            (currentUserProvider.get().isPresent() && currentUserProvider.get().get().getRole().accept(UserRole.ROLE_EDITOR)))
                     .sorted((r1, r2) -> {
                         if (r1.resource.getAudioUrl() != null && r2.resource.getAudioUrl() == null) return -1;
                         if (r2.resource.getAudioUrl() != null && r1.resource.getAudioUrl() == null) return 1;

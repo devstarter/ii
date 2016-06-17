@@ -8,6 +8,7 @@ import org.ayfaar.app.model.User;
 import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.user.UserPresentation;
 import org.ayfaar.app.services.user.UserService;
+import org.ayfaar.app.utils.CurrentUserProvider;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,19 +29,21 @@ public class ModerationController {
     private final CommonDao commonDao;
     private final ModerationService service;
     private final UserService userService;
+    private CurrentUserProvider currentUserProvider;
 
     @Inject
-    public ModerationController(ModerationService service, CommonDao commonDao, UserService userService) {
+    public ModerationController(ModerationService service, CommonDao commonDao, UserService userService, CurrentUserProvider currentUserProvider) {
         this.service = service;
         this.commonDao = commonDao;
         this.userService = userService;
+        this.currentUserProvider = currentUserProvider;
     }
 
     @RequestMapping("pending_actions")
     public List<PendingActionPresentation> getPendingActions(@AuthenticationPrincipal User currentUser) {
         // show only my users (this user can be linked with another as children for personal moderation)
         return StreamEx.of(commonDao.getList(PendingAction.class, "confirmedBy", null))
-                .filter(a -> AuthController.getCurrentAccessLevel().accept(a.getAction().getRequiredAccessLevel())
+                .filter(a -> currentUserProvider.getCurrentAccessLevel().accept(a.getAction().getRequiredAccessLevel())
                         || Objects.equals(currentUser.getId(), a.getInitiatedBy()))
                 .reverseSorted(comparingInt(PendingAction::getId))
                 .map(PendingActionPresentation::new)

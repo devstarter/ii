@@ -2,6 +2,7 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.CommonDao;
+import org.ayfaar.app.model.User;
 import org.ayfaar.app.model.VideoResource;
 import org.ayfaar.app.repositories.VideoResourceRepository;
 import org.ayfaar.app.services.moderation.Action;
@@ -10,6 +11,7 @@ import org.ayfaar.app.utils.GoogleService;
 import org.ayfaar.app.utils.Language;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -51,7 +53,7 @@ public class VideoResourcesController {
 
     @RequestMapping(method = POST)
     @Moderated(value = Action.VIDEO_ADD, command = "@videoResourcesController.add")
-    public VideoResource add(@RequestParam String url) throws Exception {
+    public VideoResource add(@RequestParam String url, @AuthenticationPrincipal User user) throws Exception {
         hasLength(url);
         final String videoId = extractVideoIdFromYoutubeUrl(url);
         return commonDao.getOpt(VideoResource.class, "id", videoId).orElseGet(() -> {
@@ -59,7 +61,7 @@ public class VideoResourcesController {
             final VideoResource video = new VideoResource(videoId, Language.ru);
             video.setTitle(info.title);
             video.setPublishedAt(info.publishedAt);
-            AuthController.getCurrentUser().ifPresent(u -> video.setCreatedBy(u.getId()));
+            if (user != null) video.setCreatedBy(user.getId());
             commonDao.save(video);
             moderationService.notice(Action.VIDEO_ADDED, video.getTitle(), video.getUri());
             return video;

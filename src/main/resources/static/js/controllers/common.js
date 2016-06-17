@@ -1,12 +1,15 @@
-function RecordController($scope, $stateParams, $api, messager, ngAudio, $rootScope) {
+function RecordController($scope, $stateParams, $api, messager, ngAudio, $rootScope, $topicPrompt) {
     $scope.recordLoading = true;
-    $api.record.get($stateParams.code).then(function(records){
+    $scope.last = [];
+
+    $api.record.get(0, $stateParams.code).then(function(records){
         $scope.recordLoading = false;
-        $scope.last = records;
+        $scope.last.append(records);
     }, function(response){
         $scope.recordLoading = false;
         messager.error("Ошибка загрузки ответа");
     });
+
     $scope.play = function(record) {
         if ($scope.currentPlayed) $scope.currentPlayed.played = false;
         var volume = 0.5;
@@ -21,7 +24,37 @@ function RecordController($scope, $stateParams, $api, messager, ngAudio, $rootSc
         $scope.currentPlayed = record;
         document.title = record.name;
     };
-    $scope.last = [];
+    $scope.getMore = function () {
+        load(true);
+    };
+
+    function load(next) {
+        $scope.recordLoading = true;
+        if (!next) {
+            $scope.last = [];
+            $scope.lastNoMore = false;
+        }
+        $api.record.get(next ? Math.ceil($scope.last.length / 10) : 0, $scope.nameFilter, $scope.yearFilter).then(function (records) {
+            $scope.recordLoading = false;
+            if (!records.length && next) {
+                $scope.lastNoMore = true;
+                return
+            }
+            $scope.last.append(records);
+        })
+    }
+
+    $scope.update = function () {
+        load()
+    };
+
+    $scope.addTopic = function (record) {
+        $topicPrompt.prompt().then(function (topic) {
+            $api.topic.addFor(record.uri, topic).then(function () {
+                load()
+            })
+        });
+    }
 }
 
 function DocumentController($scope, $stateParams, $api, messager, $state) {
@@ -202,7 +235,7 @@ function TaggerController($scope, $stateParams, $api) {
 function ResourcesController($scope, $stateParams, $state, Video, errorService, $api, $timeout) {
     $scope.topics = [];
     $scope.newTopic = {};
-    $scope.lastVideos = [];
+    $scope.last = [];
     document.title = "Последние видео ответы";
 
     if ($stateParams.id) {
@@ -236,14 +269,14 @@ function ResourcesController($scope, $stateParams, $state, Video, errorService, 
 
     function getLast() {
         $scope.lastLoading = true;
-        $api.resource.video.last(Math.ceil($scope.lastVideos.length / 6)).then(function (lastVideos) {
-            if (!lastVideos.length) {
+        $api.resource.video.last(Math.ceil($scope.last.length / 6)).then(function (lastVideos) {
+            if (!last.length) {
                 $scope.lastNoMore = true;
                 return
             }
-            $scope.lastVideos.append(lastVideos);
+            $scope.last.append(last);
             var grouped = {};
-            angular.forEach($scope.lastVideos, function (v) {
+            angular.forEach($scope.last, function (v) {
                 var d = new Date(v.created_at);
                 var diff = Date.now() - d;
                 var header;

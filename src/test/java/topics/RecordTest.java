@@ -12,7 +12,10 @@ import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.utils.GoogleService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
+import java.io.IOException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,6 +26,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
+@ActiveProfiles("remote")
 public class RecordTest extends IntegrationTest {
 
     @Autowired
@@ -56,13 +60,13 @@ public class RecordTest extends IntegrationTest {
         //CREATE RECORDS IN DB
         log.info("Save records in DB...");
         allSavedRecords = StreamEx.of(commonDao.getAll(Record.class)).toMap(Record::getCode, Function.identity());
-        recordCodes.stream().forEach(this::saveRecords); // --> 1
+//        recordCodes.stream().forEach(this::saveRecords); // --> 1
 
         //if code is not found in list recordCodes -> create records from this codes/urls
-        log.info("Save missed public records in DB");
-        addMissedRecords(audioUrls, recordCodes); // --> 2
+//        log.info("Save missed public records in DB");
+//        addMissedRecords(audioUrls, recordCodes); // --> 2
 
-        //CREATE LINKS
+        /*//CREATE LINKS
         log.info("Create links");
         for (RecordCodes recordCode : recordCodes) {
             for (Map.Entry<String, String> stringStringEntry : codeTopicMap.entrySet()) {
@@ -77,26 +81,34 @@ public class RecordTest extends IntegrationTest {
                     }
                 }
             }
-        }
+        }*/
 
 
         //ЕСЛИ необходимо ТОЛЬКО ДОКАЧАТЬ в ГУГЛ-ДРАЙВ закомментировать строки --> 1,2,3 ))))))
-        audioUrls.entrySet().stream().forEach(codeUrlEntry -> uploadNewAudioToGDrive(codeUrlEntry.getKey(), codeUrlEntry.getValue())); // --> 4
+        audioUrls.entrySet().forEach(codeUrlEntry -> uploadNewAudioToGDrive(codeUrlEntry.getKey(), codeUrlEntry.getValue())); // --> 4
     }
 
     private void uploadNewAudioToGDrive(String code, String url){
         if (allSavedRecords == null) allSavedRecords = StreamEx.of(commonDao.getAll(Record.class)).toMap(Record::getCode, Function.identity());
         Record record = allSavedRecords.get(code);
         if(record != null && record.getAltAudioGid() == null){
-            File file = null;
+            File file;
             try {
+                new URL(url).openStream();
+            } catch (IOException e) {
+                log.warn("Url {} not accessible",url);
+                record.setAudioUrl(null);
+                commonDao.save(record);
+                return;
+            }
+            /*try {
                 file = googleService.uploadToGoogleDrive(url, code);
                 if (file == null) return;
                 record.setAltAudioGid(file.getId());
                 commonDao.save(record);
             } catch (Exception e) {
                 log.warn("File uploading error", e);
-            }
+            }*/
         }
     }
 

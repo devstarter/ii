@@ -266,12 +266,7 @@ public class TermServiceImpl implements TermService {
         }
 
         List<Term> sorted = new ArrayList<Term>(contains);
-        sort(sorted, new Comparator<Term>() {
-            @Override
-            public int compare(Term o1, Term o2) {
-                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-            }
-        });
+        sort(sorted, (o1, o2) -> o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase()));
         return sorted;
     }
 }

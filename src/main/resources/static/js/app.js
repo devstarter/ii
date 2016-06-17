@@ -305,8 +305,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 }
             },
             record: {
-                get: function (nameOrCode, year, withUrl) {
-                    var data = {};
+                get: function (page, nameOrCode, year, withUrl) {
+                    var data = {page: page ? page : 0};
                     if (nameOrCode) data.nameOrCode = nameOrCode;
                     if (year) data.year = year;
                     if (withUrl) data.with_url = withUrl;

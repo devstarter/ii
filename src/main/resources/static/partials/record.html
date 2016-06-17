@@ -1,19 +1,42 @@
 <div>
-    <a href="r/">← К списку</a>
+    <a href="r/" ng-show="record">← Показать все ответы</a>
     <div ng-show="recordLoading"><img src="static/images/ajax-loader.gif"/>Загрузка...</div>
-    <div style="padding-top: 20px">
-        <span class="grey">Ответы</span>
-        <div ng-repeat="record in last">
+    <div style="padding-top: 20px" ng-hide="recordLoading">
+        <div class="pointer" ng-click="showFilters = !showFilters" style="padding-bottom: 20px">
+            <h3 style="display: inline">Ответы</h3> <span ng-hide="showFilters" class="gray">фильтровать</span>
+        </div>
+        <div ng-show="showFilters" style="padding-bottom: 20px">
+            Год: <select class="form-control" ng-model="yearFilter" style="display: inline; width: 85px;" ng-change="update()">
+                <option></option>
+                <option>2016</option>
+                <option>2015</option>
+                <option>2014</option>
+                <option>2013</option>
+                <option>2012</option>
+                <option>2011</option>
+                <option>2010</option>
+            </select>
+
+            <input placeholder="Название содержит"  class="form-control" ng-model="nameFilter" style="display: inline;width: 300px;"/><a ng-click="update()" class="btn btn-default">Обновить</a>
+        </div>
+        <div ng-repeat="record in last" style="padding-bottom: 10px" class="record-block">
             <i ng-show="record.url" class="glyphicon"
                ng-class="record.played ? 'glyphicon-pause' : 'glyphicon-play'"
                ng-click="record.played ? audio.pause() : play(record)"
                style="width: 20px;font-size: 120%;"></i>
             {{record.name}} <span class="gray">{{record.code}}</span>
+            <div>
+                <span style="padding-left: 10px" ng-repeat="topic in record.topics">
+                    <a topic-ref="topic"><i class="glyphicon glyphicon-tag" style="font-size: 75%"></i> {{topic}}</a>
+                </span>
+                <i ng-click="addTopic(record)" class="pointer glyphicon glyphicon-plus-sign h" ng-show="record.topics.length" title="Добавить тему ответа"></i>
+                <a ng-click="addTopic(record)" class="btn btn-link nopadding h" ng-hide="record.topics.length">Указать тему ответа</a>
+            </div>
         </div>
-    </div>
+        <a ng-click="getMore()" ng-hide="lastNoMore" class="btn btn-link" ng-class="recordLoading ? 'disabled' : ''">{{recordLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>
     </div>
 </div>
 <style type="text/css">
-    .title .glyphicon {visibility: hidden}
-    .title:hover .glyphicon {visibility: visible}
+    .record-block .h {visibility: hidden}
+    .record-block:hover .h {visibility: visible}
 </style>
