@@ -20,10 +20,9 @@
             <input placeholder="Название содержит"  class="form-control" ng-model="nameFilter" style="display: inline;width: 300px;"/><a ng-click="update()" class="btn btn-default">Обновить</a>
         </div>
         <div ng-repeat="record in last" style="padding-bottom: 10px" class="record-block">
-            <i ng-show="record.url" class="glyphicon"
+            <i ng-show="record.url" class="glyphicon pointer play-button" title="{{record.played ? 'Остановить' : 'Прослушать'}}"
                ng-class="record.played ? 'glyphicon-pause' : 'glyphicon-play'"
-               ng-click="record.played ? audio.pause() : play(record)"
-               style="width: 20px;font-size: 120%;"></i>
+               ng-click="record.played ? audio.pause() : play(record)"></i>
             {{record.name}} <span class="gray">{{record.code}}</span>
             <div>
                 <span style="padding-left: 10px" ng-repeat="topic in record.topics">
@@ -39,4 +38,8 @@
 <style type="text/css">
     .record-block .h {visibility: hidden}
     .record-block:hover .h {visibility: visible}
+    .play-button {
+        width: 20px;
+        font-size: 120%;
+    }
 </style>
