@@ -1,0 +1,58 @@
+<div>
+    <div class="home">
+        <div class="header">
+            <img src="static/images/logo.png" alt="Ииссиидиология">
+        </div>
+        <h1>База знаний Ииссиидиологии</h1>
+    </div>
+    <div>
+        <!--<div class="input-group">-->
+            <input ng-model="query" type="text" class="form-control" placeholder="Введите слово"
+                   ii-lookup
+                   typeahead-editable="false"
+                   typeahead-template-url="typeahead-item-template"
+                   typeahead="item for item in getSuggestions($viewValue)"
+                   typeahead-on-select="select($item, $model, $label)">
+            <!--<span class="input-group-btn">-->
+              <!--<button class="btn btn-primary" ng-click="search(query)">Искать</button>-->
+            <!--</span>-->
+        </div>
+        <!--<span class="home-search-tips">
+            Примеры поиска: <a href tooltip-placement="bottom" tooltip='"*" означает поиск всех вариантов склонения слова, например: птицам, птицы и т.п.' ng-click="search('птиц*')">птиц*</a>, <a href tooltip-placement="bottom" tooltip="поиск упоминаний непосредственно Космического Кода в содержимом" ng-click="search('НУУ-ВВУ')">НУУ-ВВУ</a>, <a href tooltip-placement="bottom" tooltip="поиск упоминаний Ииссиидиологического термина в содержимом" ng-click="search('клекс')">клекс</a>, <a href tooltip-placement="bottom" tooltip="показать текст абзаца" ng-click="search('10.10176')">10.10176</a>, <a href tooltip-placement="bottom" tooltip="показать диапазон пунктов" ng-click="search('3.0844-3.0846')">3.0844-3.0846</a>
+        </span>-->
+
+    <h3>Последние добавленные видео ответы</h3>
+    <div class="row">
+        <video-card ng-repeat="video in videos" video="video" class="col-md-4"></video-card>
+    </div>
+    <a class="btn btn-link show-more-link" href="resource/video/">посмотреть все →</a>
+
+    <h3>Последние добавленные аудио ответы</h3>
+    <record-card ng-repeat="record in records" record="record"></record-card>
+    <a class="btn btn-link show-more-link" href="r/">посмотреть все →</a>
+
+    <h3>Последние добавленные документы</h3>
+    <a class="btn btn-link" style="display: block;text-align: left;font-size: 16px" ng-repeat="doc in docs" ii-ref="doc" title="{{doc.name}}">{{doc.name|cut:true:75}}</a>
+    <a class="btn btn-link show-more-link" href="d/">посмотреть все →</a>
+
+    <h3>Последние добавленные темы</h3>
+    <a class="btn btn-link" style="display: block;text-align: left;font-size: 16px" ng-repeat="topic in topics" topic-ref="topic" title="{{topic.name}}">{{topic.name|cut:true:75}}</a>
+    <a class="btn btn-link show-more-link" href="t/Методика МИЦИАР">посмотреть все →</a>
+
+
+    <a class="btn btn-link" style="text-align: center; display: block" ng-click="auth()" ng-hide="user">Представиться</a>
+    <div ng-show="user" style="text-align: center;display: block;" ng-click="goToCabinet()" class="btn"><img ng-src="{{user.thumbnail}}" style="width: 30px;height: 30px;border-radius: 50%;"/> {{user.name}}</div>
+</div>
+<style type="text/css">
+    .show-more-link {
+        display: block;
+        text-align: left;
+        color: gray;
+    }
+</style>
+
+<script type="text/ng-template" id="typeahead-item-template">
+    <div style="padding: 5px" class="pointer">
+        <span class="gray" ng-click="addFilterByType(match.model.type)">{{match.model.typeLabel}}</span> <span ng-bind-html="match.model.label | typeaheadHighlight:query"></span>
+    </div>
+</script>

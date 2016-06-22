@@ -1,3 +1,9 @@
+.record-block .h {visibility: hidden}
+.record-block:hover .h {visibility: visible}
+.play-button {
+    width: 20px;
+    font-size: 120%;
+}
 .card {
     background: #fff;
     border-radius: 2px;

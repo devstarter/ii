@@ -25,6 +25,14 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     $rootScope.$broadcast('home-state-entered');
                 }
             })
+            .state('knowledge-base', {
+                url: "/kb",
+                templateUrl: "static/partials/knowledge-base.html",
+                controller: KnowledgeBaseController,
+                onEnter: function($rootScope){
+                    $rootScope.$broadcast('home-state-entered');
+                }
+            })
             .state('cabinet', {
                 url: "/я",
                 templateUrl: "static/partials/cabinet.html",
@@ -239,6 +247,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 suggestions: function(query) {
                     return api.get("suggestions/"+query)
                 },
+                suggestionsAll: function (q) {
+                    return api.get("suggestions/all", {q: q})
+                },
                 quote: function(uri, term, quote) {
                     return api.authPost("search/rate/+", {uri: uri, query: term, quote: quote})
                 }
@@ -248,12 +259,17 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     add: function (url) {
                         return api.authPost("resource/video", {url: url})
                     },
-                    last: function (page) {
-                        return api.get("resource/video/last-created", {page: page})
+                    last: function (page, size) {
+                        var params = {page: page};
+                        if (size) params.size = size;
+                        return api.get("resource/video/last-created", params)
                     }
                 }
             },
             topic: {
+                last: function (size) {
+                    return api.get("topic/last", {size: size})
+                },
                 suggest: function (q) {
                     return api.get("topic/suggest", {q: q})
                 },
@@ -300,11 +316,18 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 add: function (url) {
                     return api.authPost("document", {url: url})
                 },
-                last: function () {
-                    return api.get("document/last")
+                last: function (page, size) {
+                    var data = {page: page ? page : 0};
+                    if (size) data.size = size;
+                    return api.get("document/last", data)
                 }
             },
             record: {
+                last: function (page, size) {
+                    var data = {page: page ? page : 0};
+                    if (size) data.size = size;
+                    return api.get("record", data)
+                },
                 get: function (page, nameOrCode, year, withUrl) {
                     var data = {page: page ? page : 0};
                     if (nameOrCode) data.nameOrCode = nameOrCode;
@@ -372,6 +395,10 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         return uri.replace("статья:", "");
                     case 'paragraph':
                         return uri.replace("ии:пункты:", "");
+                    case 'record':
+                        return uri.replace("запись:", "");
+                    case 'document':
+                        return uri.replace("документ:", "");
                     case 'video':
                         return object ? object.title : uri;
                 }
@@ -401,6 +428,31 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 }
                 if (uri.indexOf("ии:пункты:") === 0) {
                     return 'paragraph'
+                }
+                if (uri.indexOf("запись:") === 0) {
+                    return 'record'
+                }
+            },
+            getTypeLabel: function(uri) {
+                switch (service.getType(uri)) {
+                    case 'topic':
+                        return "тема";
+                    case 'term':
+                        return "терми";
+                    case 'item':
+                        return "абзац";
+                    case 'category':
+                        return "оглавление";
+                    case 'article':
+                        return "статья";
+                    case 'paragraph':
+                        return "пераграф";
+                    case 'video':
+                        return "видео";
+                    case 'document':
+                        return "документ";
+                    case 'record':
+                        return "аудио";
                 }
             }
         };
@@ -1046,6 +1098,42 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             templateUrl: "card-document"
         }
     })
+    .directive("recordCard", function ($rootScope, $topicPrompt, $api, ngAudio, $parse) {
+        return {
+            scope: { record: '='},
+            templateUrl: "record-card",
+            link: function(scope, element, attrs) {
+                scope.playOrPause = function(record) {
+                    if (record.played) {
+                        $rootScope.audio.pause();
+                        record.played = false;
+                        return;
+                    }
+                    if (scope.$root.currentPlayed) scope.$root.currentPlayed.played = false;
+                    var volume = 0.5;
+                    if ($rootScope.audio) {
+                        volume = $rootScope.audio.volume;
+                        $rootScope.audio.stop();
+                    }
+                    $rootScope.audio = ngAudio.load(record.url);
+                    $rootScope.audio.volume = volume;
+                    $rootScope.audio.play();
+                    record.played = true;
+                    scope.$root.currentPlayed = record;
+                    document.title = record.name;
+                };
+
+
+                scope.addTopic = function (record) {
+                    $topicPrompt.prompt().then(function (topic) {
+                        $api.topic.addFor(record.uri, topic).then(function () {
+                            if (scope.$parent.$parent.update) scope.$parent.$parent.update();
+                        })
+                    });
+                }
+            }
+        }
+    })
     .run(function($state, entityService, $rootScope, analytics){
         var originStateGo = $state.go;
         $state.go = function(to, params, options) {
@@ -1054,6 +1142,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 switch (entityService.getType(uri)) {
                     case "term":
                         originStateGo.bind($state)("term", {name: entityService.getName(uri)});
+                        return;
+                    case "topic":
+                        originStateGo.bind($state)("topic", {name: entityService.getName(uri)});
                         return;
                     case "item":
                         originStateGo.bind($state)("item", {number: entityService.getName(uri)});
@@ -1067,17 +1158,22 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     case "article":
                         originStateGo.bind($state)("article", {id: entityService.getName(uri)});
                         return;
+                    case "record":
+                        originStateGo.bind($state)("record", {code: entityService.getName(uri)});
+                        return;
                     case "video":
-                        if (!to.id) {
-                            to.id = to.uri.replace("видео:youtube:", "")
+                        var id = to.id;
+                        if (!id) {
+                            id = uri.replace("видео:youtube:", "")
                         }
-                        originStateGo.bind($state)("resource-video", {id: to.id});
+                        originStateGo.bind($state)("resource-video", {id: id});
                         return;
                     case "document":
-                        if (!to.id) {
-                            to.id = to.uri.replace("документ:google:", "")
+                        var id = to.id;
+                        if (!id) {
+                            id = uri.replace("документ:google:", "")
                         }
-                        originStateGo.bind($state)("document", {id: to.id});
+                        originStateGo.bind($state)("document", {id: id});
                         return;
                 }
             } else {

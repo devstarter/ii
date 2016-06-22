@@ -1,3 +1,50 @@
+function KnowledgeBaseController($scope, $state, $api, $q, entityService) {
+    $scope.search = function(query) {
+
+    };
+    $scope.getSuggestions = function(q) {
+        var deferred = $q.defer();
+        $api.search.suggestionsAll(q).then(function (response) {
+            var data = [];
+            for(var uri in response) {
+                if (response.hasOwnProperty(uri))
+                    data.push({
+                        uri: uri,
+                        label: response[uri],
+                        type: entityService.getType(uri),
+                        typeLabel: entityService.getTypeLabel(uri)
+                })
+            }
+            deferred.resolve(data)
+        }, function (response) {
+            deferred.reject(response)
+        });
+        return deferred.promise;
+    };
+    $scope.select = function(item, model, label) {
+        $state.go(item.uri)
+    };
+    $scope.auth = function () {
+        auth.authenticate().then(function (user) {
+            $scope.user = user;
+        });
+    };
+    $scope.goToCabinet = $state.goToCabinet;
+
+    $api.topic.last(3).then(function (topics) {
+        $scope.topics = topics;
+    });
+    $api.resource.video.last(0, 3).then(function (videos) {
+        $scope.videos = videos;
+    });
+    $api.record.last(0, 3).then(function (records) {
+        $scope.records = records;
+    });
+    $api.document.last(0, 3).then(function (docs) {
+        $scope.docs = docs;
+    })
+}
+
 function RecordController($scope, $stateParams, $api, messager, ngAudio, $rootScope, $topicPrompt) {
     $scope.recordLoading = true;
     $scope.last = [];
@@ -5,31 +52,20 @@ function RecordController($scope, $stateParams, $api, messager, ngAudio, $rootSc
     $api.record.get(0, $stateParams.code).then(function(records){
         $scope.recordLoading = false;
         $scope.last.append(records);
+        $scope.singleMode = $stateParams.code;
     }, function(response){
         $scope.recordLoading = false;
         messager.error("Ошибка загрузки ответа");
     });
 
-    $scope.play = function(record) {
-        if ($scope.currentPlayed) $scope.currentPlayed.played = false;
-        var volume = 0.5;
-        if ($rootScope.audio) {
-            volume = $rootScope.audio.volume;
-            $rootScope.audio.stop();
-        }
-        $rootScope.audio = ngAudio.load(record.url);
-        $rootScope.audio.volume = volume;
-        $rootScope.audio.play();
-        record.played = true;
-        $scope.currentPlayed = record;
-        document.title = record.name;
-    };
+
     $scope.getMore = function () {
         load(true);
     };
 
     function load(next) {
         $scope.recordLoading = true;
+        $scope.singleMode = false;
         if (!next) {
             $scope.last = [];
             $scope.lastNoMore = false;
@@ -48,13 +84,6 @@ function RecordController($scope, $stateParams, $api, messager, ngAudio, $rootSc
         load()
     };
 
-    $scope.addTopic = function (record) {
-        $topicPrompt.prompt().then(function (topic) {
-            $api.topic.addFor(record.uri, topic).then(function () {
-                load()
-            })
-        });
-    }
 }
 
 function DocumentController($scope, $stateParams, $api, messager, $state) {
@@ -269,7 +298,7 @@ function ResourcesController($scope, $stateParams, $state, Video, errorService, 
 
     function getLast() {
         $scope.lastLoading = true;
-        $api.resource.video.last(Math.ceil($scope.last.length / 6)).then(function (lastVideos) {
+        $api.resource.video.last(Math.ceil($scope.last.length / 6)).then(function (last) {
             if (!last.length) {
                 $scope.lastNoMore = true;
                 return

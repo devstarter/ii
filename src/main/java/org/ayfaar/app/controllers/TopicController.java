@@ -14,6 +14,10 @@ import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.utils.UriGenerator;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -244,5 +248,10 @@ public class TopicController {
     public void bulkUnlinkResources(String topicName, List<String> resourceUris) {
         // unlink each resource from topicName
         throw new RuntimeException("Unimplemented");
+    }
+
+    @RequestMapping("last")
+    public List<Topic> getLast(@PageableDefault @SortDefault(direction = Sort.Direction.DESC, sort = "createdAt") Pageable pageable) {
+        return commonDao.getPage(Topic.class, pageable);
     }
 }

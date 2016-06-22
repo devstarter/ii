@@ -38,7 +38,7 @@ public class RecordController {
                                          @PageableDefault(sort = "recorderAt", direction = DESC, size = 30) Pageable pageable) {
         with_url = with_url != null
                 ? with_url
-                : currentUser == null || currentUser.getRole().accept(UserRole.ROLE_EDITOR);
+                : currentUser == null || !currentUser.getRole().accept(UserRole.ROLE_EDITOR);
         List<Record> records = recordDao.get(nameOrCode, year, with_url, pageable);
         return records.stream().map(this::getRecordsInfo).collect(Collectors.toList());
     }

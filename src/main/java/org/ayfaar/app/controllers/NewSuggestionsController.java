@@ -45,12 +45,12 @@ public class NewSuggestionsController {
     @ResponseBody
     public Map<String, String> suggestions(@RequestParam String q,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_terms,
-                                           @RequestParam(required = false) boolean with_topic,
-                                           @RequestParam(required = false) boolean with_category,
-                                           @RequestParam(required = false) boolean with_doc,
-                                           @RequestParam(required = false) boolean with_video,
-                                           @RequestParam(required = false) boolean with_record_name,
-                                           @RequestParam(required = false) boolean with_record_code
+                                           @RequestParam(required = false, defaultValue = "true") boolean with_topic,
+                                           @RequestParam(required = false, defaultValue = "true") boolean with_category,
+                                           @RequestParam(required = false, defaultValue = "true") boolean with_doc,
+                                           @RequestParam(required = false, defaultValue = "true") boolean with_video,
+                                           @RequestParam(required = false, defaultValue = "true") boolean with_record_name,
+                                           @RequestParam(required = false, defaultValue = "true") boolean with_record_code
     ) {
         Map<String, String> allSuggestions = new LinkedHashMap<>();
         List<Suggestions> items = new ArrayList<>();
