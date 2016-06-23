@@ -438,7 +438,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     case 'topic':
                         return "тема";
                     case 'term':
-                        return "терми";
+                        return "термин";
                     case 'item':
                         return "абзац";
                     case 'category':
@@ -1254,6 +1254,8 @@ function getUrl(uri) {
     url = url.replace("ии:пункт:", "");
     url = url.replace("ии:пункты:", "");
     url = url.replace("видео:youtube:", "resource/video/");
+    url = url.replace("документ:google:", "d/");
+    url = url.replace("запись:", "r/");
     return url;
 }
 
