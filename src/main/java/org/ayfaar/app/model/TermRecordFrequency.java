@@ -6,16 +6,18 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@IdClass(TermRecordKey.class)
 public class TermRecordFrequency {
+
     @Id
-    @GeneratedValue
-    private Integer id;
     private String term;
+    @Id
     private String record;
     private int frequency;
 }

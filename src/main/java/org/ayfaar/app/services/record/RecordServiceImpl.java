@@ -3,6 +3,7 @@ package org.ayfaar.app.services.record;
 import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.RecordDao;
+import org.ayfaar.app.dao.TermRecordDao;
 import org.ayfaar.app.model.Record;
 import org.ayfaar.app.model.TermRecordFrequency;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component()
 public class RecordServiceImpl implements RecordService {
+    @Autowired
+    TermRecordDao termRecordDao;
     @Autowired
     CommonDao commonDao;
     @Autowired
@@ -33,7 +36,7 @@ public class RecordServiceImpl implements RecordService {
 
         log.info("Records loaded");
 
-        termRecordFrequencies = commonDao.getPage(TermRecordFrequency.class, 0, MAX_TERM_LOADING, "frequency", "desc");
+        termRecordFrequencies = termRecordDao.getAllTermRecords(MAX_TERM_LOADING);
 
         log.info("Term-Record Frequencies loaded");
     }
