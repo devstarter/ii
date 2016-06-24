@@ -60,6 +60,12 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             })
             .state('resource-video', {
                 url: "/resource/video/{id: \.*}",
+                controller: function ($stateParams, $state) {
+                    $state.goToVideo({id: $stateParams.id})
+                }
+            })
+            .state('video', {
+                url: "/v/{id: \.*}",
                 templateUrl: "static/partials/resources.html",
                 controller: ResourcesController
             })
@@ -742,7 +748,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 var onEnter = $parse(attrs.onEnter);
                 element.bind('keyup', function(event) {
                     if (event.keyCode == 13) {// enter
-                        originalScope.$suggestionSelected(event.target.value);
+                        // originalScope.$suggestionSelected(event.target.value);
                         if (onEnter) onEnter(originalScope);
                     }
                 })
@@ -1134,7 +1140,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         }
     })
-    .run(function($state, entityService, $rootScope, analytics){
+    .run(function($state, entityService, $rootScope, analytics, modal){
         var originStateGo = $state.go;
         $state.go = function(to, params, options) {
             if (to.hasOwnProperty('uri') || angular.isString(to)) {
@@ -1147,13 +1153,17 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         originStateGo.bind($state)("topic", {name: entityService.getName(uri)});
                         return;
                     case "item":
-                        originStateGo.bind($state)("item", {number: entityService.getName(uri)});
+                        var number = entityService.getName(uri);
+                        if (isTom5(number)) return;
+                        originStateGo.bind($state)("item", {number: number});
                         return;
                     case "category":
                         originStateGo.bind($state)("category", {name: entityService.getName(uri)});
                         return;
                     case "paragraph":
-                        originStateGo.bind($state)("paragraph", {number: entityService.getName(uri)});
+                        var number = entityService.getName(uri);
+                        if (isTom5(number)) return;
+                        originStateGo.bind($state)("paragraph", {number: number});
                         return;
                     case "article":
                         originStateGo.bind($state)("article", {id: entityService.getName(uri)});
@@ -1166,7 +1176,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         if (!id) {
                             id = uri.replace("видео:youtube:", "")
                         }
-                        originStateGo.bind($state)("resource-video", {id: id});
+                        originStateGo.bind($state)("video", {id: id});
                         return;
                     case "document":
                         var id = to.id;
@@ -1181,7 +1191,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         };
         $state.goToVideo = function(video) {
-            originStateGo.bind($state)("resource-video", {id: video.id})
+            originStateGo.bind($state)("video", {id: video.id})
         };
         $state.goToDoc = function(doc) {
             originStateGo.bind($state)("document", {id: doc.id})
@@ -1210,7 +1220,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
 
         $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
             analytics.pageview(location.pathname);
-        })
+        });
+        function isTom5(number) {
+            if (number.indexOf("5.") == 0) {
+                modal.message("", "5 том пока официально не опубликован, по этому его текста нет в системе");
+                return true;
+            }
+        }
     })
     .filter('cut', function () {
         return function (value, wordwise, max, tail) {

@@ -3,12 +3,18 @@
         <img src="static/images/logo.png" alt="Ииссиидиология">
     </div>
     <h1>Интерактивная Ииссиидиология</h1>
+    <a href="kb">
+        <div class="pointer info">
+            Новое в тестовом режиме: кликните чтобы перейти в базу знаний Ииссиидиологии
+        </div>
+    </a>
     <div>
         Поиск пунктов, терминов, словосочетаний в материалах:
         <div class="input-group">
             <input ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
                    ii-lookup
                    typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
+                   on-enter="$suggestionSelected($label)"
                    typeahead-on-select="$suggestionSelected($label)">
             <span class="input-group-btn">
               <button class="btn btn-primary" ng-click="search(query)">Искать</button>
@@ -36,4 +42,15 @@
         <a class="btn btn-link" style="text-align: center; display: block" ng-click="auth()" ng-hide="user">Представиться</a>
         <div ng-show="user" style="text-align: center;display: block" ng-click="goToCabinet()" class="btn"><img ng-src="{{user.thumbnail}}" style="width: 30px;height: 30px;border-radius: 50%;"/> {{user.name}}</div>
     </div>
+    <style type="text/css">
+        .info {
+            background-color: #d9edf7;
+            border: 1px solid #36aae2;
+            padding: 10px;
+            margin: 15px;
+            border-radius: 5px;
+            color: black;
+            text-align: center;
+        }
+    </style>
 </div>

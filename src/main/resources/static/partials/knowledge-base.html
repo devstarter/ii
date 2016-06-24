@@ -9,6 +9,7 @@
         <!--<div class="input-group">-->
             <input ng-model="query" type="text" class="form-control" placeholder="Введите слово"
                    ii-lookup
+                   disable-enter="true"
                    typeahead-editable="false"
                    typeahead-template-url="typeahead-item-template"
                    typeahead="item for item in getSuggestions($viewValue)"

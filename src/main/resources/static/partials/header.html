@@ -1,4 +1,4 @@
-<div ng-show="visible">
+<div ng-show="visible || audio">
     <a class="title" ng-hide="expanded" href="/">Интерактивная Ииссиидиология</a>
     <input ng-show="expanded" id="search-input" ng-model="query" class="form-control" type="text" placeholder="Введите термин или фразу"
            ii-lookup ng-blur="closeWithDelay()"

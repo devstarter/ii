@@ -60,6 +60,7 @@
     <div ii-ref="video" class="card">
         <img ng-src="https://i.ytimg.com/vi/{{video.id}}/mqdefault.jpg"/>
         <div title="{{video.title}}">{{video.title | cut:true:50}}</div>
+        <i class="glyphicon glyphicon-play video-play-button"></i>
     </div>
 </script>
 <script type="text/ng-template" id="card-document">
@@ -73,7 +74,7 @@
         <i ng-show="record.url" class="glyphicon pointer play-button" title="{{record.played ? 'Остановить' : 'Прослушать'}}"
            ng-class="record.played ? 'glyphicon-pause' : 'glyphicon-play'"
            ng-click="playOrPause(record)"></i>
-        {{record.name}} <span class="gray">{{record.code}}</span>
+        {{record.name}} <span class="pointer gray" ii-ref="record">{{record.code}}</span>
         <div>
                 <span style="padding-left: 10px; font-size: 14px" class="gray" ng-repeat="topic in record.topics">
                     <a topic-ref="topic"><i class="glyphicon glyphicon-tag" style="font-size: 75%"></i> {{topic}}</a>

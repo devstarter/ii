@@ -52,7 +52,7 @@ function RecordController($scope, $stateParams, $api, messager, ngAudio, $rootSc
     $api.record.get(0, $stateParams.code).then(function(records){
         $scope.recordLoading = false;
         $scope.last.append(records);
-        $scope.singleMode = $stateParams.code;
+        $scope.singleMode = records.length == 1;
     }, function(response){
         $scope.recordLoading = false;
         messager.error("Ошибка загрузки ответа");
@@ -203,9 +203,14 @@ function HomeController($scope, $state, auth) {
     };
     $scope.goToCabinet = $state.goToCabinet;
 }
-function ItemController($scope, $stateParams, $state, $api) {
+function ItemController($scope, $stateParams, $state, $api, modal) {
     $scope.number = $stateParams.number.trim();
     if (!$scope.number) {
+        $state.goToHome();
+        return
+    }
+    if ($scope.number.indexOf("5.") == 0) {
+        modal.message("", "5 том пока официально не опубликован, по этому его текста нет в системе");
         $state.goToHome();
         return
     }

@@ -145,8 +145,10 @@ angular.module('ngAudio', [])
         if (ngAudioGlobals.unlock) {
 
             window.addEventListener("click",function twiddle(){
-                audio.play();
-                audio.pause();
+                if (audio) {
+                    audio.play();
+                    audio.pause();
+                }
                 window.removeEventListener("click",twiddle);
             });
 

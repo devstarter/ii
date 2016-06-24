@@ -1,3 +1,10 @@
+.video-play-button {
+    font-size: 50px;
+    position: absolute;
+    top: 35px;
+    left: 80px;
+    opacity: 0.3;
+}
 .record-block .h {visibility: hidden}
 .record-block:hover .h {visibility: visible}
 .play-button {
@@ -34,9 +41,6 @@
 .nopadding {padding: 0}
 .small {
     font-size: small;
-}
-.gray, .grey {
-    color: grey;
 }
 term:hover {
     border-bottom: 2px dotted #035697;
@@ -230,4 +234,8 @@ blockquote {
     .btn-icon {
         padding: 10px 13px 7px 12px;
     }
+}
+
+.gray, .grey {
+    color: grey;
 }
