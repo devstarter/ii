@@ -31,7 +31,7 @@
                 <video-card ng-repeat="link in resources.video" video="link.resource" class="col-md-4"></video-card>
             </div>
         </div>
-        <a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>
+        <!--<a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>-->
     </div>
     <div style="padding-top: 20px">
         <div ng-show="resources.item" class="children">
@@ -53,7 +53,7 @@
             <document-card ng-repeat="link in resources.document" doc="link.resource" class="col-md-4"></document-card>
         </div>
     </div>
-    <a ng-hide="resources.document.length" class="btn btn-link" ng-click="addDocResource()">Прикрепить документ</a>
+    <!--<a ng-hide="resources.document.length" class="btn btn-link" ng-click="addDocResource()">Прикрепить документ</a>-->
     <div ng-show="resources.record" class="children">
         <span class="gray">Прикреплённые аудио записи</span>
             <div ng-repeat="record in resources.record" title="{{record.resource.code}}" style="padding: 10px 0;">

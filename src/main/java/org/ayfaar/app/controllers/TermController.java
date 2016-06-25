@@ -17,6 +17,7 @@ import java.util.*;
 import static java.util.Collections.sort;
 import static org.ayfaar.app.model.LinkType.*;
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
+import static org.springframework.util.StringUtils.isEmpty;
 
 @Controller
 @RequestMapping("api/term")
@@ -56,11 +57,11 @@ public class TermController {
         modelMap.put("uri", term.getUri());
         modelMap.put("name", term.getName());
         if (mark) {
-            if (term.getTaggedShortDescription() == null && term.getShortDescription() != null) {
+            if (isEmpty(term.getTaggedShortDescription()) && !isEmpty(term.getShortDescription())) {
                 term.setTaggedShortDescription(termsMarker.mark(term.getShortDescription()));
                 termDao.save(term);
             }
-            if (term.getTaggedDescription() == null && term.getDescription() != null) {
+            if (isEmpty(term.getTaggedDescription()) && !isEmpty(term.getDescription())) {
                 term.setTaggedDescription(termsMarker.mark(term.getDescription()));
                 termDao.save(term);
             }

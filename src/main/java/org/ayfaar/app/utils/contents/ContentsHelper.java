@@ -84,6 +84,7 @@ public class ContentsHelper {
     List<Item> getItems(ParagraphProvider p) {
         List<Item> items = new ArrayList<>();
         Item currentItem = itemDao.getByNumber(p.from());
+        if (currentItem == null) throw new RuntimeException("No item found for paragraph " + p.code());
 
         String itemNumber = currentItem.getNumber();
         String endNumber = p.to();

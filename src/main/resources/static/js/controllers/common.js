@@ -1,4 +1,5 @@
 function KnowledgeBaseController($scope, $state, $api, $q, entityService) {
+    window.title = "База знаний Ииссиидиологии";
     $scope.search = function(query) {
 
     };
