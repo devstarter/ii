@@ -124,13 +124,13 @@ public class TopicController {
     @RequestMapping(value = "update-rate", method = POST)
     @Moderated(value = Action.TOPIC_RESOURCE_LINK_RATE_UPDATE, command = "@topicController.updateRate")
     public void updateRate(@RequestParam String forUri, @RequestParam String name, @RequestParam Float rate) throws Exception {
-        linkService.getByUris(forUri, UriGenerator.generate(Topic.class, name)).updater().rate(rate).commit();
+        linkService.getByUris(forUri, UriGenerator.generate(Topic.class, name)).get().updater().rate(rate).commit();
     }
 
     @RequestMapping(value = "update-comment", method = POST)
     @Moderated(value = Action.TOPIC_RESOURCE_LINK_COMMENT_UPDATE, command = "@topicController.updateComment")
     public void updateComment(@RequestParam String forUri, @RequestParam String name, @RequestParam String comment) throws Exception {
-        linkService.getByUris(forUri, UriGenerator.generate(Topic.class, name)).updater().comment(comment).commit();
+        linkService.getByUris(forUri, UriGenerator.generate(Topic.class, name)).get().updater().comment(comment).commit();
     }
 
     @RequestMapping(value = "unlink-uri", method = POST)

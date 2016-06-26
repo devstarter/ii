@@ -94,7 +94,7 @@ public class NewAliasesMapIntegrationTest extends IntegrationTest{
     public void testGetCodes() {
         TermProvider provider = termService.get("Мобиллюрасцитный Дубликатор Сектора").get();
 
-        TermProvider code = provider.getCode();
+        TermProvider code = provider.getCode().get();
         assertEquals("ии:термин:ЮЮ-ИИЙ-ССС-ЮЮ", code.getUri());
     }
 

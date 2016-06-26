@@ -32,7 +32,7 @@ public interface TermService {
         List<String> getMorphs();
         List<TermProvider> getAliases();
         List<TermProvider> getAbbreviations();
-        TermProvider getCode();
+        Optional<TermProvider> getCode();
         LinkType getType();
         boolean hasMainTerm();
         boolean isAbbreviation();

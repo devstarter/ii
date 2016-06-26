@@ -113,21 +113,21 @@ public class LinkController {
     public void updateRate(@RequestParam String uri1,
                            @RequestParam String uri2,
                            @RequestParam Float value) {
-        linkService.getByUris(uri1, uri2).updater().rate(value).commit();
+        linkService.getByUris(uri1, uri2).get().updater().rate(value).commit();
     }
 
     @RequestMapping("update/comment")
     public void updateComment(@RequestParam String uri1,
                               @RequestParam String uri2,
                               @RequestParam String value) {
-        linkService.getByUris(uri1, uri2).updater().comment(value).commit();
+        linkService.getByUris(uri1, uri2).get().updater().comment(value).commit();
     }
 
     @RequestMapping("update/quote")
     public void updateQuote(@RequestParam String uri1,
                             @RequestParam String uri2,
                             @RequestParam String value) {
-        linkService.getByUris(uri1, uri2).updater().quote(value).commit();
+        linkService.getByUris(uri1, uri2).get().updater().quote(value).commit();
     }
 
 }

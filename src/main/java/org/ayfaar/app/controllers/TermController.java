@@ -5,6 +5,8 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.*;
+import org.ayfaar.app.services.EntityLoader;
+import org.ayfaar.app.services.links.LinkService;
 import org.ayfaar.app.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,6 +31,8 @@ public class TermController {
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
     @Autowired TermService termService;
+    @Autowired LinkService linkService;
+    @Autowired EntityLoader entityLoader;
     @Autowired TermServiceImpl aliasesMap;
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
@@ -51,8 +55,10 @@ public class TermController {
             return null;
         }
 
+        final TermService.TermProvider provider = providerOpt.get();
+
         ModelMap modelMap = new ModelMap();//(ModelMap) getModelMap(term);
-        Term term = providerOpt.get().getTerm();
+        Term term = provider.getTerm();
 
         modelMap.put("uri", term.getUri());
         modelMap.put("name", term.getName());
@@ -75,11 +81,17 @@ public class TermController {
         // LINKS
 
         List<ModelMap> quotes = new ArrayList<ModelMap>();
+        linkService.getAllLinksBetween(provider.getUri(), Item.class)
+                .forEach(p -> quotes.add(getQuote(p.taggedQuote(), p.get(Item.class).get())));
+
         Set<UID> related = new LinkedHashSet<UID>();
         Set<UID> aliases = new LinkedHashSet<UID>();
 
-        UID code = null;
-        List<Link> links = linkDao.getAllLinks(term.getUri());
+        provider.getAbbreviations().forEach(p -> aliases.add(p.getTerm()));
+        provider.getAliases().forEach(p -> aliases.add(p.getTerm()));
+        UID code = provider.getCode().isPresent() ? provider.getCode().get().getTerm() : null;
+
+        /*List<Link> links = linkDao.getAllLinks(term.getUri());
         for (Link link : links) {
             UID source = link.getUid1().getUri().equals(term.getUri())
                     ? link.getUid2()
@@ -93,7 +105,7 @@ public class TermController {
             } else {
                 related.add(source);
             }
-        }
+        }*/
 
         // Нужно также включить цитаты всех синонимов и сокращений и кода
         Set<UID> aliasesQuoteSources = new HashSet<UID>(aliases);
@@ -101,7 +113,20 @@ public class TermController {
             aliasesQuoteSources.add(code);
         }
         for (UID uid : aliasesQuoteSources) {
-            List<Link> aliasLinksWithQuote = linkDao.getAllLinks(uid.getUri());
+            linkService.getAllLinksFor(uid.getUri())
+                    .forEach(p -> {
+                        final UID source = entityLoader.get(p.not(uid.getUri()));
+                        if (source instanceof Item) {
+                            quotes.add(getQuote(p.taggedQuote(), source.getUri()));
+                        }
+                        else if (ABBREVIATION.equals(p.type()) || ALIAS.equals(p.type()) || CODE.equals(p.type())) {
+                            aliases.add(source);
+                        }
+                        else {
+                            related.add(source);
+                        }
+                    });
+            /*List<Link> aliasLinksWithQuote = linkDao.getAllLinks(uid.getUri());
             for (Link link : aliasLinksWithQuote) {
                 UID source = link.getUid1().getUri().equals(uid.getUri())
                         ? link.getUid2()
@@ -117,12 +142,12 @@ public class TermController {
                 } else {
                     related.add(source);
                 }
-            }
+            }*/
         }
         sort(quotes, (o1, o2) -> ((String) o1.get("uri")).compareTo((String) o2.get("uri")));
 
         // mark quotes with strong
-        List<String> allAliasesWithAllMorphs = providerOpt.get().getAllAliasesWithAllMorphs();
+        List<String> allAliasesWithAllMorphs = provider.getAllAliasesWithAllMorphs();
         for (ModelMap quote : quotes) {
             String text = (String) quote.get("quote");
             if (text == null || text.isEmpty() || text.contains("strong")) continue;
@@ -150,6 +175,16 @@ public class TermController {
         }
         map.put("quote", quote);
         map.put("uri", source.getUri());
+        return map;
+    }
+
+    private ModelMap getQuote(String taggedQuote, String itemUri) {
+        ModelMap map = new ModelMap();
+        if (isEmpty(taggedQuote)) {
+            taggedQuote = entityLoader.<Item>get(itemUri).getTaggedContent();
+        }
+        map.put("quote", taggedQuote);
+        map.put("uri", itemUri);
         return map;
     }
 

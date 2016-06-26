@@ -10,6 +10,7 @@ import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
+import org.ayfaar.app.services.EntityLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,17 +30,23 @@ import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 public class TermServiceImpl implements TermService {
     private static final Logger logger = LoggerFactory.getLogger(TermService.class);
 
-    @Autowired
-    private CommonDao commonDao;
-    @Autowired
-    private TermDao termDao;
-    @Autowired
-    private LinkDao linkDao;
+    private final CommonDao commonDao;
+    private EntityLoader entityLoader;
+    private final TermDao termDao;
+    private final LinkDao linkDao;
 
     private Map<String, LinkInfo> links;
     private Map<String, TermProvider> aliasesMap;
     private ArrayList<Map.Entry<String, TermProvider>> sortedList;
     private List<TermDao.TermInfo> termsInfo;
+
+    @Autowired
+    public TermServiceImpl(LinkDao linkDao, TermDao termDao, CommonDao commonDao, EntityLoader entityLoader) {
+        this.linkDao = linkDao;
+        this.termDao = termDao;
+        this.commonDao = commonDao;
+        this.entityLoader = entityLoader;
+    }
 
     @PostConstruct
     public void load() {
@@ -116,7 +123,8 @@ public class TermServiceImpl implements TermService {
         }
 
         public Term getTerm() {
-            return termDao.get(uri);
+//            return termDao.get(uri);
+            return entityLoader.get(uri);
         }
 
         public List<TermProvider> getAliases() {
@@ -127,9 +135,9 @@ public class TermServiceImpl implements TermService {
             return getListProviders(ABBREVIATION, getName());
         }
 
-        public TermProvider getCode() {
+        public Optional<TermProvider> getCode() {
             List<TermProvider> codes = getListProviders(CODE, getName());
-            return codes.size() > 0 ? codes.get(0) : null;
+            return codes.size() > 0 ? Optional.of(codes.get(0)) : Optional.empty();
         }
 
         public Optional<TermProvider> getMainTerm() {
@@ -196,12 +204,12 @@ public class TermServiceImpl implements TermService {
 
         List<TermProvider> getAllAliases() {
             List<TermProvider> aliases = new ArrayList<TermProvider>();
-            TermProvider code = getCode();
+            TermProvider code = getCode().isPresent() ? getCode().get() : null;
 
             aliases.addAll(getAliases());
             aliases.addAll(getAbbreviations());
             if(code != null) {
-                aliases.add(getCode());
+                aliases.add(getCode().get());
             }
             return aliases;
         }

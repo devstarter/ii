@@ -1,33 +1,77 @@
 package org.ayfaar.app.services.links;
 
+import one.util.streamex.StreamEx;
+import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
+import org.ayfaar.app.model.Item;
+import org.ayfaar.app.model.LightLink;
 import org.ayfaar.app.model.Link;
-import org.ayfaar.app.utils.exceptions.ExceptionCode;
-import org.ayfaar.app.utils.exceptions.LogicalException;
+import org.ayfaar.app.services.EntityLoader;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class LinkService {
     private LinkDao linkDao;
+    private CommonDao commonDao;
+    private EntityLoader entityLoader;
+    private List<LightLink> allLinks;
 
     @Inject
-    public LinkService(LinkDao linkDao) {
+    public LinkService(LinkDao linkDao, CommonDao commonDao, EntityLoader entityLoader) {
         this.linkDao = linkDao;
+        this.commonDao = commonDao;
+        this.entityLoader = entityLoader;
     }
 
-    public LinkProvider getByUris(String uri1, String uri2) {
+  /*  public LinkProvider getByUris(String uri1, String uri2) {
         return findByUris(uri1, uri2).orElseThrow(() -> new LogicalException(ExceptionCode.LINK_NOT_FOUND, uri1, uri2));
-    }
+    }*/
 
+    @PostConstruct
+    private void init() {
+        allLinks = commonDao.getAll(LightLink.class);
+    }
+    /*
     public Optional<LinkProvider> findByUris(String uri1, String uri2) {
         final List<Link> links = linkDao.getByUris(uri1, uri2);
         if (links.size() > 1) throw new RuntimeException("Found more then one link for uri1: `"+uri1+"` and uri2: `"+uri2+"`");
         if (links.isEmpty()) return Optional.empty();
-        final LinkProvider provider = new LinkProvider(links.get(0), linkDao::save);
+        final LinkProvider provider = new LinkProvider(links.get(0), this::linkSaver);
         return Optional.of(provider);
+    }*/
+
+    public StreamEx<? extends LinkProvider> getAllLinksBetween(String uri, Class<Item> entityClass) {
+        return getAllLinksFor(uri)
+                .filter(linkProvider -> linkProvider.has(entityClass));
+    }
+
+    private Link linkSaver(LightLink link) {
+        final Link entity = linkDao.get(link.getLinkId());
+        entity.setComment(link.getComment());
+        entity.setQuote(link.getQuote());
+        entity.setRate(link.getRate());
+        entity.setSource(link.getSource());
+        entity.setTaggedQuote(link.getTaggedQuote());
+        return linkDao.save(entity);
+    }
+
+    public StreamEx<? extends LinkProvider> getAllLinksFor(String uri) {
+        return StreamEx.of(allLinks)
+                .filter(link -> Objects.equals(link.getUid1(), uri) || Objects.equals(link.getUid2(), uri))
+                .map(link -> new LinkProvider(link, this::linkSaver));
+    }
+
+    public Optional<LinkProvider> getByUris(String uri1, String uri2) {
+        return StreamEx.of(allLinks)
+                .filter(link -> (Objects.equals(link.getUid1(), uri1) && Objects.equals(link.getUid2(), uri2))
+                        || (Objects.equals(link.getUid1(), uri2) && Objects.equals(link.getUid2(), uri1)))
+                .map(link -> new LinkProvider(link, this::linkSaver))
+                .findFirst();
     }
 }
