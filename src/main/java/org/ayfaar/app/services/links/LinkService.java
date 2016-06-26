@@ -7,6 +7,7 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.LightLink;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.services.EntityLoader;
+import org.ayfaar.app.utils.SoftCache;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -21,6 +22,7 @@ public class LinkService {
     private CommonDao commonDao;
     private EntityLoader entityLoader;
     private List<LightLink> allLinks;
+    private SoftCache<LightLink, LinkProvider> cache = new SoftCache<>();
 
     @Inject
     public LinkService(LinkDao linkDao, CommonDao commonDao, EntityLoader entityLoader) {
@@ -64,14 +66,18 @@ public class LinkService {
     public StreamEx<? extends LinkProvider> getAllLinksFor(String uri) {
         return StreamEx.of(allLinks)
                 .filter(link -> Objects.equals(link.getUid1(), uri) || Objects.equals(link.getUid2(), uri))
-                .map(link -> new LinkProvider(link, this::linkSaver));
+                .map(this::getLinkProvider);
     }
 
     public Optional<LinkProvider> getByUris(String uri1, String uri2) {
         return StreamEx.of(allLinks)
                 .filter(link -> (Objects.equals(link.getUid1(), uri1) && Objects.equals(link.getUid2(), uri2))
                         || (Objects.equals(link.getUid1(), uri2) && Objects.equals(link.getUid2(), uri1)))
-                .map(link -> new LinkProvider(link, this::linkSaver))
+                .map(this::getLinkProvider)
                 .findFirst();
+    }
+
+    private LinkProvider getLinkProvider(LightLink link) {
+        return cache.getOrCreate(link, () -> new LinkProvider(link, this::linkSaver));
     }
 }
