@@ -22,16 +22,16 @@ public class EntityLoader {
     }
 
     public <E extends UID> E get(String uri) {
-        E item = null;
+        E entity = null;
         final Class<? extends UID> entityClass = UriGenerator.getClassByUri(uri);
         if (cache.containsKey(uri)) {
-            item = (E) cache.get(uri).get();
+            entity = (E) cache.get(uri).get();
         }
-        if (item == null)
-        item = (E) commonDao.getOpt(entityClass, uri)
-                .orElseThrow(() -> new RuntimeException("Item not found, uri: " + uri));
+        if (entity == null)
+        entity = (E) commonDao.getOpt(entityClass, uri)
+                .orElseThrow(() -> new RuntimeException("Entity not found, uri: " + uri));
 
-        cache.put(uri, new SoftReference<>(item));
-        return item;
+        cache.put(uri, new SoftReference<>(entity));
+        return entity;
     }
 }

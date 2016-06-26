@@ -80,12 +80,12 @@ public class TermController {
 
         // LINKS
 
-        List<ModelMap> quotes = new ArrayList<ModelMap>();
+        List<ModelMap> quotes = new ArrayList<>();
         linkService.getAllLinksBetween(provider.getUri(), Item.class)
                 .forEach(p -> quotes.add(getQuote(p.taggedQuote(), p.get(Item.class).get())));
 
-        Set<UID> related = new LinkedHashSet<UID>();
-        Set<UID> aliases = new LinkedHashSet<UID>();
+        Set<UID> related = new LinkedHashSet<>();
+        Set<UID> aliases = new LinkedHashSet<>();
 
         provider.getAbbreviations().forEach(p -> aliases.add(p.getTerm()));
         provider.getAliases().forEach(p -> aliases.add(p.getTerm()));
