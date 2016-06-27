@@ -4,6 +4,7 @@ import one.util.streamex.StreamEx;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.services.ItemService;
 import org.ayfaar.app.services.document.DocumentService;
 import org.ayfaar.app.services.record.RecordService;
 import org.ayfaar.app.services.topics.TopicService;
@@ -37,9 +38,14 @@ public class NewSuggestionsController {
     @Autowired DocumentService documentService;
     @Autowired VideoResourceService videoResourceService;
     @Autowired RecordService recordService;
+    @Autowired ItemService itemService;
 
     private List<String> escapeChars = Arrays.asList("(", ")", "[", "]", "{", "}");
     private static final int MAX_SUGGESTIONS = 5;
+
+    public Map<String, String> suggestions(String q) {
+        return suggestions(q, false, false, false, false, false, false, false, false);
+    }
 
     @RequestMapping("all")
     @ResponseBody
@@ -49,6 +55,7 @@ public class NewSuggestionsController {
                                            @RequestParam(required = false, defaultValue = "true") boolean with_category,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_doc,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_video,
+                                           @RequestParam(required = false, defaultValue = "true") boolean with_item,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_record_name,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_record_code
     ) {
@@ -61,6 +68,7 @@ public class NewSuggestionsController {
         if (with_video) items.add(Suggestions.VIDEO);
         if (with_record_name) items.add(Suggestions.RECORD_NAME);
         if (with_record_code) items.add(Suggestions.RECORD_CODE);
+        if (with_item) items.add(Suggestions.ITEM);
         for (Suggestions item : items) {
             Queue<String> queriesQueue = getQueue(q);
             for (Map.Entry<String, String> suggestion : getSuggestions(queriesQueue, item)) {
@@ -109,6 +117,9 @@ public class NewSuggestionsController {
                     break;
                 case VIDEO:
                     mapUriWithNames = videoResourceService.getAllUriNames();
+                    break;
+                case ITEM:
+                    mapUriWithNames = itemService.getAllUriNumbers();
                     break;
                 case RECORD_NAME:
                     mapUriWithNames = recordService.getAllUriNames();

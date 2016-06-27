@@ -2,9 +2,10 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.IntegrationTest;
 import org.junit.Test;
+
 import javax.inject.Inject;
-import java.util.Arrays;
 import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -14,7 +15,7 @@ public class NewSuggestionsControllerIntegrationTest extends IntegrationTest {
     @Test
     public void testTerms() {
         String query = "гал";
-       Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,true,false,false,false,false,false,false);
+       Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,true,false,false,false,false,false,false, false);
         assertEquals(5, suggestions.size());
         // тест последовательности
         Object[] items = suggestions.values().toArray();
@@ -28,7 +29,7 @@ public class NewSuggestionsControllerIntegrationTest extends IntegrationTest {
     @Test
     public void testTopics() {
         String query = "тол";
-        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,false,true,false,false,false,false,false);
+        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,false,true,false,false,false,false,false, false);
         assertEquals(5, suggestions.size());
         Object[] items = suggestions.values().toArray();
         // тест последовательности
@@ -42,7 +43,7 @@ public class NewSuggestionsControllerIntegrationTest extends IntegrationTest {
     @Test
     public void testCategories() {
         String query = "гла";
-        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,false,false,true,false,false,false,false);
+        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,false,false,true,false,false,false,false, false);
         assertEquals(5, suggestions.size());
         Object[] items = suggestions.values().toArray();
         // тест последовательности
@@ -56,7 +57,7 @@ public class NewSuggestionsControllerIntegrationTest extends IntegrationTest {
     @Test
     public void testDocuments() {
         String query = "ос";
-        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,false,false,false,true,false,false,false);
+        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,false,false,false,true,false, false, false,false);
         assertEquals(4, suggestions.size());
         Object[] items = suggestions.values().toArray();
         // тест последовательности
@@ -69,7 +70,7 @@ public class NewSuggestionsControllerIntegrationTest extends IntegrationTest {
     @Test
     public void testVideos() {
         String query = "рас";
-        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,false,false,false,false,true,false,false);
+        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,false,false,false,false,true,false, false,false);
         assertEquals(5, suggestions.size());
         Object[] items = suggestions.values().toArray();
         // тест последовательности
@@ -84,7 +85,7 @@ public class NewSuggestionsControllerIntegrationTest extends IntegrationTest {
     @Test
     public void testTopicsWithTerms() {
         String query = "тол";
-        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,true,true,false,false,false,false,false);
+        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,true,true,false,false,false,false,false, false);
         assertEquals(9, suggestions.size());
         Object[] items = suggestions.values().toArray();
 
@@ -103,7 +104,7 @@ public class NewSuggestionsControllerIntegrationTest extends IntegrationTest {
     @Test
     public void testRecordsName() {
         String query = "тол";
-        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,false,false,false,false,false,true,false);
+        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,false,false,false,false,false,false, true,false);
         assertEquals(5, suggestions.size());
         Object[] items = suggestions.values().toArray();
 
@@ -118,7 +119,7 @@ public class NewSuggestionsControllerIntegrationTest extends IntegrationTest {
     @Test
     public void testRecordsCode() {
         String query = "2014";
-        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,false,false,false,false,false,false,true);
+        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query,false,false,false,false,false,false, false,true);
         assertEquals(5, suggestions.size());
         Object[] items = suggestions.values().toArray();
 
@@ -133,7 +134,7 @@ public class NewSuggestionsControllerIntegrationTest extends IntegrationTest {
     @Test
     public void testAllItems() {
         String query = "ва";
-        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query, true, true, true, true, true, true, true);
+        Map<String, String> suggestions = suggestionsControllerNew.suggestions(query, true, true, true, true, true, true, true, true);
         assertEquals(27, suggestions.size());
         Object[] items = suggestions.values().toArray();
 

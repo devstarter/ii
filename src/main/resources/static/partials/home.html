@@ -15,7 +15,7 @@
                    ii-lookup
                    typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
                    on-enter="$suggestionSelected($label)"
-                   typeahead-on-select="$suggestionSelected($label)">
+                   typeahead-on-select="$suggestionSelected(query)">
             <span class="input-group-btn">
               <button class="btn btn-primary" ng-click="search(query)">Искать</button>
             </span>

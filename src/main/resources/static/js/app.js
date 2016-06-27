@@ -743,7 +743,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     return $api.get("suggestions/"+query)
                 };
                 originalScope.$suggestionSelected = function(suggestion) {
-                    $state.goToTerm(suggestion);
+                    $state.goToTerm(suggestion ? suggestion : originalScope.query);
                 };
                 var onEnter = $parse(attrs.onEnter);
                 element.bind('keyup', function(event) {

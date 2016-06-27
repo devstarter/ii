@@ -39,7 +39,7 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
 
         var metaDescription = (data.shortDescription ? data.shortDescription+"\n" : "")
             +(data.description ? data.description : "");
-        $scope.$root.metaDescription = metaDescription.trim();
+        if ($scope.$root) $scope.$root.metaDescription = metaDescription.trim();
 
         var keywords = '';
         for(i in data.related) {

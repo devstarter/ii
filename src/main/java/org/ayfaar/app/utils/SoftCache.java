@@ -15,7 +15,7 @@ public class SoftCache<K, V> {
         }
         if (value == null) {
             value = creator.get();
-            map.put(key, new SoftReference<V>(value));
+            map.put(key, new SoftReference<>(value));
         }
         return value;
     }
