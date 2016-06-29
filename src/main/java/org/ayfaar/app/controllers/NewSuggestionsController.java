@@ -152,7 +152,7 @@ public class NewSuggestionsController {
                 list.add(entry);
             }
         }
-        Collections.reverse(list);
+//        Collections.reverse(list);
         return list;
     }
 

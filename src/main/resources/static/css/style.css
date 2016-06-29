@@ -45,6 +45,7 @@
     padding: 10px;
     font-size: 90%;
     color: darkblue;
+    word-break: break-all;
 }
 .nopadding {padding: 0}
 .small {
