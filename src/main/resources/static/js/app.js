@@ -359,6 +359,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 pendingActions: function () {
                     return api.authGet("moderation/pending_actions")
                 },
+                lastActions: function (page, size) {
+                    var data = {page: page ? page : 0};
+                    if (size) data.size = size;
+                    return api.authGet("moderation/last_actions")
+                },
                 confirm: function (id) {
                     return api.authGet("moderation/"+id+"/confirm")
                 },

@@ -33,6 +33,10 @@ public interface CommonDao {
 
     <E> List<E> getList(Class<E> clazz, String property, Object value);
 
+    <E> List<E> getList(Class<E> clazz, String property, Object value, Pageable pageable);
+
+    <E> List<E> getListWithout(Class<E> clazz, String property, Object value, Pageable pageable);
+
     <E> List<E> getFor(Class<E> clazz, String entity, Serializable id);
 
     <E> E getSingleFor(Class<E> clazz, String entity, Serializable id);

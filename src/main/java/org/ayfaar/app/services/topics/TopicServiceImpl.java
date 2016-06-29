@@ -248,22 +248,23 @@ class TopicServiceImpl implements TopicService {
 
         @Override
         public TopicProviderImpl merge(String mergeInto) {
+            moderationService.check(Action.TOPIC_MERGE, topic.getName(), mergeInto);
             commonDao.remove(topic); // remove from db for case sensitive case
             final TopicProvider provider = findOrCreate(mergeInto, true);
-            linksMap.values().stream()
-                    .forEach(link -> {
-                        // заменяем ссылки на старый топик на ссылки на новый
-                        UID uid1 = link.getUid1().getUri().equals(uri()) ? provider.topic() : link.getUid1();
-                        UID uid2 = link.getUid2().getUri().equals(uri()) ? provider.topic() : link.getUid2();
-                        link = linkDao.save(Link.builder()
-                                .uid1(uid1)
-                                .uid2(uid2)
-                                .type(link.getType())
-                                .comment(link.getComment())
-                                .quote(link.getQuote())
-                                .rate(link.getRate())
-                                .build());
-                    });
+            linksMap.values().forEach(link -> {
+                // заменяем ссылки на старый топик на ссылки на новый
+                UID uid1 = link.getUid1().getUri().equals(uri()) ? provider.topic() : link.getUid1();
+                UID uid2 = link.getUid2().getUri().equals(uri()) ? provider.topic() : link.getUid2();
+                link = linkDao.save(Link.builder()
+                        .uid1(uid1)
+                        .uid2(uid2)
+                        .type(link.getType())
+                        .comment(link.getComment())
+                        .quote(link.getQuote())
+                        .rate(link.getRate())
+                        .build());
+            });
+            moderationService.notice(Action.TOPIC_MERGED, topic.getName(), provider.name());
             reload();
             return this;
         }

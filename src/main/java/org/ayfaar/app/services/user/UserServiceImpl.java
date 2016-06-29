@@ -13,6 +13,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserPresentation getPresentation(Integer id) {
         // todo implement logic
-        return new UserPresentation(commonDao.getOpt(User.class, id).get());
+        return id == null ? null : new UserPresentation(commonDao.getOpt(User.class, id).get());
     }
 }

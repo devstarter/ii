@@ -2,11 +2,10 @@ package org.ayfaar.app.controllers;
 
 import one.util.streamex.StreamEx;
 import org.ayfaar.app.dao.CommonDao;
-import org.ayfaar.app.model.ActionLog;
+import org.ayfaar.app.model.ActionEvent;
 import org.ayfaar.app.model.PendingAction;
 import org.ayfaar.app.model.User;
 import org.ayfaar.app.services.moderation.ModerationService;
-import org.ayfaar.app.services.user.UserPresentation;
 import org.ayfaar.app.services.user.UserService;
 import org.ayfaar.app.utils.CurrentUserProvider;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.util.Comparator.comparingInt;
-
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
@@ -52,16 +50,16 @@ public class ModerationController {
                 .reverseSorted(comparingInt(PendingAction::getId))
                 .map(PendingActionPresentation::new)
                 .map(presentation -> {
-                    presentation.owner = Objects.equals(currentUser.getId(), presentation.initiatedBy.id);
+                    presentation.owner = Objects.equals(currentUser.getId(), presentation.initiatedBy);
                     return presentation;
                 })
                 .toList();
     }
 
     @RequestMapping("last_actions")
-    public List<ActionLog> getLastActions(@PageableDefault(size = 3, sort = "createdAt", direction = DESC) Pageable pageable) {
-        // организовать постраничную выдачу ActionLog, сначала выдавать самые последние
-        return commonDao.getPage(ActionLog.class, pageable);
+    public List<ActionEvent> getLastActions(@PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable,
+                                            @AuthenticationPrincipal User currentUser) {
+        return commonDao.getListWithout(ActionEvent.class, "createdBy", currentUser.getId(), pageable);
     }
 
     @RequestMapping("{id}/confirm")
@@ -78,13 +76,13 @@ public class ModerationController {
     private class PendingActionPresentation {
         public Integer id;
         public String text;
-        public UserPresentation initiatedBy;
+        public Integer initiatedBy;
         public Boolean owner; // is this action created by current user
 
         public PendingActionPresentation(PendingAction action) {
             id = action.getId();
             text = action.getMessage();
-            initiatedBy = userService.getPresentation(action.getInitiatedBy());
+            initiatedBy = action.getInitiatedBy();//userService.getPresentation(action.getInitiatedBy());
         }
     }
 }

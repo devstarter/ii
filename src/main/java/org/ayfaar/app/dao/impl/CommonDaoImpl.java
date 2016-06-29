@@ -6,6 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,20 @@ public class CommonDaoImpl implements CommonDao {
     public <E> List<E> getList(Class<E> clazz, String property, Object value) {
         return sessionFactory.getCurrentSession()
                 .createCriteria(clazz).add(value == null ? isNull(property) : eq(property, value))
+                .list();
+    }
+
+    @Override
+    public <E> List<E> getList(Class<E> clazz, String property, Object value, Pageable pageable) {
+        return criteria(clazz, pageable)
+                .add(value == null ? isNull(property) : eq(property, value))
+                .list();
+    }
+
+    @Override
+    public <E> List<E> getListWithout(Class<E> clazz, String property, Object value, Pageable pageable) {
+        return criteria(clazz, pageable)
+                .add(value == null ? isNotNull(property) : Restrictions.ne(property, value))
                 .list();
     }
 
@@ -234,5 +249,23 @@ public class CommonDaoImpl implements CommonDao {
         }
 
         return list(criteria);
+    }
+
+    protected Criteria criteria(Class entityClass, Pageable pageable) {
+        final Sort sort = pageable.getSort();
+        Optional<Sort.Order> order = Optional.ofNullable(sort != null && sort.iterator().hasNext() ? sort.iterator().next() : null);
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(entityClass)
+                .setFirstResult(pageable.getOffset())
+                .setMaxResults(pageable.getPageSize());
+
+        String sortField = order.isPresent() ? order.get().getProperty() : null;
+        String sortDirection = order.isPresent() ? order.get().getDirection().name() : null;
+
+        if (sortField != null && !sortField.isEmpty()) {
+            criteria.addOrder("asc".equals(sortDirection) ? Order.asc(sortField) : Order.desc(sortField));
+        }
+
+        return criteria;
     }
 }

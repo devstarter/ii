@@ -35,15 +35,12 @@ public class NotificationListener implements ApplicationListener<PushEvent> {
             return;
         }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final Builder.PushesBuilder pusher = pushbullet(pushbulletClient).pushes().channel(channel);
-                if(event instanceof HasUrl){
-                    pusher.link(event.getTitle(), event.getMessage(), ((HasUrl) event).getUrl());
-                }else {
-                    pusher.note(event.getTitle(), event.getMessage());
-                }
+        new Thread(() -> {
+            final Builder.PushesBuilder pusher = pushbullet(pushbulletClient).pushes().channel(channel);
+            if(event instanceof HasUrl){
+                pusher.link(event.getTitle(), event.getMessage(), ((HasUrl) event).getUrl());
+            }else {
+                pusher.note(event.getTitle(), event.getMessage());
             }
         }).start();
     }

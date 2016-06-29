@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.events.SimplePushEvent;
-import org.ayfaar.app.model.ActionLog;
+import org.ayfaar.app.model.ActionEvent;
 import org.ayfaar.app.model.PendingAction;
 import org.ayfaar.app.utils.CurrentUserProvider;
 import org.ayfaar.app.utils.exceptions.ConfirmationRequiredException;
@@ -44,15 +44,15 @@ public class ModerationService {
     }
 
     public void notice(Action action, Object... args) {
-        String message = arrayFormat(action.message, args).getMessage();
+        String message = arrayFormat(action.message, args).getMessage() + " пользователем " + getCurrentUserName();
         log.info(message);
-        final ActionLog actionLog = new ActionLog();
-        actionLog.setMessage(message);
+        final ActionEvent actionEvent = new ActionEvent();
+        actionEvent.setMessage(message);
         // указать такущего пользователя
-        actionLog.setUserId(getCurrentUserId());
+        actionEvent.setCreatedBy(getCurrentUserId());
         // указать action
-        actionLog.setAction(action);
-        commonDao.save(actionLog);
+        actionEvent.setAction(action);
+        commonDao.save(actionEvent);
     }
 
     public void check(Action action, Object... args) {
@@ -120,12 +120,12 @@ public class ModerationService {
     }
 
     private Integer getCurrentUserId() {
-        return currentUserProvider.get().get().getId();
+        return currentUserProvider.get().isPresent() ? currentUserProvider.get().get().getId() : null;
     }
 
     private String getCurrentUserName() {
         // fixme: не продуман кейс отсутсвия пользователя
-        return currentUserProvider.get().get().getName();
+        return currentUserProvider.get().isPresent() ? currentUserProvider.get().get().getName() : "Аноним";
     }
 
     void checkMethod(Moderated moderated, Object[] args) {

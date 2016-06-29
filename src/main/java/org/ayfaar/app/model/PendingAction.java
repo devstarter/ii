@@ -18,7 +18,6 @@ public class PendingAction {
     private Integer id;
     @Column(nullable = false, columnDefinition = "text")
     private String message;
-    @Column(nullable = false)
     private Integer initiatedBy;
     @Column(columnDefinition = "text", nullable = false)
     private String command;

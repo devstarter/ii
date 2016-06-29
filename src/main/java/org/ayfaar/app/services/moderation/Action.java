@@ -26,6 +26,8 @@ public enum Action {
     TOPIC_CHILD_ADDED("Теме <topic>{}</topic> добавлена дочерняя тема <topic>{}</topic>"),
     TOPIC_TOPIC_UNLINKED("От темы <topic>{}</topic> отинкована тема <topic>{}</topic>"),
     TOPIC_UNLINK_RESOURCE("Отмена связи между <uri>{}</uri> и темой <uri>{}</uri>", TOPIC),
+    TOPIC_MERGE("Объединение темы <topic>{}</topic> в тему <topic>{}</topic>", ROLE_ADMIN),
+    TOPIC_MERGED("Тема `{}` объединена с <topic>{}</topic>"),
 
     VIDEO_ADDED("Добавлено видео '{}' (<uri>{}</uri>)"),
     VIDEO_ADD("Добавление нового видео по ссылке {}", UserRole.ROLE_AUTHENTICATED),

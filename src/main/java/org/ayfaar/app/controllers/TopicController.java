@@ -184,6 +184,7 @@ public class TopicController {
 
     @RequestMapping("merge")
     // Слияние двух веток
+    @Moderated(value = Action.TOPIC_MERGE, command = "@topicController.merge")
     public void merge(@RequestParam String main, @RequestParam String mergeInto) {
         topicService.getByName(main, true).merge(mergeInto);
     }

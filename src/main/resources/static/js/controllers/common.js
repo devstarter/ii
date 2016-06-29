@@ -369,6 +369,9 @@ function CabinetController($scope, $api, $rootScope, auth, modal) {
         $api.moderation.pendingActions().then(function (pendingActions) {
             $scope.pendingActions = pendingActions;
         });
+        $api.moderation.lastActions().then(function (actions) {
+            $scope.lastActions = actions;
+        });
     }
     $scope.updateName = function() {
         modal.prompt("Изменение имени", $scope.user.name, "Изменить").then(function (name) {

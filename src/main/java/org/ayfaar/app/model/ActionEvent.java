@@ -11,16 +11,16 @@ import java.util.Date;
 @Entity
 @Getter @Setter
 @NoArgsConstructor
-public class ActionLog {
+public class ActionEvent {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Integer id;
     @Column(nullable = false)
     private Date createdAt = new Date();
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text")
     private String message;
+    private Integer createdBy;
     @Column(nullable = false)
-    private Integer userId;
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Action action;
 }

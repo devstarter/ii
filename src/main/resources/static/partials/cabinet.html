@@ -11,6 +11,11 @@
         <a class="btn btn-default" ng-hide="action.owner" ng-click="confirm(action.id)">Подтвердить</a>
         <a class="btn btn-link" ng-click="cancel(action.id)">Отменить</a>
     </div>
+
+    <h2 ng-show="lastActions.length">Последние действия в системе</h2>
+    <div ng-repeat="action in lastActions" style="padding-top: 10px">
+        <span ii-bind="action.message"></span>
+    </div>
 </div>
 <h1 ng-hide="user">Для доступа требуется авторизация</h1>
 <style type="text/css">

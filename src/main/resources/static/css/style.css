@@ -1,6 +1,6 @@
 .player-progress-bar {
     display: table-cell;
-    width: 550px;
+    width: 550px !important;
 }
 .player-bar {
     display: table;
@@ -258,7 +258,7 @@ blockquote {
         top: 25%;
     }
     .player-progress-bar {
-        width: 100%
+        width: 100% !important;
     }
 }
 
