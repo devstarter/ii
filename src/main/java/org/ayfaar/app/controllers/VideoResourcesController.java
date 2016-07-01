@@ -4,7 +4,6 @@ import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.User;
 import org.ayfaar.app.model.VideoResource;
-import org.ayfaar.app.repositories.VideoResourceRepository;
 import org.ayfaar.app.services.moderation.Action;
 import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.utils.GoogleService;
@@ -23,13 +22,19 @@ import static org.springframework.util.Assert.hasLength;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
-@RequestMapping("api/resource/video")
+@RequestMapping({"api/resource/video", "api/video"})
 public class VideoResourcesController {
 
-    @Inject CommonDao commonDao;
-    @Inject VideoResourceRepository videoResourceRepository;
-    @Inject GoogleService youtubeService;
-    @Inject ModerationService moderationService;
+    private final CommonDao commonDao;
+    private final GoogleService youtubeService;
+    private final ModerationService moderationService;
+
+    @Inject
+    public VideoResourcesController(GoogleService youtubeService, CommonDao commonDao, ModerationService moderationService) {
+        this.youtubeService = youtubeService;
+        this.commonDao = commonDao;
+        this.moderationService = moderationService;
+    }
 
     @RequestMapping("{id}")
     public VideoResource get(@PathVariable String id) throws Exception {
@@ -82,6 +87,10 @@ public class VideoResourcesController {
     @RequestMapping("{id}/remove")
     @Moderated(value = Action.VIDEO_REMOVE, command = "@videoResourcesController.remove")
     public void remove(@PathVariable String id) {
-        commonDao.getOpt(VideoResource.class, "id", id).ifPresent(video -> commonDao.remove(video));
+        commonDao.getOpt(VideoResource.class, "id", id).ifPresent(video -> {
+            commonDao.remove(video);
+            moderationService.notice(Action.VIDEO_REMOVED, video.getTitle(), video.getId());
+            // todo: update linked entities (topic links for example)
+        });
     }
 }

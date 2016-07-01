@@ -60,4 +60,13 @@ public class AdvanceComparatorTest {
         assertEquals("12.9.1.2", list.get(1));
         assertEquals("12.9.1.10", list.get(2));
     }
+
+    @Test
+    public void test2() {
+        final List<String> list = asList(
+                "Будущее и Ииссиидиология. Часть 1. Смысл появления ииссиидиологии",
+                "Будущее и Ииссиидиология. Часть 1. Смысл появления Ииссиидиологии");
+        list.sort(AdvanceComparator.INSTANCE);
+        assertEquals("Будущее и Ииссиидиология. Часть 1. Смысл появления Ииссиидиологии", list.get(0));
+    }
 }

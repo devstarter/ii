@@ -8,10 +8,12 @@ import org.ayfaar.app.model.User;
 import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.user.UserService;
 import org.ayfaar.app.utils.CurrentUserProvider;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -57,9 +59,16 @@ public class ModerationController {
     }
 
     @RequestMapping("last_actions")
+    @Transactional
     public List<ActionEvent> getLastActions(@PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable,
                                             @AuthenticationPrincipal User currentUser) {
-        return commonDao.getListWithout(ActionEvent.class, "createdBy", currentUser.getId(), pageable);
+        Integer hiddenActionEventId = currentUser.getHiddenActionEventId();
+        if (hiddenActionEventId == null) hiddenActionEventId = 0;
+        //noinspection unchecked
+        return commonDao.getCriteria(ActionEvent.class, pageable)
+                .add(Restrictions.ne("createdBy", currentUser.getId()))
+                .add(Restrictions.gt("id", hiddenActionEventId))
+                .list();
     }
 
     @RequestMapping("{id}/confirm")

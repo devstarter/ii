@@ -62,7 +62,7 @@ public class AdvanceComparator implements Comparator<String> {
             int result;
 
             //если нецифровые строки равны и следующие за ними символы в строках o1 и o2 цифры
-            if (str1.substring(0, index1).equalsIgnoreCase(str2.substring(0, index2)) && Character.isDigit(o1.charAt(index1)) && Character.isDigit(o2.charAt(index2))) {
+            if (index1 < lengthFirstStr && index2 < lengthSecondStr && str1.substring(0, index1).equalsIgnoreCase(str2.substring(0, index2)) && Character.isDigit(o1.charAt(index1)) && Character.isDigit(o2.charAt(index2))) {
 
                 //найдем индекс последнего цифрового символа в последовательности в строке o1, увеличенный на 1
                 int index11 = index1;

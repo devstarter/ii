@@ -59,4 +59,10 @@ public class UserController {
         moderationService.notice(Action.USER_RENAME, oldName, name);
         return current;
     }
+
+    @RequestMapping(value = "hide-actions-before/{id}", method = RequestMethod.POST)
+    public void hideActions(@AuthenticationPrincipal User user, @PathVariable Integer id) {
+        user.setHiddenActionEventId(id);
+        commonDao.save(user);
+    }
 }

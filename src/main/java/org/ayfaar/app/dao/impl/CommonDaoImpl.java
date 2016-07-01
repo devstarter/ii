@@ -251,6 +251,11 @@ public class CommonDaoImpl implements CommonDao {
         return list(criteria);
     }
 
+    @Override
+    public Criteria getCriteria(Class entityClass, Pageable pageable) {
+        return criteria(entityClass, pageable);
+    }
+
     protected Criteria criteria(Class entityClass, Pageable pageable) {
         final Sort sort = pageable.getSort();
         Optional<Sort.Order> order = Optional.ofNullable(sort != null && sort.iterator().hasNext() ? sort.iterator().next() : null);

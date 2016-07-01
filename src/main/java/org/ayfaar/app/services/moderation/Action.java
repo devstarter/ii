@@ -29,10 +29,11 @@ public enum Action {
     TOPIC_MERGE("Объединение темы <topic>{}</topic> в тему <topic>{}</topic>", ROLE_ADMIN),
     TOPIC_MERGED("Тема `{}` объединена с <topic>{}</topic>"),
 
-    VIDEO_ADDED("Добавлено видео '{}' (<uri>{}</uri>)"),
+    VIDEO_ADDED("Добавлено видео <uri label='{}'>{}</uri>"),
     VIDEO_ADD("Добавление нового видео по ссылке {}", UserRole.ROLE_AUTHENTICATED),
     VIDEO_REMOVE("Удаление видео <uri>видео:youtube:{}</uri>", UserRole.ROLE_EDITOR),
-    VIDEO_UPDATE_TITLE("Обновление названия видео <uri>{}</uri> на `{}`", UserRole.ROLE_EDITOR);
+    VIDEO_UPDATE_TITLE("Обновление названия видео <uri>{}</uri> на `{}`", UserRole.ROLE_EDITOR),
+    NEW_USER("Новый пользователь представился системе: {}"), VIDEO_REMOVED("Видео `{}` c id: {} далено из системы");
 
     private Action parent = null;
     private UserRole requiredAccessLevel;

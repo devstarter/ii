@@ -174,7 +174,6 @@ class TopicServiceImpl implements TopicService {
             }
             linkDao.save(link);
             registerLink(link, uid);
-            moderationService.notice(Action.TOPIC_RESOURCE_LINKED, uri(), uid.getUri());
             return link;
         }
 

@@ -1,6 +1,7 @@
 package org.ayfaar.app.dao;
 
 import org.ayfaar.app.utils.Content;
+import org.hibernate.Criteria;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.Pageable;
@@ -56,4 +57,6 @@ public interface CommonDao {
 
     @NotNull
     <E> List<E> getPage(Class<E> entityClass, int skip, int pageSize, String sortField, String sortDirection);
+
+    Criteria getCriteria(Class entityClass, Pageable pageable);
 }

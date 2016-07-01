@@ -310,24 +310,7 @@ function ResourcesController($scope, $stateParams, $state, Video, errorService, 
                 return
             }
             $scope.last.append(last);
-            var grouped = {};
-            angular.forEach($scope.last, function (v) {
-                var d = new Date(v.created_at);
-                var diff = Date.now() - d;
-                var header;
-                if (diff < 24*60*60000) {
-                    header = "Добавленные за последние сутки"
-                } else if (diff < 7*24*60*60000) {
-                    header = "Добавленные за последнюю неделю"
-                } else if (diff < 30*7*24*60*60000) {
-                    header = "Добавленные за последний месяц"
-                } else {
-                    header = "Добавленные раньше чем за месяц"
-                }
-                if (!grouped[header]) grouped[header] = [];
-                grouped[header].push(v)
-            });
-            $scope.last = grouped;
+            $scope.last = groupByDate($scope.last, "created_at");
             $scope.lastLoading = false;
         })   
     }
@@ -365,12 +348,15 @@ function CabinetController($scope, $api, $rootScope, auth, modal) {
             });
         }
     }
+    var firstAction;
     function loadStatus() {
         $api.moderation.pendingActions().then(function (pendingActions) {
             $scope.pendingActions = pendingActions;
         });
         $api.moderation.lastActions().then(function (actions) {
-            $scope.lastActions = actions;
+            if (actions && actions.length) firstAction = actions[0];
+            $scope.lastActions = groupByDate(actions, "created_at");
+            $scope.hasActions = actions.length;
         });
     }
     $scope.updateName = function() {
@@ -379,6 +365,9 @@ function CabinetController($scope, $api, $rootScope, auth, modal) {
                 $scope.user.name = name;
             });
         });
+    };
+    $scope.hideActions = function () {
+        $api.user.hideActionsBefore(firstAction.id).then(loadStatus)
     }
 }
 

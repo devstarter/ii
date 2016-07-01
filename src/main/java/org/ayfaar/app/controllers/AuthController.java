@@ -3,7 +3,8 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.configs.SecurityConfig;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.User;
-import org.ayfaar.app.services.moderation.UserRole;
+import org.ayfaar.app.services.moderation.Action;
+import org.ayfaar.app.services.moderation.ModerationService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,19 +14,20 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/auth")
 public class AuthController {
 
     private final CommonDao commonDao;
+    private ModerationService moderationService;
     private final SecurityConfig.CustomAuthenticationProvider customAuthenticationProvider;
 
     @Inject
-    public AuthController(SecurityConfig.CustomAuthenticationProvider customAuthenticationProvider, CommonDao commonDao) {
+    public AuthController(SecurityConfig.CustomAuthenticationProvider customAuthenticationProvider, CommonDao commonDao, ModerationService moderationService) {
         this.customAuthenticationProvider = customAuthenticationProvider;
         this.commonDao = commonDao;
+        this.moderationService = moderationService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -55,7 +57,7 @@ public class AuthController {
                            @RequestParam(required=false) String timezone,
                            @RequestParam Long id,
                            @RequestParam OAuthProvider auth_provider) throws IOException{
-        User user = commonDao.getOpt(User.class, "email", email).orElse(
+       User user = commonDao.getOpt(User.class, "email", email).orElse(
                 User.builder()
                     .accessToken(access_token)
                     .email(email)
@@ -69,6 +71,8 @@ public class AuthController {
                     .providerId(id)
                     .build());
 
+        boolean newUserFlag = user.getId() != null;
+
         if (!user.getAccessToken().equals(access_token)){
             user.setAccessToken(access_token);
         }
@@ -78,6 +82,7 @@ public class AuthController {
         Authentication request = new UsernamePasswordAuthenticationToken(user, null);
         Authentication authentication = customAuthenticationProvider.authenticate(request);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (newUserFlag) moderationService.notice(Action.NEW_USER, user.getName());
         return user;
     }
 

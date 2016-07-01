@@ -31,17 +31,29 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("api/topic")
 public class TopicController {
 
-    @Inject CommonDao commonDao;
-    @Inject LinkDao linkDao;
-    @Inject TopicService topicService;
-    @Inject ModerationService moderationService;
-    @Inject LinkService linkService;
+    final CommonDao commonDao;
+    private final LinkDao linkDao;
+    private final TopicService topicService;
+    private final ModerationService moderationService;
+    private final LinkService linkService;
+    private final NewSuggestionsController suggestionsController;
+
+    @Inject
+    public TopicController(TopicService topicService, NewSuggestionsController suggestionsController, ModerationService moderationService, LinkService linkService, CommonDao commonDao, LinkDao linkDao) {
+        this.topicService = topicService;
+        this.suggestionsController = suggestionsController;
+        this.moderationService = moderationService;
+        this.linkService = linkService;
+        this.commonDao = commonDao;
+        this.linkDao = linkDao;
+    }
 
     @RequestMapping("for/{uri}")
     /**
      * Get all topics with any UID by his uri
      */
     public List<LinkedTopicPresentation> getForUri(@PathVariable String uri) throws Exception {
+        // todo: move to TopicService and sort by link rate
         hasLength(uri);
         final List<Link> links = linkDao.getAllLinks(uri);
         List<LinkedTopicPresentation> presentations = new ArrayList<>();
@@ -94,6 +106,7 @@ public class TopicController {
         UID uid = commonDao.get(UriGenerator.getClassByUri(uri), uri);
         final TopicProvider topic = topicService.findOrCreate(name);
         topic.link(null, uid, comment, quote, rate);
+        moderationService.notice(Action.TOPIC_RESOURCE_LINKED, topic.name(), uid.getUri());
         return topic.topic();
     }
 
@@ -138,7 +151,7 @@ public class TopicController {
     public void unlinkUri(@RequestParam String uri, @RequestParam String topicUri) throws Exception {
         hasLength(uri);
         hasLength(topicUri);
-        // todo move this logic to topic service
+        // todo: move this logic to topic service
         final List<Link> links = linkDao.getAllLinks(uri);
         for (Link link : links) {
             if ((link.getUid1() instanceof Topic && link.getUid1().getUri().equals(topicUri)) ||
@@ -151,13 +164,8 @@ public class TopicController {
     }
 
     @RequestMapping("suggest")
-    public List<String> suggest(@RequestParam String q) {
-        List<Topic> topics = commonDao.getLike(Topic.class, "name", "%" + q + "%", 20);
-        List<String> names = new ArrayList<String>();
-        for (Topic topic : topics) {
-            names.add(topic.getName());
-        }
-        return names;
+    public Collection<String> suggest(@RequestParam String q) {
+        return suggestionsController.suggestions(q, false, true, false, false, false, false, false, false).values();
     }
 
     @RequestMapping("add-child")
@@ -172,7 +180,7 @@ public class TopicController {
         final TopicProvider parentTopic = topicService.findOrCreate(name);
         if (!parentTopic.getChild(child).isPresent()) {
             final TopicProvider childTopic = parentTopic.addChild(child);
-            moderationService.notice(Action.TOPIC_CHILD_ADDED, parentTopic.uri(), childTopic.uri());
+            moderationService.notice(Action.TOPIC_CHILD_ADDED, parentTopic.name(), childTopic.name());
         }
     }
 
@@ -189,10 +197,10 @@ public class TopicController {
         topicService.getByName(main, true).merge(mergeInto);
     }
 
-    @RequestMapping("add-related")
+    /*@RequestMapping("add-related")
     public void addRelated(@RequestParam String name, @RequestParam String related) {
         topicService.findOrCreate(name).link(topicService.findOrCreate(related).topic());
-    }
+    }*/
 
     @RequestMapping("children")
     public List<Topic> linkChild(@RequestParam String name) {

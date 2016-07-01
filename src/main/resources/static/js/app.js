@@ -353,6 +353,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 },
                 rename: function (newName) {
                     return api.authPost("user/current/rename", {name: newName})
+                },
+                hideActionsBefore: function (id) {
+                    return api.authPost("user/hide-actions-before/"+id);
                 }
             },
             moderation: {
@@ -842,7 +845,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             compile : function(element, attr, linker) {
                 return function ($scope, $element, $attr) {
                     var uri = $element.html();
-                    $element.html("<a href='"+getUrl(uri)+"'>"+entityService.getName(uri) + "</a>");
+                    var label = $attr.label;
+                    $element.html("<a href='"+getUrl(uri)+"'>"+(label ? label : entityService.getName(uri)) + "</a>");
                 }
             }
         };
@@ -852,7 +856,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             restrict: 'E',
             compile : function(element, attr, linker) {
                 return function ($scope, $element, $attr) {
-                    var topicName = $element.html();
+                    var topicName = $element.html().replace("тема:", "");
                     $element.html("<a href='"+getUrl("тема:"+topicName)+"'>"+topicName + "</a>");
                 }
             }
@@ -1274,7 +1278,7 @@ function getUrl(uri) {
     url = url.replace("ии:термин:", "");
     url = url.replace("ии:пункт:", "");
     url = url.replace("ии:пункты:", "");
-    url = url.replace("видео:youtube:", "resource/video/");
+    url = url.replace("видео:youtube:", "v/");
     url = url.replace("документ:google:", "d/");
     url = url.replace("запись:", "r/");
     return url;
@@ -1302,4 +1306,24 @@ function getSelectionText() {
         text = document.selection.createRange().text;
     }
     return text;
+}
+function groupByDate(data, field) {
+    var grouped = {};
+    angular.forEach(data, function (v) {
+        var d = new Date(v[field]);
+        var diff = Date.now() - d;
+        var header;
+        if (diff < 24*60*60000) {
+            header = "За последние сутки"
+        } else if (diff < 7*24*60*60000) {
+            header = "За последнюю неделю"
+        } else if (diff < 30*7*24*60*60000) {
+            header = "За последний месяц"
+        } else {
+            header = "Больше чем месяц назад"
+        }
+        if (!grouped[header]) grouped[header] = [];
+        grouped[header].push(v)
+    });
+    return grouped
 }
