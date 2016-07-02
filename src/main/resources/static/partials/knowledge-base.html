@@ -3,21 +3,27 @@
         <div class="header">
             <img src="static/images/logo.png" alt="Ииссиидиология">
         </div>
-        <h1>База знаний Ииссиидиологии</h1>
+        <h1>Интерактивная Ииссиидиологии</h1>
     </div>
     <div>
         <!--<div class="input-group">-->
-            <input ng-model="query" type="text" class="form-control" placeholder="Введите слово"
+            <input ng-model="query" type="text" class="form-control" placeholder="Введите интересующее вас слово"
                    ii-lookup
-                   disable-enter="true"
                    typeahead-editable="false"
                    typeahead-template-url="typeahead-item-template"
-                   typeahead="item as item.label for item in getSuggestions($viewValue)"
-                   typeahead-on-select="select($item, $model, $label)">
+                   typeahead="item as item.label for item in $getSuggestions($viewValue)"
+                   typeahead-on-select="$selected($item, $model, $label)">
             <!--<span class="input-group-btn">-->
               <!--<button class="btn btn-primary" ng-click="search(query)">Искать</button>-->
             <!--</span>-->
         </div>
+    <span class="home-search-tips">
+            Примеры: <a href="птиц*" title='"*" означает поиск всех вариантов склонения слова, например: птицам, птицы и т.п.'>птиц*</a>,
+            <a href="НУУ-ВВУ" title="поиск упоминаний непосредственно Космического Кода в содержимом">НУУ-ВВУ</a>,
+            <a href="клекс" title="поиск упоминаний Ииссиидиологического термина в содержимом">клекс</a>,
+            <a href="10.10176" title="показать текст абзаца">10.10176</a>,
+            <a href="3.0844-3.0846" title="показать диапазон пунктов">3.0844-3.0846</a>
+        </span>
         <!--<span class="home-search-tips">
             Примеры поиска: <a href tooltip-placement="bottom" tooltip='"*" означает поиск всех вариантов склонения слова, например: птицам, птицы и т.п.' ng-click="search('птиц*')">птиц*</a>, <a href tooltip-placement="bottom" tooltip="поиск упоминаний непосредственно Космического Кода в содержимом" ng-click="search('НУУ-ВВУ')">НУУ-ВВУ</a>, <a href tooltip-placement="bottom" tooltip="поиск упоминаний Ииссиидиологического термина в содержимом" ng-click="search('клекс')">клекс</a>, <a href tooltip-placement="bottom" tooltip="показать текст абзаца" ng-click="search('10.10176')">10.10176</a>, <a href tooltip-placement="bottom" tooltip="показать диапазон пунктов" ng-click="search('3.0844-3.0846')">3.0844-3.0846</a>
         </span>-->
@@ -40,6 +46,7 @@
     <a class="btn btn-link" style="display: block;text-align: left;font-size: 16px" ng-repeat="topic in topics" topic-ref="topic" title="{{topic.name}}">{{topic.name|cut:true:75}}</a>
     <a class="btn btn-link show-more-link" href="t/Методика МИЦИАР">посмотреть все →</a>
 
+    <span style="color: grey;text-align: center;display: block;padding-top: 10px">Творчеством автора является только текст нумерованных абзацев, всё остальное - результат работы коллектива читателей</span>
 
     <a class="btn btn-link" style="text-align: center; display: block" ng-click="auth()" ng-hide="user">Представиться</a>
     <div ng-show="user" style="text-align: center;display: block;" ng-click="goToCabinet()" class="btn"><img ng-src="{{user.thumbnail}}" style="width: 30px;height: 30px;border-radius: 50%;"/> {{user.name}}</div>
@@ -51,9 +58,3 @@
         color: gray;
     }
 </style>
-
-<script type="text/ng-template" id="typeahead-item-template">
-    <div style="padding: 5px" class="pointer">
-        <span class="gray" ng-click="addFilterByType(match.model.type)">{{match.model.typeLabel}}</span> <span ng-bind-html="match.model.label | typeaheadHighlight:query"></span>
-    </div>
-</script>

@@ -146,6 +146,13 @@
         <button class="btn btn-default" ng-click="link(0)" style="margin: 0">Склонённый</button>
     </div>
 </script>
+
+<script type="text/ng-template" id="typeahead-item-template">
+    <div style="padding: 5px" class="pointer">
+        <span class="gray" ng-click="addFilterByType(match.model.type)">{{match.model.typeLabel}}</span> <span ng-bind-html="match.model.label | typeaheadHighlight:query"></span>
+    </div>
+</script>
+
 <script type="application/ld+json">
 {
   "@context" : "http://schema.org",

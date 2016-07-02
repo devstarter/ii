@@ -5,17 +5,20 @@
         <div class="input-group" style="padding-top: 20px">
             <input ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
                    ii-lookup
-                   typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
-                   typeahead-on-select="$suggestionSelected($label)">
+                   typeahead-template-url="typeahead-item-template"
+                   typeahead="item as item.label for item in $getSuggestions($viewValue)"
+                   typeahead-on-select="$selected($item, $model, $label)">
             <span class="input-group-btn">
               <button class="btn btn-primary" ng-click="search(query)">Искать</button>
             </span>
         </div>
         <!--<span class="btn-link" style="color:#808080;" ng-hide="showSearchHelp" ng-click="showSearchHelp = true">как работает поиск</span>-->
         <!--<span ng-show="showSearchHelp" style="color:#808080">???<span class="btn btn-link" ng-click="showSearchHelp = false">скрыть этот текст</span></span>-->
-        <div style="color:#808080" ng-show="query.indexOf('*') == -1 && query.indexOf(' ') == -1">Побробуйте со звёздочкой после корня слова для учёта всех вариантов
+        <div style="color:#808080;font-size: 75%" ng-show="query.indexOf('*') == -1 && query.indexOf('!') == -1">Побробуйте со звёздочкой после корня слова для учёта всех вариантов
             окончания слова. Например "лийллусцивный" - "лийллусцивн*" (будут учтены "лийллусцивн<u>о</u>", "лийллусцивн<u>ые</u>",
-            "лийллусцивн<u>ость</u>" и т. д. </div>
+            "лийллусцивн<u>ость</u>" и т. д.
+            Если фраза будет начинаться с "!", то система будет искать фразу "как есть", то есть без дополнительных оптимизаций поиска.
+        </div>
     </div>
     <div class="block loading" ng-show="loading">Загрузка...</div>
     <div ng-hide="loading && termFound">
@@ -123,7 +126,7 @@
                         </span>
                     </cite>
                 </blockquote>
-                <button class="btn btn-success" ng-show="showLoadMore" ng-click="loadNextPage()">
+                <button class="btn btn-primary" ng-show="showLoadMore" ng-click="loadNextPage()">
                     <img src="static/images/ajax-loader.gif" ng-show="loadingMore" />{{loadingMore ? 'Поиск...' : 'Искать далее'}}</button>
             </div>
         </div>

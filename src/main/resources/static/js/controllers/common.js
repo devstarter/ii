@@ -1,30 +1,4 @@
 function KnowledgeBaseController($scope, $state, $api, $q, entityService, auth) {
-    window.title = "База знаний Ииссиидиологии";
-    $scope.search = function(query) {
-
-    };
-    $scope.getSuggestions = function(q) {
-        var deferred = $q.defer();
-        $api.search.suggestionsAll(q).then(function (response) {
-            var data = [];
-            for(var uri in response) {
-                if (response.hasOwnProperty(uri))
-                    data.push({
-                        uri: uri,
-                        label: response[uri],
-                        type: entityService.getType(uri),
-                        typeLabel: entityService.getTypeLabel(uri)
-                })
-            }
-            deferred.resolve(data)
-        }, function (response) {
-            deferred.reject(response)
-        });
-        return deferred.promise;
-    };
-    $scope.select = function(item, model, label) {
-        $state.go(item.uri)
-    };
     $scope.auth = function () {
         auth.authenticate().then(function (user) {
             $scope.user = user;

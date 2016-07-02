@@ -166,7 +166,7 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
                 $scope.noResult = $scope.foundQuotes.length == 0;
                 if (ga) ga('send', 'event', 'not-found', $scope.query);
             }
-            $scope.showLoadMore = r.hasMore;
+            $scope.showLoadMore = r.has_more;
             if (r.quotes && !r.quotes.length) {
                 pageCounter = 0;
             }

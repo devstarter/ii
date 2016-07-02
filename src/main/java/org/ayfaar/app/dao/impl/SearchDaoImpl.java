@@ -24,17 +24,17 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
     }
 
     public List<Item> findInItems(List<String> aliases, int skip, int limit, String startFrom) {
-        Criteria criteria = criteria();
+        DetachedCriteria idsCriteria = DetachedCriteria.forClass(Item.class);//criteria();
         Disjunction disjunction = Restrictions.disjunction();
 
         if(startFrom != null && !startFrom.isEmpty() && !startFrom.equals("undefined")) {
-            criteria.add(new SimpleExpression("orderIndex", Float.valueOf(startFrom), ">=") {
+            idsCriteria.add(new SimpleExpression("orderIndex", Float.valueOf(startFrom), ">=") {
                 @Override
                 public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery) throws HibernateException {
                     return " order_index >= ?";
                 }
             });
-            criteria.addOrder(Order.asc("orderIndex"));
+            idsCriteria.addOrder(Order.asc("orderIndex"));
         }
 
         for (String alias : aliases) {
@@ -47,9 +47,14 @@ public class SearchDaoImpl extends AbstractHibernateDAO<Item> implements SearchD
             }
         }
 
-        criteria.add(disjunction).setMaxResults(limit).setFirstResult(skip);
+        idsCriteria.setProjection(Projections.distinct(Projections.id()));
+        idsCriteria.add(disjunction);
 
-        return criteria.list();
+        return criteria()
+                .add(Subqueries.propertyIn("uri", idsCriteria))
+                .setMaxResults(limit)
+                .setFirstResult(skip)
+                .list();
     }
 }
 

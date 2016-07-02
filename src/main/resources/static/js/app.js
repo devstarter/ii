@@ -17,16 +17,16 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     $state.goToHome()
                 }
             })      
-            .state('home', {
+            /*.state('home', {
                 url: "/{at: @?}",
                 templateUrl: "static/partials/home.html",
                 controller: HomeController,
                 onEnter: function($rootScope){
                     $rootScope.$broadcast('home-state-entered');
                 }
-            })
-            .state('knowledge-base', {
-                url: "/kb",
+            })*/
+            .state('home', {
+                url: "/{at: @?}",
                 templateUrl: "static/partials/knowledge-base.html",
                 controller: KnowledgeBaseController,
                 onEnter: function($rootScope){
@@ -743,23 +743,49 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         }
     })
-    .directive('iiLookup', function($api, $state, $parse) {
+    .directive('iiLookup', function($api, $state, $parse, $q, entityService) {
         return {
             require:'ngModel',
             link: function (originalScope, element, attrs, modelCtrl) {
-                originalScope.$getSuggestions = function(query) {
-                    return $api.get("suggestions/"+query)
+                var data;
+                var query;
+                originalScope.$getSuggestions = function(q) {
+                    query = q;
+                    var deferred = $q.defer();
+                    $api.search.suggestionsAll(q).then(function (response) {
+                        data = [];
+                        for(var uri in response) {
+                            if (response.hasOwnProperty(uri))
+                                data.push({
+                                    uri: uri,
+                                    label: response[uri],
+                                    type: entityService.getType(uri),
+                                    typeLabel: entityService.getTypeLabel(uri)
+                                })
+                        }
+                        deferred.resolve(data)
+                    }, function (response) {
+                        deferred.reject(response)
+                    });
+                    return deferred.promise;
                 };
-                originalScope.$suggestionSelected = function(suggestion) {
-                    $state.goToTerm(suggestion ? suggestion : originalScope.query);
+                originalScope.$selected = function(item, model, label) {
+                    $state.go(item.uri)
                 };
                 var onEnter = $parse(attrs.onEnter);
                 element.bind('keyup', function(event) {
                     if (event.keyCode == 13) {// enter
-                        // originalScope.$suggestionSelected(event.target.value);
+                        internalOnEnter();
                         if (onEnter) onEnter(originalScope);
                     }
-                })
+                });
+                function internalOnEnter() {
+                    if (data && data.length) {
+                        $state.go(data[0].uri)
+                    } else {
+                        $state.goToTerm(query)
+                    }
+                }
             }
         };
     })

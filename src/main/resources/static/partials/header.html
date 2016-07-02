@@ -1,11 +1,15 @@
 <div ng-show="visible || audio">
     <a class="title" ng-hide="expanded" href="/">Интерактивная Ииссиидиология</a>
     <input ng-show="expanded" id="search-input" ng-model="query" class="form-control" type="text" placeholder="Введите термин или фразу"
-           ii-lookup ng-blur="closeWithDelay()"
-           typeahead-append-to-body="true" ng-focus="focused = true"
-           typeahead="suggestion for suggestion in $getSuggestions($viewValue)"
-           typeahead-on-select="expanded = false;$suggestionSelected($label)"
-           on-enter="$suggestionSelected(query);expanded = false" />
+           ii-lookup
+           ng-blur="closeWithDelay()"
+           typeahead-append-to-body="true"
+           ng-focus="focused = true"
+           typeahead-editable="false"
+           typeahead-template-url="typeahead-item-template"
+           typeahead="item as item.label for item in $getSuggestions($viewValue)"
+           typeahead-on-select="expanded = false;$selected($item, $model, $label)"
+           on-enter="expanded = false" />
     <a ng-hide="expanded" class="icon-search" ng-click="expand()" title="Искать"></a>
     <div ng-show="audio" class="player-bar">
         <i class="glyphicon pointer" ng-class="audio.paused ? 'glyphicon-play' : 'glyphicon-pause'" ng-click="audio.paused ? audio.play() : audio.pause()"
