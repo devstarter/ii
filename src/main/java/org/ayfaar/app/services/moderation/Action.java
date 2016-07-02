@@ -33,7 +33,8 @@ public enum Action {
     VIDEO_ADD("Добавление нового видео по ссылке {}", UserRole.ROLE_AUTHENTICATED),
     VIDEO_REMOVE("Удаление видео <uri>видео:youtube:{}</uri>", UserRole.ROLE_EDITOR),
     VIDEO_UPDATE_TITLE("Обновление названия видео <uri>{}</uri> на `{}`", UserRole.ROLE_EDITOR),
-    NEW_USER("Новый пользователь представился системе: {}"), VIDEO_REMOVED("Видео `{}` c id: {} далено из системы");
+    NEW_USER("Выполнен вход в систему новым "),
+    VIDEO_REMOVED("Видео `{}` c id: {} далено из системы");
 
     private Action parent = null;
     private UserRole requiredAccessLevel;

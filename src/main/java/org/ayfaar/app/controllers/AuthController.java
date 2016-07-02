@@ -71,7 +71,7 @@ public class AuthController {
                     .providerId(id)
                     .build());
 
-        boolean newUserFlag = user.getId() != null;
+        boolean newUserFlag = user.getId() == null;
 
         if (!user.getAccessToken().equals(access_token)){
             user.setAccessToken(access_token);
