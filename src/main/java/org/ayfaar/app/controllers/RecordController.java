@@ -72,9 +72,9 @@ public class RecordController {
         final Record record = recordDao.get("code", code);
         if (record == null) throw new RuntimeException("Record not found");
 
-        final String oldName = record.getName();
+        record.setPreviousName(record.getName());
         record.setName(name);
         recordDao.save(record);
-        moderationService.notice(Action.RECORD_RENAMED, record.getUri(), oldName, record.getName());
+        moderationService.notice(Action.RECORD_RENAMED, record.getUri(), record.getPreviousName(), record.getName());
     }
 }

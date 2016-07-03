@@ -130,7 +130,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             } else {
                 var wasAuthenticated = $cookies.getObject("auth_provider");
                 return auth.authenticate(wasAuthenticated ? null : function () {
-                    return modal.confirm("Действие нуждается в авторизации", "Представтесь пожалуйста системе для выполнения данного действия. Это займёт пару секунд.", "Представится")
+                    return modal.confirm("Действие нуждается в авторизации", "Представтесь пожалуйста системе для выполнения данного действия. Это займёт пару секунд.", "Представиться")
                 })
             }
         }

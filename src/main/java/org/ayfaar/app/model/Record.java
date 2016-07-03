@@ -21,6 +21,7 @@ public class Record extends UID{
     private String code;
     @Column(columnDefinition = "text")
     private String name;
+    private String previousName;
     private Date recorderAt;
     private Date createdAt;
     private String audioUrl;
