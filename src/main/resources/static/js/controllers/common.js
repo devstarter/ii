@@ -20,19 +20,18 @@ function KnowledgeBaseController($scope, $state, $api, $q, entityService, auth) 
     })
 }
 
-function RecordController($scope, $stateParams, $api, messager, ngAudio, $rootScope, $topicPrompt) {
+function RecordController($scope, $stateParams, $api, messager, modal) {
     $scope.recordLoading = true;
     $scope.last = [];
+    $scope.nameFilter = $stateParams.code;
 
-    $api.record.get(0, $stateParams.code).then(function(records){
-        $scope.recordLoading = false;
-        $scope.last.append(records);
-        $scope.singleMode = records.length == 1;
-    }, function(response){
-        $scope.recordLoading = false;
-        messager.error("Ошибка загрузки ответа");
-    });
+    load();
 
+    $scope.rename = function (record) {
+        modal.prompt("Переименование ответа", record.name, "Переименовать").then(function (name) {
+            $api.record.rename(record.code, name).then(load)
+        })
+    };
 
     $scope.getMore = function () {
         load(true);
@@ -52,6 +51,11 @@ function RecordController($scope, $stateParams, $api, messager, ngAudio, $rootSc
                 return
             }
             $scope.last.append(records);
+            $scope.singleMode = records.length == 1;
+            $scope.record = $scope.singleMode ? records[0] : null;
+        }, function(response){
+            $scope.recordLoading = false;
+            messager.error("Ошибка загрузки ответа");
         })
     }
 

@@ -13,24 +13,29 @@
 
 <div style="padding-bottom: 600px">
     <div style="padding-top: 20px" class="gray">
-        <h3>Добавить тему</h3>
-        <div class="input-group">
-            <input ng-model="newTopic.name" type="text" class="form-control" placeholder="Введите название темы"
-                   typeahead="suggestion for suggestion in getSuggestions($viewValue)">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" ng-click="openSelector()">Выбрать из списка</button>
-                    </span>
+        <a class="btn btn-link gray" ng-hide="showAddTopicBlock" ng-click="showAddTopicBlock = !showAddTopicBlock">
+            <i class="glyphicon glyphicon-plus-sign"></i>
+            добавить тему</a>
+        <div ng-show="showAddTopicBlock">
+            <div class="input-group">
+                <input ng-model="newTopic.name" type="text" class="form-control" placeholder="Введите название темы"
+                       typeahead="suggestion for suggestion in getSuggestions($viewValue)">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="openSelector()">Выбрать из списка</button>
+                        </span>
+            </div>
+            Коментарий к связи с темой
+            <textarea ng-model="newTopic.comment" rows="3" class="full-width form-control"></textarea>
+            Степень значимости темы
+            <rating ng-model="newTopic.rate" max="3"></rating>
+            <br>
+            <a class="btn btn-primary" ng-click="addTopic()" style="margin-top: 15px;">Добавить тему</a>
+            <a class="btn btn-link gray middle" ng-click="showAddTopicBlock = false">скрыть</a>
         </div>
-        Коментарий к связи с темой
-        <textarea ng-model="newTopic.comment" rows="3" class="full-width form-control"></textarea>
-        Степень значимости темы
-        <rating ng-model="newTopic.rate" max="3"></rating>
-        <br>
-        <a class="btn btn-primary" ng-click="addTopic()" style="margin-top: 15px;">Добавить тему</a>
     </div>
 </div>
 
-<style>
+<style type="text/css">
     .topic {padding-top: 20px}
     .topic>span { font-size: 120% }
     .topic .h {display: none}

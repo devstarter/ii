@@ -67,6 +67,8 @@ br {
     line-height: 200%;
 }
 .inline {display: inline}
+.middle {vertical-align: -webkit-baseline-middle;}
+.top-gap {padding-top: 10px}
 a.icon-search {
     padding: 0;
     position: relative;

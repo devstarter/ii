@@ -329,6 +329,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 }
             },
             record: {
+                rename: function (code, name) {
+                    return api.authPost("record/"+code+"/rename", {name: name})
+                },
                 last: function (page, size) {
                     var data = {page: page ? page : 0};
                     if (size) data.size = size;
@@ -1086,6 +1089,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         .then(function(topic){
                             scope.newTopic = {};
                             getTopics();
+                        }, function () {
+                            scope.newTopic = {};
                         });
                 };
                 scope.removeTopic = function (topic) {

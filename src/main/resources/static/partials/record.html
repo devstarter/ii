@@ -1,26 +1,39 @@
 <div style="padding-top: 20px">
-    <a href="r/" ng-show="singleMode">← Показать все ответы</a>
     <div ng-show="recordLoading"><img src="static/images/ajax-loader.gif"/>Загрузка...</div>
     <div style="padding-top: 20px" ng-hide="recordLoading">
-        <div class="pointer" ng-click="showFilters = !showFilters" style="padding-bottom: 20px" ng-hide="singleMode">
-            <h3 style="display: inline">Ответы</h3> <span ng-hide="showFilters" class="gray">фильтровать</span>
+        <div ng-show="singleMode">
+            <a href="r/">← Показать все ответы</a>
+            <div class="header top-gap">
+                <h2 class="inline">{{record.name}}</h2>
+                <i class="btn h glyphicon glyphicon-pencil gray" ng-click="rename(record)" title="Переименовать ответ"></i>
+            </div>
+            <topics owner-uri="record.uri" style="padding-top: 20px; display: block"></topics>
         </div>
-        <div ng-show="showFilters" style="padding-bottom: 20px">
-            Год: <select class="form-control" ng-model="yearFilter" style="display: inline; width: 85px;" ng-change="update()">
-                <option></option>
-                <option>2016</option>
-                <option>2015</option>
-                <option>2014</option>
-                <option>2013</option>
-                <option>2012</option>
-                <option>2011</option>
-                <option>2010</option>
-            </select>
+        <div ng-hide="singleMode">
+            <div class="pointer" ng-click="showFilters = !showFilters" style="padding-bottom: 20px">
+                <h3 style="display: inline">Ответы</h3> <span ng-hide="showFilters" class="gray">фильтровать</span>
+            </div>
+            <div ng-show="showFilters" style="padding-bottom: 20px">
+                Год: <select class="form-control" ng-model="yearFilter" style="display: inline; width: 85px;" ng-change="update()">
+                    <option></option>
+                    <option>2016</option>
+                    <option>2015</option>
+                    <option>2014</option>
+                    <option>2013</option>
+                    <option>2012</option>
+                    <option>2011</option>
+                    <option>2010</option>
+                </select>
 
-            <input placeholder="Название или код содержит"  class="form-control" ng-model="nameFilter" style="display: inline;width: 300px;"/><a ng-click="update()" class="btn btn-default">Обновить</a>
+                <input placeholder="Название или код содержит"  class="form-control" ng-model="nameFilter" style="display: inline;width: 300px;"/><a ng-click="update()" class="btn btn-default">Обновить</a>
+            </div>
+            <record-card ng-repeat="record in last" record="record" change="update"></record-card>
+            <a ng-click="getMore()" ng-hide="lastNoMore" class="btn btn-link" ng-class="recordLoading ? 'disabled' : ''">{{recordLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>
         </div>
-        <record-card ng-repeat="record in last" record="record" change="update"></record-card>
-        <a ng-click="getMore()" ng-hide="lastNoMore || singleMode" class="btn btn-link" ng-class="recordLoading ? 'disabled' : ''">{{recordLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>
     </div>
 </div>
+<style type="text/css">
+    .header:hover .h {visibility: visible}
+    .header .h {visibility: hidden}
+</style>
 

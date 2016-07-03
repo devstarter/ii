@@ -1,8 +1,11 @@
 package org.ayfaar.app.controllers;
 
+import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.RecordDao;
 import org.ayfaar.app.model.Record;
 import org.ayfaar.app.model.User;
+import org.ayfaar.app.services.moderation.Action;
+import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.moderation.UserRole;
 import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
@@ -10,9 +13,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 import javax.inject.Inject;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -22,12 +28,14 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class RecordController {
 
     private final TopicService topicService;
+    private final ModerationService moderationService;
     private final RecordDao recordDao;
 
     @Inject
-    public RecordController(RecordDao recordDao, TopicService topicService) {
+    public RecordController(RecordDao recordDao, TopicService topicService, ModerationService moderationService) {
         this.recordDao = recordDao;
         this.topicService = topicService;
+        this.moderationService = moderationService;
     }
 
     @RequestMapping()
@@ -56,5 +64,17 @@ public class RecordController {
                 .collect(Collectors.toList());
         recordsInfoMap.put("topics", topicUris);
         return recordsInfoMap;
+    }
+
+    @RequestMapping(value = "{code}/rename", method = RequestMethod.POST)
+    @Moderated(value = Action.RECORD_RENAME, command = "@recordController.rename")
+    public void rename(@PathVariable String code, @RequestParam String name) {
+        final Record record = recordDao.get("code", code);
+        if (record == null) throw new RuntimeException("Record not found");
+
+        final String oldName = record.getName();
+        record.setName(name);
+        recordDao.save(record);
+        moderationService.notice(Action.RECORD_RENAMED, record.getUri(), oldName, record.getName());
     }
 }

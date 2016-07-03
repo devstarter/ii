@@ -34,7 +34,9 @@ public enum Action {
     VIDEO_REMOVE("Удаление видео <uri>видео:youtube:{}</uri>", UserRole.ROLE_EDITOR),
     VIDEO_UPDATE_TITLE("Обновление названия видео <uri>{}</uri> на `{}`", UserRole.ROLE_EDITOR),
     NEW_USER("Выполнен вход в систему новым "),
-    VIDEO_REMOVED("Видео `{}` c id: {} далено из системы");
+    VIDEO_REMOVED("Видео `{}` c id: {} далено из системы"),
+    RECORD_RENAME("Переименование ответа <uri>запись:{}</uri> на `{}`", ROLE_EDITOR),
+    RECORD_RENAMED("Ответ <uri>{}</uri> переименован c `{}` в `{}`");
 
     private Action parent = null;
     private UserRole requiredAccessLevel;
