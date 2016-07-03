@@ -6,6 +6,7 @@ import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.services.EntityLoader;
+import org.ayfaar.app.services.itemRange.ItemRangeService;
 import org.ayfaar.app.services.links.LinkService;
 import org.ayfaar.app.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class TermController {
     @Inject TermsMarker termsMarker;
 //    @Inject ApplicationEventPublisher publisher;
     @Inject NewSearchController searchController;
+    @Inject ItemRangeService itemRangeService;
+    @Inject TermsFinder termsFinder;
 
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
@@ -248,9 +251,11 @@ public class TermController {
 //            publisher.publishEvent(new TermUpdatedEvent(term, oldShortDescription, oldDescription));
         }
 
-
+        final Term finalTerm = term;
         new Thread(() -> {
             termService.reload();
+            termsFinder.updateTermParagraphForTerm(finalTerm.getName());
+            itemRangeService.reload();
         }).start();
 
         return term;
