@@ -311,6 +311,7 @@ function ArticleController($scope, $stateParams, $state, $api) {
 }
 
 function CabinetController($scope, $api, $rootScope, auth, modal) {
+    window.title = "Личный кабинет";
     if (!auth.isAuthenticated()) auth.authenticate().then(onAuthenticated);
     else onAuthenticated();
 

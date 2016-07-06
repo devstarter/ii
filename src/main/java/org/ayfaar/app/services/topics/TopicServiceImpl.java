@@ -115,11 +115,14 @@ class TopicServiceImpl implements TopicService {
     public boolean exist(String name) {
         return topics.values().stream().anyMatch(c -> c.name().equals(name));
     }
+
     @Override
-    public Stream<TopicProvider> getAllTopicsLinkedWith(String uri){
-        return topics.values().stream()
-                .flatMap(topicProvider -> topicProvider.linksMap.values().stream()
+    public StreamEx<TopicProvider> getAllTopicsLinkedWith(String uri){
+        return StreamEx.of(topics.values())
+                .flatMap(topicProvider -> StreamEx.of(topicProvider.linksMap.values())
                         .filter(link -> link.getUid2().getUri().equals(uri))
+                        .sortedByDouble(Link::getRate)
+                        .reverseSorted()
                         .map(link -> get(link.getUid1().getUri()).get()));
     }
     @Override

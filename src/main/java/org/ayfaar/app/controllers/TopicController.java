@@ -68,6 +68,7 @@ public class TopicController {
             if (topic != null)
                 presentations.add(new LinkedTopicPresentation(topic, link.getRate(), link.getComment()));
         }
+        Collections.sort(presentations, (o1, o2) -> o1.rate == null || o2.rate == null ? 0 : -o1.rate.compareTo(o2.rate));
         return presentations;
     }
 

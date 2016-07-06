@@ -16,7 +16,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     auth.logout();
                     $state.goToHome()
                 }
-            })      
+            })
             /*.state('home', {
                 url: "/{at: @?}",
                 templateUrl: "static/partials/home.html",
@@ -164,6 +164,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 return deferred.promise
             },
             post: function(url, data) {
+                $rootScope.$broadcast('api-call');
                 var deferred = $q.defer();
                 var cache = data && typeof data._cache !== 'undefined' ? data._cache : false;
                 if (data) delete data._cache;
@@ -185,6 +186,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 return deferred.promise;
             },
             get: function(url, data, skipError) {
+                $rootScope.$broadcast('api-call');
                 var deferred = $q.defer();
                 var cache = data && typeof data._cache !== 'undefined' ? data._cache : false;
                 if (data) delete data._cache;
@@ -508,6 +510,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
         $rootScope.closeAlert = function(index) {
             $rootScope.alerts.splice(index, 1);
         };
+        $rootScope.$on('api-call', function() {
+            angular.forEach($rootScope.alerts, function (alert, index) {
+                if (alert.type == 'success') $rootScope.closeAlert(index)
+            })
+        });
         return {
             ok: function (msg) {
                 $rootScope.alerts.push({msg: msg, type: 'success'});
@@ -693,10 +700,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
     })
     .service('$topicPrompt', function($api, $modal, $topicSelector) {
         return {
-            prompt: function () {
+            prompt: function (defaultText) {
                 return $modal.open({
                     templateUrl: 'static/partials/topic-prompt.html',
                     controller: function ($scope, $modalInstance) {
+                        if (defaultText) $scope.topic = defaultText;
                         $scope.suggestTopics = function (q) {
                             return $api.topic.suggest(q);
                         };

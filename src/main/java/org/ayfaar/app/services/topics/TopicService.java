@@ -1,13 +1,15 @@
 package org.ayfaar.app.services.topics;
 
+import one.util.streamex.StreamEx;
 import org.ayfaar.app.model.Topic;
 import org.ayfaar.app.utils.UriGenerator;
 import org.ayfaar.app.utils.exceptions.ExceptionCode;
 import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public interface TopicService {
     @NotNull
@@ -43,7 +45,7 @@ public interface TopicService {
 
     boolean exist(String name);
 
-    Stream<TopicProvider> getAllTopicsLinkedWith(String uri);
+    StreamEx<TopicProvider> getAllTopicsLinkedWith(String uri);
 
     List<String> getAllNames();
 

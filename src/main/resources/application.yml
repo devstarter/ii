@@ -16,6 +16,7 @@ spring:
     serialization.WRITE_DATES_AS_TIMESTAMPS: false
   jpa.hibernate.ddl-auto: update
 
+
 logging:
   file: ${OPENSHIFT_DATA_DIR}logs/app.log
   level:
@@ -36,3 +37,7 @@ mail.password: some
 pushbullet.key: v1Izhxi9HgremmZ8ZqEyAh0xbW7xJHLYWYujz0VEpiRR6
 pushbullet.channel: ii
 google.api.key: ${GOOGLE_API_KEY:'no_key'}
+
+server:
+  session:
+    timeout: 2147483647

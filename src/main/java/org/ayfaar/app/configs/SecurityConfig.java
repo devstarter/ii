@@ -23,7 +23,6 @@ import java.util.Collection;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         http.authorizeRequests()
                 .antMatchers("/static/old/adm.html")
                 .access("hasRole('ADMIN')")
