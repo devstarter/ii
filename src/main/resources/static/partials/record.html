@@ -4,7 +4,10 @@
         <div ng-show="singleMode">
             <a href="r/">← Показать все ответы</a>
             <div class="header top-gap">
-                <h2 class="inline">{{record.name}}</h2>
+                <i ng-show="record.url" class="glyphicon pointer play-button" title="{{record.played ? 'Остановить' : 'Прослушать'}}"
+                   ng-class="record.played ? 'glyphicon-pause' : 'glyphicon-play'"
+                   ng-click="playOrPause(record)" style="font-size: 170%"></i>
+                &nbsp;<h2 class="inline">{{record.name}}</h2>
                 <i class="btn h glyphicon glyphicon-pencil gray" ng-click="rename(record)" title="Переименовать ответ"></i>
             </div>
             <topics owner-uri="record.uri" style="padding-top: 20px; display: block"></topics>

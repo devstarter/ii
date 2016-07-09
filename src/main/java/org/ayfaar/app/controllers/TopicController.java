@@ -138,6 +138,7 @@ public class TopicController {
     @RequestMapping(value = "update-rate", method = POST)
     @Moderated(value = Action.TOPIC_RESOURCE_LINK_RATE_UPDATE, command = "@topicController.updateRate")
     public void updateRate(@RequestParam String forUri, @RequestParam String name, @RequestParam Float rate) throws Exception {
+        // fixme: для свеже созданой связи между видео и темой не возможно изменить рейт
         linkService.getByUris(forUri, UriGenerator.generate(Topic.class, name)).get().updater().rate(rate).commit();
     }
 

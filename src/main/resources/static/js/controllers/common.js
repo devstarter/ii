@@ -20,7 +20,7 @@ function KnowledgeBaseController($scope, $state, $api, $q, entityService, auth) 
     })
 }
 
-function RecordController($scope, $stateParams, $api, messager, modal) {
+function RecordController($scope, $stateParams, $api, messager, modal, audioPlayer) {
     $scope.recordLoading = true;
     $scope.last = [];
     $scope.nameFilter = $stateParams.code;
@@ -32,6 +32,7 @@ function RecordController($scope, $stateParams, $api, messager, modal) {
             $api.record.rename(record.code, name).then(load)
         })
     };
+    $scope.playOrPause = audioPlayer.playOrPause;
 
     $scope.getMore = function () {
         load(true);
@@ -53,6 +54,7 @@ function RecordController($scope, $stateParams, $api, messager, modal) {
             $scope.last.append(records);
             $scope.singleMode = records.length == 1;
             $scope.record = $scope.singleMode ? records[0] : null;
+            window.title = $scope.singleMode ? records[0].name : "Аудио ответы"
         }, function(response){
             $scope.recordLoading = false;
             messager.error("Ошибка загрузки ответа");

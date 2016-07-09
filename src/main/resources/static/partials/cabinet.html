@@ -7,17 +7,17 @@
 
     <h2 ng-show="pendingActions.length">Действия нуждающиеся в подтверждении</h2>
     <div ng-repeat="action in pendingActions" style="padding-top: 10px">
-        <span ii-bind="action.text"></span>
+        <span ii-bind-lite="action.text"></span>
         <a class="btn btn-default" ng-hide="action.owner" ng-click="confirm(action.id)">Подтвердить</a>
         <a class="btn btn-link" ng-click="cancel(action.id)">Отменить</a>
     </div>
     <div ng-show="hasActions" style="padding-top: 10px">
-        <h2 style="display: inline;">Последние действия в системе</h2>
+        <h2 style="display: inline;padding-top: 10px">Последние действия в системе</h2>
         <a class="btn btn-link gray" ng-click="hideActions()">отметить все как просмотренные</a>
 
         <div ng-repeat="(header, actions) in lastActions">
             <div class="grey" style="padding-top: 30px">{{header}}</div>
-            <div style="padding-top: 10px" ng-repeat="action in actions" ii-bind="action.message"></div>
+            <div style="padding-top: 10px" ng-repeat="action in actions" ii-bind-lite="action.message"></div>
         </div>
     </div>
 </div>

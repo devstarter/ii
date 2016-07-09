@@ -25,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/static/old/adm.html")
-                .access("hasRole('ADMIN')")
+                .hasAnyAuthority("ROLE_EDITOR", "ROLE_ADMIN")
                 .and().logout().logoutSuccessUrl("/")
                 .and().csrf().disable();
     }

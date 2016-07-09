@@ -117,6 +117,7 @@ class TopicServiceImpl implements TopicService {
     }
 
     @Override
+    // fixme: sorting by Link.rate DESC
     public StreamEx<TopicProvider> getAllTopicsLinkedWith(String uri){
         return StreamEx.of(topics.values())
                 .flatMap(topicProvider -> StreamEx.of(topicProvider.linksMap.values())

@@ -505,19 +505,44 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
              }*/
         };
     })
-    .service('messager', function($rootScope) {
+    .service('audioPlayer', function($rootScope, ngAudio) {
+        return {
+            playOrPause: function (record) {
+                if (record.played) {
+                    $rootScope.audio.pause();
+                    record.played = false;
+                    return;
+                }
+                if ($rootScope.currentPlayed) $rootScope.currentPlayed.played = false;
+                var volume = 0.5;
+                if ($rootScope.audio) {
+                    volume = $rootScope.audio.volume;
+                    $rootScope.audio.stop();
+                }
+                $rootScope.audio = ngAudio.load(record.url ? record.url : record.audio_url);
+                $rootScope.audio.volume = volume;
+                $rootScope.audio.play();
+                record.played = true;
+                $rootScope.currentPlayed = record;
+            }
+        }
+    })
+    .service('messager', function($rootScope, $timeout) {
         $rootScope.alerts = [];
         $rootScope.closeAlert = function(index) {
             $rootScope.alerts.splice(index, 1);
         };
-        $rootScope.$on('api-call', function() {
+        /*$rootScope.$on('api-call', function() {
             angular.forEach($rootScope.alerts, function (alert, index) {
                 if (alert.type == 'success') $rootScope.closeAlert(index)
             })
-        });
+        });*/
         return {
             ok: function (msg) {
-                $rootScope.alerts.push({msg: msg, type: 'success'});
+                var index = $rootScope.alerts.push({msg: msg, type: 'success'});
+                $timeout(function () {
+                    $rootScope.closeAlert(index)
+                }, 3000)
             },
             error: function (msg) {
                 $rootScope.alerts.push({msg: msg, type: 'danger'});
@@ -916,6 +941,19 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         };
     })
+    .directive("iiBindLite", function($compile) {
+        // inspired by http://stackoverflow.com/a/25516311/975169
+        return {
+            link: function(scope, element, attrs) {
+                scope.$watch(attrs.iiBindLite, function(newval) {
+                    element.html(newval);
+                    if (newval) {
+                        $compile(element.contents())(scope);
+                    }
+                });
+            }
+        };
+    })
     .directive("contributeButton", function($modal, $api) {
         return {
             template: '<i class="icon-star"></i>',
@@ -1152,31 +1190,15 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             templateUrl: "card-document"
         }
     })
-    .directive("recordCard", function ($rootScope, $topicPrompt, $api, ngAudio, $parse) {
+    .directive("recordCard", function ($rootScope, $topicPrompt, $api, ngAudio, $parse, audioPlayer) {
         return {
             scope: { record: '='},
             templateUrl: "record-card",
             link: function(scope, element, attrs) {
                 scope.playOrPause = function(record) {
-                    if (record.played) {
-                        $rootScope.audio.pause();
-                        record.played = false;
-                        return;
-                    }
-                    if (scope.$root.currentPlayed) scope.$root.currentPlayed.played = false;
-                    var volume = 0.5;
-                    if ($rootScope.audio) {
-                        volume = $rootScope.audio.volume;
-                        $rootScope.audio.stop();
-                    }
-                    $rootScope.audio = ngAudio.load(record.url);
-                    $rootScope.audio.volume = volume;
-                    $rootScope.audio.play();
-                    record.played = true;
-                    scope.$root.currentPlayed = record;
+                    audioPlayer.playOrPause(record);
                     document.title = record.name;
                 };
-
 
                 scope.addTopic = function (record) {
                     $topicPrompt.prompt().then(function (topic) {

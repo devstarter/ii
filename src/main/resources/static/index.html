@@ -71,13 +71,13 @@
 </script>
 <script type="text/ng-template" id="record-card">
     <div style="padding-bottom: 10px" class="record-block">
-        <i ng-show="record.url" class="glyphicon pointer play-button" title="{{record.played ? 'Остановить' : 'Прослушать'}}"
+        <i ng-show="record.url || record.audio_url" class="glyphicon pointer play-button" title="{{record.played ? 'Остановить' : 'Прослушать'}}"
            ng-class="record.played ? 'glyphicon-pause' : 'glyphicon-play'"
            ng-click="playOrPause(record)"></i>
         {{record.name}} <span class="pointer gray" ii-ref="record">{{record.code}}</span>
         <div>
                 <span style="padding-left: 10px; font-size: 14px" class="gray" ng-repeat="topic in record.topics">
-                    <a topic-ref="topic"><i class="glyphicon glyphicon-tag" style="font-size: 75%"></i> {{topic}}</a>
+                    <a topic-ref="topic">{{topic}}</a>{{$last ? "" : ", "}}
                 </span>
             <i ng-click="addTopic(record)" class="pointer glyphicon glyphicon-plus-sign h" ng-show="record.topics.length" title="Добавить тему ответа"></i>
             <a ng-click="addTopic(record)" class="btn btn-link nopadding h" ng-hide="record.topics.length">Указать тему ответа</a>

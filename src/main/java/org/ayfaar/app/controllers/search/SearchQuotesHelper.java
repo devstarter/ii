@@ -99,7 +99,7 @@ public class SearchQuotesHelper {
 
         if(flag.equals("right") && content.length() > text.length()) {
             String sub = content.substring(text.length(), content.length());
-            if(sub.startsWith(")") || sub.startsWith("»") || isHyphen(sub.substring(0,2))) {
+            if(sub.startsWith(")") || sub.startsWith("»") || (sub.length() > 2 && isHyphen(sub.substring(0, 2)))) {
                 text += getPartQuote(content.substring(text.length(), content.length()),
                         forCreateRightPartQuote, text, "right");
             }
@@ -161,7 +161,7 @@ public class SearchQuotesHelper {
 
     private boolean isHyphen(String text) {
         char hyphen = text.charAt(1);
-        return (int)hyphen == 45 ? true : (int)hyphen == 8211 ? true : false;
+        return (int) hyphen == 45 || (int) hyphen == 8211;
     }
 }
 
