@@ -1,25 +1,25 @@
 <div class="title">
-    <span class="gray">Тема:</span>
+    <div class="gray">Ключевое слово:</div>
     <h1 class="inline" style="padding-bottom: 20px">{{name}}</h1>
     <br>
-    <a ng-hide="loading || parents" class="h btn btn-default" ng-click="addParent()">Добавить родительскую тему</a>
-    <a ng-hide="loading || children" class="h btn btn-default" ng-click="addChild()">Добавить дочернюю тему</a>
-    <a class="h btn btn-link" ng-click="merge()">Объединить с другой темой</a>
+    <a ng-hide="loading || parents" class="h btn btn-default" ng-click="addParent()">Добавить родительское кл. слово</a>
+    <a ng-hide="loading || children" class="h btn btn-default" ng-click="addChild()">Добавить дочернее кл. слово</a>
+    <a class="h btn btn-link" ng-click="merge()">Объединить с другим кл. словом</a>
 </div>
 <div ng-show="loading"><img src="static/images/ajax-loader.gif"/>Загрузка...</div>
 <div ng-hide="loading">
     <div ng-show="parents" class="parents h" style="padding-top: 20px">
-        <span class="gray">Родительские темы:</span>
+        <span class="gray">Входит в:</span>
         <a ng-repeat="parent in parents" topic-ref="parent">{{parent}}{{$last ? '' : ', '}}</a>
-        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addParent()" title="Добавить родительскую тему"></i>
+        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addParent()" title="Добавить родительское ключевое слово"></i>
     </div>
     <div style="padding-top: 20px">
         <div ng-show="children" class="children">
-            <span class="gray">Дочерние темы</span>
-            <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addChild()" title="Добавить дочернюю тему"></i>
+            <span class="gray">Дочерние ключевые слова</span>
+            <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addChild()" title="Добавить дочернее ключевое слово"></i>
             <span class="linked-topic" ng-repeat="child in children">
                 <h4 class="topic" topic-ref="child" title="{{child}}">{{child | cut:true:70}}</h4>
-                <a class="btn glyphicon glyphicon-remove" ng-click="unlink(child)" title="Удалить связь с темой"></a>
+                <a class="btn glyphicon glyphicon-remove" ng-click="unlink(child)" title="Удалить связь с ключевым словом"></a>
             </span>
         </div>
     </div>

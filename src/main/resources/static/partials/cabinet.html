@@ -19,6 +19,7 @@
             <div class="grey" style="padding-top: 30px">{{header}}</div>
             <div style="padding-top: 10px" ng-repeat="action in actions" ii-bind-lite="action.message"></div>
         </div>
+        <a ng-click="loadMoreLastActions()" ng-show="hasMoreActions" class="btn btn-link" ng-class="lastLoading ? 'disabled' : ''">{{lastLoading ? 'Загрузка...' : 'Показать более ранние события'}}</a>
     </div>
 </div>
 <h1 ng-hide="user">Для доступа требуется авторизация</h1>

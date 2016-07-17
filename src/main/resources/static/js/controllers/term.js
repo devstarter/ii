@@ -1,4 +1,4 @@
-function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
+function TermController($scope, $stateParams, $api, $state, statistic, $modal) {
     var pageCounter = 0, currentQuery;
     var query = $scope.query = $stateParams.name;
     if (query == "{{url}}") return; // strange bug
@@ -28,7 +28,7 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
         $scope.termFound = true;
         copyObjectTo(data, $scope);
         if (data && !data.description && !data.shortDescription && !data.quotes.length && !data.related.length) {
-            analytics.registerEmptyTerm(data.name);
+            statistic.registerEmptyTerm(data.name);
         }
         if (data && !data.description && !data.shortDescription && !data.quotes.length && data.categories.length) {
             $scope.showCategories = true;
@@ -69,6 +69,7 @@ function TermController($scope, $stateParams, $api, $state, analytics, $modal) {
 
     $scope.loadNextPage = function () {
         searchInContent();
+        statistic.searchNextPageLoading(pageCounter, query)
     };
     $scope.rateUp = function (item) {
         if(getSelectionText()) {

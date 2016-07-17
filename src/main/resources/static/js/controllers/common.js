@@ -247,11 +247,12 @@ function TaggerController($scope, $stateParams, $api) {
         });
     };
 }
-function ResourcesController($scope, $stateParams, $state, Video, errorService, $api, $timeout) {
+function ResourcesController($scope, $stateParams, $state, Video, errorService, $api, $timeout, $pager) {
     $scope.topics = [];
     $scope.newTopic = {};
     $scope.last = [];
     document.title = "Последние видео ответы";
+    var pager = $pager.createGroupedByDate($api.resource.video.last, "created_at", 6);
 
     if ($stateParams.id) {
         $scope.videoLoading = true;
@@ -284,14 +285,10 @@ function ResourcesController($scope, $stateParams, $state, Video, errorService, 
 
     function getLast() {
         $scope.lastLoading = true;
-        $api.resource.video.last(Math.ceil($scope.last.length / 6)).then(function (last) {
-            if (!last.length) {
-                $scope.lastNoMore = true;
-                return
-            }
-            $scope.last.append(last);
-            $scope.last = groupByDate($scope.last, "created_at");
+        pager.loadNext().then(function (data) {
+            $scope.last = data.grouped;
             $scope.lastLoading = false;
+            $scope.lastNoMore = data.last;
         })   
     }
 }
@@ -312,7 +309,7 @@ function ArticleController($scope, $stateParams, $state, $api) {
     });
 }
 
-function CabinetController($scope, $api, $rootScope, auth, modal) {
+function CabinetController($scope, $api, $rootScope, auth, modal, $pager) {
     window.title = "Личный кабинет";
     if (!auth.isAuthenticated()) auth.authenticate().then(onAuthenticated);
     else onAuthenticated();
@@ -330,15 +327,12 @@ function CabinetController($scope, $api, $rootScope, auth, modal) {
         }
     }
     var firstAction;
+    var pager = $pager.createGroupedByDate($api.moderation.lastActions, "created_at", 10);
     function loadStatus() {
         $api.moderation.pendingActions().then(function (pendingActions) {
             $scope.pendingActions = pendingActions;
         });
-        $api.moderation.lastActions().then(function (actions) {
-            if (actions && actions.length) firstAction = actions[0];
-            $scope.lastActions = groupByDate(actions, "created_at");
-            $scope.hasActions = actions.length;
-        });
+        loadNextLastActions();
     }
     $scope.updateName = function() {
         modal.prompt("Изменение имени", $scope.user.name, "Изменить").then(function (name) {
@@ -349,6 +343,17 @@ function CabinetController($scope, $api, $rootScope, auth, modal) {
     };
     $scope.hideActions = function () {
         $api.user.hideActionsBefore(firstAction.id).then(loadStatus)
+    };
+
+    $scope.loadMoreLastActions = loadNextLastActions;
+
+    function loadNextLastActions() {
+        pager.loadNext().then(function (data) {
+            if (data.ungroupedList && data.ungroupedList.length) firstAction = data.ungroupedList[0];
+            $scope.lastActions = data.grouped;
+            $scope.hasActions = data.ungroupedList && data.ungroupedList.length;
+            $scope.hasMoreActions = !data.last;
+        });
     }
 }
 

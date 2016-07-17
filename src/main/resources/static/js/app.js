@@ -104,8 +104,22 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
 //            return originEncodeURIComponent(arg);
 //        }
     })
-    .factory("analytics", function(){
+    .factory("statistic", function(){
         return {
+            termExpandedOrCollapsed: function(term, expanded) {
+                if (typeof ga !== 'undefined') ga('send', 'event', expanded ? 'term-expanded' : 'term-collapsed', term);
+            },
+            termGoToDescription: function(term) {
+                if (typeof ga !== 'undefined') ga('send', 'event', 'term-goto-description', query + " page " + pageCounter);
+            },
+            searchNextPageLoading: function(pageCounter, query) {
+                if (typeof ga !== 'undefined') ga('send', 'event', 'search-next-page-loading', query + " page " + pageCounter);
+            },
+            lookupSelected: function (query, selectedType, selectedLabel) {
+                if (typeof ga !== 'undefined') ga('send', 'event', 'lookup-selected', query + "->" + selectedType + ":" + selectedLabel);
+            },recordPlayed: function (recordCode) {
+                if (typeof ga !== 'undefined') ga('send', 'event', 'record-played', recordCode);
+            },
             registerEmptyTerm: function(termName) {
                 if (typeof ga !== 'undefined') {
                     ga('send', 'event', 'no-data', termName);
@@ -370,7 +384,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 lastActions: function (page, size) {
                     var data = {page: page ? page : 0};
                     if (size) data.size = size;
-                    return api.authGet("moderation/last_actions")
+                    return api.authGet("moderation/last_actions", data)
                 },
                 confirm: function (id) {
                     return api.authGet("moderation/"+id+"/confirm")
@@ -779,7 +793,40 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         }
     })
-    .directive('iiLookup', function($api, $state, $parse, $q, entityService) {
+    .service('$pager', function ($q) {
+        var obj = {
+            /*create: function (dataLoader) {
+                return {
+                    load: function(page) {
+                        var list = dataLoader(page);
+
+                    }
+                }
+            },*/
+            createGroupedByDate: function (dataLoader, dateField, pageSize) {
+                var pager = {
+                    listCollector: [],
+                    loadNext: function () {
+                        var deferred = $q.defer();
+                        dataLoader(Math.ceil(pager.listCollector.length / pageSize)).then(function (list) {
+                            pager.listCollector.append(list);
+                            var grouped = groupByDate(pager.listCollector, dateField);
+                            deferred.resolve({grouped: grouped, last: list.length < pageSize, ungroupedList: pager.listCollector});
+                        }, function (error) {
+                            deferred.reject(error)
+                        });
+                        return deferred.promise;
+                    },
+                    reset: function () {
+                        pager.listCollector = [];
+                    }
+                };
+                return pager;
+            }
+        };
+        return obj;
+    })
+    .directive('iiLookup', function($api, $state, $parse, $q, entityService, statistic) {
         return {
             require:'ngModel',
             link: function (originalScope, element, attrs, modelCtrl) {
@@ -806,7 +853,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     return deferred.promise;
                 };
                 originalScope.$selected = function(item, model, label) {
-                    $state.go(item.uri)
+                    $state.go(item.uri);
+                    statistic.lookupSelected(query, item.type, item.label)
                 };
                 var onEnter = $parse(attrs.onEnter);
                 element.bind('keyup', function(event) {
@@ -815,13 +863,17 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         if (onEnter) onEnter(originalScope);
                     }
                 });
+                function find() {
+                    $state.goToTerm(query)
+                }
                 function internalOnEnter() {
                     if (data && data.length) {
                         $state.go(data[0].uri)
                     } else {
-                        $state.goToTerm(query)
+                        find()
                     }
                 }
+                originalScope.$find = find;
             }
         };
     })
@@ -855,7 +907,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         };
     })
-    .directive('term', function($api, $state, $compile) {
+    .directive('term', function($api, statistic) {
         return {
             restrict: 'E',
             compile : function(element, attr, linker) {
@@ -873,6 +925,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         if (more && !moreAfterPrimeTerm) {
                             window.open(term, '_blank');
                             //$state.goToTerm(term);
+                            statistic.termGoToDescription(term)
                             return;
                         }
                         if (expanded && !moreAfterPrimeTerm) {
@@ -896,6 +949,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                                 $element.html(originalContent + " (нет короткого пояснения, <i><a>детально</a></i>)");
                             }
                         }
+                        statistic.termExpandedOrCollapsed(term, expanded)
                     })
                 }
             }
@@ -1210,7 +1264,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         }
     })
-    .run(function($state, entityService, $rootScope, analytics, modal){
+    .run(function($state, entityService, $rootScope, statistic, modal){
         var originStateGo = $state.go;
         $state.go = function(to, params, options) {
             if (to.hasOwnProperty('uri') || angular.isString(to)) {
@@ -1289,7 +1343,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
         };
 
         $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
-            analytics.pageview(location.pathname);
+            statistic.pageview(location.pathname);
         });
         function isTom5(number) {
             if (number.indexOf("5.") == 0) {
