@@ -4,10 +4,7 @@ import org.apache.commons.lang.WordUtils;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
-import org.ayfaar.app.events.PushEvent;
-import org.ayfaar.app.events.SimplePushEvent;
 import org.ayfaar.app.events.TermAddEvent;
-import org.ayfaar.app.events.TermPushEvent;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.services.EntityLoader;
 import org.ayfaar.app.services.itemRange.ItemRangeService;
@@ -256,10 +253,7 @@ public class TermController {
 //            publisher.publishEvent(new TermUpdatedEvent(term, oldShortDescription, oldDescription));
         }
 
-        final Term finalTerm = term;
-        new Thread(() -> {
-            publisher.publishEvent(new TermAddEvent(finalTerm.getName()));
-        }).start();
+        publisher.publishEvent(new TermAddEvent(term.getName()));
 
         return term;
     }

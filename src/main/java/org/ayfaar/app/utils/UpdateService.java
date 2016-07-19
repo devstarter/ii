@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.events.TermAddEvent;
 import org.ayfaar.app.services.itemRange.ItemRangeService;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import javax.inject.Inject;
 
@@ -17,6 +18,7 @@ public class UpdateService {
     @Inject ItemRangeService itemRangeService;
 
     @EventListener
+    @Async
     public void updateTermServices(TermAddEvent termAddEvent){
         termService.reload();
         termsFinder.updateTermParagraphForTerm(termAddEvent.getTerm());
