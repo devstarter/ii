@@ -311,6 +311,8 @@ function ArticleController($scope, $stateParams, $state, $api) {
 
 function CabinetController($scope, $api, $rootScope, auth, modal, $pager) {
     window.title = "Личный кабинет";
+    var pager = $pager.createGroupedByDate($api.moderation.lastActions, "created_at", 10);
+
     if (!auth.isAuthenticated()) auth.authenticate().then(onAuthenticated);
     else onAuthenticated();
 
@@ -327,7 +329,6 @@ function CabinetController($scope, $api, $rootScope, auth, modal, $pager) {
         }
     }
     var firstAction;
-    var pager = $pager.createGroupedByDate($api.moderation.lastActions, "created_at", 10);
     function loadStatus() {
         $api.moderation.pendingActions().then(function (pendingActions) {
             $scope.pendingActions = pendingActions;
