@@ -4,11 +4,14 @@ import org.apache.commons.lang.WordUtils;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
+import org.ayfaar.app.events.TermAddEvent;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.services.EntityLoader;
+import org.ayfaar.app.services.itemRange.ItemRangeService;
 import org.ayfaar.app.services.links.LinkService;
 import org.ayfaar.app.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +39,10 @@ public class TermController {
     @Autowired TermServiceImpl aliasesMap;
     @Autowired SuggestionsController searchController2;
     @Inject TermsMarker termsMarker;
-//    @Inject ApplicationEventPublisher publisher;
+    @Inject ApplicationEventPublisher publisher;
     @Inject NewSearchController searchController;
+    @Inject ItemRangeService itemRangeService;
+    @Inject TermsFinder termsFinder;
 
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
@@ -248,10 +253,7 @@ public class TermController {
 //            publisher.publishEvent(new TermUpdatedEvent(term, oldShortDescription, oldDescription));
         }
 
-
-        new Thread(() -> {
-            termService.reload();
-        }).start();
+        publisher.publishEvent(new TermAddEvent(term.getName()));
 
         return term;
     }

@@ -9,6 +9,7 @@ import org.ayfaar.app.dao.ItemsRangeDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.ItemsRange;
+import org.ayfaar.app.services.itemRange.ItemRangeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class ContentsServiceImpl implements ContentsService {
     private static final Logger logger = LoggerFactory.getLogger(ContentsService.class);
 
     @Inject CategoryDao categoryDao;
-    @Inject ItemsRangeDao itemsRangeDao;
+    @Inject ItemRangeService itemRangeService;
 
     private Map<String, CategoryProvider> categoryMap;
     private Map<String, ? extends ParagraphProvider> paragraphMap;
@@ -44,7 +45,7 @@ public class ContentsServiceImpl implements ContentsService {
             CategoryProvider provider = new CategoryProviderImpl(category);
             categoryMap.put(category.getName(), provider);
         }
-        paragraphMap = StreamEx.of(itemsRangeDao.getWithCategories())
+        paragraphMap = StreamEx.of(itemRangeService.getWithCategories())
                 .sortedBy(ItemsRange::getFrom)
                 .toMap(ItemsRange::getCode, Paragraph::new);
         logger.info("Category map loading finish");
@@ -212,6 +213,13 @@ public class ContentsServiceImpl implements ContentsService {
         foundParagraphs.sort((o1, o2) -> o1.start.compareTo(o2.start));
         foundCategories.addAll(foundParagraphs);
         */
+        searchQueries.stream().forEach(term -> {
+            List<ParagraphProvider> paragraphs = itemRangeService
+                    .getParagraphsByTerm(term)
+                    .map(s -> paragraphMap.get(s))
+                    .collect(Collectors.toList());
+            foundCategories.addAll(paragraphs);
+        });
 
         return foundCategories;
     }
