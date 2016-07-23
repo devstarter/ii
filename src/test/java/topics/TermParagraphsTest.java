@@ -9,11 +9,12 @@ import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.TermsFinder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.util.List;
+import org.springframework.test.context.ActiveProfiles;
+
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
+@ActiveProfiles("remote")
 public class TermParagraphsTest extends IntegrationTest {
 
     @Autowired
@@ -37,7 +38,7 @@ public class TermParagraphsTest extends IntegrationTest {
         Map<String, Integer> termsWithFrequency = termsFinder.getTermsWithFrequency(paragraph);
 
         termsWithFrequency.keySet().parallelStream().map(term ->
-                new TermParagraph(code, term)).forEach(t ->
+                new TermParagraph(term, code)).forEach(t ->
                 commonDao.save(TermParagraph.class,t));
     }
 

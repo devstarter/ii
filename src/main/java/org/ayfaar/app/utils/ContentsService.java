@@ -13,7 +13,7 @@ public interface ContentsService {
     Optional<? extends CategoryProvider> getCategory(String name);
     Optional<? extends ParagraphProvider> getParagraph(String name);
     Optional<? extends ParagraphProvider> getByItemNumber(String number);
-    List<? extends ContentsProvider> descriptionContains(List<String> searchQueries);
+    List<ContentsProvider> descriptionContains(List<String> searchQueries);
     void reload();
 
 	Optional<? extends ContentsProvider> getByUri(String uri);

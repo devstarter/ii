@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import one.util.streamex.StreamEx;
 import org.ayfaar.app.dao.CategoryDao;
-import org.ayfaar.app.dao.ItemsRangeDao;
 import org.ayfaar.app.model.Category;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.ItemsRange;
@@ -205,6 +204,7 @@ public class ContentsServiceImpl implements ContentsService {
             }
         }
 
+
         /*
         final List<Paragraph> foundParagraphs = paragraphs()
                 .filter(p -> pattern.matcher(p.itemsRange.getDescription()).find())
@@ -213,13 +213,6 @@ public class ContentsServiceImpl implements ContentsService {
         foundParagraphs.sort((o1, o2) -> o1.start.compareTo(o2.start));
         foundCategories.addAll(foundParagraphs);
         */
-        searchQueries.stream().forEach(term -> {
-            List<ParagraphProvider> paragraphs = itemRangeService
-                    .getParagraphsByTerm(term)
-                    .map(s -> paragraphMap.get(s))
-                    .collect(Collectors.toList());
-            foundCategories.addAll(paragraphs);
-        });
 
         return foundCategories;
     }

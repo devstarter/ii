@@ -1,17 +1,16 @@
 package org.ayfaar.app.services.itemRange;
 
 import lombok.extern.slf4j.Slf4j;
+import one.util.streamex.StreamEx;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.ItemsRangeDao;
 import org.ayfaar.app.model.ItemsRange;
 import org.ayfaar.app.model.TermParagraph;
-import org.ayfaar.app.utils.ContentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -51,8 +50,10 @@ public class ItemRangeServiceImpl implements ItemRangeService{
     }
 
     @Override
-    public Stream<String> getParagraphsByTerm(String term){
-        return allTermParagraph.stream().filter(t ->
-                t.getTerm().equals(term)).map(TermParagraph::getParagraph).sorted();
+    public StreamEx<String> getParagraphsByTerm(String term){
+        return StreamEx.of(allTermParagraph)
+                .filter(t -> t.getTerm().equals(term))
+                .map(TermParagraph::getParagraph)
+                .sorted();
     }
 }

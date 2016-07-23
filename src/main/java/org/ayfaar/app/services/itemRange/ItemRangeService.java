@@ -1,8 +1,9 @@
 package org.ayfaar.app.services.itemRange;
 
+import one.util.streamex.StreamEx;
 import org.ayfaar.app.model.ItemsRange;
+
 import java.util.List;
-import java.util.stream.Stream;
 
 public interface ItemRangeService {
 
@@ -10,5 +11,5 @@ public interface ItemRangeService {
 
     List<ItemsRange> getWithCategories();
 
-    Stream<String> getParagraphsByTerm(String term);
+    StreamEx<String> getParagraphsByTerm(String term);
 }
