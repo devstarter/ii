@@ -108,14 +108,18 @@ public class NewSearchController {
             provider = provider.getMainTerm().orElse(provider);
             searchQueries = provider.getAllAliasesAndAbbreviationsWithAllMorphs();
         } else {
-			query = query.replace("*", RegExpUtils.w+"+");
+            query = query.replace("*", RegExpUtils.w + "+");
             searchQueries = Collections.singletonList(query);
         }
-		List<ContentsProvider> foundCategoryProviders = contentsService.descriptionContains(searchQueries);
+        List<ContentsProvider> foundCategoryProviders = contentsService.descriptionContains(searchQueries);
 
-        itemRangeService.getParagraphsByTerm(providerOpt.get().getName())
-            .map(paragraphCode -> contentsService.getParagraph(paragraphCode).get())
-            .forEach(foundCategoryProviders::add);
+        if (providerOpt.isPresent()) {
+            itemRangeService.getParagraphsByTerm(providerOpt.get().getName())
+                    .map(paragraphCode -> contentsService.getParagraph(paragraphCode))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .forEach(foundCategoryProviders::add);
+        }
 
         List<FoundCategoryPresentation> presentations = new ArrayList<>();
 		for (ContentsService.ContentsProvider p : foundCategoryProviders) {
