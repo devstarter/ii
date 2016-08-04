@@ -413,8 +413,12 @@ public class ContentsServiceImpl implements ContentsService {
 
     @Override
     public Map<String, String> getAllUriNames(){
-        return categoryMap.values().stream().collect(Collectors.toMap(categoryProvider ->
-                categoryProvider.getCategory().getUri(),categoryProvider -> categoryProvider.getCategory().getName()));
+        final Map<String, String> map = categoryMap.values().stream()
+                .collect(Collectors.toMap(categoryProvider -> categoryProvider.getCategory().getUri(),
+                        categoryProvider -> categoryProvider.getCategory().getName()));
+
+        paragraphMap.values().forEach(p -> map.put(p.uri(), p.name()));
+        return map;
     }
 }
 
