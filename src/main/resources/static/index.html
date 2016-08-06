@@ -74,7 +74,7 @@
         <i ng-show="record.url || record.audio_url" class="glyphicon pointer play-button" title="{{record.played ? 'Остановить' : 'Прослушать'}}"
            ng-class="record.played ? 'glyphicon-pause' : 'glyphicon-play'"
            ng-click="playOrPause(record)"></i>
-        {{record.name}} <span class="pointer gray" ii-ref="record">{{record.code}}</span>
+        <a ii-ref="record">{{record.name}} <span class="pointer gray">{{record.code}}</span></a>
         <div>
                 <span style="padding-left: 10px; font-size: 14px" class="gray" ng-repeat="topic in record.topics">
                     <a topic-ref="topic">{{topic}}</a>{{$last ? "" : ", "}}
