@@ -16,7 +16,7 @@ public interface ContentsService {
     List<ContentsProvider> descriptionContains(List<String> searchQueries);
     void reload();
 
-        Optional<? extends ContentsProvider> getByUri(String uri);
+       Optional<? extends ContentsProvider> getByUri(String uri);
 
     StreamEx<? extends CategoryProvider> getAllCategories();
 
@@ -52,8 +52,8 @@ public interface ContentsService {
 
     interface ContentsProvider {
         String description();
-                Optional<String> previousUri();
-                Optional<String> nextUri();
+               Optional<String> previousUri();
+               Optional<String> nextUri();
         String code();
         String uri();
         String startItemNumber();
