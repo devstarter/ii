@@ -196,7 +196,7 @@ public class ContentsServiceImpl implements ContentsService {
         Pattern pattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
         List<ContentsProvider> foundCategories = new ArrayList<>();
         for (CategoryProvider provider : categoryMap.values()) {
-			if (provider.description() == null || provider.description().isEmpty()) continue;
+                        if (provider.description() == null || provider.description().isEmpty()) continue;
             Matcher matcher = pattern.matcher(provider.description());
             if (matcher.find()) {
                 foundCategories.add(provider);
@@ -217,12 +217,12 @@ public class ContentsServiceImpl implements ContentsService {
         return foundCategories;
     }
 
-	@Override
-	public void reload() {
-		load();
-	}
+        @Override
+        public void reload() {
+                load();
+        }
 
-	public class CategoryProviderImpl implements CategoryProvider {
+        public class CategoryProviderImpl implements CategoryProvider {
         private Category category;
 
         public CategoryProviderImpl(Category category) {
@@ -269,12 +269,12 @@ public class ContentsServiceImpl implements ContentsService {
             return category.getName().equals("БДК") || category.getName().equals("Основы");
         }
 
-		@Override
-		public boolean isContentsRoot() {
-			return category.getName().equals("Содержание");
-		}
+                @Override
+                public boolean isContentsRoot() {
+                        return category.getName().equals("Содержание");
+                }
 
-		@Override
+                @Override
         public List<ContentsProvider> children() {
             List<ContentsProvider> children = new ArrayList<>();
             if (category.getStart() != null) {
@@ -304,7 +304,7 @@ public class ContentsServiceImpl implements ContentsService {
 
         @Override
         public List<CategoryProvider> parents() {
-            return getParents(getValueFromUri(Category.class, uri()));
+               return getParents(getValueFromUri(Category.class, uri()));
         }
 
         private List<CategoryProvider> getParents(String name) {
@@ -324,80 +324,80 @@ public class ContentsServiceImpl implements ContentsService {
             return split[split.length-1].trim();
         }
 
-		@Override
-		public String path() {
-			String path = "";
-			List<CategoryProvider> chain = new ArrayList<>(parents());
-			chain.add(0, this);
-			ListIterator<CategoryProvider> iterator = chain.listIterator(chain.size());
-			while (iterator.hasPrevious()) {
-				CategoryProvider provider = iterator.previous();
-				if (provider.isContentsRoot() || provider.isCikl()) continue;
-//				if (provider.isParagraph()) path += "§";
-				path += provider.extractCategoryName();
-				if (iterator.hasPrevious()) path += " / ";
-			}
-			return path;
-		}
+                @Override
+                public String path() {
+                        String path = "";
+                        List<CategoryProvider> chain = new ArrayList<>(parents());
+                        chain.add(0, this);
+                        ListIterator<CategoryProvider> iterator = chain.listIterator(chain.size());
+                        while (iterator.hasPrevious()) {
+                                CategoryProvider provider = iterator.previous();
+                                if (provider.isContentsRoot() || provider.isCikl()) continue;
+//				                if (provider.isParagraph()) path += "§";
+                                path += provider.extractCategoryName();
+                                if (iterator.hasPrevious()) path += " / ";
+                        }
+                        return path;
+                }
 
-		@Override
-		public String code() {
-			return category.getName();
-		}
+                @Override
+                public String code() {
+                        return category.getName();
+                }
 
-		@Override
-		public Optional<String> previousUri() {
-			for (CategoryProvider provider : categoryMap.values())
-				if (category.getUri().equals(provider.getCategory().getNext())) return Optional.of(provider.uri());
-			return Optional.empty();
-		}
+                @Override
+                public Optional<String> previousUri() {
+                        for (CategoryProvider provider : categoryMap.values())
+                                if (category.getUri().equals(provider.getCategory().getNext())) return Optional.of(provider.uri());
+                        return Optional.empty();
+                }
 
-		@Override
-		public Optional<String> nextUri() {
-			return Optional.ofNullable(category.getNext());
-		}
+                @Override
+                public Optional<String> nextUri() {
+                        return Optional.ofNullable(category.getNext());
+                }
 
-		@Override
-		public String startItemNumber() {
-			return getStartItemNumberOfChildren(children());
-		}
+                @Override
+                public String startItemNumber() {
+                        return getStartItemNumberOfChildren(children());
+                }
 
-		private String getStartItemNumberOfChildren(List<? extends ContentsProvider> categories) {
-			if (categories.isEmpty()) return null;
-			ContentsProvider firstCat = categories.get(0);
-			return firstCat instanceof CategoryProvider
+                private String getStartItemNumberOfChildren(List<? extends ContentsProvider> categories) {
+                        if (categories.isEmpty()) return null;
+                        ContentsProvider firstCat = categories.get(0);
+                        return firstCat instanceof CategoryProvider
                     ? getStartItemNumberOfChildren(((CategoryProvider) firstCat).children())
                     : null;
-		}
+                }
 
-		@Override
-		public Optional<? extends ContentsProvider> getPrevious() {
-			return previousUri().isPresent() ? getByUri(previousUri().get()) : Optional.empty();
-		}
-	}
+                @Override
+                public Optional<? extends ContentsProvider> getPrevious() {
+                        return previousUri().isPresent() ? getByUri(previousUri().get()) : Optional.empty();
+                }
+        }
 
     private StreamEx<Paragraph> paragraphs() {
         return StreamEx.of(paragraphMap.values()).map(p -> (Paragraph) p);
     }
 
     @Override
-	public Optional<? extends ContentsProvider> getByUri(String uri) {
-		if (uri == null) return Optional.empty();
+        public Optional<? extends ContentsProvider> getByUri(String uri) {
+                if (uri == null) return Optional.empty();
         final Optional<? extends CategoryProvider> catOpt = getCategoryByUri(uri);
         return catOpt.isPresent() ? catOpt : getParagraphByUri(uri);
-	}
+        }
 
     public Optional<? extends CategoryProvider> getCategoryByUri(String uri) {
         final CategoryProvider categoryProvider = categoryMap.get(UriGenerator.getValueFromUri(Category.class, uri));
         return Optional.ofNullable(categoryProvider);
-	}
+        }
 
     public Optional<? extends ParagraphProvider> getParagraphByUri(String uri) {
         final ParagraphProvider paragraphProvider = paragraphMap.get(UriGenerator.getValueFromUri(ItemsRange.class, uri));
         return Optional.ofNullable(paragraphProvider);
-	}
+        }
 
-	private static Double convertItemNumber(String value) {
+        private static Double convertItemNumber(String value) {
         return value != null ? Double.parseDouble(getValueFromUri(Item.class, value)) : 0.0;
     }
 
@@ -417,17 +417,7 @@ public class ContentsServiceImpl implements ContentsService {
                 .collect(Collectors.toMap(categoryProvider -> categoryProvider.getCategory().getUri(),
                         categoryProvider -> categoryProvider.getCategory().getName()));
 
-        paragraphMap.values().forEach(p -> map.put(p.uri(), p.code() + ": " + p.name()));
-        return map;
-    }
-
-    @Override
-    public Map<String, String> getAllUriDescription() {
-        final Map<String, String> map = categoryMap.values().stream()
-                .filter(categoryProvider -> categoryProvider.getCategory().getDescription() != null)
-                .collect(Collectors.toMap(categoryProvider -> categoryProvider.getCategory().getUri(),
-                        categoryProvider -> categoryProvider.getCategory().getDescription()));
-
+        paragraphMap.values().forEach(p -> map.put(p.uri(), p.name()));
         return map;
     }
 
