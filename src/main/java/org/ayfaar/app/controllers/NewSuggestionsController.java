@@ -44,7 +44,7 @@ public class NewSuggestionsController {
     private static final int MAX_SUGGESTIONS = 5;
 
     public Map<String, String> suggestions(String q) {
-        return suggestions(q, false, false, false, false, false, false, false, false);
+        return suggestions(q, false, false, false, false, false, false, false, false, false);
     }
 
     @RequestMapping("all")
@@ -52,7 +52,8 @@ public class NewSuggestionsController {
     public Map<String, String> suggestions(@RequestParam String q,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_terms,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_topic,
-                                           @RequestParam(required = false, defaultValue = "true") boolean with_category,
+                                           @RequestParam(required = false, defaultValue = "true") boolean with_category_name,
+                                           @RequestParam(required = false, defaultValue = "true") boolean with_category_description,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_doc,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_video,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_item,
@@ -63,7 +64,8 @@ public class NewSuggestionsController {
         List<Suggestions> items = new ArrayList<>();
         if (with_terms) items.add(Suggestions.TERM); //default
         if (with_topic) items.add(Suggestions.TOPIC);
-        if (with_category) items.add(Suggestions.CATEGORY);
+        if (with_category_name) items.add(Suggestions.CATEGORY_NAME);
+        if (with_category_description) items.add(Suggestions.CATEGORY_DESCRIPTION);
         if (with_doc) items.add(Suggestions.DOCUMENT);
         if (with_video) items.add(Suggestions.VIDEO);
         if (with_record_name) items.add(Suggestions.RECORD_NAME);
@@ -109,8 +111,11 @@ public class NewSuggestionsController {
                 case TOPIC:
                     mapUriWithNames = topicService.getAllUriNames();
                     break;
-                case CATEGORY:
+                case CATEGORY_NAME:
                     mapUriWithNames = contentsService.getAllUriNames();
+                    break;
+                case CATEGORY_DESCRIPTION:
+                    mapUriWithNames = contentsService.getAllUriDescription();
                     break;
                 case DOCUMENT:
                     mapUriWithNames = documentService.getAllUriNames();
@@ -152,7 +157,7 @@ public class NewSuggestionsController {
                 list.add(entry);
             }
         }
-//        Collections.reverse(list);
+        Collections.reverse(list);
         return list;
     }
 
