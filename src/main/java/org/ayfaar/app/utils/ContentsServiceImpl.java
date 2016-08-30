@@ -430,15 +430,5 @@ public class ContentsServiceImpl implements ContentsService {
 
         return map;
     }
-
-    @Override
-    public Map<String, String> getAllUriDescription() {
-        final Map<String, String> map = categoryMap.values().stream()
-                .filter(categoryProvider -> categoryProvider.getCategory().getDescription() != null)
-                .collect(Collectors.toMap(categoryProvider -> categoryProvider.getCategory().getUri(),
-                        categoryProvider -> categoryProvider.getCategory().getDescription()));
-
-        return map;
-    }
 }
 
