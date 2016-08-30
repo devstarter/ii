@@ -57,11 +57,11 @@
     </div>
 </script>
 <script type="text/ng-template" id="card-video">
-    <div ii-ref="video" class="card">
+    <a ii-ref="video" class="card">
         <img ng-src="https://i.ytimg.com/vi/{{video.id}}/mqdefault.jpg"/>
         <div title="{{video.title}}">{{video.title | cut:false:65}}</div>
         <i class="glyphicon glyphicon-play video-play-button"></i>
-    </div>
+    </a>
 </script>
 <script type="text/ng-template" id="card-document">
     <div ii-ref="doc" class="card document">

@@ -31,6 +31,7 @@
     vertical-align: top;
     height: 200px;
     width: 210px;
+    text-decoration: initial !important;
 }
 .card.document {
     height: 380px;
