@@ -144,13 +144,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             } else {
                 var wasAuthenticated = $cookies.getObject("auth_provider");
                 return auth.authenticate(wasAuthenticated ? null : function () {
-                    return modal.confirm("Действие нуждается в авторизации", "Представтесь пожалуйста системе для выполнения данного действия. Это займёт пару секунд.", "Представиться")
+                    return modal.confirm("Действие нуждается в авторизации", "Представьтесь пожалуйста системе для выполнения данного действия. Это займёт пару секунд.", "Представиться")
                 })
             }
         }
         function moderatedAction(response) {
             if (response.data.error.code == "CONFIRMATION_REQUIRED") {
-                modal.message("Действие нуждается в подтверждении", "Данное действиет будет исполненно после подтверждения модератором системы");
+                modal.message("Действие нуждается в подтверждении", "Данное действие будет исполнено после подтверждения модератором системы");
                 return true;
             }
         }
@@ -423,6 +423,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     case 'item':
                         return uri.replace("ии:пункт:", "");
                     case 'category':
+                    case 'categoryG': //глава
+                    case 'categoryR': //раздел
+                    case 'categoryT': //том
                         return uri.replace("категория:", "");
                     case 'article':
                         return uri.replace("статья:", "");
@@ -446,6 +449,15 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 }
                 if (uri.indexOf("ии:пункт:") === 0) {
                     return 'item'
+                }
+                if (uri.indexOf("категория:Том") === 0) {
+                    return 'categoryT'
+                }
+                if (uri.contains("Глава")) {
+                    return 'categoryG'
+                }
+                if (uri.indexOf("категория:Основы/Раздел"||"категория:БДК/Раздел") === 0) {
+                    return 'categoryR'
                 }
                 if (uri.indexOf("категория:") === 0) {
                     return 'category'
@@ -476,10 +488,16 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         return "абзац";
                     case 'category':
                         return "оглавление";
+                    case 'categoryR':
+                        return "раздел:";
+                    case 'categoryT':
+                        return "том:";
+                    case 'categoryG':
+                        return "глава:";
                     case 'article':
                         return "статья";
                     case 'paragraph':
-                        return "пераграф";
+                        return "параграф";
                     case 'video':
                         return "видео";
                     case 'document':
@@ -709,12 +727,12 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
     .service("errorService", function(messager){
         return {
             resolve: function(error) {
-                var message = "Неизвесная ошибка";
+                var message = "Неизвестная ошибка";
                 if (error) {
                     message = error.message;
                     switch (error.code) {
                         case "ACCESS_DENIED":
-                            message = "Представтесь пожалуйста";
+                            message = "Представьтесь пожалуйста";
                             break;
                         case "USER_NOT_FOUND":
                             message = "Пользователь не найден";
@@ -723,13 +741,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                             message = "Тема не найдена";
                             break;
                         case "PASSWORD_NOT_VALID":
-                            message = "Пароль не верный";
+                            message = "Пароль неверный";
                             break;
                         case "BAD_CREDENTIALS":
-                            message = "Не верные email и пароль";
+                            message = "Неверные email и пароль";
                             break;
                         case "EMAIL_DUPLICATION":
-                            message = "Такой email уже зарегистрированн в системе";
+                            message = "Такой email уже зарегистрирован в системе";
                             break;
                     }
                 }
@@ -1017,7 +1035,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             link: function(scope, element, attrs) {
                 element.bind('click', function(e) {
                     if (!getSelectionText()) {
-                        alert("Выберете текст");
+                        alert("Выберите текст");
                     } else
                         $modal.open({
                             templateUrl: 'contribute-form.html',
@@ -1179,7 +1197,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     $api.topic.updateRate(scope.ownerUri, topic.name, topic.rate).then(getTopics);
                 };
                 scope.updateComment = function(topic){
-                    modal.prompt("Редактирование коментария", topic.comment, "Сохранить").then(function (comment) {
+                    modal.prompt("Редактирование комментария", topic.comment, "Сохранить").then(function (comment) {
                         $api.topic.updateComment(scope.ownerUri, topic.name, comment).then(getTopics);
                     });
                 };
@@ -1194,7 +1212,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         });
                 };
                 scope.removeTopic = function (topic) {
-                    modal.confirm("Подтверждение", "Коментарий и оценка будут утеряны. Вы уверены что желаете убрать тему?", "Убрать тему")
+                    modal.confirm("Подтверждение", "Комментарий и оценка будут утеряны. Вы уверены что желаете убрать тему?", "Убрать тему")
                         .then(function () {
                             $api.topic.unlinkUri(scope.ownerUri, topic.uri).then(getTopics);
                         })
@@ -1282,6 +1300,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         originStateGo.bind($state)("item", {number: number});
                         return;
                     case "category":
+                    case "categoryR": //раздел
+                    case "categoryT": //том
+                    case "categoryG": //глава
                         originStateGo.bind($state)("category", {name: entityService.getName(uri)});
                         return;
                     case "paragraph":
@@ -1347,7 +1368,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
         });
         function isTom5(number) {
             if (number.indexOf("5.") == 0) {
-                modal.message("", "5 том пока официально не опубликован, по этому его текста нет в системе");
+                modal.message("", "5 том пока официально не опубликован, поэтому его текста нет в системе");
                 return true;
             }
         }
