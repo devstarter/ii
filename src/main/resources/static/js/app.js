@@ -453,10 +453,10 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 if (uri.indexOf("категория:Том") === 0) {
                     return 'categoryT'
                 }
-                if (uri.contains("Глава")) {
+                if (uri.indexOf("Глава") >= 0) {
                     return 'categoryG'
                 }
-                if (uri.indexOf("категория:Основы/Раздел"||"категория:БДК/Раздел") === 0) {
+                if (uri.indexOf("/Раздел") >= 0) {
                     return 'categoryR'
                 }
                 if (uri.indexOf("категория:") === 0) {
@@ -489,11 +489,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     case 'category':
                         return "оглавление";
                     case 'categoryR':
-                        return "раздел:";
+                        return "раздел";
                     case 'categoryT':
-                        return "том:";
+                        return "том";
                     case 'categoryG':
-                        return "глава:";
+                        return "глава";
                     case 'article':
                         return "статья";
                     case 'paragraph':
