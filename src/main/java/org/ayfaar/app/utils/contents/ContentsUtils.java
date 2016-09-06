@@ -39,6 +39,8 @@ public class ContentsUtils {
                     if(iFirst-j >= 0) before += sp[iFirst-j]+" ";
                 }
 
+                if(before.equals("") && findStringArr.length == 1) countWords *= 2; //Multiple words if "before" empty
+
                 String after = "";
                 int iLast = strings.indexOf(findStringArr[findStringArr.length-1]);
                 for (int j = 1; j <= countWords; j++) {
