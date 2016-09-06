@@ -30,28 +30,22 @@ public class ContentsUtils {
         if (wholeFind.equals("")) findStringArr = find.split(" ");
         else findStringArr = wholeFind.split(" ");
 
+        int lengthFindStringArr = findStringArr.length;
+        String firstPosition = findStringArr[0];
+        String lastPosition = findStringArr[lengthFindStringArr - 1];
+
         for (int i = 0; i < sp.length; i++) {
-            if (sp[i].equals(findStringArr[0]) && sp[i + findStringArr.length-1].equals(findStringArr[findStringArr.length-1])) {
-
-                String before = "";
-                int iFirst = strings.indexOf(findStringArr[0]);
-                for (int j = countWords; j > 0; j--) {
-                    if(iFirst-j >= 0) before += sp[iFirst-j]+" ";
-                }
-
-                if(before.equals("") && findStringArr.length == 1) countWords *= 2; //Multiple words if "before" empty
+            if (sp[i].equals(firstPosition) && sp[i + lengthFindStringArr-1].equals(lastPosition)) {
 
                 String after = "";
                 int iLast = strings.indexOf(findStringArr[findStringArr.length-1]);
                 for (int j = 1; j <= countWords; j++) {
                     if(iLast+j < sp.length) after += " " + sp[iLast+j];
                 }
-
-                before = before.replaceFirst("^[-+.^:,]","");
+                
                 after = after.replaceAll("[-+.^:,]$","");
-                if(!before.equals(" ") && iFirst - countWords > 0) before = "..." + before;
                 if(!after.equals(" ") && iLast + countWords < sp.length) after += "...";
-                searchResult = before + wholeFind + after;
+                searchResult = wholeFind + after;
             }
         }
 
