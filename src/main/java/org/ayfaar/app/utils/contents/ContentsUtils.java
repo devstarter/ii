@@ -33,19 +33,21 @@ public class ContentsUtils {
         int lengthFindStringArr = findStringArr.length;
         String firstPosition = findStringArr[0];
         String lastPosition = findStringArr[lengthFindStringArr - 1];
+        int iLast = strings.indexOf(lastPosition);
 
         for (int i = 0; i < sp.length; i++) {
+            String addFirstDots = "";
             if (sp[i].equals(firstPosition) && sp[i + lengthFindStringArr-1].equals(lastPosition)) {
 
                 String after = "";
-                int iLast = strings.indexOf(findStringArr[findStringArr.length-1]);
                 for (int j = 1; j <= countWords; j++) {
                     if(iLast+j < sp.length) after += " " + sp[iLast+j];
                 }
-                
+
                 after = after.replaceAll("[-+.^:,]$","");
                 if(!after.equals(" ") && iLast + countWords < sp.length) after += "...";
-                searchResult = wholeFind + after;
+                if (!firstPosition.equals(sp[0])) addFirstDots  = "...";
+                searchResult = addFirstDots + wholeFind + after;
             }
         }
 
