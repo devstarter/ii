@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.ayfaar.app.dao.TermDao;
@@ -12,6 +13,7 @@ import org.ayfaar.app.services.videoResource.VideoResourceService;
 import org.ayfaar.app.utils.ContentsService;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
+import org.ayfaar.app.utils.contents.ContentsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +30,7 @@ import static java.util.Arrays.asList;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.UNICODE_CASE;
 
+@Slf4j
 @RestController
 @RequestMapping("api/suggestions")
 public class NewSuggestionsController {
@@ -39,6 +42,7 @@ public class NewSuggestionsController {
     @Autowired VideoResourceService videoResourceService;
     @Autowired RecordService recordService;
     @Autowired ItemService itemService;
+    @Autowired ContentsUtils contentsUtils;
 
     private List<String> escapeChars = Arrays.asList("(", ")", "[", "]", "{", "}");
     private static final int MAX_SUGGESTIONS = 5;
@@ -74,7 +78,11 @@ public class NewSuggestionsController {
         for (Suggestions item : items) {
             Queue<String> queriesQueue = getQueue(q);
             for (Map.Entry<String, String> suggestion : getSuggestions(queriesQueue, item)) {
-                allSuggestions.put(suggestion.getKey(), suggestion.getValue());
+                if(suggestion.getKey().contains("ии:пункты:")) {
+                    String suggestionParagraph = contentsUtils.filterWordsBeforeAndAfter(suggestion.getValue(), q, 3);
+                    if(suggestionParagraph != null)allSuggestions.put(suggestion.getKey(), suggestion.getKey().substring(10) + ":" + suggestionParagraph);
+                }
+                else allSuggestions.put(suggestion.getKey(), suggestion.getValue());
             }
         }
         return allSuggestions;
