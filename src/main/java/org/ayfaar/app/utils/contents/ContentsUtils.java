@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 @Component
 public class ContentsUtils {
 
-    public static String filterWordsBeforeAndAfter(String paragraph, String search, int countWordsBeforeAndAfter){
+    public static String filterLengthWordsAfter(String paragraph, String search, int countWordsBeforeAndAfter){
         String wholeFind = "";
         String searchResult = null;
         String str = paragraph;
@@ -31,27 +31,28 @@ public class ContentsUtils {
         else findStringArr = wholeFind.split(" ");
 
         int lengthFindStringArr = findStringArr.length;
+        int lengthParagraph = sp.length;
         String firstPosition = findStringArr[0];
         String lastPosition = findStringArr[lengthFindStringArr - 1];
         int iLast = strings.indexOf(lastPosition);
 
-        for (int i = 0; i < sp.length; i++) {
+        for (int i = 0; i < lengthParagraph; i++) {
             String addFirstDots = "";
             if (sp[i].equals(firstPosition) && sp[i + lengthFindStringArr-1].equals(lastPosition)) {
 
                 String after = "";
                 for (int j = 1; j <= countWords; j++) {
-                    if(iLast+j < sp.length) after += " " + sp[iLast+j];
+                    if(iLast+j < lengthParagraph) after += " " + sp[iLast+j];
                 }
 
                 after = after.replaceAll("[-+.^:,]$","");
-                if(!after.equals(" ") && iLast + countWords < sp.length) after += "...";
+                if(!after.equals(" ") && iLast + countWords < lengthParagraph) after += "...";
                 if (!firstPosition.equals(sp[0])) addFirstDots  = "...";
                 searchResult = addFirstDots + wholeFind + after;
             }
         }
 
-        return searchResult;
+        return searchResult == null ? "" : searchResult;
     }
 }
 

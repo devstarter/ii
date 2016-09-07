@@ -46,6 +46,7 @@ public class NewSuggestionsController {
 
     private List<String> escapeChars = Arrays.asList("(", ")", "[", "]", "{", "}");
     private static final int MAX_SUGGESTIONS = 5;
+    private static final int MAX_WORDS_PARAGRAPH_AFTER_SEARCH = 4;
 
     public Map<String, String> suggestions(String q) {
         return suggestions(q, false, false, false, false, false, false, false, false, false);
@@ -78,11 +79,13 @@ public class NewSuggestionsController {
         for (Suggestions item : items) {
             Queue<String> queriesQueue = getQueue(q);
             for (Map.Entry<String, String> suggestion : getSuggestions(queriesQueue, item)) {
-                if(suggestion.getKey().contains("ии:пункты:")) {
-                    String suggestionParagraph = contentsUtils.filterWordsBeforeAndAfter(suggestion.getValue(), q, 3);
-                    if(suggestionParagraph != null)allSuggestions.put(suggestion.getKey(), suggestion.getKey().substring(10) + ":" + suggestionParagraph);
+                String key = suggestion.getKey();
+                String value = suggestion.getValue();
+                if(key.contains("ии:пункты:")) {
+                    String suggestionParagraph = contentsUtils.filterLengthWordsAfter(value, q, MAX_WORDS_PARAGRAPH_AFTER_SEARCH);
+                    if(suggestionParagraph != "")allSuggestions.put(key, key.substring(10) + ":" + suggestionParagraph);
                 }
-                else allSuggestions.put(suggestion.getKey(), suggestion.getValue());
+                else allSuggestions.put(key, value);
             }
         }
         return allSuggestions;
