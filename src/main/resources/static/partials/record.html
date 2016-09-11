@@ -10,6 +10,7 @@
                 &nbsp;<h2 class="inline">{{record.name}}</h2>
                 <i class="btn h glyphicon glyphicon-pencil gray" ng-click="rename(record)" title="Переименовать ответ"></i>
             </div>
+            <span class="gray">{{record.code}}</span>
             <topics owner-uri="record.uri" style="padding-top: 20px; display: block"></topics>
         </div>
         <div ng-hide="singleMode">
