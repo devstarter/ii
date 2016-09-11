@@ -33,4 +33,20 @@ public class LightLink {
 
     private String uid1;
     private String uid2;
+
+    public static LightLink fromLink(Link l) {
+        final LightLink ll = new LightLink();
+        ll.setLinkId(l.getLinkId());
+        ll.setType(l.getType());
+        ll.setSource(l.getSource());
+        ll.setQuote(l.getQuote());
+        ll.setTaggedQuote(l.getTaggedQuote());
+        ll.setComment(l.getComment());
+        ll.setRate(l.getRate());
+        ll.setCreatedAt(l.getCreatedAt());
+        ll.setCreatedBy(l.getCreatedBy());
+        ll.setUid1(l.getUid1().getUri());
+        ll.setUid2(l.getUid2().getUri());
+        return ll;
+    }
 }

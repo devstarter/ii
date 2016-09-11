@@ -80,4 +80,8 @@ public class LinkService {
     private LinkProvider getLinkProvider(LightLink link) {
         return cache.getOrCreate(link, () -> new LinkProvider(link, this::linkSaver));
     }
+
+    public void register(Link link) {
+        allLinks.add(LightLink.fromLink(link));
+    }
 }

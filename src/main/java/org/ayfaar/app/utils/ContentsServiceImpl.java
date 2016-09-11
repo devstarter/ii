@@ -417,7 +417,7 @@ public class ContentsServiceImpl implements ContentsService {
                 .collect(Collectors.toMap(categoryProvider -> categoryProvider.getCategory().getUri(),
                         categoryProvider -> categoryProvider.getCategory().getName()));
 
-        paragraphMap.values().forEach(p -> map.put(p.uri(), p.code() + ": " + p.name()));
+        paragraphMap.values().forEach(p -> map.put(p.uri(), p.name()));
         return map;
     }
 

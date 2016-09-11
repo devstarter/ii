@@ -4,6 +4,7 @@ import one.util.streamex.StreamEx;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.*;
+import org.ayfaar.app.services.links.LinkService;
 import org.ayfaar.app.services.moderation.Action;
 import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.moderation.UserRole;
@@ -41,6 +42,7 @@ class TopicServiceImpl implements TopicService {
     @Inject ModerationService moderationService;
     @Inject Environment environment;
     @Inject CurrentUserProvider currentUserProvider;
+    @Inject LinkService linkService;
 
     @PostConstruct
     private void init() {
@@ -314,6 +316,7 @@ class TopicServiceImpl implements TopicService {
         private void registerLink(Link link, UID uid) {
             //todo: не хранить тут саму сущность UID, а хранить только пё презентацию которая будет выдана в ресурсках
             linksMap.put(uid, link);
+            linkService.register(link);
         }
 
         private class ItemResourcePresentation {
