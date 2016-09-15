@@ -43,6 +43,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 templateUrl: "static/partials/document.html",
                 controller: DocumentController
             })
+            .state('picture', {
+                url: "/i/{id}",
+                templateUrl: "static/partials/image.html",
+                controller: ImageController
+            })
             .state('record', {
                 url: "/r/{code}",
                 templateUrl: "static/partials/record.html",
@@ -344,6 +349,19 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     return api.get("document/last", data)
                 }
             },
+            picture: {
+                get: function (id) {
+                    return api.get("image/"+id)
+                },
+                add: function (url) {
+                    return api.authPost("image", {url: url})
+                },
+                last: function (page, size) {
+                    var data = {page: page ? page : 0};
+                    if (size) data.size = size;
+                    return api.get("image/last", data)
+                }
+            },
             record: {
                 rename: function (code, name) {
                     return api.authPost("record/"+code+"/rename", {name: name})
@@ -435,6 +453,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         return uri.replace("запись:", "");
                     case 'document':
                         return uri.replace("документ:", "");
+                    case 'picture':
+                        return uri.replace("изображение:", "");
                     case 'video':
                         return object ? object.title : uri;
                 }
@@ -471,6 +491,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 if (uri.indexOf("документ:") === 0) {
                     return 'document'
                 }
+                if (uri.indexOf("изображение:") === 0) {
+                    return 'picture'
+                }
                 if (uri.indexOf("ии:пункты:") === 0) {
                     return 'paragraph'
                 }
@@ -502,6 +525,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         return "видео";
                     case 'document':
                         return "документ";
+                    case 'picture':
+                        return "изображение";
                     case 'record':
                         return "аудио";
                 }
@@ -1262,6 +1287,12 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             templateUrl: "card-document"
         }
     })
+    .directive("imageCard", function () {
+        return {
+            scope: { img: '='},
+            templateUrl: "card-image"
+        }
+    })
     .directive("recordCard", function ($rootScope, $topicPrompt, $api, ngAudio, $parse, audioPlayer) {
         return {
             scope: { record: '='},
@@ -1330,6 +1361,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         }
                         originStateGo.bind($state)("document", {id: id});
                         return;
+                    case "picture":
+                        var id = to.id;
+                        if (!id) {
+                            id = uri.replace("изображение:", "")
+                        }
+                        originStateGo.bind($state)("picture", {id: id});
+                        return;
                 }
             } else {
                 originStateGo.bind($state)(to, params, options)
@@ -1340,6 +1378,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
         };
         $state.goToDoc = function(doc) {
             originStateGo.bind($state)("document", {id: doc.id})
+        };
+        $state.goToImg = function(img) {
+            originStateGo.bind($state)("picture", {id: img.id})
         };
         $state.goToMainTopic = function() {
             $state.goToTopic("Методика МИЦИАР");
@@ -1416,6 +1457,7 @@ function getUrl(uri) {
     url = url.replace("ии:пункты:", "");
     url = url.replace("видео:youtube:", "v/");
     url = url.replace("документ:google:", "d/");
+    url = url.replace("изображение:", "i/");
     url = url.replace("запись:", "r/");
     return url;
 }
