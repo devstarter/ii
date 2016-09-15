@@ -1,0 +1,34 @@
+<div>
+    <div ng-show="showUrlInput && !img">
+        <div class="input-group" style="padding-top: 20px">
+            <input ng-model="url" placeholder="Вставте ссылку на изображение" class="form-control"/>
+            <span class="input-group-btn">
+                <button ng-click="add()" class="btn btn-primary" ng-class="imgLoading ? 'disabled' : ''">Добавить</button>
+            </span>
+        </div>
+        <div ng-show="imgLoading"><img src="static/images/ajax-loader.gif"/>Добавление...</div>
+        <div style="padding-top: 20px">
+            <span class="grey">Последние 9 добавленных изображений</span>
+            <div class="row">
+                <image-card ng-repeat="img in last" doc="img" class="col-md-4"></image-card>
+            </div>
+        </div>
+        <div style="clear: both"></div>
+    </div>
+    <div ng-show="img">
+        <a href="i/">← К списку</a>
+        <div class="title">
+            <h2 class="inline">{{img.name}}</h2>
+            <a href="https://drive.google.com/uc?export=view&id={{img.id}}" target="_blank" class="btn btn-default glyphicon glyphicon-new-window" title="Открыть в отдельном окне"></a>
+        </div>
+        <!--<a href="{{doc.download_url}}"  target="_blank" class="btn btn-default">Скачать</a>-->
+        <br>
+        <google-doc id="img.id"></google-doc>
+        <br>
+        <topics owner-uri="img.uri"></topics>
+    </div>
+</div>
+<style type="text/css">
+    .title .glyphicon {visibility: hidden}
+    .title:hover .glyphicon {visibility: visible}
+</style>

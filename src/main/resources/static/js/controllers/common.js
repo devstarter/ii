@@ -66,7 +66,6 @@ function RecordController($scope, $stateParams, $api, messager, modal, audioPlay
     };
 
 }
-
 function DocumentController($scope, $stateParams, $api, messager, $state) {
     if ($stateParams.id) {
         $scope.docLoading = true;
@@ -92,6 +91,35 @@ function DocumentController($scope, $stateParams, $api, messager, $state) {
         $scope.docLoading = true;
         $api.document.add($scope.url).then(function(doc){
             $state.goToDoc(doc);
+        });
+    };
+    $scope.last = [];
+}
+function ImageController($scope, $stateParams, $api, messager, $state) {
+    if ($stateParams.id) {
+        $scope.imgLoading = true;
+        $api.picture.get($stateParams.id).then(function(img){
+            $scope.imgLoading = false;
+            if (img.id) {
+                $scope.img = img;
+                picture.title = img.name;
+            } else {
+                $scope.showUrlInput = true;
+            }
+        }, function(response){
+            $scope.imgLoading = false;
+            messager.error("Ошибка загрузки изображения");
+        });
+    } else {
+        $scope.showUrlInput = true;
+        $api.picture.last().then(function (list) {
+            $scope.last = list;
+        })
+    }
+    $scope.add = function(){
+        $scope.imgLoading = true;
+        $api.picture.add($scope.url).then(function(img){
+            $state.goToImg(img);
         });
     };
     $scope.last = [];

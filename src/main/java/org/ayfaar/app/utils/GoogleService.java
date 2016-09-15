@@ -22,6 +22,7 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.ayfaar.app.model.Image;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -58,6 +59,8 @@ public class GoogleService {
 
     private final ResourceLoader resourceLoader;
     private final RestTemplate restTemplate;
+
+    private final String DocOrImageInfoUrl = "https://www.googleapis.com/drive/v2/files/{id}?key={key}";
 
     @Inject
     public GoogleService(ResourceLoader resourceLoader, RestTemplate restTemplate) {
@@ -98,17 +101,31 @@ public class GoogleService {
     public static String extractDocIdFromUrl(String url) {
         //https://docs.google.com/document/d/1iWY8qI5Qn1V_90VpzfhFDTyAcNgati9u6sTv-A-gWQg/edit?usp=sharing
         //https://drive.google.com/file/d/0BwGttgSD-WcTbTJFbWplN1hwcFU/view?usp=sharing
+       return extractIdFromUrl(url);
+    }
+
+    public DocInfo getDocInfo(String id) {
+        final DocInfo doc = restTemplate.getForObject(DocOrImageInfoUrl, DocInfo.class, id, API_KEY);
+        Assert.notNull(doc.title);
+        return doc;
+    }
+
+    public static String extractImageIdFromUrl(String url) {
+        return extractIdFromUrl(url);
+    }
+
+    public ImageInfo getImageInfo(String id) {
+        final ImageInfo imageInfo = restTemplate.getForObject(DocOrImageInfoUrl, ImageInfo.class, id, API_KEY);
+        Assert.notNull(imageInfo.title);
+        return imageInfo;
+    }
+
+    private static String extractIdFromUrl(String url) {
         Matcher matcher = Pattern.compile("^https?://(docs|drive)\\.google\\.com/(document|file)/d/([^/]+)").matcher(url);
         if (matcher.find()) {
             return matcher.group(3);
         }
-        throw new RuntimeException("Cannot resolve document id");
-    }
-
-    public DocInfo getDocInfo(String id) {
-        final DocInfo doc = restTemplate.getForObject("https://www.googleapis.com/drive/v2/files/{id}?key={key}", DocInfo.class, id, API_KEY);
-        Assert.notNull(doc.title);
-        return doc;
+        throw new RuntimeException("Cannot resolve id");
     }
 
     /** Authorizes the installed application to access user's protected data. */
@@ -230,5 +247,12 @@ public class GoogleService {
         public String downloadUrl;
         public String fileExtension;
         public Integer fileSize;
+    }
+
+    @NoArgsConstructor
+    public static class ImageInfo {
+        public String title;
+        public String downloadUrl;
+        public String mimeType;
     }
 }
