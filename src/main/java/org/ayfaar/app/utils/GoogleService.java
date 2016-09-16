@@ -22,7 +22,6 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ayfaar.app.model.Image;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -254,5 +253,6 @@ public class GoogleService {
         public String title;
         public String downloadUrl;
         public String mimeType;
+        public String thumbnailLink;
     }
 }

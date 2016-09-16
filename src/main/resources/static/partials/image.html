@@ -8,15 +8,19 @@
         </div>
         <div ng-show="imgLoading"><img src="static/images/ajax-loader.gif"/>Добавление...</div>
         <div style="padding-top: 20px">
-            <span class="grey">Последние 9 добавленных изображений</span>
+            <span class="grey">Последние добавленные изображения</span>
             <div class="row">
-                <image-card ng-repeat="img in last" doc="img" class="col-md-4"></image-card>
+                <!--<image-card ng-repeat="img in last" img="img" class="col-md-4"></image-card>-->
+                <div ng-repeat="img in last" ii-ref="img" class="col-md-4 card picture">
+                    <img ng-src="{{img.thumbnail.replace('s220', 'w210-h210-p-k-nu')}}"/>
+                    <div title="{{img.name}}">{{img.name | cut:false:65}}</div>
+                </div>
             </div>
         </div>
         <div style="clear: both"></div>
     </div>
     <div ng-show="img">
-        <a href="i/">← К списку</a>
+        <a href="picture/">← К списку изображений</a>
         <div class="title">
             <h2 class="inline">{{img.name}}</h2>
             <a href="https://drive.google.com/uc?export=view&id={{img.id}}" target="_blank" class="btn btn-default glyphicon glyphicon-new-window" title="Открыть в отдельном окне"></a>

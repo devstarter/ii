@@ -25,14 +25,16 @@ public class Image extends UID {
     private String name;
     private String mimeType;
     private String downloadUrl;
+    private String thumbnail;
     private Date createdAt = new Date();
 
     @Builder
-    public Image(String id, String name, String mimeType, String downloadUrl) {
+    public Image(String id, String name, String mimeType, String downloadUrl, String thumbnail) {
         this.id = id;
         this.name = name;
         this.mimeType = mimeType;
         this.downloadUrl = downloadUrl;
+        this.thumbnail = thumbnail;
     }
 
     @Override

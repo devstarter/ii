@@ -66,6 +66,7 @@ function RecordController($scope, $stateParams, $api, messager, modal, audioPlay
     };
 
 }
+
 function DocumentController($scope, $stateParams, $api, messager, $state) {
     if ($stateParams.id) {
         $scope.docLoading = true;
@@ -102,7 +103,7 @@ function ImageController($scope, $stateParams, $api, messager, $state) {
             $scope.imgLoading = false;
             if (img.id) {
                 $scope.img = img;
-                picture.title = img.name;
+                document.title = img.name;
             } else {
                 $scope.showUrlInput = true;
             }

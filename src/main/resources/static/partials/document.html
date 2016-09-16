@@ -8,7 +8,7 @@
         </div>
         <div ng-show="docLoading"><img src="static/images/ajax-loader.gif"/>Добавление...</div>
         <div style="padding-top: 20px">
-            <span class="grey">Последние 9 добавленных документов</span>
+            <span class="grey">Последние добавленные документы</span>
             <div class="row">
                 <document-card ng-repeat="doc in last" doc="doc" class="col-md-4"></document-card>
             </div>
@@ -16,7 +16,7 @@
         <div style="clear: both"></div>
     </div>
     <div ng-show="doc">
-        <a href="d/">← К списку</a>
+        <a href="document/">← К списку документов</a>
         <div class="title">
             <h2 class="inline">{{doc.name}}</h2>
             <a href="https://drive.google.com/uc?export=view&id={{doc.id}}" target="_blank" class="btn btn-default glyphicon glyphicon-new-window" title="Открыть в отдельном окне"></a>

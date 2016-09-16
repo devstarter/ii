@@ -39,12 +39,12 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 controller: CabinetController
             })
             .state('document', {
-                url: "/d/{id}",
+                url: "/document/{id}",
                 templateUrl: "static/partials/document.html",
                 controller: DocumentController
             })
             .state('picture', {
-                url: "/i/{id}",
+                url: "/picture/{id}",
                 templateUrl: "static/partials/image.html",
                 controller: ImageController
             })
@@ -1287,12 +1287,6 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             templateUrl: "card-document"
         }
     })
-    .directive("imageCard", function () {
-        return {
-            scope: { img: '='},
-            templateUrl: "card-image"
-        }
-    })
     .directive("recordCard", function ($rootScope, $topicPrompt, $api, ngAudio, $parse, audioPlayer) {
         return {
             scope: { record: '='},
@@ -1456,8 +1450,8 @@ function getUrl(uri) {
     url = url.replace("ии:пункт:", "");
     url = url.replace("ии:пункты:", "");
     url = url.replace("видео:youtube:", "v/");
-    url = url.replace("документ:google:", "d/");
-    url = url.replace("изображение:", "i/");
+    url = url.replace("документ:google:", "document/");
+    url = url.replace("изображение:", "picture/");
     url = url.replace("запись:", "r/");
     return url;
 }

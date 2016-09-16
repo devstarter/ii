@@ -39,6 +39,7 @@ public class ImageController {
                             .name(name.orElse(imageInfo.title))
                             .downloadUrl(imageInfo.downloadUrl)
                             .mimeType(imageInfo.mimeType)
+                            .thumbnail(imageInfo.thumbnailLink)
                             .build();
                     return commonDao.save(image);
                 });
