@@ -61,7 +61,7 @@ public class UriGenerator implements IdentifierGenerator {
 
     @SuppressWarnings("unchecked")
     public static Class<? extends UID> getClassByUri(String uri) {
-        return Stream.of(Item.class, Article.class, Category.class, ItemsRange.class, Resource.class, VideoResource.class, Term.class, Topic.class, Document.class, Record.class)
+        return Stream.of(Item.class, Article.class, Category.class, ItemsRange.class, Resource.class, VideoResource.class, Term.class, Topic.class, Document.class, Record.class, Image.class)
                 .filter(clazz -> {
                     Uri annotation = clazz.getAnnotation(Uri.class);
                     Assert.notNull(annotation, "Uri annotation not found for class "+clazz);
