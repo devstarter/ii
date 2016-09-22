@@ -177,7 +177,7 @@ public class GoogleService {
         File fileMetadata = new File();
         fileMetadata.setTitle(title);
 
-        InputStreamContent mediaContent = new InputStreamContent("audio/mpeg", new BufferedInputStream(data));
+        InputStreamContent mediaContent = new InputStreamContent("", new BufferedInputStream(data));
 
         Drive.Files.Insert insert = drive.files().insert(fileMetadata, mediaContent);
 
