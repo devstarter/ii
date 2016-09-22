@@ -1,6 +1,8 @@
 package org.ayfaar.app.controllers;
 
 
+import com.google.api.services.drive.model.File;
+import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Image;
 import org.ayfaar.app.services.images.ImageService;
@@ -18,6 +20,7 @@ import static org.ayfaar.app.utils.UriGenerator.generate;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 import static org.springframework.util.Assert.hasLength;
 
+@Slf4j
 @RestController
 @RequestMapping("api/image")
 public class ImageController {
@@ -30,6 +33,14 @@ public class ImageController {
                         @RequestParam(required = false) Optional<String> name){
 
         Assert.hasLength(url);
+        if(!url.contains("google.com")){
+            try {
+                File file = googleService.uploadToGoogleDrive(url, name.orElse("picture"));
+                url = file.getAlternateLink();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        }
         final String imgId = GoogleService.extractImageIdFromUrl(url);
         return commonDao.getOpt(Image.class,generate(Image.class,imgId))
                 .orElseGet(() -> {
@@ -63,11 +74,10 @@ public class ImageController {
     @RequestMapping(value = "update-name", method = RequestMethod.POST)
     public void updateTitle(@RequestParam String uri, @RequestParam String title) {
         hasLength(uri);
-        Image image = commonDao.get(Image.class, "uri", uri);
-        if (image != null) {
-            image.setName(title);
-            commonDao.save(image);
-        }
+        Image image = commonDao.getOpt(Image.class, "uri", uri).orElseThrow(() -> new RuntimeException("Couldn't rename, image is not defined!"));
+        image.setName(title);
+        commonDao.save(image);
+
     }
 
     @RequestMapping("{id}/remove")
