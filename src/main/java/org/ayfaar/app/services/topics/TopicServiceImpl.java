@@ -197,7 +197,7 @@ class TopicServiceImpl implements TopicService {
                             && link.getUid1().getUri().equals(uri())
                             && link.getType() == LinkType.CHILD)
                     .map(l -> new TopicProviderImpl((Topic) l.getUid2()))
-                    .sorted((o1, o2) -> o1.name().compareTo(o2.name()));
+                    .sorted((o1, o2) -> o1.name().toLowerCase().compareTo(o2.name().toLowerCase()));
         }
 
         @Override
