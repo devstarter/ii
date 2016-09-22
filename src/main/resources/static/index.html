@@ -65,7 +65,7 @@
 </script>
 <script type="text/ng-template" id="card-document">
     <div ii-ref="doc" class="card document">
-        <img ng-src="{{doc.thumbnail.replace('s220', 's300')}}"/>
+        <img ng-src="https://drive.google.com/thumbnail?sz=s300&id={{doc.id}}"/>
         <div title="{{doc.name}}">{{doc.name | cut:false:65}}</div>
     </div>
 </script>

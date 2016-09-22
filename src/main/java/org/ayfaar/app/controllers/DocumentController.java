@@ -21,7 +21,6 @@ import static org.springframework.util.Assert.hasLength;
 @Slf4j
 @RestController
 @RequestMapping("api/document")
-//todo: rename, update author etc
 public class DocumentController {
     @Inject CommonDao commonDao;
     @Inject GoogleService googleService;
@@ -33,12 +32,8 @@ public class DocumentController {
                            @RequestParam(required = false) String annotation) {
         Assert.hasLength(url);
         if(!url.contains("google.com")){
-            try {
-                File file = googleService.uploadToGoogleDrive(url, name.orElse("doc"));
-                url = file.getAlternateLink();
-            } catch (Exception e) {
-               log.error(e.getMessage());
-            }
+            File file = googleService.uploadToGoogleDrive(url, name.orElse("Новый документ"));
+            url = file.getAlternateLink();
         }
         final String docId = GoogleService.extractDocIdFromUrl(url);
         return commonDao.getOpt(Document.class, generate(Document.class, docId))

@@ -32,6 +32,7 @@
     height: 200px;
     width: 210px;
     text-decoration: initial !important;
+    text-align: center;
 }
 .card.picture img {
     width: 210px;
@@ -39,6 +40,7 @@
 }
 .card.picture {
     padding: 0;
+    height: 280px;
 }
 .card.document {
     height: 380px;
@@ -262,14 +264,16 @@ blockquote {
         height: auto;
         width: 100%;
     }
-    .card img {
-        width: 100%;
-    }
     .video-play-button {
         top: 25%;
     }
     .player-progress-bar {
         width: 100% !important;
+    }
+}
+@media screen and (max-width: 500px) {
+    .col-xs-6 {
+        width: 100%;
     }
 }
 

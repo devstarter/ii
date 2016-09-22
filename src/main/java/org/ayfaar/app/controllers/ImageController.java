@@ -34,12 +34,8 @@ public class ImageController {
 
         Assert.hasLength(url);
         if(!url.contains("google.com")){
-            try {
-                File file = googleService.uploadToGoogleDrive(url, name.orElse("picture"));
-                url = file.getAlternateLink();
-            } catch (Exception e) {
-                log.error(e.getMessage());
-            }
+            File file = googleService.uploadToGoogleDrive(url, name.orElse("Новая иллюстрация"));
+            url = file.getAlternateLink();
         }
         final String imgId = GoogleService.extractImageIdFromUrl(url);
         return commonDao.getOpt(Image.class,generate(Image.class,imgId))

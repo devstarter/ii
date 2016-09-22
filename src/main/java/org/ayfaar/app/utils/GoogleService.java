@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -128,32 +129,48 @@ public class GoogleService {
     }
 
     /** Authorizes the installed application to access user's protected data. */
-    private static Credential authorize() throws Exception {
-        // load client secrets
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY,
-                new InputStreamReader(GoogleService.class.getResourceAsStream("/client_secrets.json")));
-        if (clientSecrets.getDetails().getClientId().startsWith("Enter")
-                || clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
-            throw new RuntimeException("Enter Client ID and Secret from https://code.google.com/apis/console/?api=drive into .../client_secrets.json");
+    private static Credential authorize() {
+        GoogleClientSecrets clientSecrets;
+        GoogleAuthorizationCodeFlow flow;
+        try {
+            // load client secrets
+            clientSecrets = GoogleClientSecrets.load(JSON_FACTORY,
+                    new InputStreamReader(GoogleService.class.getResourceAsStream("/client_secrets.json")));
+            if (clientSecrets.getDetails().getClientId().startsWith("Enter")
+                    || clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
+                throw new RuntimeException("Enter Client ID and Secret from https://code.google.com/apis/console/?api=drive into .../client_secrets.json");
+            }
+            // set up authorization code flow
+            flow = new GoogleAuthorizationCodeFlow.Builder(
+                    httpTransport, JSON_FACTORY, clientSecrets,
+                    Collections.singleton(DriveScopes.DRIVE_FILE)).setDataStoreFactory(dataStoreFactory)
+                    .build();
+            // authorize
+            return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+        } catch (IOException e) {
+            throw new RuntimeException("Google authorization error", e);
         }
-        // set up authorization code flow
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                httpTransport, JSON_FACTORY, clientSecrets,
-                Collections.singleton(DriveScopes.DRIVE_FILE)).setDataStoreFactory(dataStoreFactory)
-                .build();
-        // authorize
-        return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
     }
 
-    public File uploadToGoogleDrive(String url, String title) throws Exception {
+    public File uploadToGoogleDrive(String url, String title) {
         Resource resource = resourceLoader.getResource("file:" + driveDir);
         if (!resource.exists()) {
             throw new RuntimeException("Error locating Google Drive dir "+ driveDir);
         }
 
-        java.io.File DATA_STORE_DIR = resource.getFile();
-        httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
+        java.io.File dataStoreDir;
+        try {
+            dataStoreDir = resource.getFile();
+        } catch (IOException e) {
+            throw new RuntimeException("Error locating Google Drive dir "+ driveDir);
+        }
+
+        try {
+            httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+            dataStoreFactory = new FileDataStoreFactory(dataStoreDir);
+        } catch (GeneralSecurityException | IOException e) {
+            throw new RuntimeException("Google Drive initialization error", e);
+        }
         // authorization
         Credential credential = authorize();
         // set up the global Drive instance
@@ -163,7 +180,7 @@ public class GoogleService {
     }
 
     /** Uploads a file using either resumable or direct media upload. */
-    private static File uploadFile(boolean useDirectUpload, String url, String title) throws IOException {
+    private static File uploadFile(boolean useDirectUpload, String url, String title) {
 
         InputStream data;
         try {
@@ -179,12 +196,22 @@ public class GoogleService {
 
         InputStreamContent mediaContent = new InputStreamContent("", new BufferedInputStream(data));
 
-        Drive.Files.Insert insert = drive.files().insert(fileMetadata, mediaContent);
+        Drive.Files.Insert insert;
+        try {
+            insert = drive.files().insert(fileMetadata, mediaContent);
+        } catch (IOException e) {
+            throw new RuntimeException("Google Drive file inserting error", e);
+        }
 
         MediaHttpUploader uploader = insert.getMediaHttpUploader();
         uploader.setDirectUploadEnabled(useDirectUpload);
         log.info("Uploading {}...", title);
-        File execute = insert.execute();
+        File execute;
+        try {
+            execute = insert.execute();
+        } catch (IOException e) {
+            throw new RuntimeException("Google Drive insert execution error", e);
+        }
         sharedAccess(execute.getId());
         log.info("Done");
         return execute;

@@ -11,9 +11,11 @@
             <span class="grey">Последние добавленные изображения</span>
             <div class="row">
                 <!--<image-card ng-repeat="img in last" img="img" class="col-md-4"></image-card>-->
-                <div ng-repeat="img in last" ii-ref="img" class="col-md-4 card picture">
-                    <img ng-src="{{img.thumbnail.replace('s220', 'w210-h210-p-k-nu')}}"/>
-                    <div title="{{img.name}}">{{img.name | cut:false:65}}</div>
+                <div ng-repeat="img in last" class="col-xs-6 col-sm-4">
+                    <div ii-ref="img" class="card picture">
+                        <img ng-src="https://drive.google.com/thumbnail?sz=w210-h210-p-k-nu&id={{img.id}}"/>
+                        <div title="{{img.name}}">{{img.name | cut:false:65}}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -27,7 +29,9 @@
         </div>
         <!--<a href="{{doc.download_url}}"  target="_blank" class="btn btn-default">Скачать</a>-->
         <br>
-        <google-doc id="img.id"></google-doc>
+        <img style="width: 100%" ng-show="img.mime_type.indexOf('image') == 0" ng-src="https://drive.google.com/thumbnail?sz=w600&id={{img.id}}"/>
+        <google-doc ng-hide="img.mime_type.indexOf('image') == 0" id="img.id"></google-doc>
+        <br>
         <br>
         <topics owner-uri="img.uri"></topics>
     </div>
