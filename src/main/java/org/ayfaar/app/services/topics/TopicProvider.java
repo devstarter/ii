@@ -67,6 +67,7 @@ public interface TopicProvider {
 
 
     class TopicResources {
+        public List<ResourcePresentation> image = new LinkedList<>();
         public List<ResourcePresentation> video = new LinkedList<>();
         public List<ResourcePresentation> item = new LinkedList<>();
         public List<ResourcePresentation> itemsRange = new LinkedList<>();

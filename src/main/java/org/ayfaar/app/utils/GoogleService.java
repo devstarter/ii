@@ -186,9 +186,8 @@ public class GoogleService {
         try {
             data = new URL(url).openStream();
         } catch (IOException e) {
-            //throw new RuntimeException();
             log.warn("Url {} not accessible",url);
-            return null;
+            throw new RuntimeException("Url not accessible");
         }
 
         File fileMetadata = new File();

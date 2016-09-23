@@ -17,6 +17,9 @@ function KnowledgeBaseController($scope, $state, $api, $q, entityService, auth) 
     });
     $api.document.last(0, 3).then(function (docs) {
         $scope.docs = docs;
+    });
+    $api.picture.last(0, 3).then(function (images) {
+        $scope.images = images;
     })
 }
 

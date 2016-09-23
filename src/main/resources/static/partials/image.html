@@ -29,7 +29,9 @@
         </div>
         <!--<a href="{{doc.download_url}}"  target="_blank" class="btn btn-default">Скачать</a>-->
         <br>
-        <img style="width: 100%" ng-show="img.mime_type.indexOf('image') == 0" ng-src="https://drive.google.com/thumbnail?sz=w600&id={{img.id}}"/>
+        <a href="https://drive.google.com/uc?export=view&id={{img.id}}" target="_blank">
+            <img style="width: 100%" ng-show="img.mime_type.indexOf('image') == 0" ng-src="https://drive.google.com/thumbnail?sz=w600&id={{img.id}}"/>
+        </a>
         <google-doc ng-hide="img.mime_type.indexOf('image') == 0" id="img.id"></google-doc>
         <br>
         <br>

@@ -46,6 +46,17 @@
             </div>
         </div>
     </div>
+    <div ng-show="resources.image.length" class="children">
+        <span class="gray">Прикреплённые иллюстрации и схемы</span>
+        <div class="row">
+            <div ng-repeat="resHolder in resources.image" class="col-xs-6 col-sm-4">
+                <div ii-ref="resHolder.resource" class="card picture">
+                    <img ng-src="https://drive.google.com/thumbnail?sz=w210-h210-p-k-nu&id={{resHolder.resource.id}}"/>
+                    <div title="{{resHolder.resource.name}}">{{resHolder.resource.name | cut:false:65}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div ng-show="resources.document.length" class="children">
         <span class="gray">Прикреплённые документы</span>
         <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addDocResource()" title="Прикрепить документ"></i>

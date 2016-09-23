@@ -179,6 +179,7 @@ class TopicServiceImpl implements TopicService {
                 topics.get(uid.getUri()).registerLink(link, topic);
             }
             linkDao.save(link);
+            linkService.registerNew(link);
             registerLink(link, uid);
             return link;
         }
@@ -277,6 +278,7 @@ class TopicServiceImpl implements TopicService {
         @Override
         public TopicResources resources() {
             final TopicResources resources = new TopicResources();
+            resources.image.addAll(prepareResource(Image.class));
             resources.video.addAll(prepareResource(VideoResource.class));
             resources.item.addAll(prepareItemResource());
             resources.itemsRange.addAll(prepareResource(ItemsRange.class));
@@ -316,7 +318,6 @@ class TopicServiceImpl implements TopicService {
         private void registerLink(Link link, UID uid) {
             //todo: не хранить тут саму сущность UID, а хранить только пё презентацию которая будет выдана в ресурсках
             linksMap.put(uid, link);
-            linkService.register(link);
         }
 
         private class ItemResourcePresentation {

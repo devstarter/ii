@@ -34,6 +34,17 @@
     </div>
     <a class="btn btn-link show-more-link" href="v/">посмотреть все →</a>
 
+    <h3>Прикреплённые иллюстрации и схемы</h3>
+    <div class="row">
+        <div ng-repeat="img in images" class="col-xs-6 col-sm-4">
+            <div ii-ref="img" class="card picture">
+                <img ng-src="https://drive.google.com/thumbnail?sz=w210-h210-p-k-nu&id={{img.id}}"/>
+                <div title="{{img.name}}">{{img.name | cut:false:65}}</div>
+            </div>
+        </div>
+    </div>
+    <a class="btn btn-link show-more-link" href="picture/">посмотреть все →</a>
+
     <h3>Последние добавленные аудио ответы</h3>
     <record-card ng-repeat="record in records" record="record"></record-card>
     <a class="btn btn-link show-more-link" href="r/">посмотреть все →</a>
