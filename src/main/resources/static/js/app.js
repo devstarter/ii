@@ -122,7 +122,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             },
             lookupSelected: function (query, selectedType, selectedLabel) {
                 if (typeof ga !== 'undefined') ga('send', 'event', 'lookup-selected', query + "->" + selectedType + ":" + selectedLabel);
-            },recordPlayed: function (recordCode) {
+            },
+            recordPlayed: function (recordCode) {
                 if (typeof ga !== 'undefined') ga('send', 'event', 'record-played', recordCode);
             },
             registerEmptyTerm: function(termName) {
@@ -562,7 +563,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
              }*/
         };
     })
-    .service('audioPlayer', function($rootScope, ngAudio) {
+    .service('audioPlayer', function($rootScope, ngAudio, statistic) {
         return {
             playOrPause: function (record) {
                 if (record.played) {
@@ -581,6 +582,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 $rootScope.audio.play();
                 record.played = true;
                 $rootScope.currentPlayed = record;
+                statistic.recordPlayed(record.code);
             }
         }
     })
@@ -1398,7 +1400,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             originStateGo.bind($state)("cabinet")
         };
 
-        $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
+        $rootScope.$on('pageLoaded', function(event, toState, toParams, fromState, fromParams){
             statistic.pageview(location.pathname);
         });
         function isTom5(number) {

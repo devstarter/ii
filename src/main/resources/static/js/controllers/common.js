@@ -57,7 +57,7 @@ function RecordController($scope, $stateParams, $api, messager, modal, audioPlay
             $scope.last.append(records);
             $scope.singleMode = records.length == 1;
             $scope.record = $scope.singleMode ? records[0] : null;
-            window.title = $scope.singleMode ? records[0].name : "Аудио ответы"
+            document.title = $scope.singleMode ? records[0].name : "Аудио ответы"
         }, function(response){
             $scope.recordLoading = false;
             messager.error("Ошибка загрузки ответа");
@@ -342,7 +342,7 @@ function ArticleController($scope, $stateParams, $state, $api) {
 }
 
 function CabinetController($scope, $api, $rootScope, auth, modal, $pager) {
-    window.title = "Личный кабинет";
+    document.title = "Личный кабинет";
     var pager = $pager.createGroupedByDate($api.moderation.lastActions, "created_at", 10);
 
     if (!auth.isAuthenticated()) auth.authenticate().then(onAuthenticated);
