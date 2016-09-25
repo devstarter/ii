@@ -189,7 +189,10 @@ function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt
     };
     $rootScope.$watch('audio.paused', function () {
         if ($scope.currentPlayed) $scope.currentPlayed.played = !$rootScope.audio.paused;
-    })
+    });
+    $scope.search = function () {
+       $state.goToTerm($scope.name);
+    }
 }
 function CategoryController($scope, $stateParams, $api, $state) {
 
@@ -278,6 +281,40 @@ function TaggerController($scope, $stateParams, $api) {
             $scope.loading = false;
         });
     };
+}
+function TopicTreeController($scope, $stateParams, $api) {
+    $scope.root = {name: "Классификаторы"};
+    load($scope.root);
+
+    function load(obj) {
+        obj.loading = false;
+        obj.loaded = true;
+        obj.children = [];
+        return $api.topic.get(obj.name, false).then(function (topics) {
+            var wrappers = [];
+            for(var i in topics.children) {
+                if (topics.children.hasOwnProperty(i))
+                    wrappers.push({name: topics.children[i], loading: false, loaded: false, children: []})
+            }
+            obj.loading = false;
+            obj.loaded = true;
+            obj.children = wrappers;
+        });
+    }
+    $scope.load = load;
+    $scope.expand = function (node) {
+        if (node.expanded) {
+            node.expanded = false;
+        } else {
+            if (node.loaded) {
+                node.expanded = true
+            } else {
+                load(node).then(function () {
+                    node.expanded = true;
+                })
+            }
+        }
+    }
 }
 function ResourcesController($scope, $stateParams, $state, Video, errorService, $api, $timeout, $pager) {
     $scope.topics = [];

@@ -8,6 +8,9 @@
 </div>
 <div ng-show="loading"><img src="static/images/ajax-loader.gif"/>Загрузка...</div>
 <div ng-hide="loading">
+    <a class="btn btn-default" ng-click="search()">
+        <i class="icon-search"></i> Искать в тексте Ииссиидиологии
+    </a>
     <div ng-show="parents" class="parents h" style="padding-top: 20px">
         <span class="gray">Входит в:</span>
         <a ng-repeat="parent in parents" topic-ref="parent">{{parent}}{{$last ? '' : ', '}}</a>

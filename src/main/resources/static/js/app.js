@@ -63,6 +63,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 templateUrl: "static/partials/tagger.html",
                 controller: TaggerController
             })
+            .state('topic-tree', {
+                url: "/topic-tree",
+                templateUrl: "static/partials/topic-tree.html",
+                controller: TopicTreeController
+            })
             .state('resource-video', {
                 url: "/resource/video/{id: \.*}",
                 controller: function ($stateParams, $state) {
@@ -1266,9 +1271,23 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         };
     })
-    .directive('loading-indicator', function() {
+    .directive('loadingIndicator', function() {
         return {
             template: '<div><img src="static/images/ajax-loader.gif"/>Загрузка...</div>'
+        }
+    })
+    .directive('topicTreeNode', function() {
+        return {
+            scope: { node: '=', expand: '='},
+            template:
+            '<div style="padding-left: 20px">' +
+                '<div>' +
+                    '<i ng-class="node.expanded ? \'glyphicon-minus-sign\' : \'glyphicon-plus-sign\'" ng-show="!node.loaded || node.children.length" class="glyphicon" ng-click="expand(node)"></i> ' +
+                    '<a href="/t/{{node.name}}" target="_blank">{{node.name}}</a>' +
+                '</div>' +
+                '<loading-indicator ng-show="node.loading"></loading-indicator>' +
+                '<topic-tree-node ng-show="node.expanded" ng-repeat="child in node.children" node="child" expand="expand"></topic-tree-node> ' +
+            '</div>'
         }
     })
     .directive('parents', function(entityService) {
