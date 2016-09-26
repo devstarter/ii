@@ -1282,10 +1282,10 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             template:
             '<div style="padding-left: 20px">' +
                 '<div>' +
-                    '<i ng-class="node.expanded ? \'glyphicon-minus-sign\' : \'glyphicon-plus-sign\'" ng-show="!node.loaded || node.children.length" class="glyphicon" ng-click="expand(node)"></i> ' +
+                    '<img ng-show="node.loading" src="static/images/ajax-loader.gif" style="width: 16px;"/>' +
+                    '<i ng-class="node.expanded ? \'glyphicon-chevron-down\' : \'glyphicon-chevron-right\'" ng-show="!node.loading && (!node.loaded || node.children.length)" class="glyphicon pointer" ng-click="expand(node)"></i> ' +
                     '<a href="/t/{{node.name}}" target="_blank">{{node.name}}</a>' +
                 '</div>' +
-                '<loading-indicator ng-show="node.loading"></loading-indicator>' +
                 '<topic-tree-node ng-show="node.expanded" ng-repeat="child in node.children" node="child" expand="expand"></topic-tree-node> ' +
             '</div>'
         }

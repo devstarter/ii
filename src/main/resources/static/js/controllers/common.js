@@ -287,8 +287,8 @@ function TopicTreeController($scope, $stateParams, $api) {
     load($scope.root);
 
     function load(obj) {
-        obj.loading = false;
-        obj.loaded = true;
+        obj.loading = true;
+        obj.loaded = false;
         obj.children = [];
         return $api.topic.get(obj.name, false).then(function (topics) {
             var wrappers = [];
