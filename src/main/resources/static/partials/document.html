@@ -19,6 +19,7 @@
         <a href="document/">← К списку документов</a>
         <div class="title">
             <h2 class="inline">{{doc.name}}</h2>
+            <i class="btn h glyphicon glyphicon-pencil gray" ng-click="rename(doc)" title="Переименовать ответ"></i>
             <a href="https://drive.google.com/uc?export=view&id={{doc.id}}" target="_blank" class="btn btn-default glyphicon glyphicon-new-window" title="Открыть в отдельном окне"></a>
         </div>
         <!--<a href="{{doc.download_url}}"  target="_blank" class="btn btn-default">Скачать</a>-->
