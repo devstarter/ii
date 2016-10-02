@@ -57,7 +57,7 @@ function RecordController($scope, $stateParams, $api, messager, modal, audioPlay
             $scope.last.append(records);
             $scope.singleMode = records.length == 1;
             $scope.record = $scope.singleMode ? records[0] : null;
-            window.title = $scope.singleMode ? records[0].name : "Аудио ответы"
+            document.title = $scope.singleMode ? records[0].name : "Аудио ответы"
         }, function(response){
             $scope.recordLoading = false;
             messager.error("Ошибка загрузки ответа");
@@ -253,7 +253,10 @@ function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt
     };
     $rootScope.$watch('audio.paused', function () {
         if ($scope.currentPlayed) $scope.currentPlayed.played = !$rootScope.audio.paused;
-    })
+    });
+    $scope.search = function () {
+       $state.goToTerm($scope.name);
+    }
 }
 function CategoryController($scope, $stateParams, $api, $state) {
 
@@ -343,6 +346,40 @@ function TaggerController($scope, $stateParams, $api) {
         });
     };
 }
+function TopicTreeController($scope, $stateParams, $api) {
+    $scope.root = {name: "Классификаторы"};
+    load($scope.root);
+
+    function load(obj) {
+        obj.loading = true;
+        obj.loaded = false;
+        obj.children = [];
+        return $api.topic.get(obj.name, false).then(function (topics) {
+            var wrappers = [];
+            for(var i in topics.children) {
+                if (topics.children.hasOwnProperty(i))
+                    wrappers.push({name: topics.children[i], loading: false, loaded: false, children: []})
+            }
+            obj.loading = false;
+            obj.loaded = true;
+            obj.children = wrappers;
+        });
+    }
+    $scope.load = load;
+    $scope.expand = function (node) {
+        if (node.expanded) {
+            node.expanded = false;
+        } else {
+            if (node.loaded) {
+                node.expanded = true
+            } else {
+                load(node).then(function () {
+                    node.expanded = true;
+                })
+            }
+        }
+    }
+}
 function ResourcesController($scope, $stateParams, $state, Video, errorService, $api, $timeout, $pager) {
     $scope.topics = [];
     $scope.newTopic = {};
@@ -406,7 +443,7 @@ function ArticleController($scope, $stateParams, $state, $api) {
 }
 
 function CabinetController($scope, $api, $rootScope, auth, modal, $pager) {
-    window.title = "Личный кабинет";
+    document.title = "Личный кабинет";
     var pager = $pager.createGroupedByDate($api.moderation.lastActions, "created_at", 10);
 
     if (!auth.isAuthenticated()) auth.authenticate().then(onAuthenticated);
