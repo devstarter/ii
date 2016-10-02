@@ -73,7 +73,6 @@ public class ImageController {
         Image image = commonDao.getOpt(Image.class, "uri", uri).orElseThrow(() -> new RuntimeException("Couldn't rename, image is not defined!"));
         image.setName(title);
         commonDao.save(image);
-
     }
 
     @RequestMapping("{id}/remove")

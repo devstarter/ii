@@ -57,7 +57,7 @@ function RecordController($scope, $stateParams, $api, messager, modal, audioPlay
             $scope.last.append(records);
             $scope.singleMode = records.length == 1;
             $scope.record = $scope.singleMode ? records[0] : null;
-            document.title = $scope.singleMode ? records[0].name : "Аудио ответы"
+            window.title = $scope.singleMode ? records[0].name : "Аудио ответы"
         }, function(response){
             $scope.recordLoading = false;
             messager.error("Ошибка загрузки ответа");
@@ -78,7 +78,17 @@ function DocumentController($scope, $stateParams, $api, messager, $state, modal)
         })
     };
 
-    function load() {
+    $scope.getMore = function () {
+        load(true);
+    };
+
+    function load(next) {
+        $scope.docLoading = true;
+        $scope.singleMode = false;
+        if (!next) {
+            $scope.last = [];
+            $scope.lastNoMore = false;
+        }
         if ($stateParams.id) {
             $scope.docLoading = true;
             $api.document.get($stateParams.id).then(function(doc){
@@ -95,8 +105,16 @@ function DocumentController($scope, $stateParams, $api, messager, $state, modal)
             });
         } else {
             $scope.showUrlInput = true;
-            $api.document.last().then(function (list) {
-                $scope.last = list;
+            $api.document.last(next ? Math.ceil($scope.last.length / 10) : 0).then(function (list) {
+                $scope.docLoading = false;
+                if (!list.length && next) {
+                    $scope.lastNoMore = true;
+                    return
+                }
+                $scope.last.append(list);
+                $scope.singleMode = list.length == 1;
+                $scope.document = $scope.singleMode ? list[0] : null;
+                window.title = $scope.singleMode ? list[0].name : "Документы ответы"
             })
         }
     }
@@ -120,8 +138,18 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
             $api.picture.rename(img.uri, name).then(load);
         })
     };
+
+    $scope.getMore = function () {
+        load(true);
+    };
     
-    function load() {
+    function load(next) {
+        $scope.imgLoading = true;
+        $scope.singleMode = false;
+        if (!next) {
+            $scope.last = [];
+            $scope.lastNoMore = false;
+        }
         if ($stateParams.id) {
             $scope.imgLoading = true;
             $api.picture.get($stateParams.id).then(function(img){
@@ -137,8 +165,16 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
             });
         } else {
             $scope.showUrlInput = true;
-            $api.picture.last().then(function (list) {
-                $scope.last = list;
+            $api.picture.last(next ? Math.ceil($scope.last.length / 10) : 0).then(function (list) {
+                $scope.imgLoading = false;
+                if (!list.length && next) {
+                    $scope.lastNoMore = true;
+                    return
+                }
+                $scope.last.append(list);
+                $scope.singleMode = list.length == 1;
+                $scope.picture = $scope.singleMode ? list[0] : null;
+                window.title = $scope.singleMode ? list[0].name : "Изображение ответы"
             })
         }
     }
@@ -217,10 +253,7 @@ function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt
     };
     $rootScope.$watch('audio.paused', function () {
         if ($scope.currentPlayed) $scope.currentPlayed.played = !$rootScope.audio.paused;
-    });
-    $scope.search = function () {
-       $state.goToTerm($scope.name);
-    }
+    })
 }
 function CategoryController($scope, $stateParams, $api, $state) {
 
@@ -310,40 +343,6 @@ function TaggerController($scope, $stateParams, $api) {
         });
     };
 }
-function TopicTreeController($scope, $stateParams, $api) {
-    $scope.root = {name: "Классификаторы"};
-    load($scope.root);
-
-    function load(obj) {
-        obj.loading = true;
-        obj.loaded = false;
-        obj.children = [];
-        return $api.topic.get(obj.name, false).then(function (topics) {
-            var wrappers = [];
-            for(var i in topics.children) {
-                if (topics.children.hasOwnProperty(i))
-                    wrappers.push({name: topics.children[i], loading: false, loaded: false, children: []})
-            }
-            obj.loading = false;
-            obj.loaded = true;
-            obj.children = wrappers;
-        });
-    }
-    $scope.load = load;
-    $scope.expand = function (node) {
-        if (node.expanded) {
-            node.expanded = false;
-        } else {
-            if (node.loaded) {
-                node.expanded = true
-            } else {
-                load(node).then(function () {
-                    node.expanded = true;
-                })
-            }
-        }
-    }
-}
 function ResourcesController($scope, $stateParams, $state, Video, errorService, $api, $timeout, $pager) {
     $scope.topics = [];
     $scope.newTopic = {};
@@ -407,7 +406,7 @@ function ArticleController($scope, $stateParams, $state, $api) {
 }
 
 function CabinetController($scope, $api, $rootScope, auth, modal, $pager) {
-    document.title = "Личный кабинет";
+    window.title = "Личный кабинет";
     var pager = $pager.createGroupedByDate($api.moderation.lastActions, "created_at", 10);
 
     if (!auth.isAuthenticated()) auth.authenticate().then(onAuthenticated);

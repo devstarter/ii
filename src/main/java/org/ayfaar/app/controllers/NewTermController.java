@@ -25,18 +25,13 @@ public class NewTermController {
 
     @RequestMapping("{termName}/mark")
     public void mark(@PathVariable final String termName) {
-        taskExecutor.submit(new Runnable() {
-            @Override
-            public void run() {
-                taggingUpdater.update(termName);
-            }
-        });
+        taskExecutor.submit(() -> taggingUpdater.update(termName));
     }
 
     @RequestMapping(value = "get-terms-in-text", method = RequestMethod.POST)
     @ResponseBody
     public Object getTerms(@RequestParam String text) {
-        Map<String, Integer> contains = new HashMap<String, Integer>();
+        Map<String, Integer> contains = new HashMap<>();
         text = text.toLowerCase();
 
         for (Map.Entry<String, TermService.TermProvider> entry : termsMap.getAll()) {
@@ -53,12 +48,7 @@ public class NewTermController {
         }
 
         final List<Map.Entry<String, Integer>> sorted = new ArrayList<Map.Entry<String, Integer>>(contains.entrySet());
-        sort(sorted, new Comparator<Map.Entry<String, Integer>>() {
-            @Override
-            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                return o2.getValue().compareTo(o1.getValue());
-            }
-        });
+        sort(sorted, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
         return sorted;
     }
 }

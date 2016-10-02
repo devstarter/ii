@@ -9,6 +9,8 @@ import org.ayfaar.app.model.*;
 import org.ayfaar.app.services.EntityLoader;
 import org.ayfaar.app.services.itemRange.ItemRangeService;
 import org.ayfaar.app.services.links.LinkService;
+import org.ayfaar.app.services.topics.TopicProvider;
+import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -43,6 +45,7 @@ public class TermController {
     @Inject NewSearchController searchController;
     @Inject ItemRangeService itemRangeService;
     @Inject TermsFinder termsFinder;
+    @Inject TopicService topicService;
 
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
@@ -159,11 +162,22 @@ public class TermController {
             quote.put("quote", StringUtils.markWithStrong(text, allAliasesWithAllMorphs));
         }
 
+        Optional<TopicProvider> topicOpt = topicService.get(term.getName());
+        if (!topicOpt.isPresent()) {
+            for (TermService.TermProvider termProvider : termService.get(term.getName()).get().getAliases()) {
+                topicOpt = topicService.get(termProvider.getName());
+                if (topicOpt.isPresent()) {
+                    break;
+                }
+            }
+        }
+
         modelMap.put("code", code);
         modelMap.put("quotes", quotes);
         modelMap.put("related", toPlainObjectWithoutContent(related));
         modelMap.put("aliases", toPlainObjectWithoutContent(aliases));
         modelMap.put("categories", searchController.inCategories(termName));
+        if (topicOpt.isPresent()) modelMap.put("topic", topicOpt.get().name());
 
         return modelMap;
     }

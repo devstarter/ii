@@ -36,7 +36,10 @@
                 <p ng-show="description" ii-bind="description"></p>
             </div>
         </div>
-        <div style="padding-top: 20px"></div>
+        <div style="padding-top: 20px">
+            <a ng-show="topic" class="btn btn-default" topic-ref="topic">Просмотреть ответы и схемы по этой теме</a>
+        </div>
+
         <div class="pointer section" title="Показать" ng-click="showQuotes = !showQuotes" ng-show="quotes.length">
             <i ng-class="showQuotes ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'" class="glyphicon"></i>
             <h3>Избранные цитаты</h3> <span ng-hide="showQuotes" class="gray">показать {{quotes.length}}</span>
