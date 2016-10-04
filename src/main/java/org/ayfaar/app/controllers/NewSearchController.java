@@ -21,10 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.ayfaar.app.utils.TermService.TermProvider;
@@ -118,7 +115,8 @@ public class NewSearchController {
                 .map(paragraphCode -> contentsService.getParagraph(paragraphCode))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .forEach(foundCategoryProviders::add));
+                .sorted(Comparator.comparing(o -> Double.valueOf(o.from())))
+                .forEachOrdered(foundCategoryProviders::add));
 
         List<FoundCategoryPresentation> presentations = new ArrayList<>();
 		for (ContentsService.ContentsProvider p : foundCategoryProviders) {

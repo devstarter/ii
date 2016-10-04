@@ -204,15 +204,6 @@ public class ContentsServiceImpl implements ContentsService {
             }
         }
 
-        final List<Paragraph> foundParagraphs = paragraphs()
-                .filter(p -> pattern.matcher(p.itemsRange.getDescription()).find())
-                .limit(20)
-                .toList();
-
-        foundParagraphs.sort(Comparator.comparing(o -> o.start));
-        foundCategories.addAll(foundParagraphs);
-
-
         return foundCategories;
     }
 
