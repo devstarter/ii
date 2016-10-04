@@ -113,13 +113,12 @@ public class NewSearchController {
         }
         List<ContentsProvider> foundCategoryProviders = contentsService.descriptionContains(searchQueries);
 
-        if (providerOpt.isPresent()) {
-            itemRangeService.getParagraphsByTerm(providerOpt.get().getName())
-                    .map(paragraphCode -> contentsService.getParagraph(paragraphCode))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .forEach(foundCategoryProviders::add);
-        }
+        providerOpt
+                .ifPresent(termProvider -> itemRangeService.getParagraphsByTerm(termProvider.getName())
+                .map(paragraphCode -> contentsService.getParagraph(paragraphCode))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEach(foundCategoryProviders::add));
 
         List<FoundCategoryPresentation> presentations = new ArrayList<>();
 		for (ContentsService.ContentsProvider p : foundCategoryProviders) {

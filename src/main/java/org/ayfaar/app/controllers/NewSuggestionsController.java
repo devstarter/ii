@@ -82,8 +82,8 @@ public class NewSuggestionsController {
                 String key = suggestion.getKey();
                 String value = suggestion.getValue();
                 if(key.contains("ии:пункты:")) {
-                    String suggestionParagraph = contentsUtils.splitToSentence(value, q);
-                    if(suggestionParagraph != "")allSuggestions.put(key, key.substring(10) + ":" + suggestionParagraph);
+                    String suggestionParagraph = ContentsUtils.splitToSentence(value, q);
+                    if(!Objects.equals(suggestionParagraph, ""))allSuggestions.put(key, suggestionParagraph);
                 }
                 else allSuggestions.put(key, value);
             }
