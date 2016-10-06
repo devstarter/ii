@@ -11,5 +11,5 @@ public interface ItemRangeService {
 
     List<ItemsRange> getWithCategories();
 
-    StreamEx<String> getParagraphsByTerm(String term);
+    StreamEx<String> getParagraphsByMainTerm(String term);
 }

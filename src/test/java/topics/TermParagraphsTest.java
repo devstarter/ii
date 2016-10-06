@@ -44,7 +44,7 @@ public class TermParagraphsTest extends IntegrationTest {
 
     @Test
     public void getParagraphsByTerm(){
-        Stream<String> paragraphsByTerm = itemRangeServiceImpl.getParagraphsByTerm("Время");
+        Stream<String> paragraphsByTerm = itemRangeServiceImpl.getParagraphsByMainTerm("Время");
         paragraphsByTerm.forEach(System.out::println);
     }
 }

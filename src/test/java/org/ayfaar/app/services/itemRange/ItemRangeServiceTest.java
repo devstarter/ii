@@ -9,12 +9,11 @@ import java.util.List;
 
 public class ItemRangeServiceTest extends IntegrationTest {
 
-    @Inject
-    private ItemRangeService itemRangeService;
+    @Inject private ItemRangeService itemRangeService;
 
     @Test
     public void test_ЕСИП() {
-        final List<String> paragraphCodes = itemRangeService.getParagraphsByTerm("ЕСИП").toList();
+        final List<String> paragraphCodes = itemRangeService.getParagraphsByMainTerm("Единый Суперуниверсальный Импульс-Потенциал").toList();
 
         Assert.assertTrue(paragraphCodes.contains("1.4.1.9"));
         Assert.assertTrue(paragraphCodes.contains("3.11.2.2"));

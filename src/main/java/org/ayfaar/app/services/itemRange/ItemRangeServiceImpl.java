@@ -50,7 +50,7 @@ public class ItemRangeServiceImpl implements ItemRangeService{
     }
 
     @Override
-    public StreamEx<String> getParagraphsByTerm(String term){
+    public StreamEx<String> getParagraphsByMainTerm(String term){
         return StreamEx.of(allTermParagraph)
                 .filter(t -> t.getTerm().equals(term))
                 .map(TermParagraph::getParagraph)

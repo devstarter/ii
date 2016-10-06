@@ -111,7 +111,7 @@ public class NewSearchController {
         List<ContentsProvider> foundCategoryProviders = contentsService.descriptionContains(searchQueries);
 
         providerOpt
-                .ifPresent(termProvider -> itemRangeService.getParagraphsByTerm(termProvider.getMainTerm().orElse(termProvider).getName())
+                .ifPresent(termProvider -> itemRangeService.getParagraphsByMainTerm(termProvider.getMainTerm().orElse(termProvider).getName())
                 .map(paragraphCode -> contentsService.getParagraph(paragraphCode))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
