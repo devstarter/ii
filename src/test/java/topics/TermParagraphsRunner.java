@@ -14,8 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.Map;
 import java.util.stream.Stream;
 
-@ActiveProfiles("remote")
-public class TermParagraphsTest extends IntegrationTest {
+@ActiveProfiles("dev")
+public class TermParagraphsRunner extends IntegrationTest {
 
     @Autowired
     ItemRangeServiceImpl itemRangeServiceImpl;
@@ -34,15 +34,14 @@ public class TermParagraphsTest extends IntegrationTest {
     }
 
     private void saveTermParagraph(String code, String paragraph){
-
         Map<String, Integer> termsWithFrequency = termsFinder.getTermsWithFrequency(paragraph);
 
-        termsWithFrequency.keySet().parallelStream().map(term ->
-                new TermParagraph(term, code)).forEach(t ->
-                commonDao.save(TermParagraph.class,t));
+        termsWithFrequency.keySet().parallelStream()
+                .map(term -> new TermParagraph(term, code))
+                .forEach(t -> commonDao.save(TermParagraph.class, t));
     }
 
-    @Test
+//    @Test
     public void getParagraphsByTerm(){
         Stream<String> paragraphsByTerm = itemRangeServiceImpl.getParagraphsByMainTerm("Время");
         paragraphsByTerm.forEach(System.out::println);

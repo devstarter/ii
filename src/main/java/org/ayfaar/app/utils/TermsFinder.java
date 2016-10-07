@@ -67,7 +67,8 @@ public class TermsFinder {
                     frequency++;
                 }
 
-                termFrequency.put(mainTerm, termFrequency.containsKey(mainTerm) ? termFrequency.get(mainTerm) + frequency : frequency);
+                if(mainTerm != null)
+                    termFrequency.put(mainTerm, termFrequency.containsKey(mainTerm) ? termFrequency.get(mainTerm) + frequency : frequency);
             }
         }
         return termFrequency;
