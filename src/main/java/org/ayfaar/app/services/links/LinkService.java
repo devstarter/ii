@@ -36,7 +36,7 @@ public class LinkService {
     }*/
 
     @PostConstruct
-    private void init() {
+    protected void init() {
         allLinks = commonDao.getAll(LightLink.class);
     }
     /*
@@ -83,5 +83,9 @@ public class LinkService {
 
     public void registerNew(Link link) {
         allLinks.add(LightLink.fromLink(link));
+    }
+
+    public void reload() {
+        init();
     }
 }

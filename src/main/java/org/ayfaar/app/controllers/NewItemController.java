@@ -3,6 +3,7 @@ package org.ayfaar.app.controllers;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ContentsService;
+import org.ayfaar.app.utils.ContentsService.ParagraphProvider;
 import org.ayfaar.app.utils.TermsMarker;
 import org.ayfaar.app.utils.TermsTaggingUpdater;
 import org.springframework.core.task.AsyncTaskExecutor;
@@ -108,13 +109,21 @@ public class NewItemController {
         }
     }
 
-    private class ParentPresentation {
+    public class ParentPresentation {
+        public String from;
+        public String to;
         public final String name;
         public final String uri;
 
         public ParentPresentation(String name, String uri) {
             this.name = name;
             this.uri = uri;
+        }
+
+        public ParentPresentation(String name, String uri, String from, String to) {
+            this(name, uri);
+            this.from = from;
+            this.to = to;
         }
     }
 
@@ -139,11 +148,11 @@ public class NewItemController {
 
      private List<ParentPresentation> getParents(String number) {
          List<ParentPresentation> parents = new ArrayList<>();
-         Optional<? extends ContentsService.ParagraphProvider> providerOpt = contentsService.getByItemNumber(number);
-         if (providerOpt.isPresent()) {
-             final ContentsService.ParagraphProvider provider = providerOpt.get();
-             parents.add(new ParentPresentation(provider.code(), provider.uri()));
-             parents.addAll(provider.parents().stream()
+         Optional<? extends ParagraphProvider> paragraphOpt = contentsService.getByItemNumber(number);
+         if (paragraphOpt.isPresent()) {
+             final ParagraphProvider paragraph = paragraphOpt.get();
+             parents.add(new ParentPresentation(paragraph.name(), paragraph.uri(), paragraph.from(), paragraph.to()));
+             parents.addAll(paragraph.parents().stream()
                      .map(parent -> new ParentPresentation(parent.extractCategoryName(), parent.uri()))
                      .collect(Collectors.toList()));
          }

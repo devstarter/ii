@@ -89,6 +89,7 @@ public class LinkController {
 
         //emailNotifier.newLink(term, alias, link.getLinkId());
 //        eventPublisher.publishEvent(new NewLinkEvent(term, alias, link));
+        linkService.registerNew(link);
 
         return link.getLinkId();
     }
@@ -130,4 +131,8 @@ public class LinkController {
         linkService.getByUris(uri1, uri2).get().updater().quote(value).commit();
     }
 
+    @RequestMapping("reload")
+    public void reload() {
+        linkService.reload();
+    }
 }

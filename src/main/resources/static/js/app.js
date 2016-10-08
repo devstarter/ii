@@ -536,7 +536,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     case 'video':
                         return "видео";
                     case 'document':
-                        return "документ";
+                        return "статья";
                     case 'picture':
                         return "изображение";
                     case 'record':
@@ -941,7 +941,10 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 if (!obj) return;
                 element.attr('href', getUrl(obj));
                 var label = obj.hasOwnProperty("name") ? obj.name : entityService.getName(obj);
-                obj._label = entityService.getType(obj) == 'paragraph' ? '§' + label : label;
+                if (entityService.getType(obj) == 'paragraph') {
+                    label = obj.from + "-" + obj.to;
+                }
+                obj._label = label;
                 element.bind('click', function() {
                     $state.go(obj)
                 })

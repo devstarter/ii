@@ -37,7 +37,8 @@ public class ContentsHelper {
             return new CategoryPresentation(p.code(), p.uri(),
                     marker.mark(trim(p.name())), p.previousUri(), p.nextUri(),
                     createParentPresentation(p.parents()),
-                    getParagraphSubCategory(getItems(p), 1));
+                    getParagraphSubCategory(getItems(p), 1),
+                    p.from(), p.to());
         } else {
             CategoryProvider c = (CategoryProvider) providerOpt.get();
             return new CategoryPresentation(extractCategoryName(c.code()), c.uri(),
@@ -61,8 +62,9 @@ public class ContentsHelper {
                         createChildrenPresentation(((CategoryProvider) category).children(), count)));
 
             } else if (count < 2) {
+                ParagraphProvider paragraph = (ParagraphProvider) category;
                 childrenPresentations.add(new CategoryPresentation(category.code(),
-                        category.uri(), trim(category.name()), null));
+                        category.uri(), trim(category.name()), paragraph.from(), paragraph.to()));
             }
         }
 

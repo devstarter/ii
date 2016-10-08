@@ -41,7 +41,7 @@ public class ContentsGenerator extends IntegrationTest {
 		String rootCategoryPresentationName;
 		rootCategoryPresentationName = rootCategoryProvider.getParentUri().substring(rootCategoryProvider.getParentUri().indexOf(":")+1)+"."+rootCategoryProvider.extractCategoryName();
 		rootCategoryPresentation =  new CategoryPresentation(rootCategoryPresentationName,
-				rootCategoryProvider.uri(),rootCategoryProvider.description(), categoryPresentationList);
+				rootCategoryProvider.uri(), rootCategoryProvider.description(), categoryPresentationList);
 		// делаем объект категории доступным для шаблона по пути "data"
 		values.put("data", rootCategoryPresentation);
 		// заполняем шаблон данными и получаем результат в виде html с данными
