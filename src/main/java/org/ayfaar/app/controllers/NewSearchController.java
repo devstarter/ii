@@ -102,7 +102,7 @@ public class NewSearchController {
         List<String> searchQueries;
         if (providerOpt.isPresent()) {
             TermProvider provider = providerOpt.get();
-            provider = provider.getMainTerm().orElse(provider);
+            provider = provider.getMainOrThis();
             searchQueries = provider.getAllAliasesAndAbbreviationsWithAllMorphs();
         } else {
             query = query.replace("*", RegExpUtils.w + "+");
@@ -111,7 +111,7 @@ public class NewSearchController {
         List<ContentsProvider> foundCategoryProviders = contentsService.descriptionContains(searchQueries);
 
         providerOpt
-                .ifPresent(termProvider -> itemRangeService.getParagraphsByMainTerm(termProvider.getMainTerm().orElse(termProvider).getName())
+                .ifPresent(termProvider -> itemRangeService.getParagraphsByMainTerm(termProvider.getMainOrThis().getName())
                 .map(paragraphCode -> contentsService.getParagraph(paragraphCode))
                 .filter(Optional::isPresent)
                 .map(Optional::get)

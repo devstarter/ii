@@ -140,8 +140,8 @@ public class TermServiceImpl implements TermService {
             return codes.size() > 0 ? Optional.of(codes.get(0)) : Optional.empty();
         }
 
-        public Optional<TermProvider> getMainTerm() {
-            return Optional.ofNullable(hasMainTerm() ? aliasesMap.get(getValueFromUri(Term.class, mainTermUri).toLowerCase()) : null);
+        public Optional<TermProvider> getMain() {
+            return Optional.ofNullable(hasMain() ? aliasesMap.get(getValueFromUri(Term.class, mainTermUri).toLowerCase()) : null);
         }
 
         public List<String> getMorphs() {
@@ -158,7 +158,7 @@ public class TermServiceImpl implements TermService {
             return links.get(uri) != null ? links.get(uri).getType() : null;
         }
 
-        public boolean hasMainTerm() {
+        public boolean hasMain() {
             return mainTermUri != null;
         }
 
@@ -224,8 +224,8 @@ public class TermServiceImpl implements TermService {
     @Override
     public Optional<TermProvider> getMainOrThis(String name) {
         final Optional<TermProvider> providerOpt = get(name);
-        if (providerOpt.isPresent() && providerOpt.get().getMainTerm().isPresent()) {
-            return providerOpt.get().getMainTerm();
+        if (providerOpt.isPresent() && providerOpt.get().getMain().isPresent()) {
+            return providerOpt.get().getMain();
         }
         return providerOpt;
     }

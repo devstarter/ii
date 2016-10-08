@@ -27,14 +27,17 @@ public interface TermService {
         String getName();
         String getUri();
         boolean hasShortDescription();
-        Optional<TermProvider> getMainTerm();
+        Optional<TermProvider> getMain();
+        default TermProvider getMainOrThis() {
+            return getMain().orElse(this);
+        }
         Term getTerm();
         List<String> getMorphs();
         List<TermProvider> getAliases();
         List<TermProvider> getAbbreviations();
         Optional<TermProvider> getCode();
         LinkType getType();
-        boolean hasMainTerm();
+        boolean hasMain();
         boolean isAbbreviation();
         boolean isAlias();
         boolean isCode();

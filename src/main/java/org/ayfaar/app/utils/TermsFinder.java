@@ -57,9 +57,7 @@ public class TermsFinder {
                 while (offset < result.length() && matcher.find(offset)) {
 
                     final TermService.TermProvider termProvider = entry.getValue();
-                    boolean hasMainTerm = termProvider.hasMainTerm();
-                    final TermService.TermProvider mainTermProvider = hasMainTerm ? termProvider.getMainTerm().get() : null;
-                    mainTerm = hasMainTerm ? mainTermProvider.getName() : termProvider.getName();
+                    mainTerm = termProvider.getMainOrThis().getName();
 
                     content = contentMatcher.replaceAll(" ");// убираем обработанный термин, чтобы не заменить его более мелким
 
