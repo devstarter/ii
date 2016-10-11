@@ -137,7 +137,11 @@ public class ContentsServiceImpl implements ContentsService {
 
         @Override
         public String path() {
-            return parent().isPresent() ? parent().get().path() + " / " + code() : code();
+            return parent().isPresent() ? parent().get().path() + " / " + label() : label();
+        }
+
+        public String label() {
+            return from() + "-" + to();
         }
 
         @Override

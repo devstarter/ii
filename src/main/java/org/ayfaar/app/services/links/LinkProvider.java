@@ -26,7 +26,7 @@ public class LinkProvider {
     }
 
     public String taggedQuote() {
-        return null;
+        return link.getTaggedQuote();
     }
 
     public <T extends UID> Optional<String> get(Class<T> entityClass) {

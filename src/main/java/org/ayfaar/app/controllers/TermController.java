@@ -127,7 +127,7 @@ public class TermController {
                         if (source instanceof Item) {
                             quotes.add(getQuote(p.taggedQuote(), source.getUri()));
                         }
-                        else if (ABBREVIATION.equals(p.type()) || ALIAS.equals(p.type()) || CODE.equals(p.type())) {
+                        else if (ABBREVIATION.equals(p.type()) || ALIAS.equals(p.type())/* || CODE.equals(p.type())*/) {
                             aliases.add(source);
                         }
                         else {
@@ -152,7 +152,7 @@ public class TermController {
                 }
             }*/
         }
-        sort(quotes, (o1, o2) -> ((String) o1.get("uri")).compareTo((String) o2.get("uri")));
+        sort(quotes, Comparator.comparing(o -> ((String) o.get("uri"))));
 
         // mark quotes with strong
         List<String> allAliasesWithAllMorphs = provider.getAllAliasesWithAllMorphs();
