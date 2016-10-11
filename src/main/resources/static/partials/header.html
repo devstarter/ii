@@ -9,7 +9,7 @@
            typeahead-template-url="typeahead-item-template"
            typeahead="item as item.label for item in $getSuggestions($viewValue)"
            typeahead-on-select="expanded = false;$selected($item, $model, $label)"
-           on-enter="expanded = false" />
+           on-enter="expanded = false" autocomplete="off"/>
     <a ng-hide="expanded" class="icon-search" ng-click="expand()" title="Искать"></a>
     <div ng-show="audio" class="player-bar">
         <i class="glyphicon pointer" ng-class="audio.paused ? 'glyphicon-play' : 'glyphicon-pause'" ng-click="audio.paused ? audio.play() : audio.pause()"

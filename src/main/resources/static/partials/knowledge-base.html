@@ -8,7 +8,7 @@
     <div>
         <div class="input-group">
             <input ng-model="query" type="text" class="form-control" placeholder="Введите интересующее вас слово"
-                   ii-lookup
+                   ii-lookup autocomplete="off"
                    typeahead-editable="false"
                    typeahead-template-url="typeahead-item-template"
                    typeahead="item as item.label for item in $getSuggestions($viewValue)"

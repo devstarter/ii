@@ -4,7 +4,7 @@
     <div ng-show="editMode">
         <div class="input-group" style="padding-top: 20px">
             <input ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
-                   ii-lookup
+                   ii-lookup autocomplete="off"
                    typeahead-template-url="typeahead-item-template"
                    typeahead="item as item.label for item in $getSuggestions($viewValue)"
                    typeahead-on-select="$selected($item, $model, $label)">
@@ -241,7 +241,7 @@
     </div>
     <div class="modal-body">
         <input id="search-input" ng-model="term" type="text" class="form-control"
-               ii-lookup
+               ii-lookup autocomplete="off"
                typeahead="suggestion for suggestion in $getSuggestions($viewValue)"/>
         <textarea class="full-width form-control" ng-model="text" style="margin-top: 10px; min-height: 100px"></textarea>
     </div>
