@@ -61,11 +61,13 @@ public class VideoResourcesController {
     public VideoResource add(@RequestParam String url, @AuthenticationPrincipal User user) throws Exception {
         hasLength(url);
         final String videoId = extractVideoIdFromYoutubeUrl(url);
+        String code = youtubeService.getCodeVideoFromYoutube(videoId);
         return commonDao.getOpt(VideoResource.class, "id", videoId).orElseGet(() -> {
             final GoogleService.VideoInfo info = youtubeService.getVideoInfo(videoId);
             final VideoResource video = new VideoResource(videoId, Language.ru);
             video.setTitle(info.title);
             video.setPublishedAt(info.publishedAt);
+            video.setCode(code);
             if (user != null) video.setCreatedBy(user.getId());
             commonDao.save(video);
             moderationService.notice(Action.VIDEO_ADDED, video.getTitle(), video.getUri());

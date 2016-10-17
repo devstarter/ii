@@ -98,6 +98,25 @@ public class GoogleService {
         throw new RuntimeException("Cannot resolve video id");
     }
 
+    public String getCodeVideoFromYoutube(String id){
+        String code = null;
+        final Map response = restTemplate.getForObject("https://www.googleapis.com/youtube/v3/videos?key={API_KEY}&fields=items(snippet(tags))&part=snippet&id={video_id}",
+                Map.class, API_KEY, id);
+        final List<Map> items = (List<Map>) response.get("items");
+
+        if (items.isEmpty()) throw new RuntimeException("Video private or removed");
+        final Map snippet = (Map) items.get(0).get("snippet");
+        List<String> tags = (List)snippet.get("tags");
+        for (String tag : tags) {
+            Matcher matcher = Pattern.compile("\\d{4}-\\d{2}-\\d{2}(_\\d{1,2})?([-_][km])?").matcher(tag);
+            if (matcher.find()) {
+                code = matcher.group(0);
+                log.info("Code for video with id = " + id + ": " + code);
+            }
+        }
+        return code;
+    }
+
     public static String extractDocIdFromUrl(String url) {
         //https://docs.google.com/document/d/1iWY8qI5Qn1V_90VpzfhFDTyAcNgati9u6sTv-A-gWQg/edit?usp=sharing
         //https://drive.google.com/file/d/0BwGttgSD-WcTbTJFbWplN1hwcFU/view?usp=sharing

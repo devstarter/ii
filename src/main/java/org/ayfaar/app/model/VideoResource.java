@@ -25,6 +25,7 @@ public class VideoResource extends UID implements Comparable<VideoResource> {
     @Enumerated(EnumType.STRING)
     private Language lang;
 
+    private String code;
     private Date publishedAt = new Date();
     private Date createdAt = new Date();
     private Integer createdBy;
