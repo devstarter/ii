@@ -1,15 +1,18 @@
 package org.ayfaar.app.utils;
 
 
+import org.ayfaar.app.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GoogleServiceRegExpTest {
+public class GoogleServiceRegExpTest{
 
-    String regexp = "\\d{4}-\\d{2}-\\d{2}(_\\d{1,2})?([-_][km])?";
+    //String regexp = "\\d{4}-\\d{2}-\\d{2}(_\\d{1,2})?([-_][km])?";
+    String regexp = GoogleService.codeVideoPatternRegExp;
 
     @Test
     public void RegExpTest() {
@@ -58,6 +61,13 @@ public class GoogleServiceRegExpTest {
         String query = " ";
         Matcher matcher = Pattern.compile(regexp).matcher(query);
         Assert.assertFalse(matcher.find());
+    }
+
+    @Test
+    public void RegExpTest7() {
+        String query = "2014-10-15_1";
+        Matcher matcher = Pattern.compile(regexp).matcher(query);
+        Assert.assertTrue(matcher.find());
     }
 
 }
