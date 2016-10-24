@@ -38,10 +38,7 @@ import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,6 +58,8 @@ public class GoogleService {
     private final RestTemplate restTemplate;
 
     private final String DocOrImageInfoUrl = "https://www.googleapis.com/drive/v2/files/{id}?key={key}";
+    private final String forGetCodeOfVideoUrl = "https://www.googleapis.com/youtube/v3/videos?key={API_KEY}&fields=items(snippet(tags))&part=snippet&id={video_id}";
+    public static final String codeVideoPatternRegExp = "\\d{4}-\\d{2}-\\d{2}(_\\d{1,2})?([-_][km])?";
 
     @Inject
     public GoogleService(ResourceLoader resourceLoader, RestTemplate restTemplate) {
@@ -96,6 +95,25 @@ public class GoogleService {
             }
         }
         throw new RuntimeException("Cannot resolve video id");
+    }
+
+    public Optional<String> getCodeVideoFromYoutube(String id){
+        String code = null;
+        final Map response = restTemplate.getForObject(forGetCodeOfVideoUrl,Map.class, API_KEY, id);
+        final List<Map> items = (List<Map>) response.get("items");
+
+        if (items.isEmpty()) throw new RuntimeException("Video private or removed");
+        final Map snippet = (Map) items.get(0).get("snippet");
+        List<String> tags = (List)snippet.get("tags");
+        for (String tag : tags) {
+            //"\\d{4}-\\d{2}-\\d{2}(_\\d{1,2})?([-_][km])?"
+            Matcher matcher = Pattern.compile(codeVideoPatternRegExp).matcher(tag);
+            if (matcher.find()) {
+                code = matcher.group(0);
+                log.info("Code for video with id = " + id + ": " + code);
+            }
+        }
+        return Optional.ofNullable(code);
     }
 
     public static String extractDocIdFromUrl(String url) {
