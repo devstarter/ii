@@ -20,10 +20,11 @@
     </div>
     <div ng-show="video">
         <a href="v/">← К списку видео</a>
-        <h2>{{video.title}}</h2>
+        <div class="padding">
+            <h2 class="inline">{{video.title}}</h2>
+            <span class="gray">{{video.code}}</span>
+        </div>
         <youtube code="video.id"></youtube>
-        <br>
-        <span class="gray">{{video.code}}</span>
         <br>
         <topics owner-uri="video.uri"></topics>
     </div>
