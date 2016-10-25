@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers;
 
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang.WordUtils;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
@@ -21,8 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.util.*;
 
-import static java.util.Collections.sort;
-import static org.ayfaar.app.model.LinkType.*;
+import static org.ayfaar.app.model.LinkType.ABBREVIATION;
+import static org.ayfaar.app.model.LinkType.ALIAS;
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -88,7 +89,7 @@ public class TermController {
 
         // LINKS
 
-        List<ModelMap> quotes = new ArrayList<>();
+        List<Quote> quotes = new ArrayList<>();
         linkService.getAllLinksBetween(provider.getUri(), Item.class)
                 .forEach(p -> quotes.add(getQuote(p.taggedQuote(), p.get(Item.class).get())));
 
@@ -125,7 +126,10 @@ public class TermController {
                     .forEach(p -> {
                         final UID source = entityLoader.get(p.not(uid.getUri()));
                         if (source instanceof Item) {
-                            quotes.add(getQuote(p.taggedQuote(), source.getUri()));
+                            final Quote quote = getQuote(p.taggedQuote(), source.getUri());
+                            if (!quotes.stream().anyMatch(q -> Objects.equals(quote.quote, q.quote))) {
+                                quotes.add(quote);
+                            }
                         }
                         else if (ABBREVIATION.equals(p.type()) || ALIAS.equals(p.type())/* || CODE.equals(p.type())*/) {
                             aliases.add(source);
@@ -152,14 +156,14 @@ public class TermController {
                 }
             }*/
         }
-        sort(quotes, Comparator.comparing(o -> ((String) o.get("uri"))));
+        quotes.sort(Comparator.comparing(o -> o.uri));
 
         // mark quotes with strong
         List<String> allAliasesWithAllMorphs = provider.getAllAliasesWithAllMorphs();
-        for (ModelMap quote : quotes) {
-            String text = (String) quote.get("quote");
+        for (Quote quote : quotes) {
+            String text = quote.quote;
             if (text == null || text.isEmpty() || text.contains("strong")) continue;
-            quote.put("quote", StringUtils.markWithStrong(text, allAliasesWithAllMorphs));
+            quote.quote = StringUtils.markWithStrong(text, allAliasesWithAllMorphs);
         }
 
         Optional<TopicProvider> topicOpt = topicService.get(term.getName());
@@ -177,7 +181,7 @@ public class TermController {
         modelMap.put("related", toPlainObjectWithoutContent(related));
         modelMap.put("aliases", toPlainObjectWithoutContent(aliases));
         modelMap.put("categories", searchController.inCategories(termName));
-        if (topicOpt.isPresent()) modelMap.put("topic", topicOpt.get().name());
+        topicOpt.ifPresent(topicProvider -> modelMap.put("topic", topicProvider.name()));
 
         return modelMap;
     }
@@ -197,14 +201,17 @@ public class TermController {
         return map;
     }
 
-    private ModelMap getQuote(String taggedQuote, String itemUri) {
-        ModelMap map = new ModelMap();
+    private Quote getQuote(String taggedQuote, String itemUri) {
         if (isEmpty(taggedQuote)) {
             taggedQuote = entityLoader.<Item>get(itemUri).getTaggedContent();
         }
-        map.put("quote", taggedQuote);
-        map.put("uri", itemUri);
-        return map;
+        return new Quote(taggedQuote, itemUri);
+    }
+
+    @AllArgsConstructor
+    class Quote {
+        public String quote;
+        public String uri;
     }
 
     @RequestMapping("related")
