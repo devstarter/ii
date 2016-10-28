@@ -165,6 +165,11 @@ public class TopicController {
         }
     }
 
+    @RequestMapping("suggest")
+    public Collection<String> suggest(@RequestParam String q) {
+        return suggestionsController.suggestions(q, false, true, false, false, false, false, false, false, false, false).values();
+    }
+
     @RequestMapping("add-child")
     @Moderated(value = Action.TOPIC_ADD_CHILD, command = "@topicController.addChild")
     public void addChild(@RequestParam String child, @RequestParam String name) {
