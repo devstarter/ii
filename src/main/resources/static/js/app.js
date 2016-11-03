@@ -368,6 +368,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 add: function (url) {
                     return api.authPost("image", {url: url})
                 },
+                updateComment: function (forUri, comment) {
+                    return api.authPost("image/update-comment", {uri: forUri, comment: comment})
+                },
                 last: function (page, size) {
                     var data = {page: page ? page : 0};
                     if (size) data.size = size;

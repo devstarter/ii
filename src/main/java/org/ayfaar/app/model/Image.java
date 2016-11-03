@@ -27,6 +27,7 @@ public class Image extends UID {
     private String downloadUrl;
     private String thumbnail;
     private Date createdAt = new Date();
+    private String comment;
 
     @Builder
     public Image(String id, String name, String mimeType, String downloadUrl, String thumbnail) {

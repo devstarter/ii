@@ -36,6 +36,20 @@
         </a>
         <google-doc ng-hide="img.mime_type.indexOf('image') == 0" id="img.id"></google-doc>
         <br>
+        <div ng-hide="showAddImgComment" class="topic-comment medium">{{img.comment}}
+            <i ng-click="updateComment(img)" class="btn glyphicon glyphicon-pencil" title="Редактировать коментарий"></i>
+        </div>
+        <div ng-show = "commentIsEmpty">
+            <a class="btn btn-link gray" ng-hide="showAddImgComment" ng-click="showAddImgComment = !showAddImgComment">
+                <i class="glyphicon glyphicon-comment"></i>
+                добавить коментарий</a>
+            <div ng-show="showAddImgComment">
+                Коментарий
+                <textarea ng-model="img.comment" rows="3" class="full-width form-control" ></textarea>
+                <a class="btn btn-primary" ng-click="addComment(img)" style="margin-top: 15px;">Добавить коментарий</a>
+                <a class="btn btn-link gray middle" ng-click="showAddImgComment = false">скрыть</a>
+            </div>
+        </div>
         <br>
         <topics owner-uri="img.uri"></topics>
     </div>

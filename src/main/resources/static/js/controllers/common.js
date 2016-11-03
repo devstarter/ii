@@ -146,6 +146,7 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
     function load(next) {
         $scope.imgLoading = true;
         $scope.singleMode = false;
+        $scope.commentIsEmpty = true;
         if (!next) {
             $scope.last = [];
             $scope.lastNoMore = false;
@@ -154,6 +155,9 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
             $scope.imgLoading = true;
             $api.picture.get($stateParams.id).then(function(img){
                 $scope.imgLoading = false;
+
+                if(img.comment)$scope.commentIsEmpty = false;
+                
                 if (img.id) {
                     $scope.img = img;
                 } else {
@@ -184,6 +188,18 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
         $api.picture.add($scope.url).then(function(img){
             $state.goToImg(img);
         });
+    };
+    $scope.addComment = function (img) {
+        $scope.showAddImgComment = false;
+        $scope.commentIsEmpty = !img.comment;
+        $api.picture.updateComment(img.uri, img.comment).then(load);
+    };
+
+    $scope.updateComment = function (img) {
+        modal.prompt("Редактирование комментария", img.comment, "Изменить").then(function (comment) {
+            $api.picture.updateComment(img.uri, comment).then(load);
+        })
+
     };
     $scope.last = [];
 

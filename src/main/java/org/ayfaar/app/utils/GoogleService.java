@@ -97,6 +97,7 @@ public class GoogleService {
         throw new RuntimeException("Cannot resolve video id");
     }
 
+    @SuppressWarnings("unchecked")
     public Optional<String> getCodeVideoFromYoutube(String id){
         String code = null;
         final Map response = restTemplate.getForObject(forGetCodeOfVideoUrl,Map.class, API_KEY, id);
