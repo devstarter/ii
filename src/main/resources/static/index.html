@@ -76,9 +76,9 @@
            ng-click="playOrPause(record)"></i>
         <a ii-ref="record">{{record.name}} <span class="pointer gray">{{record.code}}</span></a>
         <div>
-                <span style="padding-left: 10px; font-size: 14px" class="gray" ng-repeat="topic in record.topics">
-                    <a topic-ref="topic">{{topic}}</a>{{$last ? "" : ", "}}
-                </span>
+            <span style="padding-left: 10px; font-size: 14px" class="gray" ng-repeat="topic in record.topics">
+                <a topic-ref="topic">{{topic}}</a>{{$last ? "" : ", "}}
+            </span>
             <i ng-click="addTopic(record)" class="pointer glyphicon glyphicon-plus-sign h" ng-show="record.topics.length" title="Добавить тему ответа"></i>
             <a ng-click="addTopic(record)" class="btn btn-link nopadding h" ng-hide="record.topics.length">Указать тему ответа</a>
         </div>

@@ -304,14 +304,17 @@ class TopicServiceImpl implements TopicService {
             return list;
         }
 
-        private <T> List<ResourcePresentation<T>> prepareResource(Class<T> resourceClass) {
+        private <T extends HasUri> List<ResourcePresentation<T>> prepareResource(Class<T> resourceClass) {
             List<ResourcePresentation<T>> list = new LinkedList<>();
             //noinspection unchecked
             linksMap.entrySet().stream()
                     .filter(e -> e.getKey().getClass().isAssignableFrom(resourceClass))
                     .map(e -> new ResourcePresentation(e.getKey(), e.getValue()))
                     .sorted()
-                    .forEachOrdered(list::add);
+                    .forEachOrdered(r -> {
+                        r.topics = getAllTopicsLinkedWith(r.resource.getUri()).map(TopicProvider::name).toList();
+                        list.add(r);
+                    });
             return list;
         }
 
@@ -320,13 +323,18 @@ class TopicServiceImpl implements TopicService {
             linksMap.put(uid, link);
         }
 
-        private class ItemResourcePresentation {
+        private class ItemResourcePresentation implements HasUri {
             public final String number;
             public final String uri;
 
             private ItemResourcePresentation(Item item) {
                 number = item.getNumber();
                 uri = item.getUri();
+            }
+
+            @Override
+            public String getUri() {
+                return uri;
             }
         }
     }

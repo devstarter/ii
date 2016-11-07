@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity
 //@Audited
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class UID {
+public abstract class UID implements HasUri {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "UriGenerator")

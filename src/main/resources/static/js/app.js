@@ -1322,9 +1322,17 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
     })
     .directive("recordCard", function ($rootScope, $topicPrompt, $api, ngAudio, $parse, audioPlayer) {
         return {
-            scope: { record: '='},
+            scope: { record: '=', excludeTopic: '='},
             templateUrl: "record-card",
             link: function(scope, element, attrs) {
+                if (scope.record.hasOwnProperty('resource')) {
+                    var topics = [];
+                    angular.forEach(scope.record.topics, function(topic) {
+                        if (topic != scope.excludeTopic) topics.push(topic);
+                    });
+                    scope.record = scope.record.resource;
+                    scope.record.topics = topics;
+                }
                 scope.playOrPause = function(record) {
                     audioPlayer.playOrPause(record);
                     document.title = record.name;

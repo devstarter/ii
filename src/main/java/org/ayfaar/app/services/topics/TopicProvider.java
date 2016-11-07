@@ -1,10 +1,7 @@
 package org.ayfaar.app.services.topics;
 
 import lombok.Builder;
-import org.ayfaar.app.model.Link;
-import org.ayfaar.app.model.LinkType;
-import org.ayfaar.app.model.Topic;
-import org.ayfaar.app.model.UID;
+import org.ayfaar.app.model.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -65,7 +62,6 @@ public interface TopicProvider {
 
     Optional<? extends TopicProvider> getChild(String child);
 
-
     class TopicResources {
         public List<ResourcePresentation> image = new LinkedList<>();
         public List<ResourcePresentation> video = new LinkedList<>();
@@ -75,11 +71,12 @@ public interface TopicProvider {
         public List<ResourcePresentation> record = new LinkedList<>();
     }
 
-    class ResourcePresentation<T> implements Comparable<ResourcePresentation<T>> {
+    class ResourcePresentation<T extends HasUri> implements Comparable<ResourcePresentation<T>> {
         public String quote;
         public String comment;
         public Float rate;
         public T resource;
+        public List<String> topics;
 
         ResourcePresentation(T uid, Link link) {
             quote = link.getQuote();
