@@ -3,12 +3,14 @@ package org.ayfaar.app.services.images;
 import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Image;
+import org.ayfaar.app.model.UID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,6 +45,16 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Map<String, String> getAllUriNames(){
-        return  allImages.stream().collect(Collectors.toMap(image -> image.getUri(), image -> image.getName()));
+        return  allImages.stream().collect(Collectors.toMap(UID::getUri, Image::getName));
+    }
+
+    @Override
+    public void registerImage(Image image) {
+        allImages.add(image);
+    }
+
+    @Override
+    public void removeImage(Image image) {
+        allImages.removeIf(i -> Objects.equals(i.getId(), image.getId()));
     }
 }

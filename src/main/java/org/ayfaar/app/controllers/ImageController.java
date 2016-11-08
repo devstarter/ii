@@ -50,7 +50,9 @@ public class ImageController {
                             .mimeType(imageInfo.mimeType)
                             .thumbnail(imageInfo.thumbnailLink)
                             .build();
-                    return commonDao.save(image);
+                     commonDao.save(image);
+                     imageService.registerImage(image);
+                     return image;
                 });
     }
 
@@ -80,6 +82,7 @@ public class ImageController {
     @RequestMapping("{id}/remove")
     public void remove(@PathVariable String id) {
         commonDao.getOpt(Image.class, "id", id).ifPresent(image -> {
+            imageService.removeImage(image);
             commonDao.remove(image);
         });
     }

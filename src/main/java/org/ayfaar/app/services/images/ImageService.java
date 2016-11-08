@@ -12,4 +12,8 @@ public interface ImageService {
     List<Image> getAllImages();
 
     Map<String, String> getAllUriNames();
+
+    void registerImage(Image image);
+
+    void removeImage(Image image);
 }
