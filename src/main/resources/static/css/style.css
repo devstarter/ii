@@ -1,3 +1,8 @@
+.lightblue {color: #3e9ccc}
+/*record-card {
+    display: block;
+    padding-bottom: 20px;
+}*/
 .player-progress-bar {
     display: table-cell;
     width: 550px !important;

@@ -442,6 +442,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
         var service = {
             getName: function (uriOrObject) {
                 var uri, object;
+                uriOrObject = uriOrObject.hasOwnProperty("resource") ? uriOrObject.resource : uriOrObject;
                 if (uriOrObject.hasOwnProperty("uri")) {
                     object = uriOrObject;
                     uri = object.uri;
@@ -475,6 +476,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 }
             },
             getType: function(uri) {
+                uri = uri.hasOwnProperty("resource") ? uri.resource : uri;
                 uri = uri.hasOwnProperty("uri") ? uri.uri : uri;
                 if (uri.indexOf("тема:") === 0) {
                     return 'topic'
@@ -1330,8 +1332,10 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     angular.forEach(scope.record.topics, function(topic) {
                         if (topic != scope.excludeTopic) topics.push(topic);
                     });
+                    var uri = scope.record.resource.uri;
                     scope.record = scope.record.resource;
                     scope.record.topics = topics;
+                    scope.record.uri = uri;
                 }
                 scope.playOrPause = function(record) {
                     audioPlayer.playOrPause(record);
@@ -1480,21 +1484,22 @@ function copyObjectTo(from, to) {
     }
 }
 function getUrl(uri) {
-    var url = uri.hasOwnProperty("uri") ? uri.uri : uri;
-    if (url.indexOf("тема:") == 0) {
-        return "t/" + encodeURIComponent(url.replace("тема:", ""))
+    uri = uri.hasOwnProperty("resource") ? uri.resource : uri;
+    uri = uri.hasOwnProperty("uri") ? uri.uri : uri;
+    if (uri.indexOf("тема:") == 0) {
+        return "t/" + encodeURIComponent(uri.replace("тема:", ""))
     }
-    url = url.replace("статья:", "a/");
-    url = url.replace("категория:параграф:", "");
-    url = url.replace("категория:", "c/");
-    url = url.replace("ии:термин:", "");
-    url = url.replace("ии:пункт:", "");
-    url = url.replace("ии:пункты:", "");
-    url = url.replace("видео:youtube:", "v/");
-    url = url.replace("документ:google:", "document/");
-    url = url.replace("изображение:", "picture/");
-    url = url.replace("запись:", "r/");
-    return url;
+    uri = uri.replace("статья:", "a/");
+    uri = uri.replace("категория:параграф:", "");
+    uri = uri.replace("категория:", "c/");
+    uri = uri.replace("ии:термин:", "");
+    uri = uri.replace("ии:пункт:", "");
+    uri = uri.replace("ии:пункты:", "");
+    uri = uri.replace("видео:youtube:", "v/");
+    uri = uri.replace("документ:google:", "document/");
+    uri = uri.replace("изображение:", "picture/");
+    uri = uri.replace("запись:", "r/");
+    return uri;
 }
 
 function isItemNumber(s) {

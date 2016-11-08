@@ -1,6 +1,6 @@
 <div style="padding-top: 20px">
     <div ng-show="recordLoading"><img src="static/images/ajax-loader.gif"/>Загрузка...</div>
-    <div style="padding-top: 20px" ng-hide="recordLoading">
+    <div style="padding-top: 20px" ng-hide="recordLoading && !last.length">
         <div ng-show="singleMode">
             <a href="r/">← Показать все ответы</a>
             <div class="header top-gap">
