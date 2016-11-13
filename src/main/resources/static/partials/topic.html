@@ -2,8 +2,8 @@
     <div class="gray">Ключевое слово:</div>
     <h1 class="inline" style="padding-bottom: 20px">{{name}}</h1>
     <br>
-    <a ng-hide="loading || parents" class="h btn btn-default" ng-click="addParent()">Добавить родительское кл. слово</a>
-    <a ng-hide="loading || children" class="h btn btn-default" ng-click="addChild()">Добавить дочернее кл. слово</a>
+    <a ng-hide="loading" class="h btn btn-default" ng-click="addParent()">Добавить родительское кл. слово</a>
+    <a ng-hide="loading" class="h btn btn-default" ng-click="addChild()">Добавить дочернее кл. слово</a>
     <a class="h btn btn-link" ng-click="merge()">Объединить с другим кл. словом</a>
 </div>
 <div ng-show="loading"><img src="static/images/ajax-loader.gif"/>Загрузка...</div>

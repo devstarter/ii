@@ -10,7 +10,7 @@ public enum Action {
     TOPIC (ROLE_EDITOR),
     TOPIC_CREATE        ("Создание ключевого слова <topic>{}</topic>", TOPIC, ROLE_ADMIN),
     TOPIC_ADD_CHILD     ("Создание дочернего ключевого слова <topic>{}</topic> для <topic>{}</topic>", TOPIC, ROLE_ADMIN),
-    TOPIC_LINK_RESOURCE ("Добавление ресурса <uri>{}</uri> к ключевому слову <topic>{}</topic>", TOPIC),
+    TOPIC_LINK_RESOURCE ("Добавление <uri>{}</uri> к ключевому слову <topic>{}</topic>", TOPIC),
     TOPIC_LINK_RANGE    ("Добавление диапалоза с {} по {} к ключевому слову <topic>{}</topic>", TOPIC),
     TOPIC_RESOURCE_LINK_COMMENT_UPDATE("Обновление комментария в связке между <uri>{}</uri> и ключевым словом <topic>{}</topic>, новый коментарий: `{}` предложен", TOPIC),
     TOPIC_RESOURCE_LINK_RATE_UPDATE("Обновление весового коэфициента в связке между <uri>{}</uri> и ключевым словом <topic>{}</topic>, новые значение: {} предложено", TOPIC),
