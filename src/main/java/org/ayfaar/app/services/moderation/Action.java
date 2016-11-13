@@ -25,6 +25,7 @@ public enum Action {
     TOPIC_RESOURCE_UNLINKED("От ключевого слова <topic>{}</topic> откреплён <uri>{}</uri>"),
     TOPIC_CHILD_ADDED("Ключевому слову <topic>{}</topic> добавлено дочернее ключевое слово <topic>{}</topic>"),
     TOPIC_TOPIC_UNLINKED("От ключевого слова <topic>{}</topic> откреплено ключевоое слово <topic>{}</topic>"),
+    TOPIC_UNLINK_TOPIC("Открепление от ключевого слова <topic>{}</topic> дочернего <topic>{}</topic>", ROLE_ADMIN),
     TOPIC_UNLINK_RESOURCE("Отмена связи между <uri>{}</uri> и ключевым словом <uri>{}</uri>", TOPIC),
     TOPIC_MERGE("Объединение ключевого слова <topic>{}</topic> в ключевое слово <topic>{}</topic>", ROLE_ADMIN),
     TOPIC_MERGED("Ключевое слово `{}` объединена с <topic>{}</topic>"),

@@ -187,9 +187,10 @@ public class TopicController {
     }
 
     @RequestMapping(value = "unlink", method = POST)
+    @Moderated(value = Action.TOPIC_UNLINK_TOPIC, command = "@topicController.unlink")
     public void unlink(@RequestParam String name, @RequestParam String linked) {
         final TopicProvider unlinked = topicService.getByName(name).unlink(linked);
-        if (unlinked != null) moderationService.notice(Action.TOPIC_TOPIC_UNLINKED);
+        if (unlinked != null) moderationService.notice(Action.TOPIC_TOPIC_UNLINKED, name, linked);
     }
 
     @RequestMapping("merge")
