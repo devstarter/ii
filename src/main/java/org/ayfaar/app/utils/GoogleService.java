@@ -59,7 +59,7 @@ public class GoogleService {
 
     private final String DocOrImageInfoUrl = "https://www.googleapis.com/drive/v2/files/{id}?key={key}";
     private final String forGetCodeOfVideoUrl = "https://www.googleapis.com/youtube/v3/videos?key={API_KEY}&fields=items(snippet(tags))&part=snippet&id={video_id}";
-    public static final String codeVideoPatternRegExp = "\\d{4}-\\d{2}-\\d{2}(_\\d{1,2})?([-_][km])?";
+    public static final String codeVideoPatternRegExp = "^\\d{4}-\\d{2}-\\d{2}(_\\d{1,2})?([a-z])?([-_][km])?$";
 
     @Inject
     public GoogleService(ResourceLoader resourceLoader, RestTemplate restTemplate) {
