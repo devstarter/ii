@@ -386,10 +386,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     if (size) data.size = size;
                     return api.get("record", data)
                 },
-                get: function (page, nameOrCode, year, withUrl) {
+                get: function (page, nameOrCode, year, kind, withUrl) {
                     var data = {page: page ? page : 0};
                     if (nameOrCode) data.nameOrCode = nameOrCode;
                     if (year) data.year = year;
+                    if (kind) data.kind = kind;
                     if (withUrl) data.with_url = withUrl;
                     return api.get("record", data)
                 }

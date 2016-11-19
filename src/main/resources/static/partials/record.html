@@ -29,7 +29,13 @@
                     <option>2010</option>
                 </select>
 
-                <input placeholder="Название или код содержит"  class="form-control" ng-model="nameFilter" style="display: inline;width: 300px;"/><a ng-click="update()" class="btn btn-default">Обновить</a>
+                <select class="form-control inline" ng-model="kindFilter" style="width: 100px" ng-change="update()" placeholder="Тип">
+                    <option></option>
+                    <option value="k">Коллокувиумы</option>
+                    <option value="b">Беседы</option>
+                </select>
+                <input placeholder="Название или код содержит"  class="form-control" ng-model="nameFilter" style="display: inline;width: 300px;"/>
+                <a ng-click="update()" class="btn btn-default">Обновить</a>
             </div>
             <record-card ng-repeat="record in last" record="record" change="update"></record-card>
             <a ng-click="getMore()" ng-hide="lastNoMore" class="btn btn-link" ng-class="recordLoading ? 'disabled' : ''">{{recordLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>

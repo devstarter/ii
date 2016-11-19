@@ -41,13 +41,14 @@ public class RecordController {
     @RequestMapping()
     public List<Map<String, Object>> get(@RequestParam(required = false) String nameOrCode,
                                          @RequestParam(required = false) String year,
+                                         @RequestParam(required = false) Record.Kind kind,
                                          @RequestParam(required = false) Boolean with_url,
                                          @AuthenticationPrincipal User currentUser,
                                          @PageableDefault(sort = "recorderAt", direction = DESC, size = 30) Pageable pageable) {
         with_url = with_url != null
                 ? with_url
                 : currentUser == null || !currentUser.getRole().accept(UserRole.ROLE_EDITOR);
-        List<Record> records = recordDao.get(nameOrCode, year, with_url, pageable);
+        List<Record> records = recordDao.get(nameOrCode, year, kind, with_url, pageable);
         return records.stream().map(this::getRecordsInfo).collect(Collectors.toList());
     }
 
@@ -77,4 +78,5 @@ public class RecordController {
         recordDao.save(record);
         moderationService.notice(Action.RECORD_RENAMED, record.getUri(), record.getPreviousName(), record.getName());
     }
+
 }

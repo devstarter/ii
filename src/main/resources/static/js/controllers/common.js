@@ -48,7 +48,7 @@ function RecordController($scope, $stateParams, $api, messager, modal, audioPlay
             $scope.last = [];
             $scope.lastNoMore = false;
         }
-        $api.record.get(next ? Math.ceil($scope.last.length / 10) : 0, $scope.nameFilter, $scope.yearFilter).then(function (records) {
+        $api.record.get(next ? Math.ceil($scope.last.length / 10) : 0, $scope.nameFilter, $scope.yearFilter, $scope.kindFilter).then(function (records) {
             $scope.recordLoading = false;
             if (!records.length && next) {
                 $scope.lastNoMore = true;

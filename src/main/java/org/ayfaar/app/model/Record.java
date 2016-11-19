@@ -33,4 +33,9 @@ public class Record extends UID{
     public String toTitle() {
         return name;
     }
+
+    public enum Kind {
+        k, // коллоквиум
+        b  // беседа
+    }
 }
