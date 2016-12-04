@@ -1,11 +1,14 @@
 package org.ayfaar.app;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ImportResource;
@@ -24,5 +27,10 @@ public class Application {
     public static void main(String[] args) {
         final ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
         log.info("Open in browser: " + context.getEnvironment().getProperty("this-url"));
+    }
+
+    @Bean
+    public Mapper dozerBeanMapper() {
+        return new DozerBeanMapper();
     }
 }

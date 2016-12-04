@@ -16,4 +16,8 @@ public interface ImageService {
     void registerImage(Image image);
 
     void removeImage(Image image);
+
+    Map<String, String> getImagesKeywords();
+
+    Image getByUri(String uri);
 }

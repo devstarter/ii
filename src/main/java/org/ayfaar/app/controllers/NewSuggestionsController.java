@@ -12,6 +12,7 @@ import org.ayfaar.app.services.record.RecordService;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.services.videoResource.VideoResourceService;
 import org.ayfaar.app.utils.ContentsService;
+import org.ayfaar.app.utils.SearchSuggestions;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.ayfaar.app.utils.contents.ContentsUtils;
@@ -45,6 +46,7 @@ public class NewSuggestionsController {
     @Inject ItemService itemService;
     @Inject ContentsUtils contentsUtils;
     @Inject ImageService imageService;
+    @Inject SearchSuggestions searchSuggestions;
 
     private List<String> escapeChars = Arrays.asList("(", ")", "[", "]", "{", "}");
     private static final int MAX_SUGGESTIONS = 5;
@@ -81,30 +83,11 @@ public class NewSuggestionsController {
         if (with_item) items.add(Suggestions.ITEM);
         if (with_images) items.add(Suggestions.IMAGES);
         for (Suggestions item : items) {
-            Queue<String> queriesQueue = getQueue(q);
-            for (Map.Entry<String, String> suggestion : getSuggestions(queriesQueue, item)) {
-                String key = suggestion.getKey();
-                String value = suggestion.getValue();
-                if(key.contains("ии:пункты:")) {
-                    String suggestionParagraph = ContentsUtils.splitToSentence(value, q);
-                    if(!Objects.equals(suggestionParagraph, ""))allSuggestions.put(key, suggestionParagraph);
-                }
-                else allSuggestions.put(key, value);
-            }
+            Queue<String> queriesQueue = searchSuggestions.getQueue(q);
+            List<Map.Entry<String, String>> suggestions = getSuggestions(queriesQueue, item);
+            allSuggestions.putAll(searchSuggestions.getAllSuggestions(q,suggestions));
         }
         return allSuggestions;
-    }
-
-    private Queue<String> getQueue(String q) {
-        q = q.replace("*", ".*");
-        q = q.replaceAll("\\s+", ".*");
-        q = escapeRegexp(q);
-        q = addDuplications(q);
-        return new LinkedList<>(asList(
-                "^" + q,
-                "[\\s\\-]" + q,
-                q
-        ));
     }
 
     private List<Map.Entry<String, String>> getSuggestions(Queue<String> queriesQueue, Suggestions item) {
@@ -118,7 +101,7 @@ public class NewSuggestionsController {
             switch (item) {
                 case TERM:
                     Collection<TermDao.TermInfo> allInfoTerms = termService.getAllInfoTerms();
-                    final List<TermDao.TermInfo> suggested = getSuggested(queriesQueue.poll(), suggestions, allInfoTerms, TermDao.TermInfo::getName);
+                    final List<TermDao.TermInfo> suggested = searchSuggestions.getSuggested(queriesQueue.poll(), suggestions, allInfoTerms, TermDao.TermInfo::getName);
                     founded = StreamEx.of(suggested)
                             .map((i) -> new ImmutablePair<>(UriGenerator.generate(Term.class, i.getName()), i.getName()))
                             .toList();
@@ -152,39 +135,12 @@ public class NewSuggestionsController {
                     break;
             }
             if (item != Suggestions.TERM)
-                founded = getSuggested(queriesQueue.poll(), suggestions, mapUriWithNames.entrySet(), Map.Entry::getValue);
+                founded = searchSuggestions.getSuggested(queriesQueue.poll(), suggestions, mapUriWithNames.entrySet(), Map.Entry::getValue);
 
             suggestions.addAll(founded.subList(0, min(MAX_SUGGESTIONS - suggestions.size(), founded.size())));
         }
 
         Collections.sort(suggestions, (e1, e2) -> Integer.valueOf(e1.getValue().length()).compareTo(e2.getValue().length()));
         return suggestions;
-    }
-
-    protected static String addDuplications(String q) {
-        return q.replaceAll("([A-Za-zА-Яа-яЁё])", "$1+-*$1*");
-    }
-
-    private <T> List<T> getSuggested(String query, List<Map.Entry<String, String>> suggestions, Collection<T> uriWithNames, Function<T, String> nameProvider) {
-        List<T> list = new ArrayList<>();
-        Pattern pattern = Pattern.compile(query, CASE_INSENSITIVE + UNICODE_CASE);
-        for (T entry : uriWithNames) {
-            String name = nameProvider.apply(entry);
-            Matcher matcher = pattern.matcher(name);
-            if (matcher.find() && !suggestions.contains(name) && !list.contains(name)) {
-                list.add(entry);
-            }
-        }
-        Collections.reverse(list);
-        return list;
-    }
-
-    private String escapeRegexp(String query) {
-        for (String bracket : escapeChars) {
-            if (query.contains(bracket)) {
-                query = query.replace(bracket, "\\" + bracket);
-            }
-        }
-        return query;
     }
 }

@@ -1,9 +1,11 @@
 package org.ayfaar.app.services.images;
 
 import lombok.extern.slf4j.Slf4j;
+import one.util.streamex.StreamEx;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Image;
 import org.ayfaar.app.model.UID;
+import org.ayfaar.app.services.topics.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,11 +19,13 @@ import java.util.stream.Collectors;
 @Component
 public class ImageServiceImpl implements ImageService {
     private final CommonDao commonDao;
+    private final TopicService topicService;
     private List<Image> allImages;
 
     @Autowired
-    public ImageServiceImpl(CommonDao commonDao) {
+    public ImageServiceImpl(CommonDao commonDao, TopicService topicService) {
         this.commonDao = commonDao;
+        this.topicService = topicService;
     }
 
     @PostConstruct
@@ -56,5 +60,17 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public void removeImage(Image image) {
         allImages.removeIf(i -> Objects.equals(i.getId(), image.getId()));
+    }
+
+    @Override
+    public Map<String, String> getImagesKeywords(){
+        return StreamEx.of(allImages).toMap(UID::getUri, image -> topicService.getAllTopicsLinkedWith(image.getUri())
+                .map(tp -> tp.topic().getName())
+                .joining(", "));
+    }
+
+    @Override
+    public Image getByUri(String uri){
+        return allImages.stream().filter(image -> image.getUri() == uri).findFirst().get();
     }
 }

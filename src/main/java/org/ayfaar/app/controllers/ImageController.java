@@ -3,20 +3,24 @@ package org.ayfaar.app.controllers;
 
 import com.google.api.services.drive.model.File;
 import lombok.extern.slf4j.Slf4j;
+import one.util.streamex.StreamEx;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Image;
 import org.ayfaar.app.services.images.ImageService;
 import org.ayfaar.app.services.links.LinkService;
+import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.utils.GoogleService;
+import org.ayfaar.app.utils.SearchSuggestions;
+import org.dozer.Mapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static java.lang.Math.min;
 import static org.ayfaar.app.utils.UriGenerator.generate;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 import static org.springframework.util.Assert.hasLength;
@@ -29,6 +33,11 @@ public class ImageController {
     @Inject GoogleService googleService;
     @Inject ImageService imageService;
     @Inject LinkService linkService;
+    @Inject SearchSuggestions searchSuggestions;
+    @Inject TopicService topicService;
+    @Inject Mapper mapper;
+
+    private static final int MAX_SUGGESTIONS = 7;
 
     @RequestMapping(method = RequestMethod.POST)
     public Image create(@RequestParam String url,
@@ -93,5 +102,58 @@ public class ImageController {
         Image image = commonDao.getOpt(Image.class, "uri", uri).orElseThrow(() -> new RuntimeException("Couldn't update comment, image is not defined!"));
         image.setComment(comment);
         commonDao.save(image);
+    }
+
+    @RequestMapping("search")
+    public List<ImageEx> suggestions(@RequestParam String q){
+        Map<String, String> allSuggestions = new LinkedHashMap<>();
+        List<Suggestions> items = new ArrayList<>();
+        items.add(Suggestions.IMAGES);
+        items.add(Suggestions.TOPIC);   //image-keywords
+        for (Suggestions item : items) {
+            Queue<String> queriesQueue = searchSuggestions.getQueue(q);
+            List<Map.Entry<String, String>> suggestions = getSuggestions(queriesQueue, item);
+            allSuggestions.putAll(searchSuggestions.getAllSuggestions(q,suggestions));
+        }
+
+        return StreamEx.of(allSuggestions.entrySet())
+                .map(entry -> {
+                    final ImageEx imageEx = mapper.map(imageService.getByUri(entry.getKey()), ImageEx.class);
+                    if (!entry.getValue().equals(imageEx.getName().toLowerCase())) imageEx.hint = entry.getValue();
+                    return imageEx;
+                })
+                .toList();
+    }
+
+    private List<Map.Entry<String, String>> getSuggestions(Queue<String> queriesQueue, Suggestions item) {
+        List<Map.Entry<String, String>> suggestions = new ArrayList<>();
+
+        while (suggestions.size() < MAX_SUGGESTIONS && queriesQueue.peek() != null) {
+            List<? extends Map.Entry<String, String>> founded = null;
+            Map<String, String> mapUriWithNames = null;
+
+            switch (item) {
+                case TOPIC://image-keywords
+                    mapUriWithNames = imageService.getImagesKeywords();
+                    break;
+                case IMAGES:
+                    mapUriWithNames = imageService.getAllUriNames();
+                    break;
+            }
+
+            founded = searchSuggestions.getSuggested(queriesQueue.poll(), suggestions, mapUriWithNames.entrySet(), Map.Entry::getValue);
+
+            suggestions.addAll(founded.subList(0, min(MAX_SUGGESTIONS - suggestions.size(), founded.size())));
+        }
+
+        Collections.sort(suggestions, (e1, e2) -> Integer.valueOf(e1.getValue().length()).compareTo(e2.getValue().length()));
+        return suggestions;
+    }
+
+    public static class ImageEx extends Image {
+        public String hint;
+
+        public ImageEx() {
+        }
     }
 }
