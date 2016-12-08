@@ -375,6 +375,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     var data = {page: page ? page : 0};
                     if (size) data.size = size;
                     return api.get("image/last", data)
+                },
+                search: function (query){
+                    return api.get("image/search", {q: query})
                 }
             },
             record: {

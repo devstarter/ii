@@ -145,6 +145,7 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
     
     function load(next) {
         $scope.imgLoading = true;
+        $scope.imgSearching = false;
         $scope.singleMode = false;
         $scope.commentIsEmpty = true;
         if (!next) {
@@ -171,6 +172,7 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
             $scope.showUrlInput = true;
             $api.picture.last(next ? Math.ceil($scope.last.length / 10) : 0).then(function (list) {
                 $scope.imgLoading = false;
+                $scope.imgSearching = false;
                 if (!list.length && next) {
                     $scope.lastNoMore = true;
                     return
@@ -187,6 +189,15 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
         $scope.imgLoading = true;
         $api.picture.add($scope.url).then(function(img){
             $state.goToImg(img);
+        });
+    };
+    $scope.searchImage = function(){
+        $scope.last = [];
+        $scope.imgLoading = false;
+        $scope.imgSearching = true;
+        $api.picture.search($scope.searchImg).then(function(list){
+            $scope.last.append(list);
+            $scope.lastNoMore = true;
         });
     };
     $scope.addComment = function (img) {
