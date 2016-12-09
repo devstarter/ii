@@ -1475,6 +1475,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
 
             return value + (tail || '…');
         };
+    })
+    .filter('highlight', function($sce) {
+        return function(text, phrase) {
+            if (phrase && text) text = text.replace(new RegExp('('+phrase+')', 'gi'),
+                '<strong>$1</strong>');
+            return $sce.trustAsHtml(text)
+        }
     });
 
 Array.prototype.append = function(array){

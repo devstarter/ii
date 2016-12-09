@@ -195,6 +195,7 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
         $scope.last = [];
         $scope.imgLoading = false;
         $scope.imgSearching = true;
+        $scope.searchMode = true;
         $api.picture.search($scope.searchImg).then(function(list){
             $scope.last.append(list);
             $scope.lastNoMore = true;

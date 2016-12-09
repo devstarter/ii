@@ -1,8 +1,7 @@
 package org.ayfaar.app;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
+import org.dozer.spring.DozerBeanMapperFactoryBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.orm.jpa.EntityScan;
@@ -30,7 +29,7 @@ public class Application {
     }
 
     @Bean
-    public Mapper dozerBeanMapper() {
-        return new DozerBeanMapper();
+    public DozerBeanMapperFactoryBean dozerBeanMapperFactoryBean() {
+        return new DozerBeanMapperFactoryBean();
     }
 }

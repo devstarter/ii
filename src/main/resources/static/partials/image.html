@@ -12,21 +12,22 @@
             <div class="row">
                 <!--<image-card ng-repeat="img in last" img="img" class="col-md-4"></image-card>-->
                 <div ng-repeat="img in last" class="col-xs-6 col-sm-4">
-                    <div ii-ref="img" class="card picture">
+                    <div ii-ref="img" class="card picture" ng-class="img.hint ? 'with-hint' : ''">
                         <img ng-src="https://drive.google.com/thumbnail?sz=w210-h210-p-k-nu&id={{img.id}}"/>
-                        <div title="{{img.name}}">{{img.name | cut:false:65}}</div>
+                        <div title="{{img.name}}" ng-bind-html="img.name | highlight:searchImg"></div>
+                        <span title="{{img.hint}}" class="gray small" ng-bind-html="img.hint | highlight:searchImg"></span>
                     </div>
                 </div>
             </div>
             <a ng-click="getMore()" ng-hide="lastNoMore" class="btn btn-link" ng-class="imgLoading ? 'disabled' : ''">{{imgLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>
         </div>
         <div style="clear: both"></div>
-    </div>
-    <div class="input-group" style="padding-top: 20px">
-        <input ng-model="url" placeholder="Вставте ссылку на изображение" class="form-control"/>
-            <span class="input-group-btn">
-                <button ng-click="add()" class="btn btn-primary" ng-class="imgLoading ? 'disabled' : ''">Добавить</button>
-            </span>
+        <div ng-hide="searchMode" class="input-group" style="padding-top: 20px">
+            <input ng-model="url" placeholder="Вставте ссылку на изображение" class="form-control"/>
+                <span class="input-group-btn">
+                    <button ng-click="add()" class="btn btn-default" ng-class="imgLoading ? 'disabled' : ''">Добавить</button>
+                </span>
+        </div>
     </div>
     <div ng-show="img">
         <a href="picture/">← К списку изображений</a>
