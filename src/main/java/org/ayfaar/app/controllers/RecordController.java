@@ -9,12 +9,15 @@ import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.moderation.UserRole;
 import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
+import org.ayfaar.app.utils.Transliterator;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -79,4 +82,19 @@ public class RecordController {
         moderationService.notice(Action.RECORD_RENAMED, record.getUri(), record.getPreviousName(), record.getName());
     }
 
+    @RequestMapping(value = "{code}/download", method = RequestMethod.GET)
+    public String download(@PathVariable String code, HttpServletResponse response) {
+        final Record record = recordDao.get("code", code);
+        if (record == null) throw new RuntimeException("Record not found");
+
+        final String url = record.getAudioUrl();
+        if (url == null) throw new RuntimeException("Has no download url for record");
+
+        String name = Transliterator.transliterate(record.getName()).replace("\"", "");
+//        name = name.substring(0, 200);
+        response.setContentType("audio/mpeg");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + record.getCode() + " " + name + ".mp3\"");
+
+        return "redirect:" + url;
+    }
 }

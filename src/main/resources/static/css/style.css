@@ -1,3 +1,6 @@
+.nowrap {
+    white-space: nowrap;
+}
 .lightblue {color: #3e9ccc}
 /*record-card {
     display: block;
