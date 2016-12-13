@@ -8,7 +8,8 @@
                    ng-class="record.played ? 'glyphicon-pause' : 'glyphicon-play'"
                    ng-click="playOrPause(record)" style="font-size: 170%"></i>
                 &nbsp;<h2 class="inline">{{record.name}}</h2>
-                <i class="btn h glyphicon glyphicon-pencil gray" ng-click="rename(record)" title="Переименовать ответ"></i>
+                &nbsp;<a title="Скачать" style="text-decoration: none" class="pointer glyphicon glyphicon-download gray" target="_blank" href="{{record.url}}"></a>
+                &nbsp;<i class="pointer h glyphicon glyphicon-pencil gray" ng-click="rename(record)" title="Переименовать ответ"></i>
             </div>
             <span class="gray">{{record.code}}</span>
             <topics owner-uri="record.uri" style="padding-top: 20px; display: block"></topics>

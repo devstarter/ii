@@ -75,6 +75,7 @@
            ng-class="record.played ? 'glyphicon-pause' : 'glyphicon-play'"
            ng-click="playOrPause(record)"></i>
         <a ii-ref="record">{{record.name}} <span class="pointer gray nowrap">{{record.code}}</span></a>
+        <a title="Скачать" style="text-decoration: none" class="pointer glyphicon glyphicon-download gray" target="_blank" href="{{record.url ? record.url : record.audio_url}}"></a>
         <div>
             <span style="padding-left: 10px; font-size: 14px" ng-repeat="topic in record.topics">
                 <a topic-ref="topic" class="gray">{{topic}}</a>{{$last ? "" : ", "}}
