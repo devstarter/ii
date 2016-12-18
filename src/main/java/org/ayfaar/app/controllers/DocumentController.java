@@ -2,8 +2,11 @@ package org.ayfaar.app.controllers;
 
 import com.google.api.services.drive.model.File;
 import lombok.extern.slf4j.Slf4j;
+import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Document;
+import org.ayfaar.app.services.moderation.Action;
+import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.utils.GoogleService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -24,8 +27,10 @@ import static org.springframework.util.Assert.hasLength;
 public class DocumentController {
     @Inject CommonDao commonDao;
     @Inject GoogleService googleService;
+    @Inject ModerationService moderationService;
 
     @RequestMapping(method = RequestMethod.POST)
+    @Moderated(value = Action.DOCUMENT_ADD, command = "@documentController.create")
     public Document create(@RequestParam String url,
                            @RequestParam(required = false) Optional<String> name,
                            @RequestParam(required = false) String author,
@@ -49,7 +54,9 @@ public class DocumentController {
                         .icon(docInfo.iconLink)
                         .downloadUrl(docInfo.downloadUrl)
                         .build();
-                return commonDao.save(document);
+                commonDao.save(document);
+                moderationService.notice(Action.DOCUMENT_CREATED, document.getName(), document.getUri());
+                return document;
             });
 
     }
@@ -65,11 +72,13 @@ public class DocumentController {
     }
 
     @RequestMapping(value = "update-name", method = RequestMethod.POST)
+    @Moderated(value = Action.DOCUMENT_RENAME, command = "@documentController.updateTitle")
     public void updateTitle(@RequestParam String uri, @RequestParam String title) {
         hasLength(uri);
         Document document = commonDao.getOpt(Document.class, "uri", uri).orElseThrow(() -> new RuntimeException("Couldn't rename, document is not defined!"));
+        final String oldName = document.getName();
         document.setName(title);
         commonDao.save(document);
-
+        moderationService.notice(Action.DOCUMENT_RENAMED, oldName, document.getName(), document.getUri());
     }
 }

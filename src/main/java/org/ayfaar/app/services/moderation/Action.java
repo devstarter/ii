@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.ayfaar.app.services.moderation.UserRole.ROLE_ADMIN;
+import static org.ayfaar.app.services.moderation.UserRole.ROLE_AUTHENTICATED;
 import static org.ayfaar.app.services.moderation.UserRole.ROLE_EDITOR;
 
 public enum Action {
@@ -37,7 +38,12 @@ public enum Action {
     NEW_USER("Выполнен вход в систему новым "),
     VIDEO_REMOVED("Видео `{}` c id: {} далено из системы"),
     RECORD_RENAME("Переименование ответа <uri>запись:{}</uri> на `{}`", ROLE_EDITOR),
-    RECORD_RENAMED("Ответ <uri>{}</uri> переименован c `{}` в `{}`");
+    RECORD_RENAMED("Ответ <uri>{}</uri> переименован c `{}` в `{}`"),
+
+    DOCUMENT_CREATED("Добавлен документ <uri label='{}'>{}</uri>"),
+    DOCUMENT_RENAME("Переименование документа <uri>{}</uri> на `{}`", ROLE_EDITOR),
+    DOCUMENT_RENAMED("Документ переименован c `{}` на <uri label='{}'>{}</uri>"),
+    DOCUMENT_ADD("Добавление документа {}", ROLE_AUTHENTICATED);
 
     private Action parent = null;
     private UserRole requiredAccessLevel;
