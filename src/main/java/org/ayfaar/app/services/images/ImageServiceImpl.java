@@ -64,7 +64,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Map<String, String> getImagesKeywords(){
-        return StreamEx.of(allImages).toMap(UID::getUri, image -> topicService.getAllTopicsLinkedWith(image.getUri())
+        return StreamEx.of(allImages).toMap(UID::getUri, image -> topicService.getAllLinkedWith(image.getUri())
                 .map(tp -> tp.topic().getName())
                 .joining(", "));
     }

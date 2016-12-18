@@ -3,9 +3,10 @@ package org.ayfaar.app.services.links;
 import one.util.streamex.StreamEx;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
-import org.ayfaar.app.model.Item;
+import org.ayfaar.app.model.HasUri;
 import org.ayfaar.app.model.LightLink;
 import org.ayfaar.app.model.Link;
+import org.ayfaar.app.model.UID;
 import org.ayfaar.app.services.EntityLoader;
 import org.ayfaar.app.utils.SoftCache;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,11 @@ public class LinkService {
         return Optional.of(provider);
     }*/
 
-    public StreamEx<? extends LinkProvider> getAllLinksBetween(String uri, Class<Item> entityClass) {
+    public StreamEx<? extends LinkProvider> getAllLinksBetween(HasUri uriOwner, Class<?> entityClass) {
+        return getAllLinksBetween(uriOwner.getUri(), entityClass);
+    }
+
+    public StreamEx<? extends LinkProvider> getAllLinksBetween(String uri, Class<?> entityClass) {
         return getAllLinksFor(uri)
                 .filter(linkProvider -> linkProvider.has(entityClass));
     }
@@ -87,5 +92,19 @@ public class LinkService {
 
     public void reload() {
         init();
+    }
+
+    public Optional<? extends LinkProvider> getLinkBetween(HasUri hasUri, Class<?> entityClass) {
+        return getAllLinksFor(hasUri.getUri())
+                .filter(linkProvider -> linkProvider.has(entityClass))
+                .findFirst();
+    }
+
+    public Optional<String> getLinked(HasUri hasUri, Class<? extends UID> entityClass) {
+        return getAllLinksFor(hasUri.getUri())
+                .filter(linkProvider -> linkProvider.has(entityClass))
+                .findFirst()
+                .get()
+                .get(entityClass);
     }
 }

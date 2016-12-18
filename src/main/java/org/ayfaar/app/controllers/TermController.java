@@ -1,6 +1,7 @@
 package org.ayfaar.app.controllers;
 
 import lombok.AllArgsConstructor;
+import one.util.streamex.StreamEx;
 import org.apache.commons.lang.WordUtils;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.function.Supplier;
 
 import static org.ayfaar.app.model.LinkType.ABBREVIATION;
 import static org.ayfaar.app.model.LinkType.ALIAS;
@@ -40,7 +42,7 @@ public class TermController {
     @Autowired LinkService linkService;
     @Autowired EntityLoader entityLoader;
     @Autowired TermServiceImpl aliasesMap;
-    @Autowired SuggestionsController searchController2;
+    @Autowired SuggestionsController suggestionsController;
     @Inject TermsMarker termsMarker;
     @Inject ApplicationEventPublisher publisher;
     @Inject NewSearchController searchController;
@@ -100,22 +102,6 @@ public class TermController {
         provider.getAliases().forEach(p -> aliases.add(p.getTerm()));
         UID code = provider.getCode().isPresent() ? provider.getCode().get().getTerm() : null;
 
-        /*List<Link> links = linkDao.getAllLinks(term.getUri());
-        for (Link link : links) {
-            UID source = link.getUid1().getUri().equals(term.getUri())
-                    ? link.getUid2()
-                    : link.getUid1();
-            if (link.getQuote() != null || source instanceof Item) {
-                quotes.add(getQuote(link, source, mark));
-            } else if (ABBREVIATION.equals(link.getType()) || ALIAS.equals(link.getType())) {
-                aliases.add(source);
-            } else if (CODE.equals(link.getType())) {
-                code = source;
-            } else {
-                related.add(source);
-            }
-        }*/
-
         // Нужно также включить цитаты всех синонимов и сокращений и кода
         Set<UID> aliasesQuoteSources = new HashSet<UID>(aliases);
         if (code != null) {
@@ -138,24 +124,10 @@ public class TermController {
                             related.add(source);
                         }
                     });
-            /*List<Link> aliasLinksWithQuote = linkDao.getAllLinks(uid.getUri());
-            for (Link link : aliasLinksWithQuote) {
-                UID source = link.getUid1().getUri().equals(uid.getUri())
-                        ? link.getUid2()
-                        : link.getUid1();
-                if (link.getQuote() != null || source instanceof Item) {
-                    quotes.add(getQuote(link, source, mark));
-                } else if (ABBREVIATION.equals(link.getType()) || ALIAS.equals(link.getType()) || CODE.equals(link.getType())) {
-                    // Синонимы синонимов :) по идее их не должно быть, но если вдруг...
-                    // как минимум один есть и этот наш основной термин
-                    if (!source.getUri().equals(term.getUri())) {
-                        aliases.add(source);
-                    }
-                } else {
-                    related.add(source);
-                }
-            }*/
         }
+
+        aliases.removeIf(item -> item.getUri().equals(term.getUri()));
+
         quotes.sort(Comparator.comparing(o -> o.uri));
 
         // mark quotes with strong
@@ -166,22 +138,24 @@ public class TermController {
             quote.quote = StringUtils.markWithStrong(text, allAliasesWithAllMorphs);
         }
 
-        Optional<TopicProvider> topicOpt = topicService.get(term.getName());
-        if (!topicOpt.isPresent()) {
-            for (TermService.TermProvider termProvider : termService.get(term.getName()).get().getAliases()) {
-                topicOpt = topicService.get(termProvider.getName());
-                if (topicOpt.isPresent()) {
-                    break;
-                }
-            }
-        }
+        Optional<TopicProvider> topicOpt = StreamEx.<Supplier<Optional<TopicProvider>>>of(
+                    () -> topicService.findByName(term.getName()), // получаем топик по имени термина
+                    () -> topicService.getAllLinkedWith(term.getUri()).findFirst(), // по линку с термином
+                    () -> allAliasesWithAllMorphs.stream().map(a -> topicService.findByName(a)).filter(Optional::isPresent).findFirst().get(), // по имени по всем алиасам
+                    () -> allAliasesWithAllMorphs.stream().map(a -> topicService.getAllLinkedWith(UriGenerator.generate(Term.class, a)).findFirst()).filter(Optional::isPresent).findFirst().get()) // по линками по всем алиасам
+                .map(Supplier::get)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst();
 
         modelMap.put("code", code);
         modelMap.put("quotes", quotes);
         modelMap.put("related", toPlainObjectWithoutContent(related));
         modelMap.put("aliases", toPlainObjectWithoutContent(aliases));
         modelMap.put("categories", searchController.inCategories(termName));
-        topicOpt.ifPresent(topicProvider -> modelMap.put("topic", topicProvider.name()));
+        topicOpt.ifPresent(topicProvider -> {
+            modelMap.put("topicResources", topicProvider.resources());
+        });
 
         return modelMap;
     }
@@ -325,7 +299,7 @@ public class TermController {
     @RequestMapping("autocomplete")
     @ResponseBody
     public List<String> autoComplete(@RequestParam("filter[filters][0][value]") String filter) {
-        return searchController2.suggestions(filter);
+        return suggestionsController.suggestions(filter);
     }
 
     @RequestMapping(value = "get-short-description", produces = "text/plain; charset=utf-8")

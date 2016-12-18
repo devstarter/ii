@@ -63,7 +63,7 @@ public class RecordController {
         recordsInfoMap.put("url",record.getAudioUrl());
         recordsInfoMap.put("uri",record.getUri());
 
-        List<String> topicUris = topicService.getAllTopicsLinkedWith(record.getUri())
+        List<String> topicUris = topicService.getAllLinkedWith(record.getUri())
                 .map(TopicProvider::name)
                 .collect(Collectors.toList());
         recordsInfoMap.put("topics", topicUris);

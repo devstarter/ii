@@ -33,8 +33,11 @@ public interface TopicService {
      */
     @NotNull
     default TopicProvider getByName(String name){
-        return get(UriGenerator.generate(Topic.class, name))
-                .orElseThrow(() -> new LogicalException(ExceptionCode.TOPIC_NOT_FOUND, name));
+        return findByName(name).orElseThrow(() -> new LogicalException(ExceptionCode.TOPIC_NOT_FOUND, name));
+    }
+
+    default Optional<TopicProvider> findByName(String name){
+        return get(UriGenerator.generate(Topic.class, name));
     }
 
     @NotNull
@@ -45,7 +48,7 @@ public interface TopicService {
 
     boolean exist(String name);
 
-    StreamEx<TopicProvider> getAllTopicsLinkedWith(String uri);
+    StreamEx<TopicProvider> getAllLinkedWith(String uri);
 
     List<String> getAllNames();
 

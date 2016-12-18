@@ -220,7 +220,7 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
     };
 }
 
-function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt, messager, $timeout, ngAudio, $rootScope) {
+function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt, messager, $timeout, ngAudio, $rootScope, $termPrompt) {
     $scope.name = $stateParams.name;
     document.title = $scope.name;
 
@@ -264,6 +264,13 @@ function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt
                         messager.ok("Объединение выполнено")
                     })
                 })
+        })
+    };
+    $scope.linkToTerm = function () {
+        $termPrompt.prompt($scope.name).then(function (term) {
+            $api.topic.addFor("ии:термин:"+term, $scope.name).then(function () {
+                messager.ok("Связь с термином удалась")
+            })
         })
     };
     $scope.play = function(record) {

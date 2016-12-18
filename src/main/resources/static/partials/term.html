@@ -68,6 +68,30 @@
             <div ii-bind="cat.description"></div>
         </div>
 
+        <div class="pointer section" title="Показать" ng-click="showVideos = !showVideos" ng-show="termFound && topicResources && topicResources.video">
+            <i ng-class="showVideos ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'" class="glyphicon"></i>
+            <h3>Видео ответы Ориса</h3> <span ng-hide="showVideos" class="gray">показать {{topicResources.video.length}}</span>
+        </div>
+        <div class="row catBlock" ng-show="showVideos">
+            <video-card ng-repeat="link in topicResources.video" video="link.resource" class="col-md-4"></video-card>
+        </div>
+
+        <div class="pointer section" title="Показать" ng-click="showRecords = !showRecords" ng-show="termFound && topicResources && topicResources.record">
+            <i ng-class="showRecords ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'" class="glyphicon"></i>
+            <h3>Аудио ответы Ориса</h3> <span ng-hide="showVideos" class="gray">показать {{topicResources.record.length}}</span>
+        </div>
+        <div class="catBlock" ng-show="showRecords">
+            <record-card ng-repeat="link in topicResources.record" record="link" exclude-topic="name"></record-card>
+        </div>
+
+        <div class="pointer section" title="Показать" ng-click="showDocs = !showDocs" ng-show="termFound && topicResources && topicResources.document">
+            <i ng-class="showRecords ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'" class="glyphicon"></i>
+            <h3>Статьи</h3> <span ng-hide="showDocs" class="gray">показать {{topicResources.document.length}}</span>
+        </div>
+        <div class="row catBlock" ng-show="showDocs">
+            <document-card ng-repeat="link in topicResources.document" doc="link.resource" class="col-md-4"></document-card>
+        </div>
+
         <span ng-show="related.length">Также связан с</span>
         <a ii-ref="link" ng-repeat="link in related" class="related-btn btn btn-link">{{link._label}}</a>
     </div>

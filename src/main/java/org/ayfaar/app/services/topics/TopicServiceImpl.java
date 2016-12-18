@@ -120,7 +120,7 @@ class TopicServiceImpl implements TopicService {
 
     @Override
     // fixme: sorting by Link.rate DESC
-    public StreamEx<TopicProvider> getAllTopicsLinkedWith(String uri){
+    public StreamEx<TopicProvider> getAllLinkedWith(String uri){
         return StreamEx.of(topics.values())
                 .flatMap(topicProvider -> StreamEx.of(topicProvider.linksMap.values())
                         .filter(link -> link.getUid2().getUri().equals(uri))
@@ -312,7 +312,7 @@ class TopicServiceImpl implements TopicService {
                     .map(e -> new ResourcePresentation(e.getKey(), e.getValue()))
                     .sorted()
                     .forEachOrdered(r -> {
-                        r.topics = getAllTopicsLinkedWith(r.resource.getUri()).map(TopicProvider::name).toList();
+                        r.topics = getAllLinkedWith(r.resource.getUri()).map(TopicProvider::name).toList();
                         list.add(r);
                     });
             return list;

@@ -254,6 +254,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 },
                 getTermsInText: function(text) {
                     return api.post("v2/term/get-terms-in-text", {text: text})
+                },
+                suggest: function(q) {
+                    return api.get("v2/term/suggest", {q: q})
                 }
             },
             category: {
@@ -822,6 +825,27 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                             $topicSelector.select().then(function (topicName) {
                                 $modalInstance.close(topicName);
                             });
+                        };
+                    }
+                }).result;
+            }
+        }
+    })
+    .service('$termPrompt', function($api, $modal, $topicSelector) {
+        return {
+            prompt: function (defaultText) {
+                return $modal.open({
+                    templateUrl: 'static/partials/term-prompt.html',
+                    controller: function ($scope, $modalInstance) {
+                        if (defaultText) $scope.term = defaultText;
+                        $scope.suggestTerms = function (q) {
+                            return $api.term.suggest(q);
+                        };
+                        $scope.select = function() {
+                            $modalInstance.close($scope.term);
+                        };
+                        $scope.cancel = function() {
+                            $modalInstance.dismiss('cancel');
                         };
                     }
                 }).result;
