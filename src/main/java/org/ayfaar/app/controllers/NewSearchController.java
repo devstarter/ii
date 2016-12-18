@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.ayfaar.app.utils.TermService.TermProvider;
 
 @Controller
@@ -118,14 +119,23 @@ public class NewSearchController {
                 .sorted(Comparator.comparing(o -> Double.valueOf(o.from())))
                 .forEachOrdered(foundCategoryProviders::add));
 
-        List<FoundCategoryPresentation> presentations = new ArrayList<>();
-		for (ContentsService.ContentsProvider p : foundCategoryProviders) {
-			String strongMarkedDescription = StringUtils.markWithStrong(p.description(), searchQueries);
-			FoundCategoryPresentation presentation = new FoundCategoryPresentation(p.path(), p.uri(), strongMarkedDescription);
-			presentations.add(presentation);
-		}
 
-		return presentations;
+        List<FoundCategoryPresentation> presentations = new ArrayList<>();
+        for (ContentsService.ContentsProvider p : foundCategoryProviders) {
+            String strongMarkedDescription = StringUtils.markWithStrong(p.description(), searchQueries);
+            FoundCategoryPresentation presentation = new FoundCategoryPresentation(p.path(), p.uri(), strongMarkedDescription);
+            presentations.add(presentation);
+        }
+
+        if (presentations.size() > 20) {
+            // reduce result amount
+            presentations = presentations.stream()
+                    .sorted(Comparator.comparingInt(o -> o.getDescription().indexOf("strong")))
+                    .limit(20)
+                    .collect(toList());
+        }
+
+        return presentations;
     }
 
     private String prepareQuery(String query) {
