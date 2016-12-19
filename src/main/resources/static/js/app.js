@@ -989,6 +989,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             link: function (scope, element, attrs, modelCtrl) {
                 var getter = $parse(attrs.topicRef);
                 var topicName = getter(scope);
+                if (!topicName) return;
                 if (topicName.hasOwnProperty("name")) topicName = topicName.name;
                 if (!topicName) return;
                 element.attr('href', "t/"+topicName);
@@ -1471,7 +1472,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             originStateGo.bind($state)("cabinet")
         };
 
-        $rootScope.$on('pageLoaded', function(event, toState, toParams, fromState, fromParams){
+        $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
             statistic.pageview(location.pathname);
         });
         function isTom5(number) {
