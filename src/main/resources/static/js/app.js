@@ -1351,7 +1351,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             templateUrl: "card-document"
         }
     })
-    .directive("recordCard", function ($rootScope, $topicPrompt, $api, ngAudio, $parse, audioPlayer) {
+    .directive("recordCard", function ($rootScope, $topicPrompt, $api, ngAudio, $parse, audioPlayer, $timeout) {
         return {
             scope: { record: '=', excludeTopic: '='},
             templateUrl: "record-card",
@@ -1381,7 +1381,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             }
         }
     })
-    .run(function($state, entityService, $rootScope, statistic, modal){
+    .run(function($state, entityService, $rootScope, statistic, modal, $timeout){
         var originStateGo = $state.go;
         $state.go = function(to, params, options) {
             if (to.hasOwnProperty('uri') || angular.isString(to)) {
@@ -1473,7 +1473,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
         };
 
         $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
-            statistic.pageview(location.pathname);
+            $timeout(function(){statistic.pageview(location.pathname)}, 1000);
         });
         function isTom5(number) {
             if (number.indexOf("5.") == 0) {
