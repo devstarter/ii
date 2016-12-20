@@ -131,7 +131,7 @@ function DocumentController($scope, $stateParams, $api, messager, $state, modal)
         load()
     };
 }
-function ImageController($scope, $stateParams, $api, messager, $state, modal) {
+function ImageController($scope, $stateParams, $api, messager, $state, modal, $timeout, statistic) {
     document.title = "Иллюстрации и схемы. Загрузка...";
     load();
     $scope.rename = function (img) {
@@ -197,10 +197,13 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
         $scope.last = [];
         $scope.imgLoading = false;
         $scope.imgSearching = true;
+        $scope.imgSearchLoading = true;
         $scope.searchMode = true;
         $api.picture.search($scope.searchImg).then(function(list){
             $scope.last.append(list);
             $scope.lastNoMore = true;
+            $scope.imgSearchLoading = false;
+            statistic.registerImageSearch($scope.searchImg);
         });
     };
     $scope.addComment = function (img) {
@@ -220,6 +223,17 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
     $scope.update = function () {
         load()
     };
+
+    var searchChangeTimer;
+    $scope.searchChange = function () {
+        if (searchChangeTimer) $timeout.cancel(searchChangeTimer);
+        if (!$scope.searchImg) {
+            load();
+            $scope.imgSearching = false;
+        } else if ($scope.searchImg.length > 2) {
+            searchChangeTimer = $timeout($scope.searchImage, 500);
+        }
+    }
 }
 
 function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt, messager, $timeout, ngAudio, $rootScope, $termPrompt) {

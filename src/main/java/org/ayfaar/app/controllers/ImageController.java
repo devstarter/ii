@@ -105,7 +105,7 @@ public class ImageController {
     }
 
     @RequestMapping("search")
-    public List<ImageEx> suggestions(@RequestParam String q){
+    public List<ImageEx> search(@RequestParam String q){
         Map<String, String> allSuggestions = new LinkedHashMap<>();
         List<Suggestions> items = new ArrayList<>();
         items.add(Suggestions.IMAGES);

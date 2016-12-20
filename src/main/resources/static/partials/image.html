@@ -1,13 +1,14 @@
 <div>
     <div ng-show="showUrlInput && !img">
         <div class="input-group" style="padding-top: 20px">
-            <input ng-model="searchImg" placeholder="Поиск изображения" class="form-control"/>
+            <input ng-model="searchImg" placeholder="Поиск изображения" ng-change="searchChange()" class="form-control"/>
             <span class="input-group-btn">
-                <button ng-click="searchImage()" class="btn btn-primary" ng-class="imgLoading ? 'disabled' : ''">Поиск</button>
+                <button ng-click="searchImage()" class="btn btn-primary" ng-class="imgLoading || imgSearchLoading ? 'disabled' : ''">{{imgSearchLoading ? 'Поиск...' : 'Поиск'}}</button>
             </span>
         </div>
-        <div ng-show="imgLoading"><img src="static/images/ajax-loader.gif"/>Добавление...</div>
         <div style="padding-top: 20px">
+            <div ng-show="!imgSearchLoading && imgSearching && !last.length" class="gray">Иллюстраций или схем по запросу не найдено, измените запрос</div>
+            <div ng-show="imgSearchLoading"><img src="static/images/ajax-loader.gif"/>Поиск...</div>
             <div ng-hide="imgSearching"><span class="grey">Последние добавленные изображения</span></div>
             <div class="row">
                 <!--<image-card ng-repeat="img in last" img="img" class="col-md-4"></image-card>-->
@@ -19,15 +20,17 @@
                     </div>
                 </div>
             </div>
-            <a ng-click="getMore()" ng-hide="lastNoMore" class="btn btn-link" ng-class="imgLoading ? 'disabled' : ''">{{imgLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>
+            <a ng-click="getMore()" ng-hide="lastNoMore || imgSearching" class="btn btn-link" ng-class="imgLoading ? 'disabled' : ''">{{imgLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>
         </div>
         <div style="clear: both"></div>
         <div ng-hide="searchMode" class="input-group" style="padding-top: 20px">
             <input ng-model="url" placeholder="Вставте ссылку на изображение" class="form-control"/>
-                <span class="input-group-btn">
-                    <button ng-click="add()" class="btn btn-default" ng-class="imgLoading ? 'disabled' : ''">Добавить</button>
-                </span>
+            <span class="input-group-btn">
+                <button ng-click="add()" class="btn btn-default" ng-class="imgLoading ? 'disabled' : ''">Добавить</button>
+            </span>
+            <div ng-show="imgLoading"><img src="static/images/ajax-loader.gif"/>Добавление...</div>
         </div>
+
     </div>
     <div ng-show="img">
         <a href="picture/">← К списку изображений</a>

@@ -136,6 +136,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     ga('send', 'event', 'no-data', termName);
                 }
             },
+            registerImageSearch: function(query) {
+                if (typeof ga !== 'undefined') {
+                    ga('send', 'event', 'image-search', query);
+                }
+            },
             pageview: function(url) {
                 if (typeof ga !== 'undefined') {
                     ga('send', 'pageview', url);
