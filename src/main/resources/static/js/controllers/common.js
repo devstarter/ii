@@ -114,7 +114,7 @@ function DocumentController($scope, $stateParams, $api, messager, $state, modal)
                 $scope.last.append(list);
                 $scope.singleMode = list.length == 1;
                 $scope.document = $scope.singleMode ? list[0] : null;
-                window.title = $scope.singleMode ? list[0].name : "Документы ответы"
+                document.title = $scope.singleMode ? list[0].name : "Документы ответы"
             })
         }
     }
@@ -132,6 +132,7 @@ function DocumentController($scope, $stateParams, $api, messager, $state, modal)
     };
 }
 function ImageController($scope, $stateParams, $api, messager, $state, modal) {
+    document.title = "Иллюстрации и схемы. Загрузка...";
     load();
     $scope.rename = function (img) {
         modal.prompt("Переименование ответа", img.name, "Переименовать").then(function (name) {
@@ -164,6 +165,7 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
                 } else {
                     $scope.showUrlInput = true;
                 }
+                document.title = img.name
             }, function(response){
                 $scope.imgLoading = false;
                 messager.error("Ошибка загрузки изображения");
@@ -180,7 +182,7 @@ function ImageController($scope, $stateParams, $api, messager, $state, modal) {
                 $scope.last.append(list);
                 $scope.singleMode = list.length == 1;
                 $scope.picture = $scope.singleMode ? list[0] : null;
-                window.title = $scope.singleMode ? list[0].name : "Изображение ответы"
+                document.title = $scope.singleMode ? list[0].name : "Иллюстрации и схемы"
             })
         }
     }
