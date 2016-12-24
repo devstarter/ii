@@ -119,6 +119,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             termExpandedOrCollapsed: function(term, expanded) {
                 if (typeof ga !== 'undefined') ga('send', 'event', expanded ? 'term-expanded' : 'term-collapsed', term);
             },
+            termExpandedAndHasNoShortDescription: function(term) {
+                if (typeof ga !== 'undefined') ga('send', 'event', 'term-expanded-and-has-no-short-description', term);
+            },
             termGoToDescription: function(term) {
                 if (typeof ga !== 'undefined') ga('send', 'event', 'term-goto-description', query + " page " + pageCounter);
             },
@@ -936,8 +939,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                                 data.push({
                                     uri: uri,
                                     label: response[uri],
-                                    type: entityService.getType(uri),
-                                    typeLabel: entityService.getTypeLabel(uri)
+                                    type: entityService.getType(uri)
+                                    // typeLabel: entityService.getTypeLabel(uri)
                                 })
                         }
                         deferred.resolve(data)
@@ -1042,6 +1045,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                                 $api.term.getShortDescription(moreAfterPrimeTerm ? primeTerm : term).then(function (shortDescription) {
                                     $element.html(originalContent + " (" + shortDescription +
                                         " <i><a title=\"Перейти на детальное описание термина\">детальнее</a></i>)");
+                                    statistic.termExpandedAndHasNoShortDescription(term)
                                 });
                             } else {
                                 $element.html(originalContent + " (нет короткого пояснения, <i><a>детально</a></i>)");
