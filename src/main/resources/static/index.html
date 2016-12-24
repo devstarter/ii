@@ -150,7 +150,7 @@
 
 <script type="text/ng-template" id="typeahead-item-template">
     <div style="padding: 5px" class="pointer">
-        <span class="gray" ng-click="addFilterByType(match.model.type)">{{match.model.typeLabel}}</span> <span ng-bind-html="match.model.label | typeaheadHighlight:query"></span>
+        <span ng-bind-html="match.model.label | typeaheadHighlight:query"></span>
     </div>
 </script>
 

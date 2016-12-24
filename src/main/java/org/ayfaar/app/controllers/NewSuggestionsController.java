@@ -23,14 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.min;
-import static java.util.Arrays.asList;
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-import static java.util.regex.Pattern.UNICODE_CASE;
 
 @Slf4j
 @RestController
@@ -87,6 +82,16 @@ public class NewSuggestionsController {
             List<Map.Entry<String, String>> suggestions = getSuggestions(queriesQueue, item);
             allSuggestions.putAll(searchSuggestions.getAllSuggestions(q,suggestions));
         }
+        
+        Set<String> existing = new HashSet<>();
+        allSuggestions = allSuggestions.entrySet()
+                .stream()
+                .filter(entry -> existing.add(entry.getValue().toLowerCase()))
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (v1,v2)->v1,
+                        LinkedHashMap::new));
+
         return allSuggestions;
     }
 

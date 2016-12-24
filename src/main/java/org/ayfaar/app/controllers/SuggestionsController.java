@@ -46,12 +46,7 @@ public class SuggestionsController {
             List<String> founded = getSuggestedTerms(queriesQueue.poll(), suggestions);
             suggestions.addAll(founded.subList(0, min(MAX_SUGGESTIONS - suggestions.size(), founded.size())));
         }
-        Collections.sort(suggestions, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return Integer.valueOf(o1.length()).compareTo(o2.length());
-            }
-        });
+        suggestions.sort((o1, o2) -> Integer.valueOf(o1.length()).compareTo(o2.length()));
 
         return suggestions;
     }
