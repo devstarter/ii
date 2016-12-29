@@ -1,13 +1,13 @@
 package org.ayfaar.app.events;
 
 import org.ayfaar.app.model.Link;
+import org.springframework.util.Assert;
 
-import static java.lang.String.format;
+public class NewLinkEvent {
+    public final Link link;
 
-public class NewLinkEvent extends LinkPushEvent {
-    public NewLinkEvent(String term, String alias, Link link) {
-        super(format("Связь %s + %s", term, alias), term);
-        message =  (link.getType() != null ? "тип: " + link.getType() + "\n" : "")
-                +"удалить: " + getRemoveLink(link.getLinkId());
+    public NewLinkEvent(Link link) {
+        Assert.notNull(link, "Link is null");
+        this.link = link;
     }
 }

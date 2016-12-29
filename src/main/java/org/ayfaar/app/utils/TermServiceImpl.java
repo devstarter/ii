@@ -6,14 +6,13 @@ import lombok.Getter;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
-import org.ayfaar.app.model.Link;
-import org.ayfaar.app.model.LinkType;
-import org.ayfaar.app.model.Term;
-import org.ayfaar.app.model.TermMorph;
+import org.ayfaar.app.events.NewLinkEvent;
+import org.ayfaar.app.model.*;
 import org.ayfaar.app.services.EntityLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +24,7 @@ import static java.util.Collections.sort;
 import static java.util.regex.Pattern.compile;
 import static org.ayfaar.app.model.LinkType.*;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
+import static org.springframework.util.StringUtils.isEmpty;
 
 @Component
 public class TermServiceImpl implements TermService {
@@ -274,7 +274,31 @@ public class TermServiceImpl implements TermService {
         }
 
         List<Term> sorted = new ArrayList<Term>(contains);
-        sort(sorted, (o1, o2) -> o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase()));
+        sorted.sort(Comparator.comparing(o -> o.getName().toLowerCase()));
         return sorted;
+    }
+
+    @EventListener
+    private void onNewLink(NewLinkEvent event) {
+        final Link link = event.link;
+        if (link.getUid1() instanceof Term && link.getUid2() instanceof Term) {
+            onTermsLinked((Term) link.getUid1(), (Term) link.getUid2(), link.getType());
+        }
+    }
+
+    private void onTermsLinked(Term mainTerm, Term aliasTerm, LinkType linkType) {
+        if (linkType == LinkType.ALIAS) {
+            boolean mainTermChanged = false;
+            if (isEmpty(mainTerm.getShortDescription())) {
+                mainTerm.setShortDescription(aliasTerm.getShortDescription());
+                mainTermChanged = true;
+            }
+            if (isEmpty(mainTerm.getDescription())) {
+                mainTerm.setDescription(aliasTerm.getDescription());
+                mainTermChanged = true;
+            }
+            if (mainTermChanged) termDao.save(mainTerm);
+        }
+        reload();
     }
 }

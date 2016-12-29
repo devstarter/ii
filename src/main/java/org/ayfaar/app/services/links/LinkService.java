@@ -3,12 +3,14 @@ package org.ayfaar.app.services.links;
 import one.util.streamex.StreamEx;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
+import org.ayfaar.app.events.NewLinkEvent;
 import org.ayfaar.app.model.HasUri;
 import org.ayfaar.app.model.LightLink;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.UID;
 import org.ayfaar.app.services.EntityLoader;
 import org.ayfaar.app.utils.SoftCache;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -22,14 +24,17 @@ public class LinkService {
     private LinkDao linkDao;
     private CommonDao commonDao;
     private EntityLoader entityLoader;
+    private ApplicationEventPublisher publisher;
     private List<LightLink> allLinks;
     private SoftCache<LightLink, LinkProvider> cache = new SoftCache<>();
 
+
     @Inject
-    public LinkService(LinkDao linkDao, CommonDao commonDao, EntityLoader entityLoader) {
+    public LinkService(LinkDao linkDao, CommonDao commonDao, EntityLoader entityLoader, ApplicationEventPublisher publisher) {
         this.linkDao = linkDao;
         this.commonDao = commonDao;
         this.entityLoader = entityLoader;
+        this.publisher = publisher;
     }
 
   /*  public LinkProvider getByUris(String uri1, String uri2) {
@@ -88,6 +93,7 @@ public class LinkService {
 
     public void registerNew(Link link) {
         allLinks.add(LightLink.fromLink(link));
+        publisher.publishEvent(new NewLinkEvent(link));
     }
 
     public void reload() {

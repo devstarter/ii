@@ -82,7 +82,8 @@ public class NewSuggestionsController {
             List<Map.Entry<String, String>> suggestions = getSuggestions(queriesQueue, item);
             allSuggestions.putAll(searchSuggestions.getAllSuggestions(q,suggestions));
         }
-        
+
+        // remove duplications by values
         Set<String> existing = new HashSet<>();
         allSuggestions = allSuggestions.entrySet()
                 .stream()

@@ -73,7 +73,7 @@ function RecordController($scope, $stateParams, $api, messager, modal, audioPlay
 function DocumentController($scope, $stateParams, $api, messager, $state, modal) {
     load();
     $scope.rename = function (doc) {
-        modal.prompt("Переименование ответа", doc.name, "Переименовать").then(function (name) {
+        modal.prompt("Переименование", doc.name, "Переименовать").then(function (name) {
             $api.document.rename(doc.uri,name).then(load);
         })
     };
@@ -114,7 +114,7 @@ function DocumentController($scope, $stateParams, $api, messager, $state, modal)
                 $scope.last.append(list);
                 $scope.singleMode = list.length == 1;
                 $scope.document = $scope.singleMode ? list[0] : null;
-                document.title = $scope.singleMode ? list[0].name : "Документы ответы"
+                document.title = $scope.singleMode ? list[0].name : "Статьи"
             })
         }
     }

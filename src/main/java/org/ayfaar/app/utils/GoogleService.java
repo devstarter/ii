@@ -103,7 +103,7 @@ public class GoogleService {
         final Map response = restTemplate.getForObject(forGetCodeOfVideoUrl,Map.class, API_KEY, id);
         final List<Map> items = (List<Map>) response.get("items");
 
-        if (items.isEmpty()) throw new RuntimeException("Video private or removed");
+        if (items.isEmpty()) return Optional.empty();
         final Map snippet = (Map) items.get(0).get("snippet");
         List<String> tags = (List)snippet.get("tags");
         for (String tag : tags) {
