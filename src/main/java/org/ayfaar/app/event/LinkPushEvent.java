@@ -1,4 +1,4 @@
-package org.ayfaar.app.events;
+package org.ayfaar.app.event;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

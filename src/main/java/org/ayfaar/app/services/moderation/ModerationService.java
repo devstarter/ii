@@ -2,14 +2,14 @@ package org.ayfaar.app.services.moderation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.annotations.Moderated;
+import org.ayfaar.app.configs.EventPublisher;
 import org.ayfaar.app.dao.CommonDao;
-import org.ayfaar.app.events.SimplePushEvent;
+import org.ayfaar.app.event.SimplePushEvent;
 import org.ayfaar.app.model.ActionEvent;
 import org.ayfaar.app.model.PendingAction;
 import org.ayfaar.app.utils.CurrentUserProvider;
 import org.ayfaar.app.utils.exceptions.ConfirmationRequiredException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -29,12 +29,12 @@ public class ModerationService {
     private final SpelExpressionParser parser;
     private final CommonDao commonDao;
     private final CurrentUserProvider currentUserProvider;
-    private final ApplicationEventPublisher publisher;
+    private final EventPublisher publisher;
 
     private final ThreadLocal<MethodEntry> threadLocal = new ThreadLocal<>();
 
     @Inject
-    protected ModerationService(CommonDao commonDao, BeanFactory beanFactory, CurrentUserProvider currentUserProvider, ApplicationEventPublisher publisher) {
+    protected ModerationService(CommonDao commonDao, BeanFactory beanFactory, CurrentUserProvider currentUserProvider, EventPublisher publisher) {
         this.commonDao = commonDao;
         this.currentUserProvider = currentUserProvider;
         this.publisher = publisher;

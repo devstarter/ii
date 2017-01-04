@@ -1,4 +1,4 @@
-package org.ayfaar.app.events;
+package org.ayfaar.app.event;
 
 public class SimplePushEvent extends PushEvent {
     public SimplePushEvent(String title, String message) {

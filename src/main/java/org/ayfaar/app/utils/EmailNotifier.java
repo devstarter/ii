@@ -3,7 +3,6 @@ package org.ayfaar.app.utils;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Term;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;

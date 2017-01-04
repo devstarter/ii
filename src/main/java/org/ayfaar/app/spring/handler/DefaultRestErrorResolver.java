@@ -1,6 +1,6 @@
 package org.ayfaar.app.spring.handler;
 
-import org.ayfaar.app.events.QuietException;
+import org.ayfaar.app.event.QuietException;
 import org.ayfaar.app.utils.exceptions.ConfirmationRequiredException;
 import org.ayfaar.app.utils.exceptions.ExceptionCode;
 import org.ayfaar.app.utils.exceptions.LogicalException;

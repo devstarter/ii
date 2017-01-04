@@ -1,4 +1,4 @@
-package org.ayfaar.app.events;
+package org.ayfaar.app.event;
 
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;

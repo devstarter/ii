@@ -2,7 +2,7 @@ package org.ayfaar.app.utils;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.ayfaar.app.events.TermAddEvent;
+import org.ayfaar.app.event.TermAddEvent;
 import org.ayfaar.app.services.itemRange.ItemRangeService;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;

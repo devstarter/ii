@@ -1,4 +1,4 @@
-package org.ayfaar.app.events;
+package org.ayfaar.app.event;
 
 public class QuietException extends RuntimeException {
     public QuietException() {

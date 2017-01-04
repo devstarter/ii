@@ -1,8 +1,8 @@
 package org.ayfaar.app.spring.listeners;
 
-import org.ayfaar.app.events.PushEvent;
-import org.ayfaar.app.events.TermPushEvent;
-import org.ayfaar.app.events.TermUpdatedEvent;
+import org.ayfaar.app.event.PushEvent;
+import org.ayfaar.app.event.TermPushEvent;
+import org.ayfaar.app.event.TermUpdatedEvent;
 import org.ayfaar.app.utils.TermsTaggingUpdater;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

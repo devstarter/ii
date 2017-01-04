@@ -3,8 +3,8 @@ package org.ayfaar.app.spring.listeners;
 
 import com.pushbullet.Builder;
 import com.pushbullet.PushbulletClient;
-import org.ayfaar.app.events.PushEvent;
-import org.ayfaar.app.events.HasUrl;
+import org.ayfaar.app.event.PushEvent;
+import org.ayfaar.app.event.HasUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;

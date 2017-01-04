@@ -1,4 +1,4 @@
-package org.ayfaar.app.events;
+package org.ayfaar.app.event;
 
 /**
  * Created by Pas8sion on 09.11.2014.

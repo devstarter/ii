@@ -6,7 +6,7 @@ import lombok.Getter;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
-import org.ayfaar.app.events.NewLinkEvent;
+import org.ayfaar.app.event.NewLinkEvent;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.services.EntityLoader;
 import org.slf4j.Logger;
