@@ -1,9 +1,9 @@
 package org.ayfaar.app.services.links;
 
 import one.util.streamex.StreamEx;
-import org.ayfaar.app.configs.EventPublisher;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
+import org.ayfaar.app.event.EventPublisher;
 import org.ayfaar.app.event.NewLinkEvent;
 import org.ayfaar.app.model.HasUri;
 import org.ayfaar.app.model.LightLink;

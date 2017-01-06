@@ -248,6 +248,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-sheets</artifactId>
+			<version>v4-rev38-1.22.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-youtube</artifactId>
 			<version>v3-rev162-1.21.0</version>
 			<scope>test</scope>

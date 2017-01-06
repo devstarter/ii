@@ -17,10 +17,8 @@ public interface CommonDao {
 
     <E> Optional<E> getOpt(Class<E> clazz, Serializable id);
     @Nullable
-    @Deprecated
     // use getOpt() instead
     <E> E get(Class<E> clazz, Serializable id);
-    @Deprecated
     <E> E get(Class<E> clazz, String property, Object value);
     // use getOpt() instead
     <E> Optional<E> getOpt(Class<E> clazz, String property, Object value);
