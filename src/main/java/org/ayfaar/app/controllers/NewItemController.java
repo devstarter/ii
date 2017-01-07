@@ -151,10 +151,10 @@ public class NewItemController {
          Optional<? extends ParagraphProvider> paragraphOpt = contentsService.getByItemNumber(number);
          if (paragraphOpt.isPresent()) {
              final ParagraphProvider paragraph = paragraphOpt.get();
-             parents.add(new ParentPresentation(paragraph.name(), paragraph.uri(), paragraph.from(), paragraph.to()));
              parents.addAll(paragraph.parents().stream()
                      .map(parent -> new ParentPresentation(parent.extractCategoryName(), parent.uri()))
                      .collect(Collectors.toList()));
+             parents.add(new ParentPresentation(paragraph.name(), paragraph.uri(), paragraph.from(), paragraph.to()));
          }
          return parents;
     }
