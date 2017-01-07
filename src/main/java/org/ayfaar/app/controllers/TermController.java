@@ -3,7 +3,7 @@ package org.ayfaar.app.controllers;
 import lombok.AllArgsConstructor;
 import one.util.streamex.StreamEx;
 import org.apache.commons.lang.WordUtils;
-import org.ayfaar.app.configs.EventPublisher;
+import org.ayfaar.app.event.EventPublisher;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
