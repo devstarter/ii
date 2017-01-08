@@ -1,4 +1,4 @@
-//package org.ayfaar.app.services;
+//package org.ayfaar.app.utils;
 //
 //import com.google.api.client.auth.oauth2.Credential;
 //import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -7,23 +7,23 @@
 //import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 //import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 //import com.google.api.client.http.HttpTransport;
-//import com.google.api.client.json.jackson2.JacksonFactory;
 //import com.google.api.client.json.JsonFactory;
+//import com.google.api.client.json.jackson2.JacksonFactory;
 //import com.google.api.client.util.store.FileDataStoreFactory;
-//import com.google.api.services.sheets.v4.SheetsScopes;
-//import com.google.api.services.sheets.v4.model.*;
 //import com.google.api.services.sheets.v4.Sheets;
+//import com.google.api.services.sheets.v4.SheetsScopes;
+//import com.google.api.services.sheets.v4.model.ValueRange;
+//import lombok.extern.slf4j.Slf4j;
 //
 //import java.io.IOException;
 //import java.io.InputStream;
 //import java.io.InputStreamReader;
-//import java.util.ArrayList;
 //import java.util.Arrays;
 //import java.util.List;
 //
-//public class SpreadSheetService {
+//@Slf4j
+//public class GoogleSpreadSheetWriter {
 //	/** Application name. */
-////	private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
 //	private static final String APPLICATION_NAME = "Spreadsheets ii";
 //
 //	/** Directory to store user credentials for this application. */
@@ -44,7 +44,6 @@
 //	 * If modifying these scopes, delete your previously saved credentials
 //	 * at ~/.credentials/sheets.googleapis.com-java-quickstart
 //	 */
-////	private static final List<String> SCOPES = Arrays.asList(SheetsScopes.SPREADSHEETS_READONLY);
 //	private static final List<String> SCOPES = Arrays.asList(SheetsScopes.SPREADSHEETS);
 //
 //	static {
@@ -99,7 +98,7 @@
 //	public static Credential authorize() throws IOException {
 //		// Load client secrets.
 //		InputStream in =
-//				SpreadSheetService.class.getResourceAsStream("/client_secret.json");
+//				GoogleSpreadSheetWriter.class.getResourceAsStream("/client_secret.json");
 //		GoogleClientSecrets clientSecrets =
 //				GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 //
@@ -128,5 +127,4 @@
 //				.setApplicationName(APPLICATION_NAME)
 //				.build();
 //	}
-//
 //}
