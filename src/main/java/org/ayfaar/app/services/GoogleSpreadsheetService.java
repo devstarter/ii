@@ -1,6 +1,7 @@
 package org.ayfaar.app.services;
 
 import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,9 +28,7 @@ public class GoogleSpreadsheetService {
 	}
 
 	public List<List<Object>> read(Sheets service) throws IOException {
-		ValueRange response = service.spreadsheets().values()
-				.get(spreadsheetId, range)
-				.execute();
+		ValueRange response = service.spreadsheets().values().get(spreadsheetId, range).execute();
 		List<List<Object>> values = response.getValues();
 		if (values == null || values.size() == 0) {
 			log.debug("No data read from spreadsheet {}, {}", spreadsheetId, range);
@@ -37,12 +36,10 @@ public class GoogleSpreadsheetService {
 		return values;
 	}
 
-	public boolean write(Sheets service, List<List<Object>> values) throws IOException {
+	public UpdateValuesResponse write(Sheets service, List<List<Object>> values) throws IOException {
 		ValueRange response = new ValueRange();
 		response.setValues(values);
-		service.spreadsheets().values().update(spreadsheetId, range, response)
+		return service.spreadsheets().values().update(spreadsheetId, range, response)
 				.setValueInputOption(VALUE_INPUT_OPTION).execute();
-
-		return true;
 	}
 }
