@@ -10,7 +10,11 @@ import java.util.Optional;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TranslationItem {
-	private Optional<Integer> rowNumber;
+	private Optional<Integer> rowNumber = Optional.empty();
 	private String origin;
-	private String translation;
+	private String translation = "";
+
+	public TranslationItem(String origin) {
+		this.origin = origin;
+	}
 }

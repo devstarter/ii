@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,7 +28,10 @@ public class GoogleSpreadsheetService {
 	public List<List<Object>> read(Sheets service) throws IOException {
 		ValueRange response = service.spreadsheets().values().get(spreadsheetId, range).execute();
 		List<List<Object>> values = response.getValues();
-		if (values == null || values.size() == 0) {
+		if (values == null) {
+			values = new ArrayList<>();
+		}
+		if (values.size() == 0) {
 			log.debug("No data read from spreadsheet {}, {}", spreadsheetId, range);
 		}
 
@@ -40,7 +44,11 @@ public class GoogleSpreadsheetService {
 		response.setValues(rows);
 		UpdateValuesResponse updateValuesResponse = service.spreadsheets().values()
 				.update(spreadsheetId, range, response).setValueInputOption(VALUE_INPUT_OPTION).execute();
-		return updateValuesResponse.getUpdatedRows();
+		Integer updatedRows = updateValuesResponse.getUpdatedRows();
+		if (updatedRows == null) {
+			updatedRows = 0;
+		}
+		return updatedRows;
 	}
 
 	public Integer write(Sheets service, List<Object> row, String range) throws IOException {
@@ -49,7 +57,11 @@ public class GoogleSpreadsheetService {
 		response.setValues(rows);
 		UpdateValuesResponse updateValuesResponse =  service.spreadsheets().values()
 				.update(spreadsheetId, range, response).setValueInputOption(VALUE_INPUT_OPTION).execute();
-		return updateValuesResponse.getUpdatedCells();
+		Integer updatedCells = updateValuesResponse.getUpdatedCells();
+		if (updatedCells == null) {
+			updatedCells = 0;
+		}
+		return updatedCells;
 	}
 
 	public void clear(Sheets service) throws IOException {

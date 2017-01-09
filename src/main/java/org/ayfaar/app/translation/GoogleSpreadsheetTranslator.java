@@ -1,12 +1,9 @@
 package org.ayfaar.app.translation;
 
-import com.google.api.services.sheets.v4.Sheets;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.services.GoogleSpreadsheetService;
-import org.ayfaar.app.utils.GoogleSpreadsheetsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,7 +24,7 @@ import static org.ayfaar.app.utils.GoogleSpreadsheetsUtil.getSheetsService;
 public class GoogleSpreadsheetTranslator {
 	private String baseRange;
 
-	@Value("${spreadsheet-id.translation}")
+	@Value("${translation.spreadsheet-id}")
 	private String SPREADSHEET_ID;
 
 	private GoogleSpreadsheetService googleSpreadsheetService;
