@@ -3,12 +3,13 @@ package org.ayfaar.app;
 
 import org.ayfaar.app.event.PushEvent;
 import org.ayfaar.app.spring.listeners.NotificationListener;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import static org.mockito.Mockito.*;
 
-
+@Ignore
 public class NotificationListenerTest {
 
     @Test

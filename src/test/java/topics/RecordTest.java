@@ -10,6 +10,7 @@ import org.ayfaar.app.model.Record;
 import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.utils.GoogleService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @ActiveProfiles("remote")
+@Ignore
 public class RecordTest extends IntegrationTest {
 
     @Autowired

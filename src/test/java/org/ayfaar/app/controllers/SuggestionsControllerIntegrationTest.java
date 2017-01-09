@@ -1,6 +1,7 @@
 package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.IntegrationTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -15,6 +16,7 @@ public class SuggestionsControllerIntegrationTest extends IntegrationTest {
     SuggestionsController searchController;
 
     @Test
+    @Ignore
     public void test1() {
         String query = "гал";
         List<String> suggestions = searchController.suggestions(query);

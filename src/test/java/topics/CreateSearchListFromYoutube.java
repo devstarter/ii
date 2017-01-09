@@ -7,6 +7,7 @@ import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.IntegrationTest;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import com.google.api.services.youtube.YouTube;
@@ -19,7 +20,8 @@ import java.util.List;
 
 
 @Slf4j
-public class createSearchListFromYoutube extends IntegrationTest{
+@Ignore
+public class CreateSearchListFromYoutube extends IntegrationTest{
 
     @Value("${google.api.key}") private String KEY;
     private static YouTube youtube;

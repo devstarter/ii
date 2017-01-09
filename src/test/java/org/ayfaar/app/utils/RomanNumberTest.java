@@ -1,6 +1,5 @@
 package org.ayfaar.app.utils;
 
-import org.ayfaar.app.utils.RomanNumber;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -27,14 +26,9 @@ public class RomanNumberTest {
         assertNotEquals(23, RomanNumber.parse("XIII"));
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testParseNullPointerException() {
-        assertEquals(12, RomanNumber.parse(null));
-    }
-
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testParseEmptyException() {
-        assertEquals(12, RomanNumber.parse(null));
+        RomanNumber.parse(null);
     }
 
     @Test(expected = NumberFormatException.class)

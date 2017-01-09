@@ -30,6 +30,7 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class DBCacheUnitTest {
     @Mock ObjectMapper objectMapper;
     @Mock CommonDao commonDao;

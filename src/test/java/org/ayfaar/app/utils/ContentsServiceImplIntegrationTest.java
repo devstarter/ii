@@ -72,11 +72,11 @@ public class ContentsServiceImplIntegrationTest extends IntegrationTest{
         List<? extends ContentsService.CategoryProvider> parents = provider.get().parents();
 
         assertEquals(5, parents.size());
-        assertEquals(UriGenerator.generate(Category.class, "БДК/Раздел I/Глава 1"), parents.get(0).uri());
-        assertEquals(UriGenerator.generate(Category.class, "БДК/Раздел I"), parents.get(1).uri());
+        assertEquals(UriGenerator.generate(Category.class, "Содержание"), parents.get(0).uri());
+        assertEquals(UriGenerator.generate(Category.class, "БДК"), parents.get(1).uri());
         assertEquals(UriGenerator.generate(Category.class, "Том 10"), parents.get(2).uri());
-        assertEquals(UriGenerator.generate(Category.class, "БДК"), parents.get(3).uri());
-        assertEquals(UriGenerator.generate(Category.class, "Содержание"), parents.get(4).uri());
+        assertEquals(UriGenerator.generate(Category.class, "БДК/Раздел I"), parents.get(3).uri());
+        assertEquals(UriGenerator.generate(Category.class, "БДК/Раздел I/Глава 1"), parents.get(4).uri());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ContentsServiceImplIntegrationTest extends IntegrationTest{
         ContentsService.ParagraphProvider provider = service.getByItemNumber("10.10037").get();
         assertEquals(UriGenerator.generate(ItemsRange.class, "10.1.1.4"), provider.uri());
         provider = service.getByItemNumber("14.15639").get();
-        assertEquals(UriGenerator.generate(ItemsRange.class, "14.16.2.14"), provider.uri());
+        assertEquals(UriGenerator.generate(ItemsRange.class, "14.17.6.3"), provider.uri());
         provider = service.getByItemNumber("14.15598").get();
         assertEquals(UriGenerator.generate(ItemsRange.class, "14.16.2.4"), provider.uri());
     }

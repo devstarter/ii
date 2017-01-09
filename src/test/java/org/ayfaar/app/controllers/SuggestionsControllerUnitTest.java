@@ -86,12 +86,12 @@ public class SuggestionsControllerUnitTest {
         for (String fakeTerm : fakeTerms) {
             map.put(fakeTerm, aliasesMap.new TermProviderImpl(fakeTerm, null, false));
         }
-        return new ArrayList<Map.Entry<String, TermProvider>>(map.entrySet());
+        return new ArrayList<>(map.entrySet());
     }
 
     @Test
     public void duplicationsTest() {
         final String actual = SuggestionsController.addDuplications("abc efg 123");
-        assertEquals("a+b+c+ e+f+g+ 123", actual);
+        assertEquals("a+-*a*b+-*b*c+-*c* e+-*e*f+-*f*g+-*g* 123", actual);
     }
 }

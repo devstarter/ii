@@ -19,6 +19,7 @@ import org.ayfaar.app.model.ItemsRange;
 import org.ayfaar.app.utils.RomanNumber;
 import org.ayfaar.app.utils.StringUtils;
 import org.ayfaar.app.utils.UriGenerator;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -38,6 +39,7 @@ import java.util.*;
 @WebAppConfiguration
 @SpringApplicationConfiguration(Application.class)
 @Log4j
+@Ignore
 public class ContentsImporter {
 
     @Inject CommonDao commonDao;
@@ -46,7 +48,7 @@ public class ContentsImporter {
     @Test
     public void main() throws IOException, XLSParsingException {
         log.info("Открытие файла оглавлений");
-        InputStream in = new FileInputStream("./src/test/resources/content/ii-contents-2016.04.13.xlsx");
+        InputStream in = new FileInputStream("D:\\PROJECTS\\ayfaar\\ii-app\\ИИ - Содержание.xlsx");
         log.info("Считывание данных");
         List<ItemBook> list = fillListItemBooks(in);
         in.close();
@@ -95,8 +97,6 @@ public class ContentsImporter {
             //на листе только один том, при этом номер в 1-й строке, название во 2-й строке
             final ItemBook tom = getTom(sheet);
 
-            if (tom.getCategoryNumber().equals("5")) continue; // пропускаем 5 том
-
             categories.add(tom); //добавили том
             currentItems.put(SectionType.Tom, tom);
             final Iterator<Row> rowIterator = sheet.rowIterator();
@@ -133,7 +133,7 @@ public class ContentsImporter {
                     if (!itemNumber.contains(".")) {
                         itemNumber = tom.getCategoryNumber() + "." + itemNumber; // 10001 -> 10.10001
                     }
-                    itemNumber = itemNumber.replaceAll("^(\\d+\\.)(\\d{3})$", "$10$2"); //1.786 -> 1.0786
+//                    itemNumber = itemNumber.replaceAll("^(\\d+\\.)(\\d{3})$", "$10$2"); //1.786 -> 1.0786
                     itemBook.setItemNumber(itemNumber);
                     itemBook.setParent(currentItems.get(SectionType.Chapter));
                     itemBook.setPrev(putOrReplace(currentItems, itemBook));

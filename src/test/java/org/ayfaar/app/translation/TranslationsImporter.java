@@ -8,6 +8,7 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Translation;
 import org.ayfaar.app.services.TranslationService;
 import org.ayfaar.app.utils.Language;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -20,6 +21,7 @@ import static java.util.regex.Pattern.UNICODE_CHARACTER_CLASS;
 import static org.apache.commons.io.FileUtils.readLines;
 
 @Slf4j
+@Ignore
 public class TranslationsImporter extends IntegrationTest {
 	@Inject CommonDao commonDao;
 	@Inject TranslationService service;

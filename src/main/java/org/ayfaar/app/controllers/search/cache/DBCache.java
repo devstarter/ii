@@ -22,14 +22,18 @@ public class DBCache extends ConcurrentMapCache {
     @Inject TermService termService;
     @Inject CommonDao commonDao;
     @Inject CategoryDao categoryDao;
-//    @Inject ApplicationEventPublisher eventPublisher;
+
+    public boolean disabled;
 
     public DBCache() {
         super("DBCache");
     }
 
+
     @Override
     public ValueWrapper get(Object key) {
+        if (disabled) return super.get(key);
+
         ValueWrapper value = super.get(key);
         if(value != null) {
             return value;
@@ -71,6 +75,8 @@ public class DBCache extends ConcurrentMapCache {
 
     @Override
     public void put(Object key, Object value) {
+        if (disabled) return;
+
         String json;
         UID uid = null;
 

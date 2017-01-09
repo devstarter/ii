@@ -65,6 +65,7 @@ public class TermsMarkerIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @Ignore
     public void test2() {
         assertEquals(" пост<term id=\"Меркавгнация\" has-short-description=\"true\">меркавгнационных</term>, ", termsMarker.mark(" постмеркавгнационных, "));
         assertEquals(" меж<term id=\"Скунккция\" title=\"Скунккция\">скунккциональные</term> взаимосвязи, ", termsMarker.mark(" межскунккциональные взаимосвязи, "));
