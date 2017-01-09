@@ -130,14 +130,14 @@ public class ContentsServiceImpl implements ContentsService {
         public List<? extends CategoryProvider> parents() {
             if (!parent().isPresent()) return Collections.emptyList();
             List<CategoryProvider> parents = new LinkedList<>();
-            parents.add(parent().get());
             parents.addAll(parent().get().parents());
+            parents.add(parent().get());
             return parents;
         }
 
         @Override
         public String path() {
-            return parent().isPresent() ? parent().get().path() + " / " + label() : label();
+            return parent().isPresent() ? label() + " / " + parent().get().path() : label();
         }
 
         public String label() {
@@ -306,8 +306,8 @@ public class ContentsServiceImpl implements ContentsService {
             CategoryProvider parent = categoryMap.get(name).getParent();
 
             if(parent != null) {
-                parents.add(parent);
                 parents.addAll(getParents(getValueFromUri(Category.class, parent.uri())));
+                parents.add(parent);
             }
             return parents;
         }

@@ -150,6 +150,13 @@
 
 <script type="text/ng-template" id="typeahead-item-template">
     <div style="padding: 5px" class="pointer">
+        <i ng-show="match.model.uri.indexOf('тема') == 0" class="glyphicon glyphicon-tag gray small"></i>
+        <i ng-show="match.model.uri.indexOf('видео') == 0" class="glyphicon glyphicon-facetime-video gray small"></i>
+        <i ng-show="match.model.uri.indexOf('запись') == 0" class="glyphicon glyphicon-play gray small"></i>
+        <i ng-show="match.model.uri.indexOf('изображение') == 0" class="glyphicon glyphicon-picture gray small"></i>
+        <i ng-show="match.model.uri.indexOf('ии:пункты') == 0" class="glyphicon glyphicon-align-left gray small"></i>
+        <i ng-show="match.model.uri.indexOf('категория') == 0" class="glyphicon glyphicon-align-left gray small"></i>
+        <i ng-show="match.model.uri.indexOf('paragraph') == 0" class="glyphicon glyphicon-align-left gray small"></i>
         <span ng-bind-html="match.model.label | typeaheadHighlight:query"></span>
     </div>
 </script>

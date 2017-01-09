@@ -8,13 +8,11 @@ import org.ayfaar.app.model.Term;
 import org.ayfaar.app.services.ItemService;
 import org.ayfaar.app.services.document.DocumentService;
 import org.ayfaar.app.services.images.ImageService;
+import org.ayfaar.app.services.moderation.UserRole;
 import org.ayfaar.app.services.record.RecordService;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.services.videoResource.VideoResourceService;
-import org.ayfaar.app.utils.ContentsService;
-import org.ayfaar.app.utils.SearchSuggestions;
-import org.ayfaar.app.utils.TermService;
-import org.ayfaar.app.utils.UriGenerator;
+import org.ayfaar.app.utils.*;
 import org.ayfaar.app.utils.contents.ContentsUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,6 +40,7 @@ public class NewSuggestionsController {
     @Inject ContentsUtils contentsUtils;
     @Inject ImageService imageService;
     @Inject SearchSuggestions searchSuggestions;
+    @Inject CurrentUserProvider currentUserProvider;
 
     private List<String> escapeChars = Arrays.asList("(", ")", "[", "]", "{", "}");
     private static final int MAX_SUGGESTIONS = 5;
@@ -83,15 +82,17 @@ public class NewSuggestionsController {
             allSuggestions.putAll(searchSuggestions.getAllSuggestions(q,suggestions));
         }
 
-        // remove duplications by values
-        Set<String> existing = new HashSet<>();
-        allSuggestions = allSuggestions.entrySet()
-                .stream()
-                .filter(entry -> existing.add(entry.getValue().toLowerCase()))
-                .collect(Collectors.toMap(Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (v1,v2)->v1,
-                        LinkedHashMap::new));
+        if (!currentUserProvider.getCurrentAccessLevel().accept(UserRole.ROLE_EDITOR)) {
+            // remove duplications by values, but not for editors and admins
+            Set<String> existing = new HashSet<>();
+            allSuggestions = allSuggestions.entrySet()
+                    .stream()
+                    .filter(entry -> existing.add(entry.getValue().toLowerCase()))
+                    .collect(Collectors.toMap(Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (v1, v2) -> v1,
+                            LinkedHashMap::new));
+        }
 
         return allSuggestions;
     }

@@ -1,6 +1,7 @@
 package org.ayfaar.app.services;
 
 import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.ClearValuesRequest;
 import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import org.junit.Before;
@@ -8,6 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +45,7 @@ public class GoogleSpreadsheetServiceTest {
 		when(valuesMock.get(anyString(), anyString())).thenReturn(getMock);
 		when(getMock.execute()).thenReturn(new ValueRange());
 
-		List<List<Object>> values = googleSpreadsheetService.read(sheetsMock);
+		googleSpreadsheetService.read(sheetsMock);
 
 		verify(valuesMock, times(1)).get(eq(SPREADSHEET_ID), eq(RANGE));
 	}
@@ -53,10 +56,12 @@ public class GoogleSpreadsheetServiceTest {
 		Sheets.Spreadsheets spreadsheetsMock = mock(Sheets.Spreadsheets.class);
 		Sheets.Spreadsheets.Values valuesMock = mock(Sheets.Spreadsheets.Values.class);
 		Sheets.Spreadsheets.Values.Update updateMock = mock(Sheets.Spreadsheets.Values.Update.class);
+		Sheets.Spreadsheets.Values.Clear clearMock = mock(Sheets.Spreadsheets.Values.Clear.class);
 
 		when(sheetsMock.spreadsheets()).thenReturn(spreadsheetsMock);
 		when(spreadsheetsMock.values()).thenReturn(valuesMock);
 		when(valuesMock.update(anyString(), anyString(), any())).thenReturn(updateMock);
+		when(valuesMock.clear(anyString(), anyString(), any())).thenReturn(clearMock);
 		when(updateMock.execute()).thenReturn(new UpdateValuesResponse());
 		when(updateMock.setValueInputOption(anyString())).thenReturn(updateMock);
 
@@ -67,6 +72,7 @@ public class GoogleSpreadsheetServiceTest {
 
 		ValueRange valueRange = new ValueRange();
 		valueRange.setValues(values);
+		verify(valuesMock, times(1)).clear(anyString(), anyString(), any(ClearValuesRequest.class));
 		verify(valuesMock, times(1)).update(eq(SPREADSHEET_ID), eq(RANGE), eq(valueRange));
 	}
 }
