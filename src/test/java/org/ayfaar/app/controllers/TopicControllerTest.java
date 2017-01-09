@@ -3,6 +3,7 @@ package org.ayfaar.app.controllers;
 import org.apache.http.HttpStatus;
 import org.ayfaar.app.Application;
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -16,6 +17,7 @@ import static com.jayway.restassured.RestAssured.given;
 @ActiveProfiles("dev")
 @SpringApplicationConfiguration(Application.class)
 @WebIntegrationTest
+@Ignore
 public class TopicControllerTest {
     @Test
     public void testGet() {

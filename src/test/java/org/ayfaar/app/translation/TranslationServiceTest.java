@@ -5,10 +5,12 @@ import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.services.TranslationService;
 import org.ayfaar.app.utils.Language;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.inject.Inject;
 
+@Ignore
 public class TranslationServiceTest extends IntegrationTest {
     @Inject TranslationService service;
 

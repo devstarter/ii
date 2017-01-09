@@ -7,6 +7,7 @@ import org.ayfaar.app.services.itemRange.ItemRangeServiceImpl;
 import org.ayfaar.app.utils.ContentsService;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.TermsFinder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 @ActiveProfiles("dev")
+@Ignore
 public class TermParagraphsRunner extends IntegrationTest {
 
     @Autowired

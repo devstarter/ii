@@ -3,12 +3,14 @@ package issues.issue60;
 import org.ayfaar.app.IntegrationTest;
 import org.ayfaar.app.dao.*;
 import org.ayfaar.app.model.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import static org.junit.Assert.*;
 
+@Ignore
 public class CleanDBFromUIDIntegrationTest extends IntegrationTest{
     @Autowired private UIDDao uidDao;
     @Autowired private ArticleDao articleDao;

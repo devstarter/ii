@@ -8,6 +8,7 @@ import org.ayfaar.app.utils.ContentsService;
 import org.ayfaar.app.utils.ContentsService.ContentsProvider;
 import org.ayfaar.app.utils.ContentsService.ParagraphProvider;
 import org.ayfaar.app.utils.contents.CategoryPresentation;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +20,11 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.*;
 
+@Ignore
 public class ContentsGenerator extends IntegrationTest {
 	private static final Logger logger = LoggerFactory.getLogger(ContentsGenerator.class);
 
-	@Inject
-	ContentsService contentsService;
+	@Inject ContentsService contentsService;
 	@Inject TemplateEngine templateEngine;
 
 	@Test
