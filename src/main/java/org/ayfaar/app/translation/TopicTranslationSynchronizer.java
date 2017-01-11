@@ -19,7 +19,7 @@ public class TopicTranslationSynchronizer {
 	public void firstUpload() {
 		googleSpreadsheetTranslator.setBaseRange("Topic");
 		Stream<TranslationItem> originItems= topicService.getAllNames().stream().map(TranslationItem::new);
-		Stream<TranslationItem> translationItems = new ArrayList<TranslationItem>().stream();
+		Stream<TranslationItem> translationItems = Stream.empty();
 		Stream<TranslationItem> items = translationComparator.getNotUploadedOrigins(originItems, translationItems);
 		googleSpreadsheetTranslator.write(items);
 	}
@@ -29,8 +29,8 @@ public class TopicTranslationSynchronizer {
 		// topic -> spreadsheet
 		Stream<TranslationItem> originItems= topicService.getAllNames().stream().map(TranslationItem::new);
 		Stream<TranslationItem> translationItems = googleSpreadsheetTranslator.read();
-		Stream<TranslationItem> items = translationComparator.getNotUploadedOrigins(originItems, translationItems);
-		items.forEach(googleSpreadsheetTranslator::write);
+		translationComparator.getNotUploadedOrigins(originItems, translationItems)
+				.forEach(googleSpreadsheetTranslator::write);
 
 		// spreadsheet -> translation
 	}

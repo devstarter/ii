@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.services.GoogleSpreadsheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ import java.util.stream.Stream;
 import static org.ayfaar.app.utils.GoogleSpreadsheetsUtil.getSheetsService;
 
 @Slf4j
-@Component
+@Component @Scope("prototype")
 @Getter @Setter
 public class GoogleSpreadsheetTranslator {
 	private String baseRange;

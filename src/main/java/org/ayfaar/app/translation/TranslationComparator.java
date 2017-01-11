@@ -12,14 +12,25 @@ import java.util.stream.Stream;
 public class TranslationComparator {
 	public Stream<TranslationItem> getNotUploadedOrigins(Stream<TranslationItem> originStream, Stream<TranslationItem> translatedStream) {
 		List<TranslationItem> result = originStream.collect(Collectors.toList());
-		List<TranslationItem> secondItemList = translatedStream.collect(Collectors.toList());
+		List<TranslationItem> translatedList = translatedStream.collect(Collectors.toList());
+		Integer lastItemRowNumber = 0;
+		if (translatedList.size() != 0) {
+			lastItemRowNumber = translatedList.get(translatedList.size() - 1).getRowNumber().get() + 1;
+		}
 		Iterator<TranslationItem> iterator = result.iterator();
-		Integer lastItemRowNumber = secondItemList.get(secondItemList.size() - 1).getRowNumber().get() + 1;
 		while (iterator.hasNext()) {
-			TranslationItem firstItem = iterator.next();
+			TranslationItem originItem = iterator.next();
+			// TODO this doesn't work. Can't use lastItemRowNumber inside of the map(...)
+//			translatedList.stream()
+//					.filter(translatedItem -> ! originItem.getOrigin().equals(translatedItem.getOrigin()))
+//					.map(translatedItem -> {
+//						translatedItem.setRowNumber(Optional.of(lastItemRowNumber));
+//						lastItemRowNumber++;
+//						return translatedItem;
+//					});
 			boolean found = false;
-			for (TranslationItem secondItem : secondItemList) {
-				if (firstItem.getOrigin().equals(secondItem.getOrigin())) {
+			for (TranslationItem translatedItem : translatedList) {
+				if (originItem.getOrigin().equals(translatedItem.getOrigin())) {
 					found = true;
 					break;
 				}
@@ -27,7 +38,7 @@ public class TranslationComparator {
 			if (found) {
 				iterator.remove();
 			} else {
-				firstItem.setRowNumber(Optional.of(lastItemRowNumber));
+				originItem.setRowNumber(Optional.of(lastItemRowNumber));
 				lastItemRowNumber++;
 			}
 		}
