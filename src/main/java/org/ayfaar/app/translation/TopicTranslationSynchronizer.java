@@ -9,15 +9,20 @@ import java.util.stream.Stream;
 
 @Service
 public class TopicTranslationSynchronizer {
-	@Autowired
 	TopicService topicService;
-	@Autowired
 	GoogleSpreadsheetTranslator googleSpreadsheetTranslator;
-	@Autowired
 	TranslationComparator translationComparator;
 
+	@Autowired
+	public TopicTranslationSynchronizer(TopicService service, GoogleSpreadsheetTranslator translator,
+										TranslationComparator comparator) {
+		this.topicService = service;
+		translator.setSheetName("Topic");
+		this.googleSpreadsheetTranslator = translator;
+		this.translationComparator = comparator;
+	}
+
 	public void firstUpload() {
-		googleSpreadsheetTranslator.setBaseRange("Topic");
 		Stream<TranslationItem> originItems= topicService.getAllNames().stream().map(TranslationItem::new);
 		Stream<TranslationItem> translationItems = Stream.empty();
 		Stream<TranslationItem> items = translationComparator.getNotUploadedOrigins(originItems, translationItems);
@@ -25,7 +30,6 @@ public class TopicTranslationSynchronizer {
 	}
 
 	public void synchronize() {
-		googleSpreadsheetTranslator.setBaseRange("Topic");
 		// topic -> spreadsheet
 		Stream<TranslationItem> originItems= topicService.getAllNames().stream().map(TranslationItem::new);
 		Stream<TranslationItem> translationItems = googleSpreadsheetTranslator.read();

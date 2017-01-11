@@ -1,7 +1,5 @@
 package org.ayfaar.app.translation;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.services.GoogleSpreadsheetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,29 +19,26 @@ import static org.ayfaar.app.utils.GoogleSpreadsheetsUtil.getSheetsService;
 
 @Slf4j
 @Component @Scope("prototype")
-@Getter @Setter
 public class GoogleSpreadsheetTranslator {
-	private String baseRange;
-
-	@Value("${translation.spreadsheet-id}")
-	private String SPREADSHEET_ID;
+	private String sheetName;
 
 	private GoogleSpreadsheetService googleSpreadsheetService;
 
 	@Autowired
-	public void setGoogleSpreadsheetService(GoogleSpreadsheetService googleSpreadsheetService) {
-		googleSpreadsheetService.setSpreadsheetId(SPREADSHEET_ID);
-		this.googleSpreadsheetService = googleSpreadsheetService;
+	public GoogleSpreadsheetTranslator(GoogleSpreadsheetService service,
+									   @Value("${translation.spreadsheet-id}") String spreadsheetId) {
+		service.setSpreadsheetId(spreadsheetId);
+		this.googleSpreadsheetService = service;
 	}
 
 	public Stream<TranslationItem> read() {
-		googleSpreadsheetService.setRange(baseRange);
+		googleSpreadsheetService.setRange(sheetName);
 
 		List<List<Object>> values = new ArrayList<>();
 		try {
 			 values = googleSpreadsheetService.read(getSheetsService());
 		} catch (IOException e) {
-			log.error("Can't read translation from spreadsheet with id {} range {}", SPREADSHEET_ID, baseRange, e);
+			log.error("Can't read translation from range {}", sheetName, e);
 		}
 
 		List<TranslationItem> result = new ArrayList<>();
@@ -64,7 +59,7 @@ public class GoogleSpreadsheetTranslator {
 	}
 
 	public Integer write(Stream<TranslationItem> items) {
-		googleSpreadsheetService.setRange(baseRange);
+		googleSpreadsheetService.setRange(sheetName);
 
 		List<List<Object>> values = new ArrayList<>();
 		items.forEach(item -> values.add(Arrays.asList(item.getOrigin(), item.getTranslation())));
@@ -73,23 +68,27 @@ public class GoogleSpreadsheetTranslator {
 		try {
 			updatedRows = googleSpreadsheetService.write(getSheetsService(), values);
 		} catch (IOException e) {
-			log.error("Can't write translation to spreadsheet with id {} range {}", SPREADSHEET_ID, baseRange, e);
+			log.error("Can't write translation to range {}", sheetName, e);
 		}
 
 		return updatedRows;
 	}
 
 	public Integer write(TranslationItem item) {
-		String fullRange = baseRange + "!" + "A" + item.getRowNumber().get();
+		String fullRange = sheetName + "!" + "A" + item.getRowNumber().get();
 
 		Integer updatedCells = -1;
 		try {
 			updatedCells = googleSpreadsheetService.write(getSheetsService(),
 					Stream.of(item.getOrigin(), item.getTranslation()).collect(Collectors.toList()), fullRange);
 		} catch (IOException e) {
-			log.error("Can't write translation row to spreadsheet with id {} range {}", SPREADSHEET_ID, fullRange, e);
+			log.error("Can't write translation row to range {}", fullRange, e);
 		}
 
 		return updatedCells;
+	}
+
+	public void setSheetName(String sheetName) {
+		this.sheetName = sheetName;
 	}
 }

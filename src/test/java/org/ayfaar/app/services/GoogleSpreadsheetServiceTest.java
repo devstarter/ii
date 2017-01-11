@@ -4,6 +4,7 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ClearValuesRequest;
 import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
+import org.ayfaar.app.translation.TopicTranslationSynchronizer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +41,12 @@ public class GoogleSpreadsheetServiceTest {
 //	googleSpreadsheetTranslator.write(new TranslationItem(Optional.of(5), "Some origin 5", "Some translation 5"));
 //
 //	System.out.println("done");
+
+
+//	TopicTranslationSynchronizer topicTranslationSynchronizer = context.getBean(TopicTranslationSynchronizer.class);
+//	topicTranslationSynchronizer.synchronize();
+//
+//	System.out.println("Done!");
 
 
 	@InjectMocks
