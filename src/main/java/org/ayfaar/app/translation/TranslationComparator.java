@@ -2,47 +2,42 @@ package org.ayfaar.app.translation;
 
 import org.springframework.stereotype.Component;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
 public class TranslationComparator {
 	public Stream<TranslationItem> getNotUploadedOrigins(Stream<TranslationItem> originStream, Stream<TranslationItem> translatedStream) {
-		List<TranslationItem> result = originStream.collect(Collectors.toList());
-		List<TranslationItem> translatedList = translatedStream.collect(Collectors.toList());
-		Integer lastItemRowNumber = 0;
-		if (translatedList.size() != 0) {
-			lastItemRowNumber = translatedList.get(translatedList.size() - 1).getRowNumber().get() + 1;
-		}
-		Iterator<TranslationItem> iterator = result.iterator();
-		while (iterator.hasNext()) {
-			TranslationItem originItem = iterator.next();
-			// TODO this doesn't work. Can't use lastItemRowNumber inside of the map(...)
-//			translatedList.stream()
-//					.filter(translatedItem -> ! originItem.getOrigin().equals(translatedItem.getOrigin()))
-//					.map(translatedItem -> {
-//						translatedItem.setRowNumber(Optional.of(lastItemRowNumber));
-//						lastItemRowNumber++;
-//						return translatedItem;
-//					});
-			boolean found = false;
-			for (TranslationItem translatedItem : translatedList) {
-				if (originItem.getOrigin().equals(translatedItem.getOrigin())) {
-					found = true;
-					break;
-				}
-			}
-			if (found) {
-				iterator.remove();
-			} else {
-				originItem.setRowNumber(Optional.of(lastItemRowNumber));
-				lastItemRowNumber++;
-			}
-		}
+		List<TranslationItem> fromGoogle = translatedStream.collect(Collectors.toList());
+		final AtomicInteger lastRowNumber = new AtomicInteger(fromGoogle.stream()
+				.reduce((a, b) -> b).orElse(new TranslationItem(Optional.of(0))).getRowNumber().get() + 1);
+		return originStream
+				.flatMap(originItem -> fromGoogle.parallelStream()
+						.filter(translatedItem -> originItem.getOrigin().equals(translatedItem.getOrigin()))
+						.findAny().isPresent() ? Stream.empty() : Stream.of(originItem))
+				.peek(item -> item.setRowNumber(Optional.of(lastRowNumber.getAndIncrement())));
+	}
 
-		return result.stream();
+	public Stream<TranslationItem> getNotDownloadedTranslations(Stream<TranslationItem> translatedItemsGoogle,
+																Stream<TranslationItem> translatedItemsDB) {
+		List<TranslationItem> fromDB = translatedItemsDB.collect(Collectors.toList());
+		return translatedItemsGoogle
+				.filter(t -> !t.getTranslation().isEmpty())
+				.flatMap(itemGoogle -> fromDB.parallelStream()
+								.filter(itemDB -> itemDB.getOrigin().equals(itemGoogle.getOrigin())
+										&& !itemDB.getTranslation().equals(itemGoogle.getTranslation()))
+								.findAny().isPresent() ? Stream.of(itemGoogle) : Stream.empty()
+				);
+	}
+
+	public Stream<TranslationItem> removeIfNotInTopics(Stream<TranslationItem> originItems, Stream<TranslationItem> translatedItemsGoogle) {
+		List<TranslationItem> originAsList = originItems.collect(Collectors.toList());
+		return translatedItemsGoogle
+				.filter(itemGoogle -> originAsList.parallelStream()
+						.filter(itemOrigin -> itemGoogle.getOrigin().equals(itemOrigin.getOrigin()))
+						.findAny().isPresent());
 	}
 }
