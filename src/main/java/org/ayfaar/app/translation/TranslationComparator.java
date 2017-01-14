@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,11 +27,22 @@ public class TranslationComparator {
 		List<TranslationItem> fromDB = translatedItemsDB.collect(Collectors.toList());
 		return translatedItemsGoogle
 				.filter(t -> !t.getTranslation().isEmpty())
-				.flatMap(itemGoogle -> fromDB.parallelStream()
-								.filter(itemDB -> itemDB.getOrigin().equals(itemGoogle.getOrigin())
-										&& !itemDB.getTranslation().equals(itemGoogle.getTranslation()))
-								.findAny().isPresent() ? Stream.of(itemGoogle) : Stream.empty()
-				);
+				.flatMap(itemGoogle -> {
+					AtomicBoolean originSynced = new AtomicBoolean(false);
+					Optional<TranslationItem> syncedOriginNonSyncedTranslation =  fromDB.parallelStream()
+							.filter(itemDB -> {
+								if (originSynced.get()) {
+									return false;
+								}
+								if (itemDB.getOrigin().equals(itemGoogle.getOrigin())) {
+									originSynced.set(true);
+									return !itemDB.getTranslation().equals(itemGoogle.getTranslation());
+								}
+								return false;
+							}).findAny();
+					return syncedOriginNonSyncedTranslation.isPresent() || !originSynced.get()
+							? Stream.of(itemGoogle) : Stream.empty();
+				});
 	}
 
 	public Stream<TranslationItem> removeIfNotInTopics(Stream<TranslationItem> originItems, Stream<TranslationItem> translatedItemsGoogle) {

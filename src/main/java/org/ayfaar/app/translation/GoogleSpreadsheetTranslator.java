@@ -47,7 +47,7 @@ public class GoogleSpreadsheetTranslator {
 				continue;
 			}
 			TranslationItem translationItem = new TranslationItem();
-			translationItem.setRowNumber(Optional.of(values.indexOf(row)+1));
+			translationItem.setRowNumber(Optional.of(values.lastIndexOf(row)+1));
 			translationItem.setOrigin((String) row.get(0));
 			if (row.size() > 1) {
 				translationItem.setTranslation((String) row.get(1));

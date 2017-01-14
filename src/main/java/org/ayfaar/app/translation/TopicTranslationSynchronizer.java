@@ -1,20 +1,31 @@
 package org.ayfaar.app.translation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.model.Translation;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.services.translations.TranslationService;
 import org.ayfaar.app.utils.Language;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
+@EnableScheduling
 @Service
 public class TopicTranslationSynchronizer {
-	TopicService topicService;
-	GoogleSpreadsheetTranslator googleSpreadsheetTranslator;
-	TranslationComparator translationComparator;
-	TranslationService translationService;
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss");
+	private TopicService topicService;
+	private GoogleSpreadsheetTranslator googleSpreadsheetTranslator;
+	private TranslationComparator translationComparator;
+	private TranslationService translationService;
 
 	@Autowired
 	public TopicTranslationSynchronizer(TopicService topicService, GoogleSpreadsheetTranslator translator,
@@ -27,32 +38,36 @@ public class TopicTranslationSynchronizer {
 	}
 
 	public void firstUpload() {
+		log.info("Topic translation upload started {}", dateFormat.format(new Date()));
+
 		Stream<TranslationItem> itemsTopic = topicService.getAllNames().stream().map(TranslationItem::new);
 		Stream<TranslationItem> notUploadedTopics = translationComparator.getNotUploadedOrigins(itemsTopic, Stream.empty());
 		googleSpreadsheetTranslator.write(notUploadedTopics);
+
+		log.info("Topic translation upload finished {}", dateFormat.format(new Date()));
 	}
 
+	@Scheduled(cron ="0 0 1 * * ?") // at 1 AM every day
 	public void synchronize() {
-		Stream<TranslationItem> itemsTopic = topicService.getAllNames().stream().map(TranslationItem::new);
-		Stream<TranslationItem> itemsGoogle = googleSpreadsheetTranslator.read();
+		log.info("Topic translation sync started {}", dateFormat.format(new Date()));
+
+		// get data
+		List<TranslationItem> itemsTopicList = topicService.getAllNames().stream().map(TranslationItem::new).collect(Collectors.toList());
+		Supplier<Stream<TranslationItem>> itemsTopicSupplier = itemsTopicList::stream;
+		TranslationItem[] itemsGoogleArray = googleSpreadsheetTranslator.read().toArray(TranslationItem[]::new);
+		Supplier<Stream<TranslationItem>> itemsGoogleSupplier = () -> Stream.of(itemsGoogleArray);
 		Stream<TranslationItem> itemsTranslation = translationService.getAllAsTranslationItem();
-//		// topic -> spreadsheet
-		translationComparator.getNotUploadedOrigins(itemsTopic, itemsGoogle)
+		// topic -> spreadsheet
+		translationComparator.getNotUploadedOrigins(itemsTopicSupplier.get(), itemsGoogleSupplier.get())
 				.forEach(googleSpreadsheetTranslator::write);
 		// spreadsheet -> translation
 		Stream<TranslationItem> notDownloadedTranslations =
-				translationComparator.getNotDownloadedTranslations(itemsGoogle, itemsTranslation);
-		notDownloadedTranslations = translationComparator.removeIfNotInTopics(itemsTopic, notDownloadedTranslations);
+				translationComparator.getNotDownloadedTranslations(itemsGoogleSupplier.get(), itemsTranslation);
+		notDownloadedTranslations = translationComparator.removeIfNotInTopics(itemsTopicSupplier.get(), notDownloadedTranslations);
 		notDownloadedTranslations
 				.map(item -> new Translation(item.getOrigin(), item.getTranslation(), Language.en))
 				.forEach(translationService::save);
-	}
 
-	protected void applyChangesToDb(Stream<TranslationItem> items) {
-
-	}
-
-	protected void applyChangesToRemoteService(Stream<TranslationItem> items) {
-
+		log.info("Topic translation sync finished {}", dateFormat.format(new Date()));
 	}
 }
