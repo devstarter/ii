@@ -3,6 +3,7 @@ package org.ayfaar.app.services.record;
 import org.ayfaar.app.model.Record;
 
 import java.util.List;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -17,6 +18,8 @@ public interface RecordService {
     boolean isPrivateRecordsVisible();
 
     Map<String, String> getAllUriCodes();
+
+    Record save(Record record);
 
     Optional<Record> getByCode(String code);
 

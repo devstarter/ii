@@ -28,6 +28,7 @@ public class Record extends UID{
     private String altAudioGid;
     @Column(columnDefinition = "text")
     private String text;
+    private Integer duration = 0;
     @Column(columnDefinition = "text")
     private String description;
 

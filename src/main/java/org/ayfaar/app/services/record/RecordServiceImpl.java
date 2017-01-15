@@ -83,4 +83,14 @@ public class RecordServiceImpl implements RecordService {
         final Optional<User> currentUserOpt = currentUserProvider.get();
         return currentUserOpt.isPresent() && currentUserOpt.get().getRole().accept(UserRole.ROLE_EDITOR);
     }
+
+    @Override
+    public List<Record> getAll() {
+        return allRecords;
+    }
+
+    @Override
+    public Record save(Record record) {
+        return commonDao.save(record);
+    }
 }
