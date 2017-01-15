@@ -1,9 +1,9 @@
-package org.ayfaar.app.services.record;
+package org.ayfaar.app.translation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.ayfaar.app.model.Record;
-import org.ayfaar.app.utils.AudioUtils;
+import org.ayfaar.app.services.record.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
