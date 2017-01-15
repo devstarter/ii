@@ -278,4 +278,10 @@ public class TopicController {
         translationSynchronizer.synchronize();
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @RequestMapping(value = "upload-translation", method = GET)
+    public ResponseEntity<?> uploadTranslation() {
+        translationSynchronizer.firstUpload();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
