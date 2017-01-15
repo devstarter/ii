@@ -27,6 +27,7 @@
 		<junit.version>4.11</junit.version>
 		<poi.version>3.9</poi.version>
 		<streamex.version>0.6.0</streamex.version>
+		<tika.version>1.14</tika.version>
 	</properties>
 
 	<dependencies>
@@ -296,6 +297,17 @@
 			<groupId>net.sf.dozer</groupId>
 			<artifactId>dozer</artifactId>
 			<version>5.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>${tika.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers</artifactId>
+			<version>${tika.version}</version>
 		</dependency>
 
 	</dependencies>
