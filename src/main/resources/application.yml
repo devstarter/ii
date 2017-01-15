@@ -41,3 +41,6 @@ google.api.key: ${GOOGLE_API_KEY:'no_key'}
 server:
   session:
     timeout: 2147483647
+
+translation:
+  spreadsheet-id: '1LeX6A9Va3VQop7JMHkkvgNpnYgnPyCgajPbEm2de2C8'

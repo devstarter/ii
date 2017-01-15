@@ -27,6 +27,7 @@
 		<junit.version>4.11</junit.version>
 		<poi.version>3.9</poi.version>
 		<streamex.version>0.6.0</streamex.version>
+		<tika.version>1.14</tika.version>
 	</properties>
 
 	<dependencies>
@@ -248,6 +249,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-sheets</artifactId>
+			<version>v4-rev38-1.22.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-youtube</artifactId>
 			<version>v3-rev162-1.21.0</version>
 			<scope>test</scope>
@@ -291,6 +297,17 @@
 			<groupId>net.sf.dozer</groupId>
 			<artifactId>dozer</artifactId>
 			<version>5.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>${tika.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers</artifactId>
+			<version>${tika.version}</version>
 		</dependency>
 
 	</dependencies>

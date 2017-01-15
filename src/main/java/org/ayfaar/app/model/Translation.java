@@ -5,7 +5,7 @@ import org.ayfaar.app.utils.Language;
 
 import javax.persistence.*;
 
-//@Entity
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
