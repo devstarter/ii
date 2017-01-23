@@ -1,8 +1,9 @@
 package org.ayfaar.app.services;
 
 import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest;
+import com.google.api.services.sheets.v4.model.BatchUpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ClearValuesRequest;
-import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Getter @Setter
@@ -32,36 +33,33 @@ public class GoogleSpreadsheetService {
 			values = new ArrayList<>();
 		}
 		if (values.size() == 0) {
-			log.debug("No data read from spreadsheet {}, {}", spreadsheetId, range);
+			log.debug("No data read from spreadsheet {}, range {}", spreadsheetId, range);
 		}
 
 		return values;
 	}
 
-	public Integer write(Sheets service, List<List<Object>> rows) throws IOException {
-		clear(service);
-		ValueRange response = new ValueRange();
-		response.setValues(rows);
-		UpdateValuesResponse updateValuesResponse = service.spreadsheets().values()
-				.update(spreadsheetId, range, response).setValueInputOption(VALUE_INPUT_OPTION).execute();
-		Integer updatedRows = updateValuesResponse.getUpdatedRows();
+	public Integer write(Sheets service, Map<Integer, List<Object>> batchData) throws IOException {
+        List<ValueRange> valueRanges = new ArrayList<>();
+        batchData.forEach((k, v) -> {
+            ValueRange valueRange = new ValueRange();
+            valueRange.setRange("A" + k);
+            List<List<Object>> data = new ArrayList<>();
+            data.add(v);
+            valueRange.setValues(data);
+            valueRanges.add(valueRange);
+        });
+
+        BatchUpdateValuesRequest request = new BatchUpdateValuesRequest();
+        request.setValueInputOption(VALUE_INPUT_OPTION);
+        request.setData(valueRanges);
+        BatchUpdateValuesResponse response = service.spreadsheets().values().batchUpdate(spreadsheetId, request).execute();
+
+        Integer updatedRows = response.getTotalUpdatedRows();
 		if (updatedRows == null) {
 			updatedRows = 0;
 		}
 		return updatedRows;
-	}
-
-	public Integer write(Sheets service, List<Object> row, String range) throws IOException {
-		List<List<Object>> rows = Arrays.asList(row);
-		ValueRange response = new ValueRange();
-		response.setValues(rows);
-		UpdateValuesResponse updateValuesResponse =  service.spreadsheets().values()
-				.update(spreadsheetId, range, response).setValueInputOption(VALUE_INPUT_OPTION).execute();
-		Integer updatedCells = updateValuesResponse.getUpdatedCells();
-		if (updatedCells == null) {
-			updatedCells = 0;
-		}
-		return updatedCells;
 	}
 
 	public void clear(Sheets service) throws IOException {

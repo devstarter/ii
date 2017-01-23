@@ -31,43 +31,31 @@ public class TopicTranslationSynchronizer {
 	public TopicTranslationSynchronizer(TopicService topicService, GoogleSpreadsheetTranslator translator,
 										TranslationComparator comparator, TranslationService translationService) {
 		this.topicService = topicService;
-		translator.setSheetName("Topic");
 		this.googleSpreadsheetTranslator = translator;
 		this.translationComparator = comparator;
 		this.translationService = translationService;
 	}
 
-	public void firstUpload() {
-		log.info("Topic translation upload started {}", dateFormat.format(new Date()));
+    @Scheduled(cron ="0 0 1 * * ?") // at 1 AM every day
+    public void synchronize() {
+        log.info("Topic translation sync started {}", dateFormat.format(new Date()));
 
-		Stream<TranslationItem> itemsTopic = topicService.getAllNames().stream().map(TranslationItem::new);
-		Stream<TranslationItem> notUploadedTopics = translationComparator.getNotUploadedOrigins(itemsTopic, Stream.empty());
-		googleSpreadsheetTranslator.write(notUploadedTopics);
+        // get data
+        List<TranslationItem> itemsTopicList = topicService.getAllNames().stream().map(TranslationItem::new).collect(Collectors.toList());
+        Supplier<Stream<TranslationItem>> itemsTopicSupplier = itemsTopicList::stream;
+        TranslationItem[] itemsGoogleArray = googleSpreadsheetTranslator.read().toArray(TranslationItem[]::new);
+        Supplier<Stream<TranslationItem>> itemsGoogleSupplier = () -> Stream.of(itemsGoogleArray);
+        Stream<TranslationItem> itemsTranslation = translationService.getAllAsTranslationItem();
+        // topic -> spreadsheet
+        googleSpreadsheetTranslator.write(translationComparator.getNotUploadedOrigins(itemsTopicSupplier.get(), itemsGoogleSupplier.get()));
+        // spreadsheet -> translation
+        Stream<TranslationItem> notDownloadedTranslations =
+                translationComparator.getNotDownloadedTranslations(itemsGoogleSupplier.get(), itemsTranslation);
+        notDownloadedTranslations = translationComparator.removeIfNotInTopics(itemsTopicSupplier.get(), notDownloadedTranslations);
+        notDownloadedTranslations
+                .map(item -> new Translation(item.getOrigin(), item.getTranslation(), Language.en))
+                .forEach(translationService::save);
 
-		log.info("Topic translation upload finished {}", dateFormat.format(new Date()));
-	}
-
-	@Scheduled(cron ="0 0 1 * * ?") // at 1 AM every day
-	public void synchronize() {
-		log.info("Topic translation sync started {}", dateFormat.format(new Date()));
-
-		// get data
-		List<TranslationItem> itemsTopicList = topicService.getAllNames().stream().map(TranslationItem::new).collect(Collectors.toList());
-		Supplier<Stream<TranslationItem>> itemsTopicSupplier = itemsTopicList::stream;
-		TranslationItem[] itemsGoogleArray = googleSpreadsheetTranslator.read().toArray(TranslationItem[]::new);
-		Supplier<Stream<TranslationItem>> itemsGoogleSupplier = () -> Stream.of(itemsGoogleArray);
-		Stream<TranslationItem> itemsTranslation = translationService.getAllAsTranslationItem();
-		// topic -> spreadsheet
-		translationComparator.getNotUploadedOrigins(itemsTopicSupplier.get(), itemsGoogleSupplier.get())
-				.forEach(googleSpreadsheetTranslator::write);
-		// spreadsheet -> translation
-		Stream<TranslationItem> notDownloadedTranslations =
-				translationComparator.getNotDownloadedTranslations(itemsGoogleSupplier.get(), itemsTranslation);
-		notDownloadedTranslations = translationComparator.removeIfNotInTopics(itemsTopicSupplier.get(), notDownloadedTranslations);
-		notDownloadedTranslations
-				.map(item -> new Translation(item.getOrigin(), item.getTranslation(), Language.en))
-				.forEach(translationService::save);
-
-		log.info("Topic translation sync finished {}", dateFormat.format(new Date()));
-	}
+        log.info("Topic translation sync finished {}", dateFormat.format(new Date()));
+    }
 }

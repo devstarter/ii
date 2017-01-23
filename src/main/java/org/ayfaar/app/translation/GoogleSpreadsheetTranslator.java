@@ -8,9 +8,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,25 +21,24 @@ import static org.ayfaar.app.utils.GoogleSpreadsheetsUtil.getSheetsService;
 @Slf4j
 @Component @Scope("prototype")
 public class GoogleSpreadsheetTranslator {
-	private String sheetName;
-
+    private String range = "A:B";
 	private GoogleSpreadsheetService googleSpreadsheetService;
 
 	@Autowired
 	public GoogleSpreadsheetTranslator(GoogleSpreadsheetService service,
-									   @Value("${translation.spreadsheet-id}") String spreadsheetId) {
+                                       @Value("${translation.spreadsheet-id}") String spreadsheetId) {
 		service.setSpreadsheetId(spreadsheetId);
 		this.googleSpreadsheetService = service;
 	}
 
 	public Stream<TranslationItem> read() {
-		googleSpreadsheetService.setRange(sheetName);
+        googleSpreadsheetService.setRange(range);
 
 		List<List<Object>> values = new ArrayList<>();
 		try {
 			 values = googleSpreadsheetService.read(getSheetsService());
 		} catch (IOException e) {
-			log.error("Can't read translation from range {}", sheetName, e);
+			log.error("Can't read translation from range {}", range, e);
 		}
 
 		List<TranslationItem> result = new ArrayList<>();
@@ -47,7 +47,7 @@ public class GoogleSpreadsheetTranslator {
 				continue;
 			}
 			TranslationItem translationItem = new TranslationItem();
-			translationItem.setRowNumber(Optional.of(values.lastIndexOf(row)+1));
+			translationItem.setRowNumber(Optional.of(values.lastIndexOf(row) + 1));
 			translationItem.setOrigin((String) row.get(0));
 			if (row.size() > 1) {
 				translationItem.setTranslation((String) row.get(1));
@@ -58,37 +58,23 @@ public class GoogleSpreadsheetTranslator {
 		return result.stream();
 	}
 
-	public Integer write(Stream<TranslationItem> items) {
-		googleSpreadsheetService.setRange(sheetName);
+	public Integer write(Stream<TranslationItem> translationItems) {
+        Map<Integer, List<Object>> batchData = new HashMap<>();
+        translationItems.forEach(t ->
+                        batchData.put(t.getRowNumber().get(), Stream.of(t.getOrigin(), t.getTranslation()).collect(Collectors.toList()))
+        );
 
-		List<List<Object>> values = new ArrayList<>();
-		items.forEach(item -> values.add(Arrays.asList(item.getOrigin(), item.getTranslation())));
-
-		Integer updatedRows = -1;
-		try {
-			updatedRows = googleSpreadsheetService.write(getSheetsService(), values);
-		} catch (IOException e) {
-			log.error("Can't write translation to range {}", sheetName, e);
-		}
+        Integer updatedRows = -1;
+        try {
+            updatedRows = googleSpreadsheetService.write(getSheetsService(), batchData);
+        } catch (IOException e) {
+            log.error("Can't write translations", e);
+        }
 
 		return updatedRows;
 	}
 
-	public Integer write(TranslationItem item) {
-		String fullRange = sheetName + "!" + "A" + item.getRowNumber().get();
-
-		Integer updatedCells = -1;
-		try {
-			updatedCells = googleSpreadsheetService.write(getSheetsService(),
-					Stream.of(item.getOrigin(), item.getTranslation()).collect(Collectors.toList()), fullRange);
-		} catch (IOException e) {
-			log.error("Can't write translation row to range {}", fullRange, e);
-		}
-
-		return updatedCells;
-	}
-
-	public void setSheetName(String sheetName) {
-		this.sheetName = sheetName;
-	}
+	public void setRange(String range) {
+        this.range = range;
+    }
 }

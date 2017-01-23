@@ -27,7 +27,7 @@ public class GoogleSpreadsheetsUtil {
 
 	/** Directory to store user credentials for this application. */
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(
-			System.getProperty("user.home"), ".credentials/sheets.googleapis.com-java-quickstart");
+			"credentials/sheets_googleapis_com");
 
 	/** Global instance of the JSON factory. */
 	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
