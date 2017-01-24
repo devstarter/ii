@@ -1045,10 +1045,10 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                                 $api.term.getShortDescription(moreAfterPrimeTerm ? primeTerm : term).then(function (shortDescription) {
                                     $element.html(originalContent + " (" + shortDescription +
                                         " <i><a title=\"Перейти на детальное описание термина\">детальнее</a></i>)");
-                                    statistic.termExpandedAndHasNoShortDescription(term)
                                 });
                             } else {
                                 $element.html(originalContent + " (нет короткого пояснения, <i><a>детально</a></i>)");
+                                statistic.termExpandedAndHasNoShortDescription(term)
                             }
                         }
                         statistic.termExpandedOrCollapsed(term, expanded)
@@ -1485,8 +1485,8 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             $timeout(function(){statistic.pageview(location.pathname)}, 1000);
         });
         function isTom5(number) {
-            if (number.indexOf("5.") == 0) {
-                modal.message("", "5 том пока официально не опубликован, поэтому его текста нет в системе");
+            if (number.indexOf("5.") == 0 || number.indexOf("6.") == 0) {
+                modal.message("", "5 и 6 тома пока официально не опубликованы, поэтому их текста нет в системе");
                 return true;
             }
         }
