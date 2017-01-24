@@ -17,8 +17,8 @@ public class TranslationComparator {
 				.reduce((a, b) -> b).orElse(new TranslationItem(Optional.of(0))).getRowNumber().get() + 1);
 		return originStream
 				.flatMap(originItem -> fromGoogle.parallelStream()
-						.filter(translatedItem -> originItem.getOrigin().equals(translatedItem.getOrigin()))
-						.findAny().isPresent() ? Stream.empty() : Stream.of(originItem))
+						.anyMatch(translatedItem -> originItem.getOrigin().equals(translatedItem.getOrigin()))
+							? Stream.empty() : Stream.of(originItem))
 				.peek(item -> item.setRowNumber(Optional.of(lastRowNumber.getAndIncrement())));
 	}
 
@@ -49,7 +49,6 @@ public class TranslationComparator {
 		List<TranslationItem> originAsList = originItems.collect(Collectors.toList());
 		return translatedItemsGoogle
 				.filter(itemGoogle -> originAsList.parallelStream()
-						.filter(itemOrigin -> itemGoogle.getOrigin().equals(itemOrigin.getOrigin()))
-						.findAny().isPresent());
+						.anyMatch(itemOrigin -> itemGoogle.getOrigin().equals(itemOrigin.getOrigin())));
 	}
 }

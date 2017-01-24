@@ -20,14 +20,16 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.isEmpty;
+
 @Slf4j
 public class GoogleSpreadsheetsUtil {
 	/** Application name. */
 	private static final String APPLICATION_NAME = "Spreadsheets ii";
 
 	/** Directory to store user credentials for this application. */
-	private static final java.io.File DATA_STORE_DIR = new java.io.File(
-			"credentials/sheets_googleapis_com");
+	private static final java.io.File DATA_STORE_DIR = new java.io.File(isEmpty(System.getProperty("OPENSHIFT_DATA_DIR"))
+			? System.getProperty("java.io.tmpdir") : System.getProperty("OPENSHIFT_DATA_DIR"));
 
 	/** Global instance of the JSON factory. */
 	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -61,14 +63,15 @@ public class GoogleSpreadsheetsUtil {
 	 */
 	private static Credential authorize() throws IOException {
 		// Load client secrets.
-		InputStream in =
-				GoogleSpreadsheetsUtil.class.getResourceAsStream("/client_secret.json");
-		GoogleClientSecrets clientSecrets =
-				GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+		InputStream in = GoogleSpreadsheetsUtil.class.getResourceAsStream("/client_secret.json");
+		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+
+//		in = GoogleSpreadsheetsUtil.class.getClassLoader().getResourceAsStream("StoredCredential");
+
+//		if (in != null) IOUtils.copy(in, new FileWriter(new File(DATA_STORE_DIR, "StoredCredential")));
 
 		// Build flow and trigger user authorization request.
-		GoogleAuthorizationCodeFlow flow =
-				new GoogleAuthorizationCodeFlow.Builder(
+		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
 						HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
 						.setDataStoreFactory(DATA_STORE_FACTORY)
 						.setAccessType("offline")
