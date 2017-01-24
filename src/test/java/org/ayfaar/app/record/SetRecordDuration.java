@@ -1,4 +1,4 @@
-package org.ayfaar.app.translation;
+package org.ayfaar.app.record;
 
 import org.ayfaar.app.Application;
 import org.springframework.boot.SpringApplication;
