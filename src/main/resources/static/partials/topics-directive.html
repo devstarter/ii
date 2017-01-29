@@ -18,14 +18,14 @@
             добавить ключевое слово</a>
         <div ng-show="showAddTopicBlock">
             <div class="input-group">
-                <input ng-model="newTopic.name" type="text" class="form-control" placeholder="Введите название темы"
+                <input ng-model="newTopic.name" type="text" class="form-control" placeholder="Введите ключевое слово"
                        typeahead="suggestion for suggestion in getSuggestions($viewValue)" autocomplete="off">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" ng-click="openSelector()">Выбрать из списка</button>
+                            <button class="btn btn-default" ng-click="openSelector()">Список</button>
                         </span>
             </div>
-            Коментарий к связи с ключевым словом
-            <textarea ng-model="newTopic.comment" rows="3" class="full-width form-control"></textarea>
+            <!--Коментарий к связи с ключевым словом
+            <textarea ng-model="newTopic.comment" rows="3" class="full-width form-control"></textarea>-->
             Степень значимости ключевого слова
             <rating ng-model="newTopic.rate" max="3"></rating>
             <br>
