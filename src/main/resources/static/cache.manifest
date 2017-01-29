@@ -24,7 +24,6 @@ partials/header.html
 partials/knowledge-base.html
 partials/term.html
 partials/term-prompt.html
-partials/term-selector.html
 partials/document.html
 partials/image.html
 partials/item.html
@@ -43,12 +42,6 @@ images/logo.png
 
 /template/tooltip/tooltip-popup.html
 /template/typeahead/typeahead-popup.html
-
-#/api/topic/last?size=3
-#/api/resource/video/last-created?page=0&size=3
-#/api/record?page=0&size=3
-#/api/document/last?page=0&size=3
-#/api/image/last?page=0&size=3
 
 NETWORK:
 *
