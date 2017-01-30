@@ -44,3 +44,5 @@ server:
 
 translation:
   spreadsheet-id: '1vAMl7PTVXHuRUdGI9HlbfAIYXh6X1tcPcixI1aAJgfk'
+
+spring.mvc.media-types.manifest: text/cache-manifest
