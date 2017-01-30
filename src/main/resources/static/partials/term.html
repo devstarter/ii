@@ -85,11 +85,24 @@
         </div>
 
         <div class="pointer section" title="Показать" ng-click="showDocs = !showDocs" ng-show="termFound && topicResources && topicResources.document">
-            <i ng-class="showRecords ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'" class="glyphicon"></i>
+            <i ng-class="showDocs ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'" class="glyphicon"></i>
             <h3>Статьи</h3> <span ng-hide="showDocs" class="gray">показать {{topicResources.document.length}}</span>
         </div>
         <div class="row catBlock" ng-show="showDocs">
             <document-card ng-repeat="link in topicResources.document" doc="link.resource" class="col-md-4"></document-card>
+        </div>
+
+        <div class="pointer section" title="Показать" ng-click="showImgs = !showImgs" ng-show="termFound && topicResources && topicResources.image">
+            <i ng-class="showImgs ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'" class="glyphicon"></i>
+            <h3>Иллюстрации и схемы</h3> <span ng-hide="showImgs" class="gray">показать {{topicResources.image.length}}</span>
+        </div>
+        <div class="row catBlock" ng-show="showImgs">
+            <div ng-repeat="resHolder in topicResources.image" class="col-xs-6 col-sm-4">
+                <div ii-ref="resHolder.resource" class="card picture">
+                    <img ng-src="https://drive.google.com/thumbnail?sz=w210-h210-p-k-nu&id={{resHolder.resource.id}}"/>
+                    <div title="{{resHolder.resource.name}}">{{resHolder.resource.name | cut:false:65}}</div>
+                </div>
+            </div>
         </div>
 
         <span ng-show="related.length">Также связан с</span>
