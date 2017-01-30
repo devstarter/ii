@@ -9,8 +9,8 @@
 </div>
 <div ng-show="loading"><img src="static/images/ajax-loader.gif"/>Загрузка...</div>
 <div ng-hide="loading">
-    <a class="btn btn-default" ng-click="search()">
-        <i class="icon-search"></i> Искать в тексте Ииссиидиологии
+    <a class="btn btn-primary" ng-show="term" ng-click="search()">
+        <i class="icon-search"></i> Перейти на описание термина
     </a>
     <div ng-show="parents" class="parents h" style="padding-top: 20px">
         <span class="gray">Входит в:</span>
@@ -73,6 +73,9 @@
         <span class="gray">Прикреплённые аудио записи</span>
         <record-card ng-repeat="record in resources.record" record="record" exclude-topic="name"></record-card>
     </div>
+    <a class="btn btn-default" ng-hide="term" ng-click="search()">
+        <i class="icon-search"></i> Искать в тексте Ииссиидиологии
+    </a>
 </div>
 <style type="text/css">
     .title .h {visibility: hidden}

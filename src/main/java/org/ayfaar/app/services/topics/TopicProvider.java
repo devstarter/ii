@@ -2,6 +2,7 @@ package org.ayfaar.app.services.topics;
 
 import lombok.Builder;
 import org.ayfaar.app.model.*;
+import org.ayfaar.app.utils.TermService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -96,6 +97,8 @@ public interface TopicProvider {
             public String title;
         }
     }
+
+    Optional<TermService.TermProvider> linkedTerm();
 
     // todo implement
     default boolean hasGrandParent(String name) {

@@ -14,6 +14,7 @@ import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.translation.TopicTranslationSynchronizer;
+import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -236,6 +237,7 @@ public class TopicController {
                 .parents(topic.parents().map(TopicProvider::name).collect(toList()))
                 .related(topic.related().map(TopicProvider::name).collect(toList()))
                 .resources(includeResources ? topic.resources() : null)
+                .term(topic.linkedTerm().map(TermService.TermProvider::getName).orElse(null))
                 .build();
     }
 
@@ -243,6 +245,7 @@ public class TopicController {
     private static class GetTopicPresentation {
         public String uri;
         public String name;
+        public String term;
         public List<String> children;
         public List<String> parents;
         public List<String> related;

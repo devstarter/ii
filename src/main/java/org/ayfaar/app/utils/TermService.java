@@ -19,6 +19,7 @@ public interface TermService {
     List<Map.Entry<String, TermProvider>> getAll();
     List<TermDao.TermInfo> getAllInfoTerms();
     Optional<TermProvider> get(String name);
+    Optional<TermProvider> getByUri(String uri);
     Optional<TermProvider> getMainOrThis(String name);
     Term getTerm(String name);
     void reload();

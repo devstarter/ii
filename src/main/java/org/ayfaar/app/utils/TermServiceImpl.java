@@ -222,6 +222,11 @@ public class TermServiceImpl implements TermService {
     }
 
     @Override
+    public Optional<TermProvider> getByUri(String uri) {
+        return Optional.ofNullable(aliasesMap.get(getValueFromUri(Term.class, uri)));
+    }
+
+    @Override
     public Optional<TermProvider> getMainOrThis(String name) {
         final Optional<TermProvider> providerOpt = get(name);
         if (providerOpt.isPresent() && providerOpt.get().getMain().isPresent()) {

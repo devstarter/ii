@@ -9,6 +9,7 @@ import org.ayfaar.app.services.moderation.Action;
 import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.moderation.UserRole;
 import org.ayfaar.app.utils.CurrentUserProvider;
+import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.ayfaar.app.utils.exceptions.ExceptionCode;
 import org.ayfaar.app.utils.exceptions.LogicalException;
@@ -43,6 +44,7 @@ class TopicServiceImpl implements TopicService {
     @Inject Environment environment;
     @Inject CurrentUserProvider currentUserProvider;
     @Inject LinkService linkService;
+    @Inject TermService termService;
 
     @PostConstruct
     private void init() {
@@ -187,6 +189,14 @@ class TopicServiceImpl implements TopicService {
         @Override
         public Optional<? extends TopicProvider> getChild(String child) {
             return children().filter(p -> p.name().equals(child)).collect(onlyOne());
+        }
+
+        @Override
+        public Optional<TermService.TermProvider> linkedTerm() {
+            return linkService.getLinkBetween(topic, Term.class)
+                    .map(linkProvider -> linkProvider.get(Term.class).get())
+                    .map(termService::getByUri)
+                    .orElseGet(() -> termService.getMainOrThis(name()));
         }
 
         @Override
