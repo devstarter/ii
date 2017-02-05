@@ -246,7 +246,7 @@ function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt
             copyObjectTo(topic, $scope);
             document.title = $scope.name;
         }, function () {
-            $state.goToMainTopic();
+            $state.goToHome();
         })['finally'](function () {
             $scope.loading = false;
         });

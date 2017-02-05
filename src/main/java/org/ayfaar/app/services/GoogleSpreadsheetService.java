@@ -5,10 +5,8 @@ import com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ClearValuesRequest;
 import com.google.api.services.sheets.v4.model.ValueRange;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.ayfaar.app.utils.GoogleService;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -17,16 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Getter @Setter
-@NoArgsConstructor
 @Component
 public class GoogleSpreadsheetService {
 	private static final String VALUE_INPUT_OPTION = "RAW";
 
-	private String spreadsheetId;
-	private String range;
-
-	public List<List<Object>> read(Sheets service) throws IOException {
+	public List<List<Object>> read(String spreadsheetId, String range) throws IOException {
+		Sheets service = GoogleService.getSheetsService();
 		ValueRange response = service.spreadsheets().values().get(spreadsheetId, range).execute();
 		List<List<Object>> values = response.getValues();
 		if (values == null) {
@@ -39,7 +33,8 @@ public class GoogleSpreadsheetService {
 		return values;
 	}
 
-	public Integer write(Sheets service, Map<Integer, List<Object>> batchData) throws IOException {
+	public Integer write(String spreadsheetId, Map<Integer, List<Object>> batchData) throws IOException {
+		Sheets service = GoogleService.getSheetsService();
         List<ValueRange> valueRanges = new ArrayList<>();
         batchData.forEach((k, v) -> {
             ValueRange valueRange = new ValueRange();
@@ -62,7 +57,8 @@ public class GoogleSpreadsheetService {
 		return updatedRows;
 	}
 
-	public void clear(Sheets service) throws IOException {
+	public void clear(String spreadsheetId, String range) throws IOException {
+		Sheets service = GoogleService.getSheetsService();
 		service.spreadsheets().values().clear(spreadsheetId, range, new ClearValuesRequest()).execute();
 	}
 }

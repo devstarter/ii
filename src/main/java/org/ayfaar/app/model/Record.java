@@ -28,6 +28,8 @@ public class Record extends UID{
     private String altAudioGid;
     @Column(columnDefinition = "text")
     private String text;
+    @Column(columnDefinition = "text")
+    private String description;
 
     @Override
     public String toTitle() {

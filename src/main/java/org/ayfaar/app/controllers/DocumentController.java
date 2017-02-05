@@ -14,6 +14,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class DocumentController {
     public Document create(@RequestParam String url,
                            @RequestParam(required = false) Optional<String> name,
                            @RequestParam(required = false) String author,
-                           @RequestParam(required = false) String annotation) {
+                           @RequestParam(required = false) String annotation) throws IOException {
         Assert.hasLength(url);
         if(!url.contains("google.com")){
             File file = googleService.uploadToGoogleDrive(url, name.orElse("Новый документ"));

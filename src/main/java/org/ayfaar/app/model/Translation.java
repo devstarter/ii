@@ -21,4 +21,10 @@ public class Translation {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Language lang;
+    @Enumerated(EnumType.STRING)
+    private Context context = Context.topic;
+
+    public enum Context {
+        topic
+    }
 }

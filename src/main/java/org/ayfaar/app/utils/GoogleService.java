@@ -1,10 +1,7 @@
 package org.ayfaar.app.utils;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -20,6 +17,8 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.SheetsScopes;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,22 +32,30 @@ import javax.inject.Inject;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.util.Arrays.asList;
 
 @Slf4j
 @Component
 public class GoogleService {
+    private static Sheets sheetsService;
+
     @Value("${google.api.key}") private String API_KEY;
     @Value("${drive-dir}") private String driveDir;
 
     private static final String APPLICATION_NAME = "ii";
+    private static final String ACCOUNT_PRIVATE_KEY = "/account-private-key-google-api-devstarter.json";
+
     private static HttpTransport httpTransport;
     private static FileDataStoreFactory dataStoreFactory;
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -60,6 +67,16 @@ public class GoogleService {
     private final String DocOrImageInfoUrl = "https://www.googleapis.com/drive/v2/files/{id}?key={key}";
     private final String forGetCodeOfVideoUrl = "https://www.googleapis.com/youtube/v3/videos?key={API_KEY}&fields=items(snippet(tags))&part=snippet&id={video_id}";
     public static final String codeVideoPatternRegExp = "^\\d{4}-\\d{2}-\\d{2}(_\\d{1,2})?([a-z])?([-_][km])?$";
+
+    /** Global instance of the HTTP transport. */
+    private static HttpTransport HTTP_TRANSPORT;
+    static {
+        try {
+            HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        } catch (Throwable t) {
+            log.error(t.getMessage(), t);
+        }
+    }
 
     @Inject
     public GoogleService(ResourceLoader resourceLoader, RestTemplate restTemplate) {
@@ -147,31 +164,7 @@ public class GoogleService {
         throw new RuntimeException("Cannot resolve id");
     }
 
-    /** Authorizes the installed application to access user's protected data. */
-    private static Credential authorize() {
-        GoogleClientSecrets clientSecrets;
-        GoogleAuthorizationCodeFlow flow;
-        try {
-            // load client secrets
-            clientSecrets = GoogleClientSecrets.load(JSON_FACTORY,
-                    new InputStreamReader(GoogleService.class.getResourceAsStream("/client_secrets.json")));
-            if (clientSecrets.getDetails().getClientId().startsWith("Enter")
-                    || clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
-                throw new RuntimeException("Enter Client ID and Secret from https://code.google.com/apis/console/?api=drive into .../client_secrets.json");
-            }
-            // set up authorization code flow
-            flow = new GoogleAuthorizationCodeFlow.Builder(
-                    httpTransport, JSON_FACTORY, clientSecrets,
-                    Collections.singleton(DriveScopes.DRIVE_FILE)).setDataStoreFactory(dataStoreFactory)
-                    .build();
-            // authorize
-            return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
-        } catch (IOException e) {
-            throw new RuntimeException("Google authorization error", e);
-        }
-    }
-
-    public File uploadToGoogleDrive(String url, String title) {
+    public File uploadToGoogleDrive(String url, String title) throws IOException {
         Resource resource = resourceLoader.getResource("file:" + driveDir);
         if (!resource.exists()) {
             throw new RuntimeException("Error locating Google Drive dir "+ driveDir);
@@ -191,7 +184,7 @@ public class GoogleService {
             throw new RuntimeException("Google Drive initialization error", e);
         }
         // authorization
-        Credential credential = authorize();
+        Credential credential = authorize(DriveScopes.DRIVE);
         // set up the global Drive instance
         drive = new Drive.Builder(httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
         // run command
@@ -270,6 +263,39 @@ public class GoogleService {
 //                .queue(batch, callback);
 
 
+    }
+
+    /**
+     * Creates an authorized Credential object.
+     * @return an authorized Credential object.
+     * @throws IOException
+     * @see https://developers.google.com/identity/protocols/OAuth2ServiceAccount
+     */
+    private static Credential authorize(String... scopes) throws IOException {
+        GoogleCredential credential = null;
+        try {
+            credential = GoogleCredential
+                    .fromStream(GoogleService.class.getResourceAsStream(ACCOUNT_PRIVATE_KEY))
+                    .createScoped(asList(scopes));
+        } catch (IOException e) {
+            log.error("Can't create Google credential", e);
+        }
+
+        return credential;
+    }
+
+    /**
+     * Build and return an authorized Sheets API client service.
+     * @return an authorized Sheets API client service
+     */
+    public static Sheets getSheetsService() throws IOException {
+        if (sheetsService == null) {
+            Credential credential = authorize(SheetsScopes.SPREADSHEETS);
+            sheetsService = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+        }
+        return sheetsService;
     }
 
     public static class VideoInfo {

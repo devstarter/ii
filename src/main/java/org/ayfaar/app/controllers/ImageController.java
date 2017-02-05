@@ -18,6 +18,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.util.*;
 
 import static java.lang.Math.min;
@@ -41,7 +42,7 @@ public class ImageController {
 
     @RequestMapping(method = RequestMethod.POST)
     public Image create(@RequestParam String url,
-                        @RequestParam(required = false) Optional<String> name){
+                        @RequestParam(required = false) Optional<String> name) throws IOException {
 
         Assert.hasLength(url);
         if(!url.contains("google.com")){

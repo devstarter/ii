@@ -8,7 +8,7 @@ public interface RecordService {
 
     Map<String, String> getAllUriNames();
 
-    boolean isInternalRecordAllowed();
+    boolean isPrivateRecordsVisible();
 
     Map<String, String> getAllUriCodes();
 }

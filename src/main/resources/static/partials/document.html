@@ -1,12 +1,5 @@
 <div>
     <div ng-show="showUrlInput && !doc">
-        <div class="input-group" style="padding-top: 20px">
-            <input ng-model="url" placeholder="Вставте ссылку на документ" class="form-control"/>
-            <span class="input-group-btn">
-                <button ng-click="add()" class="btn btn-primary" ng-class="docLoading ? 'disabled' : ''">Добавить</button>
-            </span>
-        </div>
-        <div ng-show="docLoading"><img src="static/images/ajax-loader.gif"/>Добавление...</div>
         <div ng-hide="singleMode">
             <div style="padding-top: 20px">
                 <span class="grey">Последние добавленные документы</span>
@@ -17,6 +10,13 @@
             </div>
         </div>
         <div style="clear: both"></div>
+        <div class="input-group" style="padding-top: 20px">
+            <input ng-model="url" placeholder="Вставте ссылку на документ" class="form-control"/>
+            <span class="input-group-btn">
+                <button ng-click="add()" class="btn btn-default" ng-class="docLoading ? 'disabled' : ''">Добавить</button>
+            </span>
+        </div>
+        <div ng-show="docLoading"><img src="static/images/ajax-loader.gif"/>Добавление...</div>
     </div>
     <div ng-show="doc">
         <a href="document/">← К списку документов</a>

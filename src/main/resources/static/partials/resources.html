@@ -1,12 +1,5 @@
 <div>
     <div ng-show="showUrlInput && !video">
-        <div class="input-group" style="padding-top: 20px">
-            <input ng-model="url" placeholder="Вставте ссылку на видео" class="form-control"/>
-            <span class="input-group-btn">
-                <button ng-click="save()" class="btn btn-primary" ng-class="videoLoading ? 'disabled' : ''">Добавить</button>
-            </span>
-        </div>
-        <div ng-show="videoLoading"><img src="static/images/ajax-loader.gif"/>Добавление видео...</div>
         <div style="padding-top: 20px">
             <div ng-repeat="(header, videos) in last">
                 <span class="grey">{{header}}</span>
@@ -17,6 +10,13 @@
             <a ng-click="getMore()" ng-hide="lastNoMore" class="btn btn-link" ng-class="lastLoading ? 'disabled' : ''">{{lastLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>
         </div>
         <div style="clear: both"></div>
+        <div class="input-group" style="padding-top: 20px">
+            <input ng-model="url" placeholder="Вставте ссылку на видео" class="form-control"/>
+            <span class="input-group-btn">
+                <button ng-click="save()" class="btn btn-default" ng-class="videoLoading ? 'disabled' : ''">Добавить</button>
+            </span>
+        </div>
+        <div ng-show="videoLoading"><img src="static/images/ajax-loader.gif"/>Добавление видео...</div>
     </div>
     <div ng-show="video">
         <a href="v/">← К списку видео</a>

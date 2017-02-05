@@ -6,6 +6,8 @@ import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.services.translations.TranslationService;
 import org.ayfaar.app.utils.Language;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
-//@EnableScheduling
+@EnableScheduling
 @Service
 public class TopicTranslationSynchronizer {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss");
@@ -26,15 +28,17 @@ public class TopicTranslationSynchronizer {
 	private TranslationService translationService;
 
 	@Autowired
-	public TopicTranslationSynchronizer(TopicService topicService, GoogleSpreadsheetTranslator translator,
-										TranslationComparator comparator, TranslationService translationService) {
+	public TopicTranslationSynchronizer(TopicService topicService,
+                                        GoogleSpreadsheetTranslator translator,
+										TranslationComparator comparator,
+                                        TranslationService translationService) {
 		this.topicService = topicService;
 		this.googleSpreadsheetTranslator = translator;
 		this.translationComparator = comparator;
 		this.translationService = translationService;
 	}
 
-    //@Scheduled(cron ="0 0 1 * * ?") // at 1 AM every day
+    @Scheduled(cron = "0 0 1 * * ?") // at 1 AM every day
     public void synchronize() {
         log.info("Topic translation sync started {}", dateFormat.format(new Date()));
 

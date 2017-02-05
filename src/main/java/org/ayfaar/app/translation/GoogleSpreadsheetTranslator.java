@@ -4,40 +4,33 @@ import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.services.GoogleSpreadsheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.ayfaar.app.utils.GoogleSpreadsheetsUtil.getSheetsService;
-
 @Slf4j
-@Component @Scope("prototype")
+@Component
 public class GoogleSpreadsheetTranslator {
-    private String range = "A:B";
-	private GoogleSpreadsheetService googleSpreadsheetService;
+	private final String spreadsheetId;
+	private final String range = "A:B";
+	private final GoogleSpreadsheetService googleSpreadsheetService;
 
 	@Autowired
 	public GoogleSpreadsheetTranslator(GoogleSpreadsheetService service,
                                        @Value("${translation.spreadsheet-id}") String spreadsheetId) {
-		service.setSpreadsheetId(spreadsheetId);
+		this.spreadsheetId = spreadsheetId;
 		this.googleSpreadsheetService = service;
 	}
 
 	public Stream<TranslationItem> read() {
-        googleSpreadsheetService.setRange(range);
-
 		List<List<Object>> values = new ArrayList<>();
 		try {
-			 values = googleSpreadsheetService.read(getSheetsService());
+			 values = googleSpreadsheetService.read(spreadsheetId, range);
 		} catch (IOException e) {
+			// dispatch syslog event
 			log.error("Can't read translation from range {}", range, e);
 		}
 
@@ -66,15 +59,12 @@ public class GoogleSpreadsheetTranslator {
 
         Integer updatedRows = -1;
         try {
-            updatedRows = googleSpreadsheetService.write(getSheetsService(), batchData);
+            updatedRows = googleSpreadsheetService.write(spreadsheetId, batchData);
         } catch (IOException e) {
+			// dispatch syslog event
             log.error("Can't write translations", e);
         }
 
 		return updatedRows;
 	}
-
-	public void setRange(String range) {
-        this.range = range;
-    }
 }

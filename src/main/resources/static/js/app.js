@@ -884,7 +884,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                             if ($scope.history.length)
                                 $scope.load($scope.history.pop(), true);
                         };
-                        $scope.load("Методика МИЦИАР");
+                        $scope.load("классификаторы");
                     }
                 }).result
             }
@@ -1460,7 +1460,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             originStateGo.bind($state)("picture", {id: img.id})
         };
         $state.goToMainTopic = function() {
-            $state.goToTopic("Методика МИЦИАР");
+            $state.goToTopic("классификаторы");
         };
         $state.goToTopic = function(topicName) {
             originStateGo.bind($state)("topic", {name: topicName})

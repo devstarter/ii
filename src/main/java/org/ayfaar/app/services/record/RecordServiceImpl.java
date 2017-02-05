@@ -47,7 +47,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public Map<String, String> getAllUriNames() {
-        final boolean internalRecordAllowed = isInternalRecordAllowed();
+        final boolean internalRecordAllowed = isPrivateRecordsVisible();
         return allRecords.stream()
                 .filter(r -> internalRecordAllowed || !StringUtils.isEmpty(r.getAudioUrl()))
                 .collect(Collectors.toMap(UID::getUri, Record::getName));
@@ -55,14 +55,14 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public Map<String, String> getAllUriCodes() {
-        final boolean internalRecordAllowed = isInternalRecordAllowed();
+        final boolean privateRecordsVisible = isPrivateRecordsVisible();
         return allRecords.stream()
-                .filter(r -> internalRecordAllowed || !StringUtils.isEmpty(r.getAudioUrl()))
+                .filter(r -> privateRecordsVisible || !StringUtils.isEmpty(r.getAudioUrl()))
                 .collect(Collectors.toMap(UID::getUri, Record::getCode));
     }
 
     @Override
-    public boolean isInternalRecordAllowed() {
+    public boolean isPrivateRecordsVisible() {
         final Optional<User> currentUserOpt = currentUserProvider.get();
         return currentUserOpt.isPresent() && currentUserOpt.get().getRole().accept(UserRole.ROLE_EDITOR);
     }
