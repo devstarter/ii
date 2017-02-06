@@ -12,15 +12,17 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableJpaRepositories
+@EnableCaching
+@EnableAsync
+@EnableAspectJAutoProxy
+@Slf4j
 @EntityScan("org.ayfaar.app.model")
 @ComponentScan("org.ayfaar.app")
 @ImportResource({"classpath:hibernate.xml", "classpath:spring-basic.xml"})
-@EnableCaching
-@EnableAspectJAutoProxy
-@Slf4j
 public class Application {
     public static void main(String[] args) {
         final ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);

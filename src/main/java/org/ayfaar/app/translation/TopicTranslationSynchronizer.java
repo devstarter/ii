@@ -27,16 +27,16 @@ public class TopicTranslationSynchronizer {
 	private TranslationComparator translationComparator;
 	private TranslationService translationService;
 
-	@Autowired
+    @Autowired
 	public TopicTranslationSynchronizer(TopicService topicService,
                                         GoogleSpreadsheetTranslator translator,
-										TranslationComparator comparator,
+                                        TranslationComparator comparator,
                                         TranslationService translationService) {
 		this.topicService = topicService;
 		this.googleSpreadsheetTranslator = translator;
 		this.translationComparator = comparator;
 		this.translationService = translationService;
-	}
+    }
 
     @Scheduled(cron = "0 0 1 * * ?") // at 1 AM every day
     public void synchronize() {

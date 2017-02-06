@@ -1,16 +1,14 @@
 package org.ayfaar.app.services;
 
 import com.google.api.services.sheets.v4.Sheets;
-import com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest;
-import com.google.api.services.sheets.v4.model.BatchUpdateValuesResponse;
-import com.google.api.services.sheets.v4.model.ClearValuesRequest;
-import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.api.services.sheets.v4.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.utils.GoogleService;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +49,24 @@ public class GoogleSpreadsheetService {
         BatchUpdateValuesResponse response = service.spreadsheets().values().batchUpdate(spreadsheetId, request).execute();
 
         Integer updatedRows = response.getTotalUpdatedRows();
+		if (updatedRows == null) {
+			updatedRows = 0;
+		}
+		return updatedRows;
+	}
+
+	public Integer write(String spreadsheetId, int index, List<Object> data) throws IOException {
+		Sheets service = GoogleService.getSheetsService();
+
+		ValueRange valueRange = new ValueRange();
+		valueRange.setValues(Collections.singletonList(data));
+
+        UpdateValuesResponse response = service.spreadsheets().values()
+				.update(spreadsheetId, "A" + index, valueRange)
+				.setValueInputOption(VALUE_INPUT_OPTION)
+				.execute();
+
+        Integer updatedRows = response.getUpdatedRows();
 		if (updatedRows == null) {
 			updatedRows = 0;
 		}

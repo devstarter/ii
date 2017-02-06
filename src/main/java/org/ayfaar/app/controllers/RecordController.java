@@ -2,6 +2,8 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.RecordDao;
+import org.ayfaar.app.event.EventPublisher;
+import org.ayfaar.app.event.RecordRenamedEvent;
 import org.ayfaar.app.model.Record;
 import org.ayfaar.app.model.User;
 import org.ayfaar.app.services.moderation.Action;
@@ -9,6 +11,7 @@ import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.moderation.UserRole;
 import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
+import org.ayfaar.app.sync.RecordSynchronizer;
 import org.ayfaar.app.utils.Transliterator;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -32,13 +36,17 @@ public class RecordController {
 
     private final TopicService topicService;
     private final ModerationService moderationService;
+    private final RecordSynchronizer recordSynchronizer;
+    private EventPublisher publisher;
     private final RecordDao recordDao;
 
     @Inject
-    public RecordController(RecordDao recordDao, TopicService topicService, ModerationService moderationService) {
+    public RecordController(RecordDao recordDao, TopicService topicService, ModerationService moderationService, RecordSynchronizer recordSynchronizer, EventPublisher publisher) {
         this.recordDao = recordDao;
         this.topicService = topicService;
         this.moderationService = moderationService;
+        this.recordSynchronizer = recordSynchronizer;
+        this.publisher = publisher;
     }
 
     @RequestMapping()
@@ -80,6 +88,7 @@ public class RecordController {
         record.setName(name);
         recordDao.save(record);
         moderationService.notice(Action.RECORD_RENAMED, record.getUri(), record.getPreviousName(), record.getName());
+        publisher.publishEvent(new RecordRenamedEvent(record));
     }
 
     @RequestMapping(value = "{code}/download", method = RequestMethod.GET)
@@ -96,5 +105,10 @@ public class RecordController {
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + record.getCode() + " " + name + ".mp3\"");
 
         return "redirect:" + url;
+    }
+
+    @RequestMapping("sync")
+    public void sync() throws IOException {
+        recordSynchronizer.synchronize();
     }
 }

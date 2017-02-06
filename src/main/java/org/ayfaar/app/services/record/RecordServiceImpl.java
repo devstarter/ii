@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.ayfaar.app.utils.StreamUtils.single;
+
 @Slf4j
 @Component()
 public class RecordServiceImpl implements RecordService {
@@ -59,6 +61,21 @@ public class RecordServiceImpl implements RecordService {
         return allRecords.stream()
                 .filter(r -> privateRecordsVisible || !StringUtils.isEmpty(r.getAudioUrl()))
                 .collect(Collectors.toMap(UID::getUri, Record::getCode));
+    }
+
+    @Override
+    public Optional<Record> getByCode(String code) {
+        return allRecords.stream().filter(record -> record.getCode().equals(code)).collect(single());
+    }
+
+    @Override
+    public void save(Record record) {
+        commonDao.save(record);
+    }
+
+    @Override
+    public List<Record> getAll() {
+        return allRecords;
     }
 
     @Override
