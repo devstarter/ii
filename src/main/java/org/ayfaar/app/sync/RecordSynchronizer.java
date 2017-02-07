@@ -2,12 +2,14 @@ package org.ayfaar.app.sync;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
 import org.ayfaar.app.event.RecordRenamedEvent;
 import org.ayfaar.app.model.Record;
+import org.ayfaar.app.model.VideoResource;
 import org.ayfaar.app.services.GoogleSpreadsheetService;
 import org.ayfaar.app.services.record.RecordService;
 import org.ayfaar.app.services.videoResource.VideoResourceService;
@@ -20,9 +22,9 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * 1. Initial uploading
@@ -39,7 +41,6 @@ import java.util.List;
 @EnableScheduling
 @Slf4j
 public class RecordSynchronizer {
-    private final GoogleSpreadsheetService spreadsheetService;
     private final RecordService recordService;
     private final VideoResourceService videoResourceService;
 
@@ -50,7 +51,6 @@ public class RecordSynchronizer {
                               RecordService recordService,
                               VideoResourceService videoResourceService,
                               @Value("${sync.records.spreadsheet-id}") String spreadsheetId) {
-        this.spreadsheetService = spreadsheetService;
         this.recordService = recordService;
         this.videoResourceService = videoResourceService;
         
@@ -67,13 +67,31 @@ public class RecordSynchronizer {
 
     private Collection<RecordSyncData> dataLoader() {
         final List<Record> records = recordService.getAll();
-        return StreamEx.of(records)
+        final List<VideoResource> videos = videoResourceService.getAll();
+
+        // create data based on records
+        final List<RecordSyncData> syncData = StreamEx.of(records)
                 .map(record -> RecordSyncData.builder()
-                    .code(record.getCode())
-                    .originalName(record.getName())
-                    .description(record.getDescription())
-                    .build())
+                        .code(record.getCode())
+                        .originalName(record.getName())
+                        .description(record.getDescription())
+                        .build())
                 .toList();
+
+        // add data based on videos
+        videos.stream().filter(v -> !isEmpty(v.getCode())).forEach(v -> {
+            final Optional<RecordSyncData> match = syncData.stream().filter(i -> Objects.equals(i.code, v.getCode())).findFirst();
+            if (match.isPresent()) {
+                match.get().simpleName(v.getTitle());
+            } else {
+                syncData.add(RecordSyncData.builder()
+                        .code(v.getCode())
+                        .simpleName(v.getTitle())
+                        .build());
+
+            }
+        });
+        return syncData;
     }
 
     @Scheduled(cron = "0 0 2 * * ?") // at 2 AM every day
@@ -108,7 +126,7 @@ public class RecordSynchronizer {
         });
     }
 
-    @Getter
+    @Getter @Setter
     @Accessors(fluent = true)
     @Builder
     @ToString

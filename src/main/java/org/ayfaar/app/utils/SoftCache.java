@@ -19,4 +19,8 @@ public class SoftCache<K, V> {
         }
         return value;
     }
+
+    public void clear() {
+        map.clear();
+    }
 }

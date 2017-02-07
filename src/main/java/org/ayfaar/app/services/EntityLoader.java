@@ -24,4 +24,8 @@ public class EntityLoader {
         return (E) cache.getOrCreate(uri, () -> commonDao.getOpt(UriGenerator.getClassByUri(uri), uri)
                 .orElseThrow(() -> new RuntimeException("Entity not found, uri: " + uri)));
     }
+
+    public void clear() {
+        cache.clear();
+    }
 }

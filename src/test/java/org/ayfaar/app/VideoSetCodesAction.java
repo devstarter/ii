@@ -21,7 +21,7 @@ public class VideoSetCodesAction extends IntegrationTest {
 
     @Test
     public void setCodes() {
-        videoService.getAll()
+        videoService.getAll().stream()
                 .filter(v -> StringUtils.isEmpty(v.getCode()))
                 .forEach(v -> {
                     try {
