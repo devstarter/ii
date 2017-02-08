@@ -17,7 +17,7 @@ public class TranslationComparator {
 				.reduce((a, b) -> b).orElse(new TranslationItem(Optional.of(0))).getRowNumber().get() + 1);
 		return originStream
 				.flatMap(originItem -> fromGoogle.parallelStream()
-						.anyMatch(translatedItem -> originItem.getOrigin().equals(translatedItem.getOrigin()))
+						.anyMatch(translatedItem -> originItem.getOrigin().equalsIgnoreCase(translatedItem.getOrigin()))
 							? Stream.empty() : Stream.of(originItem))
 				.peek(item -> item.setRowNumber(Optional.of(lastRowNumber.getAndIncrement())));
 	}
@@ -34,9 +34,9 @@ public class TranslationComparator {
 								if (originSynced.get()) {
 									return false;
 								}
-								if (itemDB.getOrigin().equals(itemGoogle.getOrigin())) {
+								if (itemDB.getOrigin().equalsIgnoreCase(itemGoogle.getOrigin())) {
 									originSynced.set(true);
-									return !itemDB.getTranslation().equals(itemGoogle.getTranslation());
+									return !itemDB.getTranslation().equalsIgnoreCase(itemGoogle.getTranslation());
 								}
 								return false;
 							}).findAny();
@@ -49,6 +49,6 @@ public class TranslationComparator {
 		List<TranslationItem> originAsList = originItems.collect(Collectors.toList());
 		return translatedItemsGoogle
 				.filter(itemGoogle -> originAsList.parallelStream()
-						.anyMatch(itemOrigin -> itemGoogle.getOrigin().equals(itemOrigin.getOrigin())));
+                        .anyMatch(itemOrigin -> itemGoogle.getOrigin().equalsIgnoreCase(itemOrigin.getOrigin())));
 	}
 }

@@ -133,7 +133,7 @@ class TopicServiceImpl implements TopicService {
     @Override
     public List<String> getAllNames(){
         return topics.values().stream().map(topicProvider ->
-                topicProvider.topic().getName()).collect(Collectors.toList());
+                topicProvider.topic().getName().trim()).collect(Collectors.toList());
     }
     @Override
     public Map<String, String> getAllUriNames(){
