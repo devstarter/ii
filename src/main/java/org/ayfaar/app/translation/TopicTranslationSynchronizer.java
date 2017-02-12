@@ -5,6 +5,7 @@ import org.ayfaar.app.model.Translation;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.services.translations.TranslationService;
 import org.ayfaar.app.utils.Language;
+import org.ayfaar.app.utils.SysLogPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,20 +27,24 @@ public class TopicTranslationSynchronizer {
 	private GoogleSpreadsheetTranslator googleSpreadsheetTranslator;
 	private TranslationComparator translationComparator;
 	private TranslationService translationService;
+    private SysLogPublisher sysLogPublisher;
 
     @Autowired
 	public TopicTranslationSynchronizer(TopicService topicService,
                                         GoogleSpreadsheetTranslator translator,
                                         TranslationComparator comparator,
-                                        TranslationService translationService) {
+                                        TranslationService translationService,
+                                        SysLogPublisher sysLogPublisher) {
 		this.topicService = topicService;
 		this.googleSpreadsheetTranslator = translator;
 		this.translationComparator = comparator;
 		this.translationService = translationService;
+        this.sysLogPublisher = sysLogPublisher;
     }
 
     @Scheduled(cron = "0 0 1 * * ?") // at 1 AM every day
     public void synchronize() {
+        sysLogPublisher.log("Topic translation sync started at " + dateFormat.format(new Date()));
         log.info("Topic translation sync started {}", dateFormat.format(new Date()));
 
         // get data
@@ -59,5 +64,6 @@ public class TopicTranslationSynchronizer {
                 .forEach(translationService::save);
 
         log.info("Topic translation sync finished {}", dateFormat.format(new Date()));
+        sysLogPublisher.log("Topic translation sync finished at " + dateFormat.format(new Date()));
     }
 }

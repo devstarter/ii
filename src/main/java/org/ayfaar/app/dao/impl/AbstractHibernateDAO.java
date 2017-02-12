@@ -116,7 +116,7 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
     @SuppressWarnings("unchecked")
     protected List<E> list(Criteria criteria, boolean cache) {
         criteria.setCacheable(cache);
-        return new ArrayList<E>(new LinkedHashSet<E>(criteria.list())); // privent duplications
+        return new ArrayList<E>(criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list()); // privent duplications
     }
 
     protected List<E> list(Query query) {

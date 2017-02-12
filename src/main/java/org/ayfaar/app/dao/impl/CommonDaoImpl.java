@@ -20,7 +20,6 @@ import org.springframework.util.Assert;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -140,7 +139,7 @@ public class CommonDaoImpl implements CommonDao {
     }
 
     protected <E> List<E> list(Criteria criteria) {
-        return new ArrayList<E>(new LinkedHashSet<E>(criteria.list())); // privent duplications
+        return new ArrayList<E>(criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list());
     }
 
     @Override
