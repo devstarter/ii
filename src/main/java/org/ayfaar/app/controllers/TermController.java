@@ -65,7 +65,6 @@ public class TermController {
         if (!providerOpt.isPresent()) {
             return null;
         }
-
         final TermService.TermProvider provider = providerOpt.get();
 
         ModelMap modelMap = new ModelMap();//(ModelMap) getModelMap(term);
@@ -113,7 +112,7 @@ public class TermController {
                         final UID source = entityLoader.get(p.not(uid.getUri()));
                         if (source instanceof Item) {
                             final Quote quote = getQuote(p.taggedQuote(), source.getUri());
-                            if (!quotes.stream().anyMatch(q -> Objects.equals(quote.quote, q.quote))) {
+                            if (quotes.stream().noneMatch(q -> Objects.equals(quote.quote, q.quote))) {
                                 quotes.add(quote);
                             }
                         }
@@ -140,9 +139,11 @@ public class TermController {
 
         Optional<TopicProvider> topicOpt = StreamEx.<Supplier<Optional<TopicProvider>>>of(
                     () -> topicService.findByName(term.getName()), // получаем топик по имени термина
+                    () -> topicService.contains(term.getName()),
                     () -> topicService.getAllLinkedWith(term.getUri()).findFirst(), // по линку с термином
                     () -> allAliasesWithAllMorphs.stream().map(a -> topicService.findByName(a)).filter(Optional::isPresent).findFirst().orElseGet(Optional::empty), // по имени по всем алиасам
                     () -> allAliasesWithAllMorphs.stream().map(a -> topicService.getAllLinkedWith(UriGenerator.generate(Term.class, a)).findFirst()).filter(Optional::isPresent).findFirst().orElseGet(Optional::empty)) // по линками по всем алиасам
+
                 .map(Supplier::get)
                 .filter(Optional::isPresent)
                 .map(Optional::get)

@@ -16,6 +16,9 @@ public interface TopicService {
     Optional<TopicProvider> get(String uri);
 
     @NotNull
+    Optional<TopicProvider> contains(String s);
+
+    @NotNull
     Optional<TopicProvider> get(String uri, boolean caseSensitive);
 
     @NotNull
