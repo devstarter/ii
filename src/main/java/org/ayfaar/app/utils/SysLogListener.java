@@ -22,7 +22,6 @@ public class SysLogListener {
     @Async
     @EventListener
     private void listenForEvents(SysLogEvent event) {
-        log.debug("Event received {}", event);
         sysLogService.save(event);
     }
 }

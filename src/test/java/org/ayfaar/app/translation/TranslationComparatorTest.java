@@ -1,6 +1,8 @@
 package org.ayfaar.app.translation;
 
 import org.junit.Test;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -10,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class TranslationComparatorTest {
-	private final TranslationComparator translationComparator = new TranslationComparator();
+	private final TranslationComparator translationComparator = new TranslationComparator(new ApplicationEventPublisherImpl());
 
 	@Test
 	public void testGetNotUploadedOrigins() throws Exception {
@@ -44,4 +46,17 @@ public class TranslationComparatorTest {
 //
 //		assertThat(expected, containsInAnyOrder(others.toArray()));
 	}
+}
+
+class ApplicationEventPublisherImpl implements ApplicationEventPublisher {
+
+    @Override
+    public void publishEvent(ApplicationEvent event) {
+
+    }
+
+    @Override
+    public void publishEvent(Object event) {
+
+    }
 }

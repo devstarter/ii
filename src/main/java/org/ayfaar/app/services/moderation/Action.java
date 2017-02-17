@@ -43,7 +43,10 @@ public enum Action {
     DOCUMENT_CREATED("Добавлен документ <uri label='{}'>{}</uri>"),
     DOCUMENT_RENAME("Переименование документа <uri>{}</uri> на `{}`", ROLE_EDITOR),
     DOCUMENT_RENAMED("Документ переименован c `{}` на <uri label='{}'>{}</uri>"),
-    DOCUMENT_ADD("Добавление документа {}", ROLE_AUTHENTICATED);
+    DOCUMENT_ADD("Добавление документа {}", ROLE_AUTHENTICATED),
+
+    SYSLOG_TRANSLATION_NEW("\"{}\" into \"{}\", "),
+    SYSLOG_TRANSLATION_UPDATE("\"{}\" from \"{}\" to \"{}\", ");
 
     private Action parent = null;
     private UserRole requiredAccessLevel;

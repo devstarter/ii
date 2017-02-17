@@ -1,10 +1,12 @@
 package org.ayfaar.app.translation;
 
 import lombok.extern.slf4j.Slf4j;
+import org.ayfaar.app.event.SysLogEvent;
 import org.ayfaar.app.services.GoogleSpreadsheetService;
-import org.ayfaar.app.utils.SysLogPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.logging.LogLevel;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -18,15 +20,15 @@ public class GoogleSpreadsheetTranslator {
 	private final String spreadsheetId;
 	private final String range = "A:B";
 	private final GoogleSpreadsheetService googleSpreadsheetService;
-    private final SysLogPublisher logPublisher;
+    private final ApplicationEventPublisher publisher;
 
 	@Autowired
 	public GoogleSpreadsheetTranslator(GoogleSpreadsheetService service,
                                        @Value("${translation.spreadsheet-id}") String spreadsheetId,
-                                       SysLogPublisher logPublisher) {
+                                       ApplicationEventPublisher publisher) {
 		this.spreadsheetId = spreadsheetId;
 		this.googleSpreadsheetService = service;
-        this.logPublisher = logPublisher;
+        this.publisher = publisher;
 	}
 
 	public Stream<TranslationItem> read() {
@@ -36,7 +38,9 @@ public class GoogleSpreadsheetTranslator {
 		} catch (IOException e) {
 			// dispatch syslog event
 			log.error("Can't read translation from range {}", range, e);
-		}
+            publisher.publishEvent(new SysLogEvent(this, "Can't read translation from range " + range + ". "
+                    + e.getMessage(), LogLevel.ERROR));
+        }
 
 		List<TranslationItem> result = new ArrayList<>();
 		for (List<Object> row : values) {
@@ -63,13 +67,11 @@ public class GoogleSpreadsheetTranslator {
 
         Integer updatedRows = -1;
         try {
-            logPublisher.log("Updating google spreadsheet translation table with " + batchData.size() + " rows");
             updatedRows = googleSpreadsheetService.write(spreadsheetId, batchData);
-            logPublisher.log("Google spreadsheet translation table updated successfully");
         } catch (IOException e) {
-			// dispatch syslog event
+            // dispatch syslog event
             log.error("Can't write translations", e);
-            logPublisher.log("Can't write translations. " + e.getMessage());
+            publisher.publishEvent(new SysLogEvent(this, "Can't write translations. " + e.getMessage(), LogLevel.ERROR));
         }
 
 		return updatedRows;

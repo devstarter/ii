@@ -1,7 +1,12 @@
 package org.ayfaar.app.translation;
 
+import org.ayfaar.app.event.SysLogEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.logging.LogLevel;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,6 +16,13 @@ import java.util.stream.Stream;
 
 @Component
 public class TranslationComparator {
+    private ApplicationEventPublisher publisher;
+
+    @Autowired
+    public TranslationComparator(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
+    }
+
 	public Stream<TranslationItem> getNotUploadedOrigins(Stream<TranslationItem> originStream, Stream<TranslationItem> translatedStream) {
 		List<TranslationItem> fromGoogle = translatedStream.collect(Collectors.toList());
 		final AtomicInteger lastRowNumber = new AtomicInteger(fromGoogle.stream()
@@ -46,9 +58,24 @@ public class TranslationComparator {
 	}
 
 	public Stream<TranslationItem> removeIfNotInTopics(Stream<TranslationItem> originItems, Stream<TranslationItem> translatedItemsGoogle) {
-		List<TranslationItem> originAsList = originItems.collect(Collectors.toList());
-		return translatedItemsGoogle
-				.filter(itemGoogle -> originAsList.parallelStream()
-						.anyMatch(itemOrigin -> itemGoogle.getOrigin().equals(itemOrigin.getOrigin())));
+        List<TranslationItem> originAsList = originItems.collect(Collectors.toList());
+        List<TranslationItem> notInOrigins = new ArrayList<>();
+        List<TranslationItem> resultList = translatedItemsGoogle
+                .flatMap(itemGoogle -> {
+                    boolean isPresent = originAsList.parallelStream().anyMatch(itemOrigin -> itemGoogle.getOrigin().equals(itemOrigin.getOrigin()));
+                    if (isPresent) {
+                        return Stream.of(itemGoogle);
+                    } else {
+                        notInOrigins.add(itemGoogle);
+                        return Stream.empty();
+                    }
+                }).collect(Collectors.toList());
+
+        if (!notInOrigins.isEmpty()) {
+            publisher.publishEvent(new SysLogEvent(this, "Items in Google Spreadsheet doesn't exist in Topic table: "
+                    + notInOrigins.toString(), LogLevel.WARN));
+        }
+
+        return resultList.stream();
 	}
 }

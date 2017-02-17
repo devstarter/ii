@@ -45,6 +45,7 @@ public class SysLogServiceImpl implements SysLogService {
         sysLog.setDate(new Date());
         sysLog.setLogger(event.getSource().getClass().getName());
         sysLog.setMessage(event.getMessage());
+        sysLog.setLevel(event.getLevel());
 
         return sysLog;
     }
