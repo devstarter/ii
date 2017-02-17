@@ -10,8 +10,6 @@ import org.ayfaar.app.services.translations.TranslationService;
 import org.ayfaar.app.utils.Language;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.logging.LogLevel;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -28,7 +26,6 @@ import static org.ayfaar.app.services.moderation.Action.SYSLOG_TRANSLATION_UPDAT
 import static org.slf4j.helpers.MessageFormatter.arrayFormat;
 
 @Slf4j
-@EnableScheduling
 @Service
 public class TopicTranslationSynchronizer {
     private static final String NO_UPDATES = "Synchronization: no updates";
@@ -55,7 +52,6 @@ public class TopicTranslationSynchronizer {
         this.publisher = publisher;
     }
 
-    @Scheduled(cron = "0 0 1 * * ?") // at 1 AM every day
     public void synchronize() {
         log.info("Topic translation sync started {}", dateFormat.format(new Date()));
 

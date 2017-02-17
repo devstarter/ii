@@ -81,6 +81,15 @@ class TopicServiceImpl implements TopicService {
 
     @NotNull
     @Override
+    public Optional<TopicProvider> contains(String s) {
+        return topics.keySet().stream()
+                .filter(name -> name.toLowerCase().contains(s.toLowerCase()))
+                .findFirst()
+                .map(topic -> topics.get(topic));
+    }
+
+    @NotNull
+    @Override
     public Optional<TopicProvider> get(String uri, boolean caseSensitive) {
         if (!caseSensitive) return get(uri);
         return topics.values().parallelStream()
@@ -133,7 +142,7 @@ class TopicServiceImpl implements TopicService {
     @Override
     public List<String> getAllNames(){
         return topics.values().stream().map(topicProvider ->
-                topicProvider.topic().getName()).collect(Collectors.toList());
+                topicProvider.topic().getName().trim()).collect(Collectors.toList());
     }
     @Override
     public Map<String, String> getAllUriNames(){
@@ -193,10 +202,19 @@ class TopicServiceImpl implements TopicService {
 
         @Override
         public Optional<TermService.TermProvider> linkedTerm() {
-            return linkService.getLinkBetween(topic, Term.class)
+            final Optional<TermService.TermProvider> termProviderOptional = linkService.getLinkBetween(topic, Term.class)
                     .map(linkProvider -> linkProvider.get(Term.class).get())
                     .map(termService::getByUri)
                     .orElseGet(() -> termService.getMainOrThis(name()));
+
+            if (!termProviderOptional.isPresent()) {
+                return termService.getAll().stream()
+                        .filter(entry -> name().toLowerCase().contains(entry.getKey().toLowerCase()))
+                        .findFirst()
+                        .map(Map.Entry::getValue);
+            }
+
+            return termProviderOptional;
         }
 
         @Override

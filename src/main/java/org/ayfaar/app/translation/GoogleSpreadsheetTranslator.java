@@ -49,9 +49,9 @@ public class GoogleSpreadsheetTranslator {
 			}
 			TranslationItem translationItem = new TranslationItem();
 			translationItem.setRowNumber(Optional.of(values.lastIndexOf(row) + 1));
-			translationItem.setOrigin((String) row.get(0));
+			translationItem.setOrigin(((String) row.get(0)).trim());
 			if (row.size() > 1) {
-				translationItem.setTranslation((String) row.get(1));
+				translationItem.setTranslation(((String) row.get(1)).trim());
 			}
 			result.add(translationItem);
 		}

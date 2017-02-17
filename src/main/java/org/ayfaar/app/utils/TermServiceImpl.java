@@ -37,6 +37,7 @@ public class TermServiceImpl implements TermService {
 
     private Map<String, LinkInfo> links;
     private Map<String, TermProvider> aliasesMap;
+    // names - provider map
     private ArrayList<Map.Entry<String, TermProvider>> sortedList;
     private List<TermDao.TermInfo> termsInfo;
 

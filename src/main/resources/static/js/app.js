@@ -90,7 +90,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 controller: ItemController
             })
             .state('item-range', {
-                url: "/{from:\\d+\\.\\d+}{space1:\\s*}-{space2:\\s*}{to:\\d+\\.\\d+}",
+                url: "/{from:\\d+\\.\\d+}{space1:\\s*}{delimiter:[-–]}{space2:\\s*}{to:\\d+\\.\\d+}",
                 templateUrl: "static/partials/item-range.html",
                 controller: ItemRangeController
             })

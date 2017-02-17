@@ -34,7 +34,7 @@ public class TranslationService {
 	}
 
 	public Stream<TranslationItem> getAllAsTranslationItem() {
-		return getAll().stream().map(t -> new TranslationItem(t.getOrigin(), t.getTranslated()));
+		return getAll().stream().map(t -> new TranslationItem(t.getOrigin().trim(), t.getTranslated().trim()));
 	}
 
 	public Translation save(Translation translation) {
