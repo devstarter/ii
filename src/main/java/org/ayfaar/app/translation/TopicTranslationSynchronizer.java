@@ -2,6 +2,7 @@ package org.ayfaar.app.translation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.ayfaar.app.event.EventPublisher;
 import org.ayfaar.app.event.SysLogEvent;
 import org.ayfaar.app.model.Translation;
 import org.ayfaar.app.services.topics.TopicService;
@@ -9,7 +10,6 @@ import org.ayfaar.app.services.translations.TranslationService;
 import org.ayfaar.app.utils.Language;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.logging.LogLevel;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -40,14 +40,14 @@ public class TopicTranslationSynchronizer {
 	private GoogleSpreadsheetTranslator googleSpreadsheetTranslator;
 	private TranslationComparator translationComparator;
 	private TranslationService translationService;
-    private final ApplicationEventPublisher publisher;
+    private final EventPublisher publisher;
 
     @Autowired
 	public TopicTranslationSynchronizer(TopicService topicService,
                                         GoogleSpreadsheetTranslator translator,
                                         TranslationComparator comparator,
                                         TranslationService translationService,
-                                        ApplicationEventPublisher publisher) {
+                                        EventPublisher publisher) {
 		this.topicService = topicService;
 		this.googleSpreadsheetTranslator = translator;
 		this.translationComparator = comparator;

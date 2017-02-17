@@ -1,9 +1,9 @@
 package org.ayfaar.app.translation;
 
+import org.ayfaar.app.event.EventPublisher;
 import org.ayfaar.app.event.SysLogEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.logging.LogLevel;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,10 +16,10 @@ import java.util.stream.Stream;
 
 @Component
 public class TranslationComparator {
-    private ApplicationEventPublisher publisher;
+    private final EventPublisher publisher;
 
     @Autowired
-    public TranslationComparator(ApplicationEventPublisher publisher) {
+    public TranslationComparator(EventPublisher publisher) {
         this.publisher = publisher;
     }
 

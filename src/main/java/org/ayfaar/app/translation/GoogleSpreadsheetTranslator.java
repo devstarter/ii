@@ -1,12 +1,12 @@
 package org.ayfaar.app.translation;
 
 import lombok.extern.slf4j.Slf4j;
+import org.ayfaar.app.event.EventPublisher;
 import org.ayfaar.app.event.SysLogEvent;
 import org.ayfaar.app.services.GoogleSpreadsheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.logging.LogLevel;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -20,12 +20,12 @@ public class GoogleSpreadsheetTranslator {
 	private final String spreadsheetId;
 	private final String range = "A:B";
 	private final GoogleSpreadsheetService googleSpreadsheetService;
-    private final ApplicationEventPublisher publisher;
+    private final EventPublisher publisher;
 
 	@Autowired
 	public GoogleSpreadsheetTranslator(GoogleSpreadsheetService service,
                                        @Value("${translation.spreadsheet-id}") String spreadsheetId,
-                                       ApplicationEventPublisher publisher) {
+                                       EventPublisher publisher) {
 		this.spreadsheetId = spreadsheetId;
 		this.googleSpreadsheetService = service;
         this.publisher = publisher;
