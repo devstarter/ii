@@ -202,19 +202,19 @@ class TopicServiceImpl implements TopicService {
 
         @Override
         public Optional<TermService.TermProvider> linkedTerm() {
-            final Optional<TermService.TermProvider> termProviderOptional = linkService.getLinkBetween(topic, Term.class)
+            return linkService.getLinkBetween(topic, Term.class)
                     .map(linkProvider -> linkProvider.get(Term.class).get())
                     .map(termService::getByUri)
                     .orElseGet(() -> termService.getMainOrThis(name()));
+        }
 
-            if (!termProviderOptional.isPresent()) {
-                return termService.getAll().stream()
-                        .filter(entry -> name().toLowerCase().contains(entry.getKey().toLowerCase()))
-                        .findFirst()
-                        .map(Map.Entry::getValue);
-            }
-
-            return termProviderOptional;
+        @Override
+        public Optional<TermService.TermProvider> relatedTermSuggestion() {
+            return termService.getAll().stream()
+                    .filter(entry -> entry.getKey().length() > 2)
+                    .filter(entry -> name().toLowerCase().contains(entry.getKey().toLowerCase()))
+                    .findFirst()
+                    .map(Map.Entry::getValue);
         }
 
         @Override

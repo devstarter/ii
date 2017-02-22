@@ -9,8 +9,11 @@
 </div>
 <div ng-show="loading"><img src="static/images/ajax-loader.gif"/>Загрузка...</div>
 <div ng-hide="loading">
-    <a class="btn btn-primary" ng-show="term" ng-click="search()">
-        <i class="icon-search"></i> Перейти на описание термина
+    <a class="btn btn-primary" ng-show="term" ng-click="search(term)">
+        Перейти на описание термина
+    </a>
+    <a class="btn btn-default" ng-show="suggested_term" ng-click="search(suggested_term)">
+        Просмотреть похожий термин "{{suggested_term}}"
     </a>
     <div ng-show="parents" class="parents h" style="padding-top: 20px">
         <span class="gray">Входит в:</span>
@@ -73,7 +76,7 @@
         <span class="gray">Прикреплённые аудио записи</span>
         <record-card ng-repeat="record in resources.record" record="record" exclude-topic="name"></record-card>
     </div>
-    <a class="btn btn-default" ng-hide="term" ng-click="search()">
+    <a class="btn btn-default" ng-hide="term" ng-click="search(name)">
         <i class="icon-search"></i> Искать в тексте Ииссиидиологии
     </a>
 </div>

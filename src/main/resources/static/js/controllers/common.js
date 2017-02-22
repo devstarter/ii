@@ -305,8 +305,8 @@ function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt
     $rootScope.$watch('audio.paused', function () {
         if ($scope.currentPlayed) $scope.currentPlayed.played = !$rootScope.audio.paused;
     });
-    $scope.search = function () {
-       $state.goToTerm($scope.term);
+    $scope.search = function (term) {
+       $state.goToTerm(term);
     }
 }
 function CategoryController($scope, $stateParams, $api, $state) {

@@ -54,10 +54,10 @@ public class GoogleService {
     @Value("${drive-dir}") private String driveDir;
 
     private static final String APPLICATION_NAME = "ii";
+    // https://developers.google.com/identity/protocols/OAuth2ServiceAccount
     private static final String ACCOUNT_PRIVATE_KEY = "/account-private-key-google-api-devstarter.json";
 
     private static HttpTransport httpTransport;
-    private static FileDataStoreFactory dataStoreFactory;
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static Drive drive;
 
@@ -170,16 +170,8 @@ public class GoogleService {
             throw new RuntimeException("Error locating Google Drive dir "+ driveDir);
         }
 
-        java.io.File dataStoreDir;
-        try {
-            dataStoreDir = resource.getFile();
-        } catch (IOException e) {
-            throw new RuntimeException("Error locating Google Drive dir "+ driveDir);
-        }
-
         try {
             httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-            dataStoreFactory = new FileDataStoreFactory(dataStoreDir);
         } catch (GeneralSecurityException | IOException e) {
             throw new RuntimeException("Google Drive initialization error", e);
         }

@@ -27,6 +27,7 @@ public class Image extends UID {
     private String downloadUrl;
     private String thumbnail;
     private Date createdAt = new Date();
+    @Column(columnDefinition = "text")
     private String comment;
 
     @Builder

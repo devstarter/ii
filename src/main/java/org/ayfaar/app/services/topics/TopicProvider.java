@@ -22,6 +22,8 @@ public interface TopicProvider {
         return link(type, uid, comment, null, null);
     }
 
+    Optional<TermService.TermProvider> relatedTermSuggestion();
+
     Stream<? extends TopicProvider> children();
     Stream<TopicProvider> parents();
     Stream<TopicProvider> related();

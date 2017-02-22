@@ -29,6 +29,7 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.hasLength;
+import static org.springframework.util.StringUtils.isEmpty;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -230,6 +231,8 @@ public class TopicController {
     @RequestMapping
     public GetTopicPresentation get(@RequestParam String name, @RequestParam(required = false) boolean includeResources) {
         TopicProvider topic = topicService.getByName(name);
+        String linkedTerm = topic.linkedTerm().map(TermService.TermProvider::getName).orElse(null);
+        String suggestedTerm = isEmpty(linkedTerm) ? topic.relatedTermSuggestion().map(TermService.TermProvider::getName).orElse(null) : null;
         return GetTopicPresentation.builder()
                 .name(topic.name())
                 .uri(topic.uri())
@@ -237,7 +240,8 @@ public class TopicController {
                 .parents(topic.parents().map(TopicProvider::name).collect(toList()))
                 .related(topic.related().map(TopicProvider::name).collect(toList()))
                 .resources(includeResources ? topic.resources() : null)
-                .term(topic.linkedTerm().map(TermService.TermProvider::getName).orElse(null))
+                .term(linkedTerm)
+                .suggestedTerm(suggestedTerm)
                 .build();
     }
 
@@ -246,6 +250,7 @@ public class TopicController {
         public String uri;
         public String name;
         public String term;
+        public String suggestedTerm;
         public List<String> children;
         public List<String> parents;
         public List<String> related;
