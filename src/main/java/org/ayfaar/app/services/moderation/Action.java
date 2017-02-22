@@ -45,8 +45,8 @@ public enum Action {
     DOCUMENT_RENAMED("Документ переименован c `{}` на <uri label='{}'>{}</uri>"),
     DOCUMENT_ADD("Добавление документа {}", ROLE_AUTHENTICATED),
 
-    SYSLOG_TRANSLATION_NEW("\"{}\" into \"{}\", "),
-    SYSLOG_TRANSLATION_UPDATE("\"{}\" from \"{}\" to \"{}\", ");
+    SYSLOG_TRANSLATION_NEW("\"{}\" -> \"{}\", "),
+    SYSLOG_TRANSLATION_UPDATE("\"{}\" из \"{}\" в \"{}\", "), SYS_EVENT("");
 
     private Action parent = null;
     private UserRole requiredAccessLevel;

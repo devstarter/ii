@@ -1,4 +1,4 @@
-package org.ayfaar.app.model;
+/*package org.ayfaar.app.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,4 +32,4 @@ public class SysLog {
     private String message;
     @Enumerated(EnumType.STRING)
     private LogLevel level;
-}
+}*/

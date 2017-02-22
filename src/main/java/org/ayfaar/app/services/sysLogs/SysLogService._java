@@ -1,3 +1,4 @@
+/*
 package org.ayfaar.app.services.sysLogs;
 
 import org.ayfaar.app.event.SysLogEvent;
@@ -9,3 +10,4 @@ public interface SysLogService {
     List<SysLog> getAll();
     SysLog save(SysLogEvent event);
 }
+*/

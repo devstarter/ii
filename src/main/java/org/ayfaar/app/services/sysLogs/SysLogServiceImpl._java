@@ -1,3 +1,4 @@
+/*
 package org.ayfaar.app.services.sysLogs;
 
 import org.ayfaar.app.dao.CommonDao;
@@ -50,3 +51,4 @@ public class SysLogServiceImpl implements SysLogService {
         return sysLog;
     }
 }
+*/

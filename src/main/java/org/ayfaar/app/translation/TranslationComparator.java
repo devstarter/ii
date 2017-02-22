@@ -72,8 +72,8 @@ public class TranslationComparator {
                 }).collect(Collectors.toList());
 
         if (!notInOrigins.isEmpty()) {
-            publisher.publishEvent(new SysLogEvent(this, "Items in Google Spreadsheet doesn't exist in Topic table: "
-                    + notInOrigins.toString(), LogLevel.WARN));
+            publisher.publishEvent(new SysLogEvent(this, "Записи из таблици переводов не отражённая в системе: "
+                    + notInOrigins.toString(), LogLevel.WARN)); // Items in Google Spreadsheet doesn't exist in Topic table
         }
 
         return resultList.stream();

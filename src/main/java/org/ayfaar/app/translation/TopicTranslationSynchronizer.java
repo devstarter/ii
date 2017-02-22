@@ -28,9 +28,9 @@ import static org.slf4j.helpers.MessageFormatter.arrayFormat;
 @Slf4j
 @Service
 public class TopicTranslationSynchronizer {
-    private static final String NO_UPDATES = "Synchronization: no updates";
-    private static final String PREFIX_NEW_TRANSLATION = "New translations for: ";
-    private static final String PREFIX_UPDATED_TRANSLATION = "Updated translations for: ";
+    private static final String NO_UPDATES = "Синхронизация: без обновлений";
+    private static final String PREFIX_NEW_TRANSLATION = "Добавлен перевод для: ";
+    private static final String PREFIX_UPDATED_TRANSLATION = "Обновлён перевод для: ";
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss");
 	private TopicService topicService;
