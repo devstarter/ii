@@ -4,3 +4,4 @@ target
 /II.rar
 /src/test/test.iml
 /.idea
+src/main/resources/account-private-key-google-api-devstarter.json

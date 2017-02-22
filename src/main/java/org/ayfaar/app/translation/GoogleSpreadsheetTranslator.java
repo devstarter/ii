@@ -1,9 +1,12 @@
 package org.ayfaar.app.translation;
 
 import lombok.extern.slf4j.Slf4j;
+import org.ayfaar.app.event.EventPublisher;
+import org.ayfaar.app.event.SysLogEvent;
 import org.ayfaar.app.services.GoogleSpreadsheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -17,12 +20,15 @@ public class GoogleSpreadsheetTranslator {
 	private final String spreadsheetId;
 	private final String range = "A:B";
 	private final GoogleSpreadsheetService googleSpreadsheetService;
+    private final EventPublisher publisher;
 
 	@Autowired
 	public GoogleSpreadsheetTranslator(GoogleSpreadsheetService service,
-                                       @Value("${translation.spreadsheet-id}") String spreadsheetId) {
+                                       @Value("${translation.spreadsheet-id}") String spreadsheetId,
+                                       EventPublisher publisher) {
 		this.spreadsheetId = spreadsheetId;
 		this.googleSpreadsheetService = service;
+        this.publisher = publisher;
 	}
 
 	public Stream<TranslationItem> read() {
@@ -32,7 +38,9 @@ public class GoogleSpreadsheetTranslator {
 		} catch (IOException e) {
 			// dispatch syslog event
 			log.error("Can't read translation from range {}", range, e);
-		}
+            publisher.publishEvent(new SysLogEvent(this, "Can't read translation from range " + range + ". "
+                    + e.getMessage(), LogLevel.ERROR));
+        }
 
 		List<TranslationItem> result = new ArrayList<>();
 		for (List<Object> row : values) {
@@ -61,8 +69,9 @@ public class GoogleSpreadsheetTranslator {
         try {
             updatedRows = googleSpreadsheetService.write(spreadsheetId, batchData);
         } catch (IOException e) {
-			// dispatch syslog event
+            // dispatch syslog event
             log.error("Can't write translations", e);
+            publisher.publishEvent(new SysLogEvent(this, "Can't write translations. " + e.getMessage(), LogLevel.ERROR));
         }
 
 		return updatedRows;
