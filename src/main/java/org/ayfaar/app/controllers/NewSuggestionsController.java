@@ -47,7 +47,7 @@ public class NewSuggestionsController {
     private static final int MAX_WORDS_PARAGRAPH_AFTER_SEARCH = 4;
 
     public Map<String, String> suggestions(String q) {
-        return suggestions(q, false, false, false, false, false, false, false, false, false, false);
+        return suggestions(q, false, false, false, false, false, false, false, false, false, false, false);
     }
 
     @RequestMapping("all")
@@ -59,6 +59,7 @@ public class NewSuggestionsController {
                                            @RequestParam(required = false, defaultValue = "true") boolean with_category_description,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_doc,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_video,
+                                           @RequestParam(required = false, defaultValue = "true") boolean with_video_code,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_item,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_record_name,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_record_code,
@@ -72,6 +73,7 @@ public class NewSuggestionsController {
         if (with_category_description) items.add(Suggestions.CATEGORY_DESCRIPTION);
         if (with_doc) items.add(Suggestions.DOCUMENT);
         if (with_video) items.add(Suggestions.VIDEO);
+        if (with_video_code) items.add(Suggestions.VIDEO_CODE);
         if (with_record_name) items.add(Suggestions.RECORD_NAME);
         if (with_record_code) items.add(Suggestions.RECORD_CODE);
         if (with_item) items.add(Suggestions.ITEM);
@@ -127,6 +129,9 @@ public class NewSuggestionsController {
                     break;
                 case VIDEO:
                     mapUriWithNames = videoResourceService.getAllUriNames();
+                    break;
+                case VIDEO_CODE:
+                    mapUriWithNames = videoResourceService.getAllUriCodes();
                     break;
                 case ITEM:
                     mapUriWithNames = itemService.getAllUriNumbers();

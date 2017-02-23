@@ -175,7 +175,7 @@ public class TopicController {
 
     @RequestMapping("suggest")
     public Collection<String> suggest(@RequestParam String q) {
-        return suggestionsController.suggestions(q, false, true, false, false, false, false, false, false, false, false).values();
+        return suggestionsController.suggestions(q, false, true, false, false, false, false, false, false, false, false, false).values();
     }
 
     @RequestMapping("add-child")

@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 @Component
 public class VideoResourceService {
     @Inject CommonDao commonDao;
@@ -20,5 +22,11 @@ public class VideoResourceService {
 
     public List<VideoResource> getAll() {
         return commonDao.getAll(VideoResource.class);
+    }
+
+    public Map<String, String> getAllUriCodes() {
+        return getAll().stream()
+                .filter(v -> !isEmpty(v.getCode()))
+                .collect(Collectors.toMap(UID::getUri, VideoResource::getCode));
     }
 }
