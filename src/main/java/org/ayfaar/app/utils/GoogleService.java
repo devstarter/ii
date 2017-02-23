@@ -12,13 +12,14 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.YouTubeScopes;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +50,7 @@ import static java.util.Arrays.asList;
 @Component
 public class GoogleService {
     private static Sheets sheetsService;
+    private static YouTube youtubeService;
 
     @Value("${google.api.key}") private String API_KEY;
     @Value("${drive-dir}") private String driveDir;
@@ -288,6 +290,16 @@ public class GoogleService {
                     .build();
         }
         return sheetsService;
+    }
+
+    public static YouTube getYoutubeService() throws IOException {
+        if (youtubeService == null) {
+            Credential credential = authorize(YouTubeScopes.YOUTUBE);
+            youtubeService = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+        }
+        return youtubeService;
     }
 
     public static class VideoInfo {

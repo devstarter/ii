@@ -1,7 +1,7 @@
 package org.ayfaar.app.importing;
 
 import org.apache.commons.io.FileUtils;
-import org.ayfaar.app.SpringTestConfiguration;
+import org.ayfaar.app.SpringTestDevConfiguration;
 import org.ayfaar.app.controllers.TermController;
 import org.ayfaar.app.dao.ArticleDao;
 import org.ayfaar.app.dao.LinkDao;
@@ -32,7 +32,7 @@ public class VocabularyImporter {
     public static void main(String[] args) throws IOException {
         currentArticle = null;
 
-        ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
+        ctx = new AnnotationConfigApplicationContext(SpringTestDevConfiguration.class);
         articleDao = ctx.getBean(ArticleDao.class);
         termDao = ctx.getBean(TermDao.class);
         linkDao = ctx.getBean(LinkDao.class);

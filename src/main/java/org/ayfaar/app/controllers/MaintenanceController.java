@@ -1,6 +1,7 @@
 package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.services.EntityLoader;
+import org.ayfaar.app.sync.GetVideosFormYoutube;
 import org.ayfaar.app.sync.RecordSynchronizer;
 import org.ayfaar.app.translation.TopicTranslationSynchronizer;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ public class MaintenanceController {
     @Inject EntityLoader entityLoader;
     @Inject RecordSynchronizer recordSynchronizer;
     @Inject TopicTranslationSynchronizer topicTranslationSynchronizer;
+    @Inject GetVideosFormYoutube getVideosFormYoutube;
 
     @RequestMapping("entity-loader/clear")
     public void clearEntityLoader() {
@@ -29,5 +31,10 @@ public class MaintenanceController {
     @RequestMapping("sync/translations")
     public void synchronizeTranslations() throws IOException {
         topicTranslationSynchronizer.synchronize();
+    }
+
+    @RequestMapping("sync/videos")
+    public void synchronizeVideos() throws IOException {
+        getVideosFormYoutube.synchronize();
     }
 }

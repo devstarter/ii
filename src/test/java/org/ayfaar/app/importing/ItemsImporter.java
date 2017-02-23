@@ -1,7 +1,7 @@
 package org.ayfaar.app.importing;
 
 import org.apache.commons.io.FileUtils;
-import org.ayfaar.app.SpringTestConfiguration;
+import org.ayfaar.app.SpringTestDevConfiguration;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ItemsHelper;
@@ -27,7 +27,7 @@ public class ItemsImporter {
     public static void main(String[] args) throws IOException {
         currentItem = null;
 
-        ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
+        ctx = new AnnotationConfigApplicationContext(SpringTestDevConfiguration.class);
         itemDao = ctx.getBean(ItemDao.class);
         taggingUpdater = ctx.getBean(TermsTaggingUpdater.class);
 

@@ -1,6 +1,6 @@
 package org.ayfaar.app.exec;
 
-import org.ayfaar.app.SpringTestConfiguration;
+import org.ayfaar.app.SpringTestDevConfiguration;
 import org.ayfaar.app.dao.*;
 import org.ayfaar.app.model.*;
 import org.springframework.context.ApplicationContext;
@@ -13,7 +13,7 @@ public class CleanDBFromUnusedUID {
     private static UIDDao uidDao;
 
     public static void main(String[] args) {
-        ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestDevConfiguration.class);
         CommonDao commonDao = ctx.getBean(CommonDao.class);
         uidDao = ctx.getBean(UIDDao.class);
 

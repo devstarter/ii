@@ -15,7 +15,7 @@ public class NotificationListenerTest {
     @Test
     public void senderToPushBulletTest() {
 
-        ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestDevConfiguration.class);
         NotificationListener listener = ctx.getBean(NotificationListener.class);
 
         PushEvent mock = mock(PushEvent.class);

@@ -23,11 +23,16 @@ public interface TopicService {
 
     @NotNull
     default TopicProvider findOrCreate(String name) {
-        return findOrCreate(name, false);
+        return findOrCreate(name, false, true);
     }
 
     @NotNull
-    TopicProvider findOrCreate(String name, boolean caseSensitive);
+    default TopicProvider findOrCreate(String name, boolean caseSensitive) {
+        return findOrCreate(name, caseSensitive, true);
+    }
+
+    @NotNull
+    TopicProvider findOrCreate(String name, boolean caseSensitive, boolean checkAuth);
 
     /**
      * Throw exception on topic not found

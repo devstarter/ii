@@ -1,6 +1,6 @@
 package org.ayfaar.app.exec;
 
-import org.ayfaar.app.SpringTestConfiguration;
+import org.ayfaar.app.SpringTestDevConfiguration;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.model.Item;
@@ -15,7 +15,7 @@ public class CleanBD {
 
     public static void main(String[] args) {
 
-        ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestDevConfiguration.class);
         ItemDao itemDao = ctx.getBean(ItemDao.class);
         LinkDao linkDao = ctx.getBean(LinkDao.class);
 

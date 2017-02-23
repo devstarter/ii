@@ -25,7 +25,7 @@ public class SysLogListener {
     @Async
     @EventListener
     private void listenForEvents(SysLogEvent event) {
-        String message = String.format("Системное событие от %s: %s", event.getSource().getSimpleName(), event.getMessage());
+        String message = String.format("Системное событие от %s: %s", event.getSource(), event.getMessage());
         final ActionEvent actionEvent = new ActionEvent();
         actionEvent.setAction(Action.SYS_EVENT);
         actionEvent.setMessage(message);
