@@ -96,8 +96,8 @@ public class RecordController {
         publisher.publishEvent(new RecordRenamedEvent(record));
     }
 
-    @RequestMapping(value = "{code}/download", method = RequestMethod.GET)
-    public String download(@PathVariable String code, HttpServletResponse response) throws IOException{
+    @RequestMapping(value = "{code}/download/{any}", method = RequestMethod.GET)
+    public void download(@PathVariable String code, HttpServletResponse response) throws IOException{
         final Record record = recordDao.get("code", code);
         if (record == null) throw new RuntimeException("Record not found");
 
@@ -107,7 +107,7 @@ public class RecordController {
         final int bufferSize = 4096;
         final String mimeType = "audio/mpeg";
         String name = Transliterator.transliterate(record.getName()).replace("\"", "");
-        String headerValue = String.format("attachment; filename=\"%s\"", record.getCode() + " " + name + ".mp3");
+        String headerValue = String.format("attachment;");
 
         InputStream  inputStream = new URL(url).openStream();
 
@@ -122,8 +122,7 @@ public class RecordController {
         }
         inputStream.close();
         outputStream.close();
-
-        return "redirect:" + url;
+//        return "redirect:" + url;
     }
 
     @RequestMapping("sync")
