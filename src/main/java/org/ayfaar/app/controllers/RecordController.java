@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.RecordDao;
 import org.ayfaar.app.event.EventPublisher;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +36,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping("api/record")
+@Slf4j
 public class RecordController {
 
     private final TopicService topicService;
@@ -92,17 +97,31 @@ public class RecordController {
     }
 
     @RequestMapping(value = "{code}/download", method = RequestMethod.GET)
-    public String download(@PathVariable String code, HttpServletResponse response) {
+    public String download(@PathVariable String code, HttpServletResponse response) throws IOException{
         final Record record = recordDao.get("code", code);
         if (record == null) throw new RuntimeException("Record not found");
 
         final String url = record.getAudioUrl();
         if (url == null) throw new RuntimeException("Has no download url for record");
 
+        final int bufferSize = 4096;
+        final String mimeType = "audio/mpeg";
         String name = Transliterator.transliterate(record.getName()).replace("\"", "");
-//        name = name.substring(0, 200);
-        response.setContentType("audio/mpeg");
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + record.getCode() + " " + name + ".mp3\"");
+        String headerValue = String.format("attachment; filename=\"%s\"", record.getCode() + " " + name + ".mp3");
+
+        InputStream  inputStream = new URL(url).openStream();
+
+        response.setContentType(mimeType);
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, headerValue);
+
+        OutputStream outputStream = response.getOutputStream();
+        byte[] buffer = new byte[bufferSize];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        inputStream.close();
+        outputStream.close();
 
         return "redirect:" + url;
     }
