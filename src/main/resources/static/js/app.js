@@ -307,6 +307,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         var params = {page: page};
                         if (size) params.size = size;
                         return api.get("resource/video/last-created", params)
+                    },
+                    updateCode: function (id, code) {
+                        return api.authPost("resource/video/update-code", {id: id, code: code})
                     }
                 }
             },

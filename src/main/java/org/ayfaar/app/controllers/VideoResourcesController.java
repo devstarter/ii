@@ -96,4 +96,14 @@ public class VideoResourcesController {
             // todo: update linked entities (topic links for example)
         });
     }
+
+    @RequestMapping(value = "update-code", method = POST)
+    @Moderated(value = Action.VIDEO_UPDATE_CODE, command = "@videoResourcesController.updateCode")
+    public void updateCode(@RequestParam String id, @RequestParam String code) {
+        commonDao.getOpt(VideoResource.class, "id", id).ifPresent(video -> {
+            final String oldCode = video.getCode();
+            video.setCode(code);
+            moderationService.notice(Action.VIDEO_CODE_UPDATED, video.getTitle(), video.getUri(), oldCode != null ? oldCode : "<пусто>", code);
+        });
+    }
 }

@@ -431,7 +431,7 @@ function TopicTreeController($scope, $stateParams, $api) {
         }
     }
 }
-function ResourcesController($scope, $stateParams, $state, Video, errorService, $api, $timeout, $pager) {
+function ResourcesController($scope, $stateParams, $state, Video, errorService, $api, $timeout, $pager, modal) {
     $scope.topics = [];
     $scope.newTopic = {};
     $scope.last = [];
@@ -474,6 +474,14 @@ function ResourcesController($scope, $stateParams, $state, Video, errorService, 
             $scope.lastLoading = false;
             $scope.lastNoMore = data.last;
         })   
+    }
+
+    $scope.updateCode = function() {
+        modal.prompt("Код видео", $scope.video.code, "Указать/Изменить").then(function (code) {
+            $api.resource.video.updateCode($scope.video.id, code).then(function(){
+                $scope.video.code = code;
+            });
+        })
     }
 }
 

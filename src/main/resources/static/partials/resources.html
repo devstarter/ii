@@ -22,7 +22,11 @@
         <a href="v/">← К списку видео</a>
         <div class="padding">
             <h2 class="inline">{{video.title}}</h2>
-            <span class="gray nowrap">{{video.code}}</span>
+
+            <span ng-if="!video.code" class="gray nowrap pointer" ng-click="updateCode()">указать код</span>
+            <span ng-if="video.code" class="gray nowrap">{{video.code}}</span>
+            <i ng-if="video.code" class="btn h glyphicon glyphicon-pencil gray" ng-click="updateCode()" title="Изменить код видео" style="padding-left: 0;"></i>
+
         </div>
         <youtube code="video.id"></youtube>
         <br>

@@ -35,6 +35,8 @@ public enum Action {
     VIDEO_ADD("Добавление нового видео по ссылке {}", UserRole.ROLE_AUTHENTICATED),
     VIDEO_REMOVE("Удаление видео <uri>видео:youtube:{}</uri>", UserRole.ROLE_EDITOR),
     VIDEO_UPDATE_TITLE("Обновление названия видео <uri>{}</uri> на `{}`", UserRole.ROLE_EDITOR),
+    VIDEO_UPDATE_CODE("Задание или изменеие кода видео <uri>видео:youtube:{}</uri>, код `{}`", UserRole.ROLE_EDITOR),
+    VIDEO_CODE_UPDATED("Кода видео <uri label='{}'>{}</uri> обновился c `{}` на `{}`", UserRole.ROLE_EDITOR),
     NEW_USER("Выполнен вход в систему новым "),
     VIDEO_REMOVED("Видео `{}` c id: {} далено из системы"),
     RECORD_RENAME("Переименование ответа <uri>запись:{}</uri> на `{}`", ROLE_EDITOR),
