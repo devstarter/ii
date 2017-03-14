@@ -28,12 +28,10 @@
 С чего начать (Java)
 ====================
 
-**Видео инструкция https://www.youtube.com/watch?v=mbwN4eaES78**
-
 Устанавливаем:
 
 1.	GIT http://msysgit.github.io
-2.	Добавляем git.exe в [переменную окружения Path](http://clip2net.com/s/iuLWXk) и перезагружаем windows
+2.	Добавляем git.exe в переменную окружения Path и перезагружаем windows
 3.	Выполняем тестовую задачу [Тренировка работы с git](https://github.com/devstarter/ii/issues/4)
 4.	[IntelliJ IDEA](http://www.jetbrains.com/idea/download/)
 5.	[Java](https://www.java.com/en/download)
