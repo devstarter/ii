@@ -103,6 +103,7 @@ public class VideoResourcesController {
         commonDao.getOpt(VideoResource.class, "id", id).ifPresent(video -> {
             final String oldCode = video.getCode();
             video.setCode(code);
+            commonDao.save(video);
             moderationService.notice(Action.VIDEO_CODE_UPDATED, video.getTitle(), video.getUri(), oldCode != null ? oldCode : "<пусто>", code);
         });
     }
