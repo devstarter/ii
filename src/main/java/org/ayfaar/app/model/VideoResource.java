@@ -29,6 +29,7 @@ public class VideoResource extends UID implements Comparable<VideoResource> {
     private Date publishedAt = new Date();
     private Date createdAt = new Date();
     private Integer createdBy;
+    private Boolean official;
 
     @Override
     public String toTitle() {
