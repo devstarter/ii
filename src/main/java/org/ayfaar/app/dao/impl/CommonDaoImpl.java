@@ -83,6 +83,11 @@ public class CommonDaoImpl implements CommonDao {
     }
 
     @Override
+    public <E> List<E> getList(Class<E> clazz, Pageable pageable) {
+        return criteria(clazz, pageable).list();
+    }
+
+    @Override
     public <E> List<E> getListWithout(Class<E> clazz, String property, Object value, Pageable pageable) {
         return criteria(clazz, pageable)
                 .add(value == null ? isNotNull(property) : Restrictions.ne(property, value))

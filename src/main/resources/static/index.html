@@ -141,8 +141,9 @@
     <div class="modal-body">
         <input id="search-input" ng-model="term" type="text" class="form-control"
                ii-lookup placeholder="Введите термин" required autocomplete="off"
+               term-only="true"
                typeahead="suggestion for suggestion in $getSuggestions($viewValue)"/>
-        <textarea class="full-width form-control" ng-model="text" style="margin-top: 10px; min-height: 100px"></textarea>
+        <textarea class="full-width form-control" ng-model="text" style="margin-top: 10px; min-height: 200px"></textarea>
     </div>
     <div class="modal-footer btn-group">
         <button class="btn btn-default" ng-click="quote()">Цитата</button>

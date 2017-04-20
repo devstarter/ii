@@ -46,8 +46,11 @@ public class NewSuggestionsController {
     private static final int MAX_SUGGESTIONS = 5;
     private static final int MAX_WORDS_PARAGRAPH_AFTER_SEARCH = 4;
 
-    public Map<String, String> suggestions(String q) {
-        return suggestions(q, false, false, false, false, false, false, false, false, false, false, false);
+    @RequestMapping("term")
+    @ResponseBody
+    public Collection<String> suggestionTerms(@RequestParam String q) {
+        return suggestions(q, true, false, false, false, false, false, false, false, false, false, false)
+                .values();
     }
 
     @RequestMapping("all")

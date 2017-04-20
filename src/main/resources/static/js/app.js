@@ -291,6 +291,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 suggestions: function(query) {
                     return api.get("suggestions/"+query)
                 },
+                suggestionsTerm: function (q) {
+                    return api.get("suggestions/term", {q: q})
+                },
                 suggestionsAll: function (q) {
                     return api.get("suggestions/all", {q: q})
                 },
@@ -932,24 +935,33 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             link: function (originalScope, element, attrs, modelCtrl) {
                 var data;
                 var query;
+                var termOnly = Boolean(attrs.termOnly);
                 originalScope.$getSuggestions = function(q) {
                     query = q;
                     var deferred = $q.defer();
-                    $api.search.suggestionsAll(q).then(function (response) {
-                        data = [];
-                        for(var uri in response) {
-                            if (response.hasOwnProperty(uri))
-                                data.push({
-                                    uri: uri,
-                                    label: response[uri],
-                                    type: entityService.getType(uri)
-                                    // typeLabel: entityService.getTypeLabel(uri)
-                                })
-                        }
-                        deferred.resolve(data)
-                    }, function (response) {
-                        deferred.reject(response)
-                    });
+                    if (termOnly) {
+                        $api.search.suggestionsTerm(q).then(function (response) {
+                            deferred.resolve(response)
+                        }, function (response) {
+                            deferred.reject(response)
+                        });
+                    } else {
+                        $api.search.suggestionsAll(q).then(function (response) {
+                            data = [];
+                            for (var uri in response) {
+                                if (response.hasOwnProperty(uri))
+                                    data.push({
+                                        uri: uri,
+                                        label: response[uri],
+                                        type: entityService.getType(uri)
+                                        // typeLabel: entityService.getTypeLabel(uri)
+                                    })
+                            }
+                            deferred.resolve(data)
+                        }, function (response) {
+                            deferred.reject(response)
+                        });
+                    }
                     return deferred.promise;
                 };
                 originalScope.$selected = function(item, model, label) {
@@ -959,7 +971,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 var onEnter = $parse(attrs.onEnter);
                 element.bind('keyup', function(event) {
                     if (event.keyCode == 13) {// enter
-                        internalOnEnter();
+                        if (!termOnly) internalOnEnter();
                         if (onEnter) onEnter(originalScope);
                     }
                 });
@@ -1117,17 +1129,19 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
         return {
             template: '<i class="icon-star"></i>',
             scope: {
-                uri: "="
+                uri: "=",
+                text: "="
             },
             link: function(scope, element, attrs) {
                 element.bind('click', function(e) {
-                    if (!getSelectionText()) {
+                    if (!scope.text && !getSelectionText()) {
                         alert("Выберите текст");
                     } else
                         $modal.open({
                             templateUrl: 'contribute-form.html',
                             controller: function ($scope, $modalInstance) {
-                                $scope.text = getSelectionText();
+                                var selectedText = getSelectionText();
+                                $scope.text = selectedText ? selectedText : String(scope.text).replace(/<[^>]+>/gm, '');
                                 $scope.quote = function () {
                                     if (!$scope.term) {
                                         alert("Укажите термин");

@@ -31,7 +31,7 @@ public class ItemsImporter {
         itemDao = ctx.getBean(ItemDao.class);
         taggingUpdater = ctx.getBean(TermsTaggingUpdater.class);
 
-        for(String line: FileUtils.readLines(new File("D:\\PROJECTS\\ayfaar\\ii-archive\\text\\Том 4.txt"))) {
+        for(String line: FileUtils.readLines(new File("C:\\PROJECTS\\ayfaar\\text\\Том 5.txt"))) {
 
             Matcher matcher = compile("(\\d+\\.\\d\\d\\d\\d+)\\.\\s(.+)").matcher(line);
             if (matcher.find()) {
