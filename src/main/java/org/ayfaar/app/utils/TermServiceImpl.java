@@ -92,6 +92,12 @@ public class TermServiceImpl implements TermService {
         load();
     }
 
+    @Override
+    public void save(Term term) {
+        commonDao.save(term);
+        load();
+    }
+
     @Data
     private class LinkInfo {
         private LinkType type;
@@ -192,6 +198,11 @@ public class TermServiceImpl implements TermService {
             final List<String> list = getAllAliasesWithAllMorphs();
             list.addAll(getAllMorphs(getAbbreviations()));
             return list;
+        }
+
+        @Override
+        public Optional<String> getShortDescription() {
+            return hasShortDescription ? Optional.of(getTerm().getShortDescription()) : Optional.empty();
         }
 
         List<String> getAllMorphs(List<TermProvider> providers) {

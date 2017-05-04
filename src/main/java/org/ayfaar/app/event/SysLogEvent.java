@@ -14,7 +14,7 @@ public class SysLogEvent {
     private LogLevel level;
 
     public SysLogEvent(Object source, String message, LogLevel level) {
-        this.source = source.getClass().getSimpleName();
+        this.source = source instanceof String ? (String) source : source.getClass().getSimpleName();
         this.message = message;
         this.level = level;
     }

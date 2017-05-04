@@ -24,6 +24,8 @@ public interface TermService {
     Term getTerm(String name);
     void reload();
 
+    void save(Term term);
+
     interface TermProvider {
         String getName();
         String getUri();
@@ -45,5 +47,7 @@ public interface TermService {
         boolean hasCode();
         List<String> getAllAliasesWithAllMorphs();
         List<String> getAllAliasesAndAbbreviationsWithAllMorphs();
+
+        Optional<String> getShortDescription();
     }
 }
