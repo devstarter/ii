@@ -240,6 +240,11 @@ function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt
     $scope.name = $stateParams.name;
     document.title = $scope.name;
 
+    if (isItemNumber($scope.name)) {
+        $state.goToItem($scope.name);
+        return;
+    }
+
     function load() {
     $scope.loading = true;
         $api.topic.get($scope.name, true).then(function(topic){
