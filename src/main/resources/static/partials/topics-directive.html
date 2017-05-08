@@ -3,7 +3,7 @@
 <div ng-show="loading"><img src="static/images/ajax-loader.gif"/>Загрузка ключевых слов...</div>
 <div ng-repeat="topic in topics" class="topic">
     <rating ng-click="updateRate(topic)" ng-model="topic.rate" max="3" class="gray"></rating>
-    <a topic-ref="topic">{{topic.name}}</a>
+    <a topic-ref="topic">{{(topic.isItem ? 'Абзац: ' : '') + topic.name}}</a>
     <i class="btn h glyphicon glyphicon-comment nopadding gray" ng-click="updateComment(topic)" title="Добавить коментарий" ng-hide="topic.comment"></i>
     <i class="btn h glyphicon glyphicon-remove-circle nopadding gray" ng-click="removeTopic(topic)" title="Отменить ключевое слово"></i>
     <div class="topic-comment small gray">{{topic.comment}}

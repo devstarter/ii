@@ -1325,6 +1325,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     if (!scope.ownerUri) return;
                     scope.loading = true;
                     $api.topic.getFor(scope.ownerUri).then(function(topics){
+                        angular.forEach(topics, function (topic) {
+                            topic.isItem = isItemNumber(topic.name)
+                        });
                         scope.topics = topics;
                     })['finally'](function () {
                         scope.loading = false;
@@ -1496,6 +1499,10 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
         };
         $state.goToCabinet = function() {
             originStateGo.bind($state)("cabinet")
+        };
+
+        $state.redirectToItem = function(item) {
+            window.location.replace(item);  
         };
 
         $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){

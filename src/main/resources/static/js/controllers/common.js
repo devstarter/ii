@@ -241,7 +241,7 @@ function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt
     document.title = $scope.name;
 
     if (isItemNumber($scope.name)) {
-        $state.goToItem($scope.name);
+        $state.redirectToItem($scope.name);
         return;
     }
 
