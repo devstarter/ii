@@ -54,7 +54,7 @@ public class TermsTaggingUpdater {
         updateLinks(linkDao.getAll());
     }
 
-    private void updateItems(List<Item> items) {
+    public void updateItems(List<Item> items) {
         for (Item item : items) {
             update(item);
         }

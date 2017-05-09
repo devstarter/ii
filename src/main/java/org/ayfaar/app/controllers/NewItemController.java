@@ -23,6 +23,7 @@ import static java.lang.String.format;
 import static org.ayfaar.app.controllers.ItemController.getPrev;
 import static org.ayfaar.app.utils.UriGenerator.generate;
 import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.StringUtils.isEmpty;
 
 @Controller
 @RequestMapping("api/v2/item")
@@ -30,12 +31,10 @@ public class NewItemController {
 
     private static final int MAXIMUM_RANGE_SIZE = 200;
     @Inject ItemDao itemDao;
-    @Inject
-    ContentsService contentsService;
+    @Inject ContentsService contentsService;
     @Inject TermsMarker termsMarker;
     @Inject AsyncTaskExecutor taskExecutor;
     @Inject TermsTaggingUpdater taggingUpdater;
-//    @Inject ApplicationEventPublisher eventPublisher;
 
     @RequestMapping
     @ResponseBody
@@ -49,7 +48,10 @@ public class NewItemController {
                 taggingUpdater.update(nextItem);
             });
         }
-
+        if (isEmpty(item.getTaggedContent())) {
+            taggingUpdater.update(item);
+            itemDao.save(item);
+        }
         return new ItemPresentation(item, generate(Item.class, getPrev(item.getNumber())), true);
     }
 
