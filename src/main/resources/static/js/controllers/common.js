@@ -244,6 +244,10 @@ function TopicController($scope, $stateParams, $api, $state, modal, $topicPrompt
         $state.redirectToItem($scope.name);
         return;
     }
+    if (isItemRange($scope.name)) {
+        $state.redirectTo($scope.name);
+        return;
+    }
 
     function load() {
     $scope.loading = true;

@@ -1435,7 +1435,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         return;
                     case "paragraph":
                         var number = entityService.getName(uri);
-                        if (isTom5(number)) return;
+                        if (isTom6(number)) return;
                         originStateGo.bind($state)("paragraph", {number: number});
                         return;
                     case "article":
@@ -1503,6 +1503,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
 
         $state.redirectToItem = function(item) {
             window.location.replace(item);  
+        };
+        $state.redirectTo = function(url) {
+            window.location.replace(url);
         };
 
         $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
