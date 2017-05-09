@@ -1,13 +1,20 @@
 package org.ayfaar.app.importing;
 
 import org.apache.commons.io.FileUtils;
-import org.ayfaar.app.SpringTestDevConfiguration;
+import org.ayfaar.app.Application;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ItemsHelper;
 import org.ayfaar.app.utils.TermsTaggingUpdater;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,23 +22,25 @@ import java.util.regex.Matcher;
 
 import static java.util.regex.Pattern.compile;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = Application.class,
+        initializers = ConfigFileApplicationContextInitializer.class)
+@ActiveProfiles("remote")
+@WebAppConfiguration
 public class ItemsImporter {
-    private static Item currentItem;
-    private static Item prevItem;
-    private static ApplicationContext ctx;
-//    private static String skipUntilNumber = "1.0780";
-    private static boolean saveAllowed = true;
-    private static ItemDao itemDao;
-    private static TermsTaggingUpdater taggingUpdater;
+    private Item currentItem;
+    private Item prevItem;
+    @Autowired private ApplicationContext ctx;
+//    private String skipUntilNumber = "1.0780";
+    private boolean saveAllowed = true;
+    @Autowired private ItemDao itemDao;
+    @Autowired private TermsTaggingUpdater taggingUpdater;
 
-    public static void main(String[] args) throws IOException {
+    @Test
+    public void main() throws IOException {
         currentItem = null;
 
-        ctx = new AnnotationConfigApplicationContext(SpringTestDevConfiguration.class);
-        itemDao = ctx.getBean(ItemDao.class);
-        taggingUpdater = ctx.getBean(TermsTaggingUpdater.class);
-
-        for(String line: FileUtils.readLines(new File("C:\\PROJECTS\\ayfaar\\text\\Том 5.txt"))) {
+        for(String line: FileUtils.readLines(new File("C:\\PROJECTS\\ayfaar\\texts\\Том 5.txt"))) {
 
             Matcher matcher = compile("(\\d+\\.\\d\\d\\d\\d+)\\.\\s(.+)").matcher(line);
             if (matcher.find()) {
@@ -47,7 +56,7 @@ public class ItemsImporter {
         saveItem();
     }
 
-    private static void saveItem() {
+    private void saveItem() {
         System.out.print(currentItem.getNumber() + "\n");
 //        System.out.println(currentItem.getContent());
 
@@ -59,8 +68,8 @@ public class ItemsImporter {
         }
         currentItem.setContent(currentItem.getContent().trim());
         currentItem.setContent(ItemsHelper.clean(currentItem.getContent()));
-        taggingUpdater.update(currentItem); //saved inside update
-//        itemDao.save(currentItem);
+//        taggingUpdater.update(currentItem); //saved inside update
+        itemDao.save(currentItem);
 
         if (prevItem != null) {
             prevItem.setNext(currentItem.getUri());
