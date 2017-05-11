@@ -27,7 +27,7 @@ import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 @EnableScheduling
 @Profile("default")
 @Slf4j
-public class CacheUpdater {
+public class SearchCacheUpdater {
     @Autowired
     private NewSearchController searchController;
     @Autowired
@@ -41,13 +41,13 @@ public class CacheUpdater {
     @Scheduled(fixedDelay = 604800000, initialDelay = 3*360000) // обновлять кеш спустя 3 часа со старта и через неделю после каждого завершения обновления
     public void update() throws IOException {
         long start = System.currentTimeMillis();
-        log.info("Cache updating started");
+        log.info("Search cache updating started");
         termService.reload();
         updateCacheSearchResult();
 
         long end = System.currentTimeMillis();
         final String duration = DurationFormatUtils.formatDuration(end - start, "HH:mm:ss");
-        log.info("Catch updated in " + duration);
+        log.info("Search catch updated in " + duration);
     }
 
     private void updateCacheSearchResult() throws IOException {

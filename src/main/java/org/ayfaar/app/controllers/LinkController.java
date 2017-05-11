@@ -58,9 +58,7 @@ public class LinkController {
         Link link = linkDao.save(new Link(term, item,
                 quote.isEmpty() ? null : quote,
                 quote.isEmpty() ? null : termsMarker.mark(quote)));
-
-        //emailNotifier.newQuoteLink(term.getName(), itemNumber, quote, link.getLinkId());
-//        eventPublisher.publishEvent(new NewQuoteLinkEvent(term.getName(), itemNumber, quote, link.getLinkId()));
+        linkService.registerNew(link);
 
         return link.getLinkId();
     }

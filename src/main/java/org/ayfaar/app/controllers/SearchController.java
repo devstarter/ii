@@ -5,6 +5,7 @@ import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
+import org.ayfaar.app.services.links.LinkService;
 import org.ayfaar.app.utils.Content;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.ayfaar.app.utils.TermService;
@@ -37,6 +38,7 @@ public class SearchController {
 //    @Autowired ApplicationEventPublisher eventPublisher;
     @Autowired TermsMarker termsMarker;
     @Autowired NewSearchController searchController;
+    @Autowired LinkService linkService;
 
     private Map<String, List<ModelMap>> searchInContentCatch = new HashMap<String, List<ModelMap>>();
 
@@ -232,6 +234,7 @@ public class SearchController {
                     link = new Link(term, item, quote, termsMarker.mark(quote));
                     link.setSource("search");
                     linkDao.save(link);
+                    linkService.registerNew(link);
                 } else {
                     possibleDuplication = true;
                 }
