@@ -1,11 +1,14 @@
 package org.ayfaar.app.controllers;
 
+import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.*;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.services.links.LinkService;
+import org.ayfaar.app.services.moderation.Action;
+import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.utils.Content;
 import org.ayfaar.app.utils.EmailNotifier;
 import org.ayfaar.app.utils.TermService;
@@ -39,6 +42,7 @@ public class SearchController {
     @Autowired TermsMarker termsMarker;
     @Autowired NewSearchController searchController;
     @Autowired LinkService linkService;
+    @Autowired ModerationService moderationService;
 
     private Map<String, List<ModelMap>> searchInContentCatch = new HashMap<String, List<ModelMap>>();
 
@@ -218,29 +222,23 @@ public class SearchController {
         return modelMap;
     }
 
-    @RequestMapping(value = "rate/{kind}", method = RequestMethod.POST)
-    public void rate(@PathVariable String kind,
-                     @RequestParam String uri,
-                     @RequestParam String query,
-                     @RequestParam(required = false) String quote) {
-        if (kind.equals("+")) {
-            Term term = termService.getTerm(query);
-            Item item = itemDao.get(uri);
-            boolean possibleDuplication = false;
-            Link link = null;
-            if (term != null && item != null) {
-                final List<Link> links = linkDao.get(term, item);
-                if (links.size() == 0) {
-                    link = new Link(term, item, quote, termsMarker.mark(quote));
-                    link.setSource("search");
-                    linkDao.save(link);
-                    linkService.registerNew(link);
-                } else {
-                    possibleDuplication = true;
-                }
+    @RequestMapping(value = "rate/+", method = RequestMethod.POST)
+    @Moderated(value = Action.CREATE_QUOTE, command = "@searchController.addQuote")
+    public void addQuote(@RequestParam("query") String termName,
+                         @RequestParam(required = false) String quote,
+                         @RequestParam String uri) {
+        Term term = termService.getTerm(termName);
+        Item item = itemDao.get(uri);
+        Link link;
+        if (term != null && item != null) {
+            final List<Link> links = linkDao.get(term, item);
+            if (links.size() == 0) {
+                link = new Link(term, item, quote, termsMarker.mark(quote));
+                link.setSource("search");
+                linkDao.save(link);
+                linkService.registerNew(link);
+                moderationService.notice(Action.QUOTE_CREATED, termName, uri);
             }
-            //notifier.rate(term, item, quote, link != null ? link.getLinkId() : null);
-//            eventPublisher.publishEvent(new SearchQuoteEvent(term, item, quote, link != null ? link.getLinkId() : null));
         }
     }
 }

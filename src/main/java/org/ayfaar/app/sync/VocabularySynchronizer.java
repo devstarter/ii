@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 @Service
 @Slf4j
 @EnableScheduling
@@ -46,7 +48,8 @@ public class VocabularySynchronizer {
         final Optional<TermService.TermProvider> termProviderOpt = termService.get(termName);
         if (termProviderOpt.isPresent()) {
             final Term term = termProviderOpt.get().getTerm();
-            final String oldShortDescription = term.getShortDescription();
+            String oldShortDescription = term.getShortDescription();
+            if (isEmpty(oldShortDescription)) oldShortDescription = "<пусто>";
             term.setShortDescription(newShortDescription);
             termService.save(term);
             publisher.publishEvent(new SysLogEvent(me, String.format("Обновлено короткое описание термина %s. Старый вариант: %s, новый: %s", termName, oldShortDescription, newShortDescription), LogLevel.INFO));

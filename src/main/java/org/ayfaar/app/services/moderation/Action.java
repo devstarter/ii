@@ -48,7 +48,9 @@ public enum Action {
     DOCUMENT_ADD("Добавление документа {}", ROLE_AUTHENTICATED),
 
     SYSLOG_TRANSLATION_NEW("\"{}\" -> \"{}\", "),
-    SYSLOG_TRANSLATION_UPDATE("\"{}\" из \"{}\" в \"{}\", "), SYS_EVENT("");
+    SYSLOG_TRANSLATION_UPDATE("\"{}\" из \"{}\" в \"{}\", "), SYS_EVENT(""),
+    QUOTE_CREATED("К термину <uri>ии:термин:{}</uri> добавленна цитата с <uri>{}</uri>", ROLE_EDITOR),
+    CREATE_QUOTE("К термину <uri>ии:термин:{}</uri> предлагается цитата `{}` связанная с <uri>{}</uri>", ROLE_EDITOR);
 
     private Action parent = null;
     private UserRole requiredAccessLevel;

@@ -10,6 +10,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 @Slf4j
 public class GoogleSpreadsheetSynchronizer<T extends SyncItem> {
     private final HashMap<Integer, BiConsumer<String, String>> columnUpdaters;
@@ -60,7 +62,7 @@ public class GoogleSpreadsheetSynchronizer<T extends SyncItem> {
                           if (remoteItem.size() <= i) continue;
                           String remoteValue = (String) remoteItem.get(i);
                           String localValue = (String) localRawItem.get(i);
-                          if (!Objects.equals(localValue, remoteValue) && columnUpdaters.containsKey(i + 1)) {
+                          if (!Objects.equals(localValue, remoteValue) && !isEmpty(localValue) && !isEmpty(remoteValue) && columnUpdaters.containsKey(i + 1)) {
                               String key = keyGetter.apply(localItem);
                               log.debug("Update from remote. key: {}, column: {}, local value: {}, remote value: {}",
                                       key, i + 1, localValue, remoteValue);
