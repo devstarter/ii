@@ -111,9 +111,9 @@ public class TopicTranslationSynchronizer {
             messageUpdatedTranslation = PREFIX_UPDATED_TRANSLATION + messageUpdatedTranslation;
             message = message + messageUpdatedTranslation + ".";
         }
-        if (StringUtils.isEmpty(message)) {
-            message = NO_UPDATES;
+        if (!StringUtils.isEmpty(message)) {
+//            message = NO_UPDATES;
+            publisher.publishEvent(new SysLogEvent(this, message, LogLevel.INFO));
         }
-        publisher.publishEvent(new SysLogEvent(this, message, LogLevel.INFO));
     }
 }

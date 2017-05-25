@@ -70,7 +70,7 @@
 
         <div class="pointer section" title="Показать" ng-click="showVideos = !showVideos" ng-show="termFound && topicResources && topicResources.video">
             <i ng-class="showVideos ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'" class="glyphicon"></i>
-            <h3>Видео ответы Ориса</h3> <span ng-hide="showVideos" class="gray">показать {{topicResources.video.length}}</span>
+            <h3>Видео записи</h3> <span ng-hide="showVideos" class="gray">показать {{topicResources.video.length}}</span>
         </div>
         <div class="row catBlock" ng-show="showVideos">
             <video-card ng-repeat="link in topicResources.video" video="link.resource" class="col-md-4"></video-card>
