@@ -157,10 +157,10 @@ public class SearchController {
 
     @RequestMapping("term")
     @ResponseBody
-    private ModelMap searchAsTerm(@RequestParam String query) {
+    public ModelMap searchAsTerm(@RequestParam String query) {
         query = query.trim();
         List<Map.Entry<String, TermService.TermProvider>> allProviders = termService.getAll();
-        List<String> matches = new ArrayList<String>();
+        List<String> matches = new ArrayList<>();
         Term exactMatchTerm = null;
 
         Pattern pattern = null;
