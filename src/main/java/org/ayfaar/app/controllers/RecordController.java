@@ -75,6 +75,7 @@ public class RecordController {
         recordsInfoMap.put("recorder_at",new SimpleDateFormat("yyyy-MM-dd").format(record.getRecorderAt()));
         recordsInfoMap.put("url",record.getAudioUrl());
         recordsInfoMap.put("uri",record.getUri());
+        recordsInfoMap.put("duration",record.getDuration());
 
         List<String> topicUris = topicService.getAllLinkedWith(record.getUri())
                 .map(TopicProvider::name)

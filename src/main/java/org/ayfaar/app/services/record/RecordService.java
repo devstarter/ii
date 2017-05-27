@@ -19,8 +19,6 @@ public interface RecordService {
 
     Map<String, String> getAllUriCodes();
 
-    Record save(Record record);
-
     Optional<Record> getByCode(String code);
 
     void save(Record record);

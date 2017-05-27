@@ -74,7 +74,10 @@
         <i ng-show="record.url || record.audio_url" class="glyphicon pointer play-button" title="{{record.played ? 'Остановить' : 'Прослушать'}}"
            ng-class="record.played ? 'glyphicon-pause' : 'glyphicon-play'"
            ng-click="playOrPause(record)"></i>
-        <a ii-ref="record">{{record.name}} <span class="pointer gray nowrap small">{{record.code}}</span></a>
+        <a ii-ref="record">{{record.name}}
+            <span class="pointer gray nowrap small">{{record.code}}</span>
+            <span class="pointer gray nowrap small">({{record.duration | duration:'mm:ss' }})</span>
+        </a>
         <a title="Скачать"
            ng-show="record.url || record.audio_url"
            style="text-decoration: none"
