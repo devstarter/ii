@@ -1,4 +1,9 @@
 <div class="title">
+    <div ng-show="parents && !loading" class="parents" style="padding-bottom: 20px">
+        <span class="gray">Входит в:</span>
+        <a ng-repeat="parent in parents" topic-ref="parent">{{parent}}{{$last ? '' : ', '}}</a>
+        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addParent()" title="Добавить родительское ключевое слово"></i>
+    </div>
     <div class="gray">Ключевое слово:</div>
     <h1 class="inline" style="padding-bottom: 20px">{{name}}</h1>
     <br>
@@ -15,11 +20,6 @@
     <a class="btn btn-default" ng-show="suggested_term" ng-click="search(suggested_term)">
         Просмотреть похожий термин "{{suggested_term}}"
     </a>
-    <div ng-show="parents" class="parents h" style="padding-top: 20px">
-        <span class="gray">Входит в:</span>
-        <a ng-repeat="parent in parents" topic-ref="parent">{{parent}}{{$last ? '' : ', '}}</a>
-        <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addParent()" title="Добавить родительское ключевое слово"></i>
-    </div>
     <div style="padding-top: 20px">
         <div ng-show="children" class="children">
             <span class="gray">Дочерние ключевые слова</span>

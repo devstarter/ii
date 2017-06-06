@@ -31,6 +31,17 @@
                     }
                 }
             });
+            $(".topic").kendoAutoComplete({
+                minLength: 2,
+                dataSource: {
+                    serverFiltering: true,
+                    serverPaging: true,
+                    pageSize: 20,
+                    transport: {
+                        read: "/api/topic/suggest"
+                    }
+                }
+            });
             $(".category").kendoAutoComplete({
                 minLength: 3,
                 dataSource: {
@@ -126,7 +137,38 @@
                 addTermContainer.find(".long").val("");
             });
         }
-
+        function linkTopicItem() {
+            var container = $(".link-topic-item");
+            $.post("/api/topic/for", {
+                name: container.find("input.topic").val(),
+                uri: "ии:пункт:" + container.find(".item").val()
+            }, function (r) {
+                if (r) {
+                    alert("Есть!");
+                } else {
+                    alert("Связь не удалась!");
+                }
+                container.find("input.topic").val("");
+                container.find(".item").val("");
+            });
+        }
+        function linkTopicItems() {
+            var container = $(".link-topic-items");
+            $.post("/api/topic/for/items-range", {
+                topicName: container.find("input.topic").val(),
+                from: container.find(".from").val(),
+                to: container.find(".to").val()
+            }, function(r) {
+                if (r) {
+                    alert("Есть!");
+                } else {
+                    alert("Связь не удалась!");
+                }
+                container.find("input.topic").val("");
+                container.find(".from").val("");
+                container.find(".to").val("");
+            });
+        }
     </script>
     <style type="text/css">
         .panel {
@@ -150,7 +192,7 @@
             width: 250px
         }
         .item {
-            width: 50px
+            width: 60px
         }
         .type {
             width: 250px;
@@ -192,6 +234,25 @@
         <textarea placeholder="Описание" class="long quote k-input"></textarea>
         <div class="controls">
             <button onclick="sendAddTerm()" class="k-button">Добавить термин</button>
+        </div>
+    </div>
+    <div class="panel link-topic-item">
+        <h3>Связать ключ с абзацем</h3>
+        <input placeholder="Ключ" class="topic"/>
+        <br/>
+        <input placeholder="Абзац" class="item"/>
+        <div class="controls">
+            <button onclick="linkTopicItem()" class="k-button">Связать</button>
+        </div>
+    </div>
+    <div class="panel link-topic-items">
+        <h3>Связать ключ с диапазоном абзацев</h3>
+        <input placeholder="Ключ" class="topic"/>
+        <br/>
+        <input placeholder="C абзаца" class="item from"/>
+        <input placeholder="По абзац" class="item to"/>
+        <div class="controls">
+            <button onclick="linkTopicItems()" class="k-button">Связать</button>
         </div>
     </div>
     <div class="panel">

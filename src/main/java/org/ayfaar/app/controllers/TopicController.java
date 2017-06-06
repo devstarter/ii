@@ -174,7 +174,9 @@ public class TopicController {
     }
 
     @RequestMapping("suggest")
-    public Collection<String> suggest(@RequestParam String q) {
+    public Collection<String> suggest(@RequestParam(name = "q", required = false) String q,
+                                      @RequestParam(name = "filter[filters][0][value]", required = false) String kendoQ) {
+        if (kendoQ != null) q = kendoQ;
         return suggestionsController.suggestions(q, false, true, false, false, false, false, false, false, false, false, false).values();
     }
 
