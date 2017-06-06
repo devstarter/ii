@@ -143,11 +143,7 @@
                 name: container.find("input.topic").val(),
                 uri: "ии:пункт:" + container.find(".item").val()
             }, function (r) {
-                if (r) {
-                    alert("Есть!");
-                } else {
-                    alert("Связь не удалась!");
-                }
+                alert("Есть!");
                 container.find("input.topic").val("");
                 container.find(".item").val("");
             });
@@ -159,11 +155,7 @@
                 from: container.find(".from").val(),
                 to: container.find(".to").val()
             }, function(r) {
-                if (r) {
-                    alert("Есть!");
-                } else {
-                    alert("Связь не удалась!");
-                }
+                alert("Есть!");
                 container.find("input.topic").val("");
                 container.find(".from").val("");
                 container.find(".to").val("");

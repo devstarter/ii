@@ -2,7 +2,6 @@ package org.ayfaar.app.controllers;
 
 import lombok.AllArgsConstructor;
 import one.util.streamex.StreamEx;
-import org.apache.commons.lang.WordUtils;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
@@ -213,7 +212,7 @@ public class TermController {
 
     public Term add(String name, String shortDescription, String description) {
         name = name.replace("\"", "").replace("«", "").replace("»", "").trim();
-        name = WordUtils.capitalize(name, new char[]{'@'}); // Делаем первую букву большой, @ - знак который не появляеться в названии, чтобы поднялась только первая буква всей фразы
+//        name = WordUtils.capitalize(name, new char[]{'@'}); // Делаем первую букву большой, @ - знак который не появляеться в названии, чтобы поднялась только первая буква всей фразы
         Term term = termDao.getByName(name);
         if (term == null) {
             term = termDao.save(new Term(name, shortDescription, description));
