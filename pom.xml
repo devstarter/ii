@@ -28,9 +28,15 @@
 		<poi.version>3.9</poi.version>
 		<streamex.version>0.6.0</streamex.version>
 		<tika.version>1.14</tika.version>
+		<kotlin.version>1.1.2-5</kotlin.version>
 	</properties>
 
 	<dependencies>
+		<!--<dependency>
+			<groupId>com.samczsun</groupId>
+			<artifactId>skype4j</artifactId>
+			<version>0.1.5</version>
+		</dependency>-->
 		<dependency>
 			<groupId>one.util</groupId>
 			<artifactId>streamex</artifactId>
@@ -295,6 +301,17 @@
 			<version>${tika.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-stdlib-jre8</artifactId>
+			<version>${kotlin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-test-junit</artifactId>
+			<version>${kotlin.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 	
@@ -313,7 +330,28 @@
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
-            <plugin>
+			<plugin>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-maven-plugin</artifactId>
+				<version>${kotlin.version}</version>
+				<executions>
+					<execution>
+						<id>compile</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>test-compile</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>test-compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
