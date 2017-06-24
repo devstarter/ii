@@ -1,30 +1,35 @@
 package org.ayfaar.app.controllers;
 
-import org.apache.commons.lang.WordUtils;
+import lombok.AllArgsConstructor;
+import one.util.streamex.StreamEx;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
+import org.ayfaar.app.event.EventPublisher;
+import org.ayfaar.app.event.TermAddEvent;
 import org.ayfaar.app.model.*;
-import org.ayfaar.app.spring.Model;
-import org.ayfaar.app.utils.AliasesMap;
-import org.ayfaar.app.utils.Morpher;
-import org.ayfaar.app.utils.TermUtils;
-import org.ayfaar.app.utils.ValueObjectUtils;
+import org.ayfaar.app.services.EntityLoader;
+import org.ayfaar.app.services.itemRange.ItemRangeService;
+import org.ayfaar.app.services.links.LinkService;
+import org.ayfaar.app.services.topics.TopicProvider;
+import org.ayfaar.app.services.topics.TopicService;
+import org.ayfaar.app.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.inject.Inject;
 import java.util.*;
+import java.util.function.Supplier;
 
-import static java.util.Collections.sort;
-import static org.ayfaar.app.model.Link.*;
+import static org.ayfaar.app.model.LinkType.ABBREVIATION;
+import static org.ayfaar.app.model.LinkType.ALIAS;
 import static org.ayfaar.app.utils.ValueObjectUtils.convertToPlainObjects;
-import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
-import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.StringUtils.isEmpty;
 
 @Controller
-@RequestMapping("term")
+@RequestMapping("api/term")
 public class TermController {
 
     private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(TermController.class.getName());
@@ -32,74 +37,68 @@ public class TermController {
     @Autowired CommonDao commonDao;
     @Autowired TermDao termDao;
     @Autowired LinkDao linkDao;
-    @Autowired AliasesMap aliasesMap;
-    @Autowired
-    SuggestionsController searchController2;
+    @Autowired TermService termService;
+    @Autowired LinkService linkService;
+    @Autowired EntityLoader entityLoader;
+    @Autowired TermServiceImpl aliasesMap;
+    @Autowired SuggestionsController suggestionsController;
+    @Inject TermsMarker termsMarker;
+    @Inject EventPublisher publisher;
+    @Inject NewSearchController searchController;
+    @Inject ItemRangeService itemRangeService;
+    @Inject TermsFinder termsFinder;
+    @Inject TopicService topicService;
 
-    /*@RequestMapping("import")
-    @Model
-    public void _import() throws ParserConfigurationException, SAXException, IOException {
-        for (Termin termin : commonDao.getAll(Termin.class)) {
-            add(termin.getName());
-        }
-    }*/
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    @Model
-    public void add(Term term) {
-        add(term.getName(), term.getShortDescription(), term.getDescription());
+    @ResponseBody
+    public Term add(Term term) {
+        return add(term.getName(), term.getShortDescription(), term.getDescription());
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    @Model
-    public ModelMap get(@RequestParam("name") String termName) {
-        Term term = termDao.getByName(termName);
-        notNull(term, "Термин не найден");
-        return get(term);
-    }
-
-    public ModelMap get(Term term) {
-        String termName = term.getName();
-        Term alias = null;
-        if (!aliasesMap.get(termName).getTerm().getUri().equals(term.getUri())) {
-            alias = term;
-            term = aliasesMap.get(termName).getTerm();
+    @ResponseBody
+    public ModelMap get(@RequestParam("name") String termName, @RequestParam(required = false) boolean mark) {
+        termName = termName.replace("_", " ");
+        Optional<TermService.TermProvider> providerOpt = termService.getMainOrThis(termName);
+        if (!providerOpt.isPresent()) {
+            return null;
         }
+        final TermService.TermProvider provider = providerOpt.get();
 
-        // может быть аббравиатурой, сокращением, кодом или синонимов
-        Link _link = linkDao.getForAbbreviationOrAliasOrCode(term.getUri());
-        if (_link != null && _link.getUid1() instanceof Term) {
-            alias = term;
-            term = (Term) _link.getUid1();
+        ModelMap modelMap = new ModelMap();//(ModelMap) getModelMap(term);
+        Term term = provider.getTerm();
+
+        modelMap.put("uri", term.getUri());
+        modelMap.put("name", term.getName());
+        if (mark) {
+            if (isEmpty(term.getTaggedShortDescription()) && !isEmpty(term.getShortDescription())) {
+                term.setTaggedShortDescription(termsMarker.mark(term.getShortDescription()));
+                termDao.save(term);
+            }
+            if (isEmpty(term.getTaggedDescription()) && !isEmpty(term.getDescription())) {
+                term.setTaggedDescription(termsMarker.mark(term.getDescription()));
+                termDao.save(term);
+            }
+            modelMap.put("shortDescription", term.getTaggedShortDescription());
+            modelMap.put("description", term.getTaggedDescription());
+        } else {
+            modelMap.put("shortDescription", term.getShortDescription());
+            modelMap.put("description", term.getDescription());
         }
-//        }
-
-        ModelMap modelMap = (ModelMap) getModelMap(term);
-
-        modelMap.put("from", alias);
 
         // LINKS
 
-        List<ModelMap> quotes = new ArrayList<ModelMap>();
-        Set<UID> related = new LinkedHashSet<UID>();
-        Set<UID> aliases = new LinkedHashSet<UID>();
+        List<Quote> quotes = new ArrayList<>();
+        linkService.getAllLinksBetween(provider.getUri(), Item.class)
+                .forEach(p -> quotes.add(getQuote(p.taggedQuote(), p.get(Item.class).get())));
 
-        UID code = null;
-        List<Link> links = linkDao.getAllLinks(term.getUri());
-        for (Link link : links) {
-            UID source = link.getUid1().getUri().equals(term.getUri())
-                    ? link.getUid2()
-                    : link.getUid1();
-            if (link.getQuote() != null || source instanceof Item) {
-                quotes.add(getQuote(link, source));
-            } else if (ABBREVIATION.equals(link.getType()) || ALIAS.equals(link.getType())) {
-                aliases.add(source);
-            } else if (CODE.equals(link.getType())) {
-                code = source;
-            } else {
-                related.add(source);
-            }
-        }
+        Set<UID> related = new LinkedHashSet<>();
+        Set<UID> aliases = new LinkedHashSet<>();
+
+        provider.getAbbreviations().forEach(p -> aliases.add(p.getTerm()));
+        provider.getAliases().forEach(p -> aliases.add(p.getTerm()));
+        UID code = provider.getCode().isPresent() ? provider.getCode().get().getTerm() : null;
 
         // Нужно также включить цитаты всех синонимов и сокращений и кода
         Set<UID> aliasesQuoteSources = new HashSet<UID>(aliases);
@@ -107,57 +106,89 @@ public class TermController {
             aliasesQuoteSources.add(code);
         }
         for (UID uid : aliasesQuoteSources) {
-            List<Link> aliasLinksWithQuote = linkDao.getAllLinks(uid.getUri());
-            for (Link link : aliasLinksWithQuote) {
-                UID source = link.getUid1().getUri().equals(uid.getUri())
-                        ? link.getUid2()
-                        : link.getUid1();
-                if (link.getQuote() != null || source instanceof Item) {
-                    quotes.add(getQuote(link, source));
-                } else if (ABBREVIATION.equals(link.getType()) || ALIAS.equals(link.getType()) || CODE.equals(link.getType())) {
-                    // Синонимы синонимов :) по идее их не должно быть, но если вдруг...
-                    // как минимум один есть и этот наш основной термин
-                    if (!source.getUri().equals(term.getUri())) {
-                        aliases.add(source);
-                    }
-                } else {
-                    related.add(source);
-                }
-            }
+            linkService.getAllLinksFor(uid.getUri())
+                    .forEach(p -> {
+                        final UID source = entityLoader.get(p.not(uid.getUri()));
+                        if (source instanceof Item) {
+                            final Quote quote = getQuote(p.taggedQuote(), source.getUri());
+                            if (quotes.stream().noneMatch(q -> Objects.equals(quote.quote, q.quote))) {
+                                quotes.add(quote);
+                            }
+                        }
+                        else if (ABBREVIATION.equals(p.type()) || ALIAS.equals(p.type())/* || CODE.equals(p.type())*/) {
+                            aliases.add(source);
+                        }
+                        else {
+                            related.add(source);
+                        }
+                    });
         }
-        sort(quotes, new Comparator<ModelMap>() {
-            @Override
-            public int compare(ModelMap o1, ModelMap o2) {
-                return ((String) o1.get("uri")).compareTo((String) o2.get("uri"));
-            }
-        });
+
+        aliases.removeIf(item -> item.getUri().equals(term.getUri()));
+
+        quotes.sort(Comparator.comparing(o -> o.uri));
+
+        // mark quotes with strong
+        List<String> allAliasesWithAllMorphs = provider.getAllAliasesWithAllMorphs();
+        for (Quote quote : quotes) {
+            String text = quote.quote;
+            if (text == null || text.isEmpty() || text.contains("strong")) continue;
+            quote.quote = StringUtils.markWithStrong(text, allAliasesWithAllMorphs);
+        }
+
+        Optional<TopicProvider> topicOpt = StreamEx.<Supplier<Optional<TopicProvider>>>of(
+                    () -> topicService.findByName(term.getName()), // получаем топик по имени термина
+                    () -> topicService.contains(term.getName()),
+                    () -> topicService.getAllLinkedWith(term.getUri()).findFirst(), // по линку с термином
+                    () -> allAliasesWithAllMorphs.stream().map(a -> topicService.findByName(a)).filter(Optional::isPresent).findFirst().orElseGet(Optional::empty), // по имени по всем алиасам
+                    () -> allAliasesWithAllMorphs.stream().map(a -> topicService.getAllLinkedWith(UriGenerator.generate(Term.class, a)).findFirst()).filter(Optional::isPresent).findFirst().orElseGet(Optional::empty)) // по линками по всем алиасам
+
+                .map(Supplier::get)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst();
 
         modelMap.put("code", code);
         modelMap.put("quotes", quotes);
         modelMap.put("related", toPlainObjectWithoutContent(related));
         modelMap.put("aliases", toPlainObjectWithoutContent(aliases));
+        modelMap.put("categories", searchController.inCategories(termName));
+        topicOpt.ifPresent(topicProvider -> {
+            modelMap.put("topicResources", topicProvider.resources());
+        });
 
         return modelMap;
     }
 
     private Object toPlainObjectWithoutContent(Set<UID> related) {
-        return convertToPlainObjects(related, new ValueObjectUtils.Modifier<UID>() {
-            @Override
-            public void modify(UID entity, ModelMap map) {
-                map.remove("content");
-            }
-        });
+        return convertToPlainObjects(related, (entity, map) -> map.remove("content"));
     }
 
-    private ModelMap getQuote(Link link, UID source) {
+    private ModelMap getQuote(Link link, UID source, boolean mark) {
         ModelMap map = new ModelMap();
-        map.put("quote", link.getQuote() != null ? link.getQuote() : ((Item) source).getContent());
+        String quote = link.getQuote() != null ? link.getQuote() : ((Item) source).getContent();
+        if (mark) {
+            quote = link.getTaggedQuote() != null ? link.getTaggedQuote() : ((Item) source).getTaggedContent();
+        }
+        map.put("quote", quote);
         map.put("uri", source.getUri());
         return map;
     }
 
+    private Quote getQuote(String taggedQuote, String itemUri) {
+        if (isEmpty(taggedQuote)) {
+            taggedQuote = entityLoader.<Item>get(itemUri).getTaggedContent();
+        }
+        return new Quote(taggedQuote, itemUri);
+    }
+
+    @AllArgsConstructor
+    class Quote {
+        public String quote;
+        public String uri;
+    }
+
     @RequestMapping("related")
-    @Model
     @ResponseBody
     public Collection<ModelMap> getRelated(@RequestParam String uri) {
         Set<UID> related = new LinkedHashSet<UID>();
@@ -170,12 +201,7 @@ public class TermController {
                 }
             }
         }
-        return convertToPlainObjects(related, new ValueObjectUtils.Modifier<UID>() {
-            @Override
-            public void modify(UID entity, ModelMap map) {
-                map.remove("content");
-            }
-        });
+        return convertToPlainObjects(related, (entity, map) -> map.remove("content"));
     }
 
 //    @RequestMapping(value = "/", method = POST)
@@ -186,12 +212,16 @@ public class TermController {
 
     public Term add(String name, String shortDescription, String description) {
         name = name.replace("\"", "").replace("«", "").replace("»", "").trim();
-        name = WordUtils.capitalize(name, new char[]{'@'}); // Делаем первую букву большой, @ - знак который не появляеться в названии, чтобы поднялась только первая буква всей фразы
+//        name = WordUtils.capitalize(name, new char[]{'@'}); // Делаем первую букву большой, @ - знак который не появляеться в названии, чтобы поднялась только первая буква всей фразы
         Term term = termDao.getByName(name);
         if (term == null) {
             term = termDao.save(new Term(name, shortDescription, description));
+            if (shortDescription != null)
+                term.setTaggedShortDescription(termsMarker.mark(shortDescription));
+            if (description != null)
+                term.setTaggedDescription(termsMarker.mark(description));
             String termName = term.getName();
-            log.info("Added: "+ termName);
+            log.info("Added: " + termName);
             if (TermUtils.isComposite(termName)) {
                 String target = TermUtils.getNonCosmicCodePart(termName);
                 if (target != null) {
@@ -200,18 +230,25 @@ public class TermController {
             } else if (!TermUtils.isCosmicCode(termName)) {
                 findAliases(term, termName, "");
             }
+//            publisher.publishEvent(new NewTermEvent(term));
         } else {
-            term.setShortDescription(shortDescription);
-            term.setDescription(description);
+            String oldShortDescription = null;
+            if (shortDescription != null && !shortDescription.isEmpty()) {
+                oldShortDescription = term.getShortDescription();
+                term.setShortDescription(shortDescription);
+                term.setTaggedShortDescription(termsMarker.mark(shortDescription));
+            }
+            String oldDescription = null;
+            if (description != null && !description.isEmpty()) {
+                oldDescription = term.getDescription();
+                term.setDescription(description);
+                term.setTaggedDescription(termsMarker.mark(description));
+            }
             termDao.save(term);
+//            publisher.publishEvent(new TermUpdatedEvent(term, oldShortDescription, oldDescription));
         }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                aliasesMap.reload();
-            }
-        }).start();
+        publisher.publishEvent(new TermAddEvent(term.getName()));
 
         return term;
     }
@@ -229,12 +266,11 @@ public class TermController {
                     String alias = prefix+morph.text;
                     if (morph != null && !alias.isEmpty()
                             && !alias.equals(primeTerm.getName())) {
-
                         if (!aliases.contains(alias)) {
                             TermMorph termMorph = commonDao.get(TermMorph.class, alias);
                             if (termMorph == null) {
                                 commonDao.save(new TermMorph(alias, primeTerm.getUri()));
-                                aliasesMap.put(alias, primeTerm);
+
                                 log.info("Alias added: "+alias);
                             }
                             aliases.add(alias);
@@ -242,7 +278,7 @@ public class TermController {
                     }
                 }
                /* for (Map.Entry<String, Term> entry : aliases.entrySet()) {
-                    if (primeTerm.getUri().equals(entry.getValue().generateUri())) continue;
+                    if (primeTerm.uri().equals(entry.getValue().generateUri())) continue;
                     commonDao.save(new Link(primeTerm, entry.getValue(), Link.ALIAS, Link.MORPHEME_WEIGHT));
                 }*/
             }
@@ -251,8 +287,6 @@ public class TermController {
             throw new RuntimeException(e);
         }
     }
-
-
 
     public Term getPrime(Term term) {
         return (Term) linkDao.getPrimeForAlias(term.getUri());
@@ -265,7 +299,13 @@ public class TermController {
     @RequestMapping("autocomplete")
     @ResponseBody
     public List<String> autoComplete(@RequestParam("filter[filters][0][value]") String filter) {
-        return searchController2.suggestions(filter);
+        return suggestionsController.suggestions(filter);
+    }
+
+    @RequestMapping(value = "get-short-description", produces = "text/plain; charset=utf-8")
+    @ResponseBody
+    public String getShortDescription(@RequestParam String name) {
+        return termService.getTerm(name).getShortDescription();
     }
 
     @RequestMapping("remove/{name}")
@@ -276,6 +316,6 @@ public class TermController {
 
     @RequestMapping("reload-aliases-map")
     public void reloadAliasesMap() {
-        aliasesMap.reload();
+        termService.reload();
     }
 }

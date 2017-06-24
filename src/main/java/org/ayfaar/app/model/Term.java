@@ -1,5 +1,7 @@
 package org.ayfaar.app.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.ayfaar.app.annotations.Uri;
 
 import javax.persistence.Column;
@@ -10,13 +12,19 @@ import javax.persistence.PrimaryKeyJoinColumn;
 //@Audited
 @PrimaryKeyJoinColumn(name="uri")
 @Uri(nameSpace = "ии:термин:")
+@Getter @Setter
 public class Term extends UID {
 
     @Column(unique = true)
     private String name;
+    @Column(columnDefinition = "TEXT")
     private String shortDescription;
     @Column(columnDefinition = "TEXT")
+    private String taggedShortDescription;
+    @Column(columnDefinition = "TEXT")
     private String description;
+    @Column(columnDefinition = "TEXT")
+    private String taggedDescription;
 
 
     public Term(String name) {
@@ -36,28 +44,8 @@ public class Term extends UID {
         this.shortDescription = shortDescription;
     }
 
-
-    public String getName() {
+    @Override
+    public String toTitle() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
     }
 }

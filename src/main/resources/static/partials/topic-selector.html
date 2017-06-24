@@ -1,0 +1,15 @@
+<div class="modal-header">
+    <span class="gray">Текущее ключевое слово: </span><h3 class="modal-title inline">{{name}}</h3>
+</div>
+<div class="modal-body">
+    <a ng-click="load(child)" class="btn btn-link" ng-repeat="child in children" style="display: block; text-align: left">
+        {{child}}
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+    <span ng-hide="children.length">Нет дочерних ключевых слов</span>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default" ng-click="cancel()">Отмена</button>
+    <a ng-show="history.length" ng-click="back()" class="btn btn-default"><i class="glyphicon glyphicon-chevron-left"></i>Назад к предыдущей теме</a>
+    <button class="btn btn-primary" ng-click="select()">Выбрать</button>
+</div>

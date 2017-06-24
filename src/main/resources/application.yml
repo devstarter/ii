@@ -1,0 +1,53 @@
+# DB
+spring:
+  datasource:
+    url: jdbc:mysql://${OPENSHIFT_EXTMYSQL_DB_HOST}:${OPENSHIFT_EXTMYSQL_DB_PORT}/${OPENSHIFT_EXTAPP_NAME}?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false
+    username: ${OPENSHIFT_EXTMYSQL_DB_USERNAME}
+    password: ${OPENSHIFT_EXTMYSQL_DB_PASSWORD}
+    platform: org.hibernate.dialect.MySQL5Dialect
+    test-while-idle: true
+    test-on-borrow: true
+    validation-query: SELECT 1
+    time-between-eviction-runs-millis: 5000
+    min-evictable-idle-time-millis: 60000
+  jackson:
+    property-naming-strategy: CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
+    serialization-inclusion: non_empty
+    serialization.WRITE_DATES_AS_TIMESTAMPS: false
+  jpa.hibernate.ddl-auto: update
+
+
+logging:
+  file: ${OPENSHIFT_DATA_DIR}logs/app.log
+  level:
+    org: warn
+    org.ayfaar: info
+#    org.springframework: warn
+#  pattern:
+#    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+
+site-base-url: 'http://ii.ayfaar.org'
+sitemap-dir: ${OPENSHIFT_DATA_DIR}
+drive-dir: ${OPENSHIFT_DATA_DIR}
+this-url: http://${server.address:localhost}:${server.port:8080}
+
+mail.user: some@gmail.com
+mail.password: some
+
+pushbullet.key: v1Izhxi9HgremmZ8ZqEyAh0xbW7xJHLYWYujz0VEpiRR6
+pushbullet.channel: ii
+google.api.key: ${GOOGLE_API_KEY:'no_key'}
+
+server:
+  session:
+    timeout: 2147483647
+
+translation:
+  spreadsheet-id: '1vAMl7PTVXHuRUdGI9HlbfAIYXh6X1tcPcixI1aAJgfk'
+
+sync:
+  records:
+    spreadsheet-id: '1W3siNcFKJaHRSz4155iRF7Y0-pzNYswNzWjp9o3R5hI'
+
+
+spring.mvc.media-types.manifest: text/cache-manifest

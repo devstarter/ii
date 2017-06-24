@@ -1,0 +1,38 @@
+<div>
+    <div ng-show="showUrlInput && !doc">
+        <div ng-hide="singleMode">
+            <div style="padding-top: 20px">
+                <span class="grey">Последние добавленные документы</span>
+                <div class="row">
+                    <document-card ng-repeat="doc in last" doc="doc" class="col-xs-6 col-sm-4"></document-card>
+                    <a ng-click="getMore()" ng-hide="lastNoMore" class="btn btn-link" ng-class="docLoading ? 'disabled' : ''">{{docLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>
+                </div>
+            </div>
+        </div>
+        <div style="clear: both"></div>
+        <div class="input-group" style="padding-top: 20px">
+            <input ng-model="url" placeholder="Вставте ссылку на документ" class="form-control"/>
+            <span class="input-group-btn">
+                <button ng-click="add()" class="btn btn-default" ng-class="docLoading ? 'disabled' : ''">Добавить</button>
+            </span>
+        </div>
+        <div ng-show="docLoading"><img src="static/images/ajax-loader.gif"/>Добавление...</div>
+    </div>
+    <div ng-show="doc">
+        <a href="document/">← К списку документов</a>
+        <div class="title">
+            <h2 class="inline">{{doc.name}}</h2>
+            <i class="btn h glyphicon glyphicon-pencil gray" ng-click="rename(doc)" title="Переименовать ответ"></i>
+            <a href="https://drive.google.com/uc?export=view&id={{doc.id}}" target="_blank" class="btn btn-default glyphicon glyphicon-new-window" title="Открыть в отдельном окне"></a>
+        </div>
+        <!--<a href="{{doc.download_url}}"  target="_blank" class="btn btn-default">Скачать</a>-->
+        <br>
+        <google-doc id="doc.id"></google-doc>
+        <br>
+        <topics owner-uri="doc.uri"></topics>
+    </div>
+</div>
+<style type="text/css">
+    .title .glyphicon {visibility: hidden}
+    .title:hover .glyphicon {visibility: visible}
+</style>

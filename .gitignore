@@ -5,6 +5,10 @@ target
 /src/test/test.iml
 <<<<<<< HEAD
 /.idea
+<<<<<<< HEAD
+src/main/resources/account-private-key-google-api-devstarter.json
+=======
 =======
 /.idea
 >>>>>>> 080cd17ae17b68b4cec6512498198d8332690c7c
+>>>>>>> 969a9f11bc9654c66161ec7983f43c0638a92a2e

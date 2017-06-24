@@ -1,40 +1,48 @@
 package org.ayfaar.app.controllers;
 
+import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.*;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
 import org.ayfaar.app.model.TermMorph;
-import org.ayfaar.app.spring.Model;
-import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.services.links.LinkService;
+import org.ayfaar.app.services.moderation.Action;
+import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.utils.Content;
 import org.ayfaar.app.utils.EmailNotifier;
+import org.ayfaar.app.utils.TermService;
+import org.ayfaar.app.utils.TermsMarker;
+import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.regex.Pattern.*;
 import static org.ayfaar.app.utils.RegExpUtils.w;
 import static org.ayfaar.app.utils.TermUtils.isCosmicCode;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 
-@Controller
-@RequestMapping("search")
+@RestController
+@RequestMapping("api/search")
 public class SearchController {
-    @Autowired AliasesMap aliasesMap;
+    @Autowired TermService termService;
     @Autowired TermDao termDao;
     @Autowired ItemDao itemDao;
+    @Autowired ArticleDao articleDao;
     @Autowired LinkDao linkDao;
     @Autowired CommonDao commonDao;
     @Autowired TermMorphDao termMorphDao;
     @Autowired EmailNotifier notifier;
+//    @Autowired ApplicationEventPublisher eventPublisher;
+    @Autowired TermsMarker termsMarker;
+    @Autowired NewSearchController searchController;
+    @Autowired LinkService linkService;
+    @Autowired ModerationService moderationService;
 
     private Map<String, List<ModelMap>> searchInContentCatch = new HashMap<String, List<ModelMap>>();
 
@@ -50,7 +58,6 @@ public class SearchController {
     }*/
 
     @RequestMapping("content")
-    @Model
     @ResponseBody
     private List<ModelMap> searchInContent(@RequestParam String query,
                                            @RequestParam(required = false, defaultValue = "0") Integer page) {
@@ -72,14 +79,14 @@ public class SearchController {
             items = commonDao.findInAllContent(query, page*pageSize, pageSize);
         } else {
 
-            AliasesMap.Proxy proxy = aliasesMap.get(query);
 
             Term term = null;
-            if (proxy != null) {
-                term = proxy.getTerm();
+            Optional<TermService.TermProvider> providerOpt = termService.get(query);
+            if (providerOpt.isPresent()) {
+                term = providerOpt.get().getTerm();
             } else {
-                for (Map.Entry<String, AliasesMap.Proxy> entry : aliasesMap.entrySet()) {
-                    if (entry.getKey().toLowerCase().equals(query)) {
+                for (Map.Entry<String, TermService.TermProvider> entry : termService.getAll()) {
+                    if (entry.getKey().equals(query)) {
                         term = entry.getValue().getTerm();
                         break;
                     }
@@ -120,7 +127,7 @@ public class SearchController {
                 query = newQuery;
             }
 
-            query = query.replaceAll("\\*", "[" + w + "]*");
+            query = query.replaceAll("\\*", w + "*");
             if (aliasesList.size() > 0) {
                 items = commonDao.findInAllContent(aliasesList, page * pageSize, pageSize);
             } else {
@@ -149,12 +156,11 @@ public class SearchController {
     }
 
     @RequestMapping("term")
-    @Model
     @ResponseBody
-    private ModelMap searchAsTerm(@RequestParam String query) {
+    public ModelMap searchAsTerm(@RequestParam String query) {
         query = query.trim();
-        List<Term> allTerms = aliasesMap.getAllTerms();
-        List<String> matches = new ArrayList<String>();
+        List<Map.Entry<String, TermService.TermProvider>> allProviders = termService.getAll();
+        List<String> matches = new ArrayList<>();
         Term exactMatchTerm = null;
 
         Pattern pattern = null;
@@ -169,23 +175,23 @@ public class SearchController {
             pattern = Pattern.compile(regexp.toLowerCase());
         }
 
-        for (Term term : allTerms) {
-            if (term.getName().toLowerCase().equals(query.toLowerCase())) {
-                exactMatchTerm = term;
-            } else if (term.getName().toLowerCase().contains(query.toLowerCase())
-                    || pattern != null && pattern.matcher(term.getName().toLowerCase()).find()) {
-                matches.add(term.getName());
+        for (Map.Entry<String, TermService.TermProvider> providers : allProviders) {
+            if (providers.getKey().equals(query.toLowerCase())) {
+                exactMatchTerm = providers.getValue().getTerm();
+            } else if (providers.getKey().contains(query.toLowerCase())
+                    || pattern != null && pattern.matcher(providers.getKey()).find()) {
+                matches.add(providers.getKey());
             }
         }
 
         TermMorph morph = termMorphDao.getByName(query);
         if (morph != null) {
-            exactMatchTerm = aliasesMap.get(getValueFromUri(Term.class, morph.getTermUri())).getTerm();
+            exactMatchTerm = termService.getTerm(getValueFromUri(Term.class, morph.getTermUri()));
         }
 
         List<Term> terms = new ArrayList<Term>();
         for (String match : matches) {
-            Term prime = aliasesMap.get(match.toLowerCase()).getTerm();
+            Term prime = termService.getTerm(match);
             boolean has = false;
             for (Term term : terms) {
                 if (term.getUri().equals(prime.getUri())) {
@@ -195,36 +201,44 @@ public class SearchController {
 
             if (!has) terms.add(prime);
         }
+
+        for (Map.Entry<String, TermService.TermProvider> entry : termService.getAll()) {
+            String word = entry.getKey();
+            pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|])|^)(" + word
+                    + ")(([^A-Za-zА-Яа-я0-9Ёё\\]\\|])|$)", UNICODE_CHARACTER_CLASS | UNICODE_CASE | CASE_INSENSITIVE);
+            Matcher contentMatcher = pattern.matcher(query);
+            if (contentMatcher.find()) {
+                terms.add(entry.getValue().getTerm());
+            }
+        }
+        Collections.reverse(terms);
+
         ModelMap modelMap = new ModelMap();
         modelMap.put("terms", terms);
+        modelMap.put("articles", articleDao.getLike("name", query, MatchMode.ANYWHERE));
         modelMap.put("exactMatchTerm", exactMatchTerm);
+        modelMap.put("categories", searchController.inCategories(query));
 
         return modelMap;
     }
 
-    @RequestMapping(value = "rate/{kind}", method = RequestMethod.POST)
-    public void rate(@PathVariable String kind,
-                     @RequestParam String uri,
-                     @RequestParam String query,
-                     @RequestParam String quote) {
-        if (kind.equals("+")) {
-//            notifier.rate(kind, query, uri);
-            Term term = aliasesMap.getTerm(query);
-            Item item = itemDao.get(uri);
-            if (term != null && item != null) {
-                Link link = new Link(term, item, quote, "search");
+    @RequestMapping(value = "rate/+", method = RequestMethod.POST)
+    @Moderated(value = Action.CREATE_QUOTE, command = "@searchController.addQuote")
+    public void addQuote(@RequestParam("query") String termName,
+                         @RequestParam(required = false) String quote,
+                         @RequestParam String uri) {
+        Term term = termService.getTerm(termName);
+        Item item = itemDao.get(uri);
+        Link link;
+        if (term != null && item != null) {
+            final List<Link> links = linkDao.get(term, item);
+            if (links.size() == 0) {
+                link = new Link(term, item, quote, termsMarker.mark(quote));
+                link.setSource("search");
                 linkDao.save(link);
+                linkService.registerNew(link);
+                moderationService.notice(Action.QUOTE_CREATED, termName, uri);
             }
         }
-    }
-
-    @RequestMapping("get-content")
-    @ResponseBody
-    public String getContent(@RequestParam String uri) {
-        Item item = itemDao.get(uri);
-        if (item != null) {
-            return item.getContent();
-        }
-        return null;
     }
 }

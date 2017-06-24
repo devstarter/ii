@@ -2,9 +2,6 @@ import org.junit.Assert;
 import org.ayfaar.app.model.Article;
 import org.junit.Test;
 
-/**
- * Created by yurec on 10.07.2014.
- */
 public class RunTest {
     @Test
     public void test() {

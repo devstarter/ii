@@ -2,7 +2,7 @@
 ============================
 [презетация](http://youtu.be/__ibkaMRHZI), [ii.ayfaar.org](http://ii.ayfaar.org), [канал YouTube](https://www.youtube.com/channel/UCx7OZ2t2mEiaW6kem5lfl9w)
 
-Ключевые слова: OOP, [SOLID](http://ru.wikipedia.org/wiki/SOLID_(%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%BD%D0%BE-%D0%BE%D1%80%D0%B8%D0%B5%D0%BD%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%BD%D0%BE%D0%B5_%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5)), Java, J2SE, Hibernate, Spring (IoC, MVC), JUnit, JavaScript, HTML5, CSS3, [KendoUI](www.kendoui.com), [AngularJS](https://angularjs.org), MySQL, Maven, git, TDD, CI, IntelliJ IDEA
+Ключевые слова: OOP, [SOLID](http://ru.wikipedia.org/wiki/SOLID_(%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%BD%D0%BE-%D0%BE%D1%80%D0%B8%D0%B5%D0%BD%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%BD%D0%BE%D0%B5_%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5)), Java 8, J2SE, Hibernate, [Spring Boot](https://spring.io/) (JPA, IoC, MVC), JUnit, JavaScript, HTML5, CSS3, [KendoUI](www.kendoui.com), [AngularJS](https://angularjs.org), MySQL, Maven, git, TDD, CI, IntelliJ IDEA
 
 Мой скайп: iu3116
 
@@ -28,27 +28,23 @@
 С чего начать (Java)
 ====================
 
-**Видео инструкция https://www.youtube.com/watch?v=mbwN4eaES78**
-
 Устанавливаем:
 
 1.	GIT http://msysgit.github.io
-2.	Добавляем git.exe в [переменную окружения Path](http://clip2net.com/s/iuLWXk) и перезагружаем windows
+2.	Добавляем git.exe в переменную окружения Path и перезагружаем windows
 3.	Выполняем тестовую задачу [Тренировка работы с git](https://github.com/devstarter/ii/issues/4)
 4.	[IntelliJ IDEA](http://www.jetbrains.com/idea/download/)
-5.	[Java version 1.7](https://www.java.com/en/download)
-6.	[Java SE Development Kit 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
+5.	[Java](https://www.java.com/en/download)
+6.	[Java SE Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 7.	[MySQL](http://dev.mysql.com/downloads/mysql/) или [XAMPP](https://www.apachefriends.org/index.html) [wiki/База данных](https://github.com/devstarter/ii/wiki/%D0%91%D0%B0%D0%B7%D0%B0-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85)
-8.	Не обязательно, [Apache Tomcat](http://tomcat.apache.org/download-70.cgi) или [XAMPP](https://www.apachefriends.org/index.html)
 
 Окрываем проект:
 
 1. Зарегистрируйтесь в [GitHub](https://github.com)
 2. Сделайте Fork (копию) [этого кода](https://github.com/devstarter/ii) из своего акаунта
 3. Скачайте его на свой компьютер `git clone https://github.com/<ваш акаунт>/ii.git`
-4. Откройте проект с помощью IDEA
-5. Устанавите плагин [lombok](http://plugins.jetbrains.com/plugin/6317) для IDEA
-6. Запустите тест [RunTest.java](https://github.com/devstarter/ii/blob/master/src/test/java/RunTest.java)
+4. Устанавите плагин [lombok](http://plugins.jetbrains.com/plugin/6317) для IDEA
+5. [Открываем проект в IntelliJ IDEA](https://github.com/devstarter/ii/wiki/%D0%9E%D1%82%D0%BA%D1%80%D1%8B%D1%82%D0%B8%D0%B5-%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0-%D0%B2-IntelliJ-IDEA)
 
 Настраиваем базу данных (MySQL) [Видео](https://www.youtube.com/watch?v=l-ZGmR98d-4): 
 
@@ -56,11 +52,9 @@
 2. Качаем [последний дамп данных](https://github.com/devstarter/ii/tree/master/db)
 3. Импортируем дамп
 
-Запускаем проект (не обязательно):
+Запускаем проект:
 
-1. Добавляем Run Configuration для Tomcat в IDEA
-2. Запускаем эту конфигурацию
+Конфигурация в IDEA [Run/Debug Configuration](https://cloud.githubusercontent.com/assets/1183619/14000544/b469080e-f152-11e5-9a3a-c1acb737b5d8.png)
 
-Подробнее в видео https://www.youtube.com/watch?v=mbwN4eaES78
 
 [![Презетация](http://img.youtube.com/vi/__ibkaMRHZI/0.jpg)](http://youtu.be/__ibkaMRHZI)

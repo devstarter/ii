@@ -1,15 +1,15 @@
 package org.ayfaar.app.importing;
 
 import org.apache.commons.io.FileUtils;
-import org.ayfaar.app.SpringTestConfiguration;
+import org.ayfaar.app.SpringTestDevConfiguration;
 import org.ayfaar.app.controllers.TermController;
 import org.ayfaar.app.dao.ArticleDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Article;
 import org.ayfaar.app.model.Link;
+import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Term;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -29,10 +29,10 @@ public class VocabularyImporter {
 //    private static String skipUntilNumber = "1.0780";
 //    private static boolean saveAllowed = true;
 
-    public static void main(String[] args) throws Docx4JException, IOException {
+    public static void main(String[] args) throws IOException {
         currentArticle = null;
 
-        ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
+        ctx = new AnnotationConfigApplicationContext(SpringTestDevConfiguration.class);
         articleDao = ctx.getBean(ArticleDao.class);
         termDao = ctx.getBean(TermDao.class);
         linkDao = ctx.getBean(LinkDao.class);
@@ -63,7 +63,7 @@ public class VocabularyImporter {
     private static void saveAliases(String termName, String aliasName) {
         Term term = getTerm(termName);
         Term alias = getTerm(aliasName);
-        Link link = new Link(term, alias, Link.ALIAS);
+        Link link = new Link(term, alias, LinkType.ALIAS);
         linkDao.save(link);
     }
 

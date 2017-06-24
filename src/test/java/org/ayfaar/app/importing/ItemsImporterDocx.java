@@ -1,6 +1,6 @@
 package org.ayfaar.app.importing;
 
-import org.ayfaar.app.controllers.ItemController;
+/*import org.ayfaar.app.controllers.ItemController;
 import org.ayfaar.app.model.Item;
 import org.docx4j.model.listnumbering.AbstractListNumberingDefinition;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -15,10 +15,10 @@ import javax.xml.bind.JAXBElement;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 
-import static java.util.regex.Pattern.compile;
+import static java.util.regex.Pattern.compile;*/
 
 public class ItemsImporterDocx {
-    private static Item currentItem;
+    /*private static Item currentItem;
 
     public static void main(String[] args) throws Docx4JException {
         WordprocessingMLPackage wordMLPackage =
@@ -36,7 +36,7 @@ public class ItemsImporterDocx {
 
             if (o instanceof P) {
                 if (currentItem != null) {
-                    createNextItem(ItemController.getNext(currentItem.getNumber()));
+                    createNextItem(ItemController.next(currentItem.getNumber()));
                 }
                 for (Object r : ((P) o).getContent()) {
                     if (r instanceof R) {
@@ -72,6 +72,6 @@ public class ItemsImporterDocx {
 
     private static void createNextItem(String number) {
         currentItem = new Item(number, "");
-    }
+    }*/
 }
 

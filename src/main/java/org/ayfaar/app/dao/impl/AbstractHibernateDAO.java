@@ -1,21 +1,18 @@
 package org.ayfaar.app.dao.impl;
 
 import org.ayfaar.app.dao.BasicCrudDao;
-import org.dozer.DozerBeanMapper;
 import org.hibernate.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.cfg.ImprovedNamingStrategy;
 import org.hibernate.criterion.*;
-import org.hibernate.envers.AuditReader;
-import org.hibernate.envers.AuditReaderFactory;
-import org.hibernate.envers.query.AuditEntity;
-import org.hibernate.envers.query.AuditQuery;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.StringType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +65,24 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         return currentSession().createCriteria(entityClass);
     }
 
+    protected Criteria criteria(Pageable pageable) {
+        final Sort sort = pageable.getSort();
+        Optional<Sort.Order> order = Optional.ofNullable(sort != null && sort.iterator().hasNext() ? sort.iterator().next() : null);
+
+        Criteria criteria = currentSession().createCriteria(entityClass)
+                .setFirstResult(pageable.getOffset())
+                .setMaxResults(pageable.getPageSize());
+
+        String sortField = order.isPresent() ? order.get().getProperty() : null;
+        String sortDirection = order.isPresent() ? order.get().getDirection().name() : null;
+
+        if (sortField != null && !sortField.isEmpty()) {
+            criteria.addOrder("asc".equals(sortDirection) ? Order.asc(sortField) : Order.desc(sortField));
+        }
+
+        return criteria;
+    }
+
     protected Query query(String hql) {
         return currentSession().createQuery(hql);
     }
@@ -101,7 +116,7 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
     @SuppressWarnings("unchecked")
     protected List<E> list(Criteria criteria, boolean cache) {
         criteria.setCacheable(cache);
-        return new ArrayList<E>(new LinkedHashSet<E>(criteria.list())); // privent duplications
+        return new ArrayList<E>(criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list()); // privent duplications
     }
 
     protected List<E> list(Query query) {
@@ -176,6 +191,19 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
     }
 
     @Override
+    public List<E> getLike(String property, @NotNull List<String> values, MatchMode matchMode) {
+        Criteria criteria = criteria();
+        Disjunction disjunction = Restrictions.disjunction();
+
+        for (String alias : values) {
+            disjunction.add(like(property, alias, matchMode));
+        }
+        criteria.add(disjunction);
+
+        return criteria.list();
+    }
+
+    @Override
     public List<E> getByRegexp(String property, String regexp) {
         return criteria()
                 .add(regexp(property, regexp))
@@ -201,10 +229,12 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         currentSession().delete(entity);
     }
 
+    @NotNull
     public List<E> getPage(int skip, int pageSize) {
         return list(criteria().setFirstResult(skip).setMaxResults(pageSize));
     }
 
+    @NotNull
     public List<E> getPage(int skip, int pageSize, String sortField, String sortDirection) {
         Criteria criteria = currentSession().createCriteria(entityClass)
                 .setFirstResult(skip)
@@ -238,6 +268,13 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         return list(criteria);
     }
 
+    @NotNull
+    @Override
+    public List<E> getPage(Pageable pageable) {
+        return list(criteria(pageable));
+    }
+
+    @NotNull
     public Long getCount() {
         return (Long) currentSession().createQuery("select count (*) from "+entityClass.getName())
                 .uniqueResult();
@@ -268,6 +305,7 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         return (Long) criteria.uniqueResult();
     }
 
+    @NotNull
     @Override
     public List<E> getAll() {
         return criteria()
@@ -311,7 +349,7 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         return list(criteria().add(Example.create(o)));
     }
 
-    @Override
+    /*@Override
     public List<E> getAudit(Serializable id) {
         AuditReader reader = AuditReaderFactory.get(currentSession());
 
@@ -332,9 +370,9 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         }
 
         return result;
-    }
+    }*/
 
-    @Override
+/*    @Override
     public List<E> getAllAudit() {
         AuditReader reader = AuditReaderFactory.get(currentSession());
 
@@ -350,7 +388,7 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
         }
 
         return result;
-    }
+    }*/
 
     @Override
     public E initialize(E detachedParent, String fieldName) {

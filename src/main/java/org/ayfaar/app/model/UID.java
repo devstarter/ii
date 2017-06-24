@@ -7,12 +7,12 @@ import javax.persistence.*;
 @Entity
 //@Audited
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class UID {
+public abstract class UID implements HasUri {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "UriGenerator")
     @GenericGenerator(name = "UriGenerator", strategy = "org.ayfaar.app.utils.UriGenerator")
-    private String uri;
+    protected String uri;
 
     @Override
     public boolean equals(Object o) {
@@ -34,4 +34,6 @@ public abstract class UID {
     public void setUri(String uri) {
         this.uri = uri;
     }
+
+    abstract public String toTitle();
 }

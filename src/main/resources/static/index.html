@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru" ng-app="app" manifest="/static/cache.manifest">
+<head>
+	<meta name='yandex-verification' content='4bbcc914862aaad9' />
+	<meta name="google-site-verification" content="I5Xo9PwBeBnIqp0TbN0Q4OC8B0Ir3uesMkpQjSpawx4" />
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <base href="/" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<meta name="description" content="{{ metaDescription }}">-->
+    <!--<meta name="keywords" content="{{ metaKeywords }}">-->
+
+    <link href="static/images/favicon.ico" rel="shortcut icon">
+    <title>Интерактивная Ииссиидиология</title>
+
+    <link href="static/lib/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="static/css/style.css" type="text/css" rel="stylesheet">
+    <link href="static/css/icons/style.css" rel="stylesheet" type="text/css" />
+
+    <script src="static/lib/angular/angular.min.js"></script>
+    <script src="static/lib/angular/angular-cookies.min.js"></script>
+    <script src="static/lib/angular/angular-resource.min.js"></script>
+    <script src="static/lib/angular/angular-sanitize.min.js"></script>
+    <script src="static/lib/angular-ui-router.min.js"></script>
+    <script src="static/lib/angular.audio.min.js"></script>
+    <script src="static/lib/ui-bootstrap/ui-bootstrap-0.11.2.min.js"></script>
+
+    <script async src="static/lib/require/require.min.js"></script>
+    <script src="static/js/controllers/common.js"></script>
+    <script src="static/js/controllers/term.js"></script>
+    <script src="static/js/app.js"></script>
+    <script>
+        app.constant('config', {useHtml5Mode: true, apiUrl: "/api/"});
+    </script>
+</head>
+
+<body>
+<header ii-header ng-hide="hideLoop"></header>
+
+<div ui-view></div>
+<div style="position: absolute; right: 0;top: 35px; width: 400px;z-index: 999">
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+</div>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-51463207-1', 'ayfaar.org');
+</script>
+<script type="text/ng-template" id="template/alert/alert.html">
+    <div class="alert" ng-class="['alert-' + (type || 'warning'), closeable ? 'alert-dismissable' : null]" role="alert">
+        <button ng-show="closeable" type="button" class="close" ng-click="close()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <div ng-transclude></div>
+    </div>
+</script>
+<script type="text/ng-template" id="card-video">
+    <a ii-ref="video" class="card">
+        <img ng-src="https://i.ytimg.com/vi/{{video.id}}/mqdefault.jpg"/>
+        <div title="{{video.title}}">{{video.title | cut:false:65}}</div>
+        <i class="glyphicon glyphicon-play video-play-button"></i>
+    </a>
+</script>
+<script type="text/ng-template" id="card-document">
+    <div ii-ref="doc" class="card document">
+        <img ng-src="https://drive.google.com/thumbnail?sz=s300&id={{doc.id}}"/>
+        <div title="{{doc.name}}">{{doc.name | cut:false:65}}</div>
+    </div>
+</script>
+<script type="text/ng-template" id="record-card">
+    <div style="padding-bottom: 10px" class="record-block">
+        <i ng-show="record.url || record.audio_url" class="glyphicon pointer play-button" title="{{record.played ? 'Остановить' : 'Прослушать'}}"
+           ng-class="record.played ? 'glyphicon-pause' : 'glyphicon-play'"
+           ng-click="playOrPause(record)"></i>
+        <a ii-ref="record">{{record.name}}
+            <span class="pointer gray nowrap small">{{record.code}}</span>
+            <span class="pointer gray nowrap small">({{record.duration | duration:'mm:ss' }})</span>
+        </a>
+        <a title="Скачать"
+           ng-show="record.url || record.audio_url"
+           style="text-decoration: none"
+           class="pointer glyphicon glyphicon-download gray small"
+           target="_blank"
+           href="api/record/{{record.code}}/download/{{record.code}} {{record.name}}.mp3"></a>
+        <div>
+            <span style="padding-left: 10px; font-size: 14px" ng-repeat="topic in record.topics">
+                <a topic-ref="topic" class="gray">{{topic}}</a>{{$last ? "" : ", "}}
+            </span>
+            <i ng-click="addTopic(record)" class="pointer gray glyphicon glyphicon-plus-sign h" ng-show="record.topics.length" title="Добавить тему ответа"></i>
+            <a ng-click="addTopic(record)" class="gray btn btn-link nopadding h" ng-hide="record.topics.length">Указать тему ответа</a>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="modal-message.html">
+    <div class="modal-header">
+        <h3 class="modal-title">{{title}}</h3>
+    </div>
+    <div class="modal-body">
+        {{text}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ok()">OK</button>
+    </div>
+</script>
+<script type="text/ng-template" id="modal-prompt.html">
+    <div class="modal-header">
+        <h3 class="modal-title">{{title}}</h3>
+    </div>
+    <div class="modal-body">
+        <textarea ng-model="text" rows="3" class="full-width form-control"></textarea>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()">Отменить</button>
+        <button class="btn btn-primary" ng-click="act()">{{action}}</button>
+    </div>
+</script>
+<script type="text/ng-template" id="modal-auth.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Представтесь через социальные тести</h3>
+    </div>
+    <div class="modal-body">
+        <div ng-hide="user" style="text-align: center">
+            <img alt="Facebook" title="Facebook" class="btn" src="static/images/facebook.png" ng-click="authenticate('facebook')" style="width: 154px;height: 142px"/>
+            <img alt="VK" title="VK" class="btn" src="static/images/vk.png" ng-click="authenticate('vk')" style="width: 154px;height: 142px"/>
+        </div>
+        <div ng-show="user">
+            <img ng-src="{{user.thumbnail}}" style="float: left; padding-right: 10px;"/>
+            <div>{{user.name}}</div>
+            <div>{{user.email}}</div>
+            <div style="clear: both"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()">Отменить</button>
+        <button class="btn btn-primary" ng-show="user" ng-click="registrate()">Представиться</button>
+    </div>
+</script>
+<script type="text/ng-template" id="contribute-form.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Панель модератора</h3>
+    </div>
+    <div class="modal-body">
+        <input id="search-input" ng-model="term" type="text" class="form-control"
+               ii-lookup placeholder="Введите термин" required autocomplete="off"
+               term-only="true"
+               typeahead="suggestion for suggestion in $getSuggestions($viewValue)"/>
+        <textarea class="full-width form-control" ng-model="text" style="margin-top: 10px; min-height: 200px"></textarea>
+    </div>
+    <div class="modal-footer btn-group">
+        <button class="btn btn-default" ng-click="quote()">Цитата</button>
+        <button class="btn btn-default" ng-click="link(1)" style="margin: 0">Синоним</button>
+        <button class="btn btn-default" ng-click="link(2)" style="margin: 0">Сокращение</button>
+        <button class="btn btn-default" ng-click="link(4)" style="margin: 0">Космический Код</button>
+        <button class="btn btn-default" ng-click="link(0)" style="margin: 0">Склонённый</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="typeahead-item-template">
+    <div style="padding: 5px" class="pointer">
+        <i ng-show="match.model.uri.indexOf('тема') == 0" class="glyphicon glyphicon-tag gray small"></i>
+        <i ng-show="match.model.uri.indexOf('видео') == 0" class="glyphicon glyphicon-facetime-video gray small"></i>
+        <i ng-show="match.model.uri.indexOf('запись') == 0" class="glyphicon glyphicon-play gray small"></i>
+        <i ng-show="match.model.uri.indexOf('изображение') == 0" class="glyphicon glyphicon-picture gray small"></i>
+        <i ng-show="match.model.uri.indexOf('ии:пункты') == 0" class="glyphicon glyphicon-align-left gray small"></i>
+        <i ng-show="match.model.uri.indexOf('категория') == 0" class="glyphicon glyphicon-align-left gray small"></i>
+        <i ng-show="match.model.uri.indexOf('paragraph') == 0" class="glyphicon glyphicon-align-left gray small"></i>
+        <span ng-bind-html="match.model.label | typeaheadHighlight:query"></span>
+    </div>
+</script>
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "WebSite",
+  "name" : "Ииссиидиология",
+  "alternateName" : "Айфаар",
+  "url" : "http://ii.ayfaar.org"
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "http://ii.ayfaar.org/index.php?option=com_search&searchword={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+</body>
+</html>

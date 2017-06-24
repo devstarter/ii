@@ -1,5 +1,6 @@
 package org.ayfaar.app.model;
 
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.ayfaar.app.annotations.Uri;
 
@@ -14,12 +15,12 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @Uri(nameSpace = "категория:")
 public class Category extends UID {
 
-    public static final String PARAGRAPH_NAME = "Параграф";
+//    public static final String PARAGRAPH_NAME = "параграф:";
     public static final String TOM_NAME = "Том";
     public static final String PARAGRAPH_SIGN = "§";
 
     @Column(unique = true)
-    private String name;
+    private String name; //todo rename to code
     @Column(columnDefinition = "TEXT")
     private String description;
     private String parent;
@@ -34,6 +35,11 @@ public class Category extends UID {
     public Category(String name, String description, String parent) {
         this(name, parent);
         this.description = description;
+    }
+    @Builder
+    public Category(String name, String description, String parent, String next) {
+        this(name, parent, description);
+        this.next = next;
     }
 
     public Category(String name) {
@@ -88,10 +94,10 @@ public class Category extends UID {
         this.description = description;
     }
 
-    public boolean isParagraph() {
-        return name.indexOf(PARAGRAPH_NAME) == 0;
+//    public boolean isParagraph() {
+//        return name.indexOf(PARAGRAPH_NAME) == 0;
 //        return start != null && !start.isEmpty();
-    }
+//    }
 
     public boolean isTom() {
         return name.indexOf(TOM_NAME) == 0;
@@ -99,5 +105,10 @@ public class Category extends UID {
 
     public boolean isCikl() {
         return name.equals("БДК") || name.equals("Основы");
+    }
+
+    @Override
+    public String toTitle() {
+        return name;
     }
 }

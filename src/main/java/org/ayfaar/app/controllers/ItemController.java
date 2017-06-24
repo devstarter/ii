@@ -6,8 +6,11 @@ import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
-import org.ayfaar.app.spring.Model;
-import org.ayfaar.app.utils.AliasesMap;
+import org.ayfaar.app.utils.TermService;
+import org.ayfaar.app.utils.TermServiceImpl;
+import org.ayfaar.app.utils.TermsTaggingUpdater;
+import org.ayfaar.app.utils.exceptions.ExceptionCode;
+import org.ayfaar.app.utils.exceptions.LogicalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -16,22 +19,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 import static org.ayfaar.app.utils.ValueObjectUtils.getModelMap;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("item")
+@RequestMapping("api/item")
 public class ItemController {
 
     @Autowired CommonDao commonDao;
     @Autowired ItemDao itemDao;
     @Autowired TermDao termDao;
     @Autowired TermController termController;
-    @Autowired AliasesMap aliasesMap;
+    @Autowired TermService termService;
+    @Autowired TermServiceImpl aliasesMap;
+    @Autowired TermsTaggingUpdater taggingUpdater;
 
     @RequestMapping(value = "{number}", method = POST)
-    @Model
+    @ResponseBody
     public Item add(@PathVariable String number, @RequestBody String content) {
         Item item = itemDao.getByNumber(number);
         if (item == null) {
@@ -42,11 +50,17 @@ public class ItemController {
         return item;
     }
 
+    @RequestMapping("{number}!")
+    public void update(@PathVariable String number, HttpServletResponse response) throws IOException {
+        taggingUpdater.update(itemDao.getByNumber(number));
+        response.sendRedirect(number);
+    }
+
     @RequestMapping("{number}")
-    @Model
+    @ResponseBody
     public ModelMap get(@PathVariable String number) {
         Item item = itemDao.getByNumber(number);
-        notNull(item, "Item not found");
+        if (item == null) throw new LogicalException(ExceptionCode.ITEM_NOT_FOUND, number);
         ModelMap modelMap = (ModelMap) getModelMap(item);
 //        modelMap.put("linkedTerms", getLinkedTerms(item));
         Item next = itemDao.get(item.getNext());
@@ -86,7 +100,6 @@ public class ItemController {
     }
 
     @RequestMapping("{number}/linked-terms")
-    @Model
     @ResponseBody
     public Object getLinkedTerms(@PathVariable String number) {
         Item item = itemDao.getByNumber(number);
@@ -96,13 +109,13 @@ public class ItemController {
     }
 
     @RequestMapping("{number}/{term}")
-    @Model
+    @ResponseBody
     public Link assignToTerm(@PathVariable String number, @PathVariable String term) {
         return assignToTermWithWeight(number, term, null);
     }
 
     @RequestMapping("{number}/{term}/{weight}")
-    @Model
+    @ResponseBody
     public Link assignToTermWithWeight(@PathVariable String number,
                                        @PathVariable String term,
                                        @PathVariable Byte weight) {

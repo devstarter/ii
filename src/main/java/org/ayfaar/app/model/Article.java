@@ -52,4 +52,9 @@ public class Article extends UID {
     public void setContent(String content) {
         this.content = content;
     }
+
+    @Override
+    public String toTitle() {
+        return name;
+    }
 }

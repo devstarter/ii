@@ -1,10 +1,9 @@
 package org.ayfaar.app.exec;
 
-import org.ayfaar.app.SpringTestConfiguration;
+import org.ayfaar.app.SpringTestDevConfiguration;
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.utils.ItemsHelper;
-import org.hibernate.criterion.MatchMode;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -14,7 +13,7 @@ public class FixQuestionBD {
 
     public static void main(String[] args) {
 
-        ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestConfiguration.class);
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringTestDevConfiguration.class);
         ItemDao itemDao = ctx.getBean(ItemDao.class);
 
         List<Item> items = itemDao.getByRegexp("content","^.+" + ItemsHelper.QUESTION);

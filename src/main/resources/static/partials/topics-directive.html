@@ -1,0 +1,46 @@
+<span ng-hide="loading || topics.length">Ключевые слова не указаны</span>
+<h3 ng-show="topics.length" class="grey">Ключевые слова:</h3>
+<div ng-show="loading"><img src="static/images/ajax-loader.gif"/>Загрузка ключевых слов...</div>
+<div ng-repeat="topic in topics" class="topic">
+    <rating ng-click="updateRate(topic)" ng-model="topic.rate" max="3" class="gray"></rating>
+    <a topic-ref="topic">{{(topic.isItem ? 'Абзац: ' : '') + topic.name}}</a>
+    <i class="btn h glyphicon glyphicon-comment nopadding gray" ng-click="updateComment(topic)" title="Добавить коментарий" ng-hide="topic.comment"></i>
+    <i class="btn h glyphicon glyphicon-remove-circle nopadding gray" ng-click="removeTopic(topic)" title="Отменить ключевое слово"></i>
+    <div class="topic-comment small gray">{{topic.comment}}
+        <i ng-click="updateComment(topic)" class="btn glyphicon glyphicon-pencil" title="Редактировать коментарий"></i>
+    </div>
+</div>
+
+<div style="padding-bottom: 600px">
+    <div style="padding-top: 20px" class="gray">
+        <a class="btn btn-link gray" ng-hide="showAddTopicBlock" ng-click="showAddTopicBlock = !showAddTopicBlock">
+            <i class="glyphicon glyphicon-plus-sign"></i>
+            добавить ключевое слово</a>
+        <div ng-show="showAddTopicBlock">
+            <div class="input-group">
+                <input ng-model="newTopic.name" type="text" class="form-control" placeholder="Введите ключевое слово"
+                       typeahead="suggestion for suggestion in getSuggestions($viewValue)" autocomplete="off">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="openSelector()">Список</button>
+                        </span>
+            </div>
+            <!--Коментарий к связи с ключевым словом
+            <textarea ng-model="newTopic.comment" rows="3" class="full-width form-control"></textarea>-->
+            Степень значимости ключевого слова
+            <rating ng-model="newTopic.rate" max="3"></rating>
+            <br>
+            <a class="btn btn-primary" ng-click="addTopic()" style="margin-top: 15px;">Добавить ключевое слово</a>
+            <a class="btn btn-link gray middle" ng-click="showAddTopicBlock = false">скрыть</a>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    .topic {padding-top: 20px}
+    .topic>span { font-size: 120% }
+    .topic .h {display: none}
+    .topic:hover .h {display: inline}
+    .topic-comment .glyphicon { display: none }
+    .topic-comment:hover .glyphicon { display: inline }
+    /*.topic-comment {padding-left: 65px;}*/
+</style>

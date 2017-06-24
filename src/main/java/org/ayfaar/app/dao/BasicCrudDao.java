@@ -4,6 +4,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.Pageable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -63,6 +64,8 @@ public interface BasicCrudDao<E> {
 
     List<E> getLike(String property, @NotNull String value, MatchMode matchMode, int limit);
 
+    List<E> getLike(String property, @NotNull List<String> values, MatchMode matchMode);
+
     /**
      * SQL: ...WHERE <property> REGEXP <regexp>
      *
@@ -89,6 +92,8 @@ public interface BasicCrudDao<E> {
     List<E> getPage(int skip, int pageSize, String sortField, String sortDirection);
     @NotNull
     List<E> getPage(int skip, int pageSize, String sortField, String sortDirection, List<String> aliases, List<Criterion> criterions);
+    @NotNull
+    List<E> getPage(Pageable pageable);
 
     @NotNull
     Long getCount();
@@ -110,10 +115,10 @@ public interface BasicCrudDao<E> {
     E getOneFor(String entity, Serializable id);
 
     List<E> getByExample(E o);
-
+/*
     List<E> getAudit(Serializable id);
 
-    List<E> getAllAudit();
+    List<E> getAllAudit();*/
 
     E initialize(E detachedParent, String fieldName);
 }

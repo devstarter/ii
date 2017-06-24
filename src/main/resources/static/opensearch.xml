@@ -1,0 +1,9 @@
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+    <ShortName>Интерактивная Ииссиидиология</ShortName>
+    <Description>
+        ИИССИИДИОЛОГИЯ
+    </Description>
+    <InputEncoding>UTF-8</InputEncoding>
+    <Image width="16" height="16" type="image/x-icon">http://ii.ayfaar.org/static/images/favicon.ico</Image>
+    <Url type="text/html" method="get" template="http://ii.ayfaar.org/{searchTerms}"/>
+</OpenSearchDescription>

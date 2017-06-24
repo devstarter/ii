@@ -5,22 +5,23 @@ import org.ayfaar.app.utils.Content;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.envers.AuditReader;
-import org.hibernate.envers.AuditReaderFactory;
-import org.hibernate.envers.RevisionType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static org.apache.commons.beanutils.PropertyUtils.setProperty;
 import static org.ayfaar.app.utils.EntityUtils.getPrimaryKeyFiledName;
@@ -43,16 +44,15 @@ public class CommonDaoImpl implements CommonDao {
     }
 
     @Override
-    public <E> E getRandom(Class<E> clazz) {
-        return (E) sessionFactory.getCurrentSession().createCriteria(clazz)
-            .add(Restrictions.sqlRestriction("1=1 order by rand()"))
-            .setMaxResults(1)
-            .list().get(0);
+    public <E> Optional<E> getOpt(Class<E> clazz, Serializable id) {
+        return Optional.ofNullable(get(clazz, id));
     }
 
     @Nullable
     @Override
     public <E> E get(Class<E> clazz, Serializable id) {
+        Assert.notNull(clazz);
+        Assert.notNull(id);
         return (E) sessionFactory.getCurrentSession().get(clazz, id);
     }
 
@@ -64,9 +64,33 @@ public class CommonDaoImpl implements CommonDao {
     }
 
     @Override
+    public <E> Optional<E> getOpt(Class<E> clazz, String property, Object value) {
+        return Optional.ofNullable(get(clazz, property, value));
+    }
+
+    @Override
     public <E> List<E> getList(Class<E> clazz, String property, Object value) {
         return sessionFactory.getCurrentSession()
                 .createCriteria(clazz).add(value == null ? isNull(property) : eq(property, value))
+                .list();
+    }
+
+    @Override
+    public <E> List<E> getList(Class<E> clazz, String property, Object value, Pageable pageable) {
+        return criteria(clazz, pageable)
+                .add(value == null ? isNull(property) : eq(property, value))
+                .list();
+    }
+
+    @Override
+    public <E> List<E> getList(Class<E> clazz, Pageable pageable) {
+        return criteria(clazz, pageable).list();
+    }
+
+    @Override
+    public <E> List<E> getListWithout(Class<E> clazz, String property, Object value, Pageable pageable) {
+        return criteria(clazz, pageable)
+                .add(value == null ? isNotNull(property) : Restrictions.ne(property, value))
                 .list();
     }
 
@@ -119,16 +143,8 @@ public class CommonDaoImpl implements CommonDao {
         remove(entity.getClass(), (Serializable) getPrimaryKeyValue(entity));
     }
 
-    @Override
-    public <E> E getByCode(Class<E> className, String code) {
-        return (E) sessionFactory.getCurrentSession()
-                .createCriteria(className)
-                .add(eq("code", code))
-                .uniqueResult();
-    }
-
     protected <E> List<E> list(Criteria criteria) {
-        return new ArrayList<E>(new LinkedHashSet<E>(criteria.list())); // privent duplications
+        return new ArrayList<E>(criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list());
     }
 
     @Override
@@ -212,27 +228,53 @@ public class CommonDaoImpl implements CommonDao {
         );
     }
 
+    @NotNull
     @Override
-    public <E> AuditReader getAuditReader() {
-        return AuditReaderFactory.get(sessionFactory.getCurrentSession());
+    public <E> List<E> getPage(Class<E> entityClass, Pageable pageable) {
+        final Sort sort = pageable.getSort();
+        Optional<Sort.Order> order = Optional.ofNullable(sort != null && sort.iterator().hasNext() ? sort.iterator().next() : null);
+        return getPage(
+                entityClass,
+                pageable.getOffset(),
+                pageable.getPageSize(),
+                order.isPresent() ? order.get().getProperty() : null,
+                order.isPresent() ? order.get().getDirection().name() : null);
+    }
 
-        /*AuditQuery query = reader.getCrossTypeRevisionChangesReader().findEntities();
+    @NotNull
+    @Override
+    public <E> List<E> getPage(Class<E> entityClass, int skip, int pageSize, String sortField, String sortDirection) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(entityClass)
+                .setFirstResult(skip)
+                .setMaxResults(pageSize);
 
-        List<E> result = new ArrayList<E>();
-        List<Object[]> audits = query.getResultList();
-
-        DozerBeanMapper mapper = new DozerBeanMapper();
-
-        for (Object[] objects : audits) {
-            result.add(mapper.map(objects[0], entityClass));
+        if (sortField != null && !sortField.isEmpty()) {
+            criteria.addOrder("asc".equals(sortDirection) ? Order.asc(sortField) : Order.desc(sortField));
         }
 
-        return result;*/
+        return list(criteria);
     }
 
     @Override
-    public Collection<?> findAuditEntities(Number revision, RevisionType revisionType) {
-        return AuditReaderFactory.get(sessionFactory.getCurrentSession())
-                .getCrossTypeRevisionChangesReader().findEntities(revision, revisionType);
+    public Criteria getCriteria(Class entityClass, Pageable pageable) {
+        return criteria(entityClass, pageable);
+    }
+
+    protected Criteria criteria(Class entityClass, Pageable pageable) {
+        final Sort sort = pageable.getSort();
+        Optional<Sort.Order> order = Optional.ofNullable(sort != null && sort.iterator().hasNext() ? sort.iterator().next() : null);
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(entityClass)
+                .setFirstResult(pageable.getOffset())
+                .setMaxResults(pageable.getPageSize());
+
+        String sortField = order.isPresent() ? order.get().getProperty() : null;
+        String sortDirection = order.isPresent() ? order.get().getDirection().name() : null;
+
+        if (sortField != null && !sortField.isEmpty()) {
+            criteria.addOrder("asc".equals(sortDirection) ? Order.asc(sortField) : Order.desc(sortField));
+        }
+
+        return criteria;
     }
 }
