@@ -61,7 +61,7 @@
 
         <div class="pointer section" title="Показать" ng-click="showCategories = !showCategories" ng-show="termFound && categories.length">
             <i ng-class="showCategories ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'" class="glyphicon"></i>
-            <h3>Упоминания в содержании</h3> <span ng-hide="showCategories" class="gray">показать {{categories.length}}</span>
+            <h3>Упоминания в оглавлении</h3> <span ng-hide="showCategories" class="gray">показать {{categories.length}}</span>
         </div>
         <div ng-repeat="cat in categories" ng-show="showCategories" class="catBlock">
             <a ii-ref="cat">{{cat.path}}</a>
@@ -124,7 +124,7 @@
         </div>
         <div ng-show="!termFound && categories.length">
             <div class="pointer section" title="Показать" ng-click="showSCategories = !showSCategories">
-                <h3>Найдено в содержании</h3> <span ng-hide="showSCategories">показать {{categories.length}}</span>
+                <h3>Найдено в оглавлении</h3> <span ng-hide="showSCategories">показать {{categories.length}}</span>
             </div>
             <div ng-repeat="cat in categories" ng-show="showSCategories" class="catBlock">
                 <a ii-ref="cat">{{cat.path}}</a>
