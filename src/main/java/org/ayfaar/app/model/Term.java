@@ -25,6 +25,8 @@ public class Term extends UID {
     private String description;
     @Column(columnDefinition = "TEXT")
     private String taggedDescription;
+    @Column(columnDefinition = "TEXT")
+    private String accent;
 
 
     public Term(String name) {
