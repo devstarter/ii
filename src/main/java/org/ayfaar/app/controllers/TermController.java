@@ -137,11 +137,19 @@ public class TermController {
         }
 
         Optional<TopicProvider> topicOpt = StreamEx.<Supplier<Optional<TopicProvider>>>of(
-                    () -> topicService.getAllLinkedWith(term.getUri()).findFirst(), // по линку с термином
+                    () -> topicService.getAllLinkedWith(term.getUri()).findFirst(), //  топик по линку с термином
                     () -> topicService.findByName(term.getName()), // получаем топик по имени термина
                     () -> topicService.contains(term.getName()),
-                    () -> allAliasesWithAllMorphs.stream().map(a -> topicService.findByName(a)).filter(Optional::isPresent).findFirst().orElseGet(Optional::empty), // по имени по всем алиасам
-                    () -> allAliasesWithAllMorphs.stream().map(a -> topicService.getAllLinkedWith(UriGenerator.generate(Term.class, a)).findFirst()).filter(Optional::isPresent).findFirst().orElseGet(Optional::empty)) // по линками по всем алиасам
+                    () -> allAliasesWithAllMorphs.stream() // по имени по всем алиасам
+                            .map(a -> topicService.findByName(a))
+                            .filter(Optional::isPresent)
+                            .findFirst()
+                            .orElseGet(Optional::empty),
+                    () -> allAliasesWithAllMorphs.stream() // по линками по всем алиасам
+                            .map(a -> topicService.getAllLinkedWith(UriGenerator.generate(Term.class, a)).findFirst())
+                            .filter(Optional::isPresent)
+                            .findFirst()
+                            .orElseGet(Optional::empty))
 
                 .map(Supplier::get)
                 .filter(Optional::isPresent)
