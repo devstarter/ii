@@ -27,7 +27,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 @Slf4j
 @EnableScheduling
 public class VocabularySynchronizer {
-    public static final String me = "Синхронизатор словаря";
+    public static final String myName = "Синхронизатор словаря";
 
     @Inject TermService termService;
     @Inject GoogleSpreadsheetService spreadsheetService;
@@ -52,10 +52,10 @@ public class VocabularySynchronizer {
             if (isEmpty(oldShortDescription)) oldShortDescription = "<пусто>";
             term.setShortDescription(newShortDescription);
             termService.save(term);
-            publisher.publishEvent(new SysLogEvent(me, String.format("Обновлено короткое описание термина %s. Старый вариант: %s, новый: %s", termName, oldShortDescription, newShortDescription), LogLevel.INFO));
+            publisher.publishEvent(new SysLogEvent(myName, String.format("Обновлено короткое описание термина %s. Старый вариант: %s, новый: %s", termName, oldShortDescription, newShortDescription), LogLevel.INFO));
         } else {
             // не возможная пока ситуация
-            publisher.publishEvent(new SysLogEvent(me, "Появился новый термин: " + termName, LogLevel.WARN));
+            publisher.publishEvent(new SysLogEvent(myName, "Появился новый термин: " + termName, LogLevel.WARN));
         }
     }
 
