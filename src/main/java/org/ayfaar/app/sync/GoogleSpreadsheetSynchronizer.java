@@ -41,6 +41,7 @@ public class GoogleSpreadsheetSynchronizer<T extends SyncItem> {
 
         remoteToLocal(localData, remoteData);
         localToRemote(localData, remoteData);
+        log.info("Synchronization finished");
     }
 
     private void localToRemote(Collection<T> localData, List<List<Object>> remoteData) throws IOException {
@@ -65,7 +66,12 @@ public class GoogleSpreadsheetSynchronizer<T extends SyncItem> {
                           if (remoteItem.size() <= i) continue;
                           String remoteValue = (String) remoteItem.get(i);
                           String localValue = (String) localRawItem.get(i);
-                          if (!Objects.equals(localValue, remoteValue) && !(isEmpty(localValue) && isEmpty(remoteValue)) && columnUpdaters.containsKey(i + 1)) {
+
+                          boolean bothEmpty = isEmpty(localValue) && isEmpty(remoteValue);
+                          boolean hasColumnUpdater = columnUpdaters.containsKey(i + 1);
+                          boolean remoteAndLocalEquals = Objects.equals(localValue, remoteValue);
+
+                          if (!remoteAndLocalEquals && !bothEmpty && hasColumnUpdater) {
                               String key = keyGetter.apply(localItem);
                               log.debug("Update from remote. key: {}, column: {}, local value: {}, remote value: {}",
                                       key, i + 1, localValue, remoteValue);

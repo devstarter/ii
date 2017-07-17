@@ -32,9 +32,15 @@ public class VocabularySynchronizer {
     @Inject TermService termService;
     @Inject GoogleSpreadsheetService spreadsheetService;
     @Inject EventPublisher publisher;
+    private boolean inProcess = false;
 
     @Scheduled(cron = "0 0 * * * *") // every hour
     public void synchronize() throws IOException {
+        if (inProcess) {
+            log.warn("Synchronizer already in process");
+            return;
+        }
+        inProcess = true;
         GoogleSpreadsheetSynchronizer<VocabularySyncItem> synchronizer = GoogleSpreadsheetSynchronizer.<VocabularySyncItem>build(spreadsheetService, "1h3Gy0x1-OvpznGvrugPBf7-Rqr9_MXtbj09AXrV9q2Q")
                 .keyGetter(VocabularySyncItem::term)
                 .skipFirstRow()
@@ -42,9 +48,15 @@ public class VocabularySynchronizer {
                 .columnUpdater(2, this::updateShortDescription)
                 .build();
         synchronizer.sync();
+        inProcess = false;
     }
 
     private void updateShortDescription(String termName, String newShortDescription) {
+        if (!isEmpty(newShortDescription) && newShortDescription.length() > 255) {
+            log.warn("New short description `{}` for term `{}` too long", newShortDescription, termName);
+            return;
+        }
+
         final Optional<TermService.TermProvider> termProviderOpt = termService.get(termName);
         if (termProviderOpt.isPresent()) {
             final Term term = termProviderOpt.get().getTerm();
