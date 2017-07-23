@@ -326,4 +326,11 @@ public class TermController {
     public void reloadAliasesMap() {
         termService.reload();
     }
+
+    @RequestMapping("rename")
+    public void rename(@RequestParam String oldName, @RequestParam String newName) {
+        termService.get(oldName)
+                .orElseThrow(() -> new RuntimeException("Term not found for name: "+oldName))
+                .rename(newName);
+    }
 }

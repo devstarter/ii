@@ -74,4 +74,8 @@ public class LinkProvider {
             saver.apply(link);
         }
     }
+
+    public Integer id() {
+        return link.getLinkId();
+    }
 }

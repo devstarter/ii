@@ -12,6 +12,7 @@ import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -34,7 +35,7 @@ public class TermsTaggingUpdater {
         updateTerms(termDao.getLike("description", aliases, MatchMode.ANYWHERE));
         updateTerms(termDao.getLike("shortDescription", aliases, MatchMode.ANYWHERE));
         final List<Item> items = itemDao.getLike("content", aliases, MatchMode.ANYWHERE);
-        updateItems(items);
+        update(items);
         updateLinks(linkDao.getLike("quote", aliases, MatchMode.ANYWHERE));
 
         final String duration = DurationFormatUtils.formatDuration(System.currentTimeMillis() - time, "HH:mm:ss");
@@ -42,7 +43,7 @@ public class TermsTaggingUpdater {
     }
 
     public void updateAllContent() {
-        updateItems(itemDao.getAll());
+        update(itemDao.getAll());
     }
 
 
@@ -54,10 +55,11 @@ public class TermsTaggingUpdater {
         updateLinks(linkDao.getAll());
     }
 
-    public void updateItems(List<Item> items) {
-        for (Item item : items) {
-            update(item);
-        }
+    public void update(List<Item> items) {
+        items.stream()
+                .parallel()
+                .filter((item) -> item.getUpdatesAt() == null)
+                .forEach(this::update);
     }
 
     private void updateTerms(List<Term> terms) {
@@ -80,7 +82,7 @@ public class TermsTaggingUpdater {
 
     public void updateSingle(String morphAlias) {
         long time = System.currentTimeMillis();
-        updateItems(itemDao.getLike("content", morphAlias, MatchMode.ANYWHERE));
+        update(itemDao.getLike("content", morphAlias, MatchMode.ANYWHERE));
         updateLinks(linkDao.getLike("quote", morphAlias, MatchMode.ANYWHERE));
 
         final String duration = DurationFormatUtils.formatDuration(System.currentTimeMillis() - time, "HH:mm:ss");
@@ -89,6 +91,7 @@ public class TermsTaggingUpdater {
 
     public void update(Item item) {
         item.setTaggedContent(termsMarker.mark(item.getContent()));
+        item.setUpdatesAt(new Date());
         itemDao.save(item);
     }
 }

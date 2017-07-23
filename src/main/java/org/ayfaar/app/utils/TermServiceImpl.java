@@ -7,20 +7,25 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.event.NewLinkEvent;
-import org.ayfaar.app.model.*;
+import org.ayfaar.app.model.Link;
+import org.ayfaar.app.model.LinkType;
+import org.ayfaar.app.model.Term;
+import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.services.EntityLoader;
+import org.ayfaar.app.services.links.LinkProvider;
+import org.ayfaar.app.services.links.LinkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.Collections.sort;
 import static java.util.regex.Pattern.compile;
 import static org.ayfaar.app.model.LinkType.*;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
@@ -32,6 +37,7 @@ public class TermServiceImpl implements TermService {
 
     private final CommonDao commonDao;
     private EntityLoader entityLoader;
+    private final LinkService linkService;
     private final TermDao termDao;
     private final LinkDao linkDao;
 
@@ -42,11 +48,12 @@ public class TermServiceImpl implements TermService {
     private List<TermDao.TermInfo> termsInfo;
 
     @Autowired
-    public TermServiceImpl(LinkDao linkDao, TermDao termDao, CommonDao commonDao, EntityLoader entityLoader) {
+    public TermServiceImpl(LinkDao linkDao, TermDao termDao, CommonDao commonDao, EntityLoader entityLoader, LinkService linkService) {
         this.linkDao = linkDao;
         this.termDao = termDao;
         this.commonDao = commonDao;
         this.entityLoader = entityLoader;
+        this.linkService = linkService;
     }
 
     @PostConstruct
@@ -78,13 +85,8 @@ public class TermServiceImpl implements TermService {
         }
 
         // prepare sorted List by term name length, longest terms first
-        sortedList = new ArrayList<Map.Entry<String, TermService.TermProvider>>(aliasesMap.entrySet());
-        sort(sortedList, new Comparator<Map.Entry<String, TermService.TermProvider>>() {
-            @Override
-            public int compare(Map.Entry<String, TermService.TermProvider> o1, Map.Entry<String, TermService.TermProvider> o2) {
-                return Integer.compare(o2.getKey().length(), o1.getKey().length());
-            }
-        });
+        sortedList = new ArrayList<>(aliasesMap.entrySet());
+        sortedList.sort((o1, o2) -> Integer.compare(o2.getKey().length(), o1.getKey().length()));
 		logger.info("Terms loading finish");
     }
 
@@ -203,6 +205,54 @@ public class TermServiceImpl implements TermService {
         @Override
         public Optional<String> getShortDescription() {
             return hasShortDescription ? Optional.of(getTerm().getShortDescription()) : Optional.empty();
+        }
+
+        @Override
+        public TermProvider rename(String newName) {
+            Assert.hasText(newName, "Invalid term name: " + newName);
+            newName = newName.trim();
+
+            logger.info("Term renaming started. Old name: `{}`, new name: `{}`", getName(), newName);
+            final List<Link> allLinks = linkService.getAllLinksFor(uri)
+                    .peek(link -> logger.trace(link.toString()))
+                    .map(LinkProvider::id)
+                    .map(linkDao::get)
+                    .toList();
+
+            final Term oldTerm = getTerm();
+            commonDao.remove(oldTerm);
+
+            final Term newTerm = new Term(newName);
+            newTerm.setShortDescription(oldTerm.getShortDescription());
+            newTerm.setDescription(oldTerm.getDescription());
+            newTerm.setTaggedShortDescription(oldTerm.getTaggedShortDescription());
+            newTerm.setTaggedDescription(oldTerm.getTaggedDescription());
+            commonDao.save(newTerm);
+
+            allLinks.forEach(link -> {
+                link.setLinkId(null);
+                if (link.getUid1().getUri().equals(oldTerm.getUri())) {
+                    link.setUid1(newTerm);
+                } else {
+                    link.setUid2(newTerm);
+                }
+                linkDao.save(link);
+            });
+
+            linkService.reload();
+
+            final long newLinksCount = linkService.getAllLinksFor(newTerm.getUri()).count();
+
+            if (newLinksCount != allLinks.size()) {
+                logger.warn("Something went wrong while renaming. New links dump:");
+                linkService.getAllLinksFor(newTerm.getUri()).forEach(link -> logger.trace(link.toString()));
+            }
+
+            reload();
+            logger.info("Term renaming finished. Old name: `{}`, new name: `{}`", getName(), newName);
+
+            String finalNewName = newName;
+            return get(newName).orElseThrow(() -> new RuntimeException("Term renaming procedure error, cannot find ne term: "+ finalNewName));
         }
 
         List<String> getAllMorphs(List<TermProvider> providers) {

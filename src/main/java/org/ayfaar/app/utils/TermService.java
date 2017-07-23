@@ -49,5 +49,6 @@ public interface TermService {
         List<String> getAllAliasesAndAbbreviationsWithAllMorphs();
 
         Optional<String> getShortDescription();
+        TermProvider rename(String newName);
     }
 }

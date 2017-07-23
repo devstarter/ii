@@ -7,6 +7,7 @@ import org.ayfaar.app.annotations.Uri;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
+import java.util.Date;
 
 import static java.lang.Float.parseFloat;
 
@@ -20,13 +21,14 @@ public class Item extends UID {
     private String number;
     @Column(columnDefinition = "TEXT")
     private String content;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String taggedContent;
 //    @Column(columnDefinition = "TEXT")
 //    private String wiki;
     private String next;
     // field for optimization order operation on database
     private Float orderIndex;
+    private Date updatesAt;
 
     public Item(String number, String content) {
         this(number);
