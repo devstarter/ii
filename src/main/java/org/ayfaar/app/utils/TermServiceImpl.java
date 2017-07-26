@@ -19,6 +19,7 @@ import org.ayfaar.app.services.moderation.ModerationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -54,7 +55,14 @@ public class TermServiceImpl implements TermService {
     private List<TermDao.TermInfo> termsInfo;
 
     @Autowired
-    public TermServiceImpl(LinkDao linkDao, TermDao termDao, CommonDao commonDao, EntityLoader entityLoader, LinkService linkService, ModerationService moderationService, TermsTaggingUpdater taggingUpdater, AsyncTaskExecutor taskExecutor) {
+    public TermServiceImpl(LinkDao linkDao,
+                           TermDao termDao,
+                           CommonDao commonDao,
+                           EntityLoader entityLoader,
+                           LinkService linkService,
+                           @Lazy ModerationService moderationService,
+                           @Lazy TermsTaggingUpdater taggingUpdater,
+                           @Lazy AsyncTaskExecutor taskExecutor) {
         this.linkDao = linkDao;
         this.termDao = termDao;
         this.commonDao = commonDao;
