@@ -1,4 +1,4 @@
-function TermController($scope, $stateParams, $api, $state, statistic, $modal) {
+function TermController($scope, $stateParams, $api, $state, statistic, $modal, modal) {
     var pageCounter = 0, currentQuery;
     var query = $scope.query = $stateParams.name;
     if (query == "{{url}}") return; // strange bug
@@ -192,5 +192,13 @@ function TermController($scope, $stateParams, $api, $state, statistic, $modal) {
         $scope.loadingContents = true;
         pageCounter = 0;
         searchInContent();
+    };
+
+    $scope.rename = function () {
+        modal.prompt("Переименование термина", $scope.name, "Переименовать").then(function (newName) {
+            $api.term.rename($scope.name, newName).then(function () {
+                $state.goToTerm(newName)
+            })
+        })
     }
 }

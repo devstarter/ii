@@ -2,6 +2,7 @@ package org.ayfaar.app.controllers;
 
 import lombok.AllArgsConstructor;
 import one.util.streamex.StreamEx;
+import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
@@ -11,6 +12,7 @@ import org.ayfaar.app.model.*;
 import org.ayfaar.app.services.EntityLoader;
 import org.ayfaar.app.services.itemRange.ItemRangeService;
 import org.ayfaar.app.services.links.LinkService;
+import org.ayfaar.app.services.moderation.Action;
 import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.utils.*;
@@ -328,6 +330,8 @@ public class TermController {
     }
 
     @RequestMapping("rename")
+    @ResponseBody
+    @Moderated(value = Action.TERM_RENAME, command = "@termController.rename")
     public void rename(@RequestParam String oldName, @RequestParam String newName) {
         termService.get(oldName)
                 .orElseThrow(() -> new RuntimeException("Term not found for name: "+oldName))

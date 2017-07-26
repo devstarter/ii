@@ -50,7 +50,10 @@ public enum Action {
     SYSLOG_TRANSLATION_NEW("\"{}\" -> \"{}\", "),
     SYSLOG_TRANSLATION_UPDATE("\"{}\" из \"{}\" в \"{}\", "), SYS_EVENT(""),
     QUOTE_CREATED("К термину <uri>ии:термин:{}</uri> добавленна цитата с <uri>{}</uri>", ROLE_EDITOR),
-    CREATE_QUOTE("К термину <uri>ии:термин:{}</uri> предлагается цитата `{}` связанная с <uri>{}</uri>", ROLE_EDITOR);
+    CREATE_QUOTE("К термину <uri>ии:термин:{}</uri> предлагается цитата `{}` связанная с <uri>{}</uri>", ROLE_EDITOR),
+    TERM_RENAME("Переименование термина <uri>ии:термин:{}</uri> в `{}`", ROLE_ADMIN),
+    TERM_RENAMED("Термин переименован с `{}` на <uri>ии:термин:{}</uri>"),
+    TAGGING_FINISHED("Тегирование для {} завершено за {}");
 
     private Action parent = null;
     private UserRole requiredAccessLevel;

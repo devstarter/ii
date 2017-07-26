@@ -14,10 +14,13 @@ import org.ayfaar.app.model.TermMorph;
 import org.ayfaar.app.services.EntityLoader;
 import org.ayfaar.app.services.links.LinkProvider;
 import org.ayfaar.app.services.links.LinkService;
+import org.ayfaar.app.services.moderation.Action;
+import org.ayfaar.app.services.moderation.ModerationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -38,6 +41,9 @@ public class TermServiceImpl implements TermService {
     private final CommonDao commonDao;
     private EntityLoader entityLoader;
     private final LinkService linkService;
+    private final ModerationService moderationService;
+    private final TermsTaggingUpdater taggingUpdater;
+    private final AsyncTaskExecutor taskExecutor;
     private final TermDao termDao;
     private final LinkDao linkDao;
 
@@ -48,12 +54,15 @@ public class TermServiceImpl implements TermService {
     private List<TermDao.TermInfo> termsInfo;
 
     @Autowired
-    public TermServiceImpl(LinkDao linkDao, TermDao termDao, CommonDao commonDao, EntityLoader entityLoader, LinkService linkService) {
+    public TermServiceImpl(LinkDao linkDao, TermDao termDao, CommonDao commonDao, EntityLoader entityLoader, LinkService linkService, ModerationService moderationService, TermsTaggingUpdater taggingUpdater, AsyncTaskExecutor taskExecutor) {
         this.linkDao = linkDao;
         this.termDao = termDao;
         this.commonDao = commonDao;
         this.entityLoader = entityLoader;
         this.linkService = linkService;
+        this.moderationService = moderationService;
+        this.taggingUpdater = taggingUpdater;
+        this.taskExecutor = taskExecutor;
     }
 
     @PostConstruct
@@ -209,8 +218,11 @@ public class TermServiceImpl implements TermService {
 
         @Override
         public TermProvider rename(String newName) {
+            if (getName().equals(newName)) return this;
+                
             Assert.hasText(newName, "Invalid term name: " + newName);
             newName = newName.trim();
+            moderationService.check(Action.TERM_RENAME, getName(), newName);
 
             logger.info("Term renaming started. Old name: `{}`, new name: `{}`", getName(), newName);
             final List<Link> allLinks = linkService.getAllLinksFor(uri)
@@ -251,8 +263,15 @@ public class TermServiceImpl implements TermService {
             reload();
             logger.info("Term renaming finished. Old name: `{}`, new name: `{}`", getName(), newName);
 
+            moderationService.notice(Action.TERM_RENAMED, getName(), newName);
+
             String finalNewName = newName;
-            return get(newName).orElseThrow(() -> new RuntimeException("Term renaming procedure error, cannot find ne term: "+ finalNewName));
+            return get(newName).orElseThrow(() -> new RuntimeException("Term renaming procedure error, cannot find new term: "+ finalNewName));
+        }
+
+        @Override
+        public void markAllContentAsync() {
+            taskExecutor.submit(() -> taggingUpdater.update(getName()));
         }
 
         List<String> getAllMorphs(List<TermProvider> providers) {

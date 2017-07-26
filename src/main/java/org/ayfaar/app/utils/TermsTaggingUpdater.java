@@ -8,6 +8,8 @@ import org.ayfaar.app.dao.TermMorphDao;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
+import org.ayfaar.app.services.moderation.Action;
+import org.ayfaar.app.services.moderation.ModerationService;
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,17 +19,35 @@ import java.util.List;
 
 @Component
 public class TermsTaggingUpdater {
+    private final TermsMarker termsMarker;
+    private final TermMorphDao termMorphDao;
+    private final ItemDao itemDao;
+    private final LinkDao linkDao;
+    private final TermDao termDao;
+    private final ModerationService moderationService;
+
     @Autowired
-    private TermsMarker termsMarker;
-    @Autowired
-    private TermMorphDao termMorphDao;
-    @Autowired
-    private ItemDao itemDao;
-    @Autowired
-    private LinkDao linkDao;
-    @Autowired
-    private TermDao termDao;
-//    @Autowired ApplicationEventPublisher publisher;
+    public TermsTaggingUpdater(TermsMarker termsMarker, TermMorphDao termMorphDao, ItemDao itemDao, LinkDao linkDao, TermDao termDao, ModerationService moderationService) {
+        this.termsMarker = termsMarker;
+        this.termMorphDao = termMorphDao;
+        this.itemDao = itemDao;
+        this.linkDao = linkDao;
+        this.termDao = termDao;
+        this.moderationService = moderationService;
+    }
+
+    public void update(TermService.TermProvider term) {
+        long time = System.currentTimeMillis();
+        final List<String> aliases = term.getMorphs();
+        updateTerms(termDao.getLike("description", aliases, MatchMode.ANYWHERE));
+        updateTerms(termDao.getLike("shortDescription", aliases, MatchMode.ANYWHERE));
+        final List<Item> items = itemDao.getLike("content", aliases, MatchMode.ANYWHERE);
+        update(items);
+        updateLinks(linkDao.getLike("quote", aliases, MatchMode.ANYWHERE));
+
+        final String duration = DurationFormatUtils.formatDuration(System.currentTimeMillis() - time, "HH:mm:ss");
+        moderationService.notice(Action.TAGGING_FINISHED, term.getName(), duration);
+    }
 
     public void update(String termName) {
         long time = System.currentTimeMillis();

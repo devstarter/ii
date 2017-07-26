@@ -5,6 +5,7 @@ import org.ayfaar.app.sync.GetVideosFormYoutube;
 import org.ayfaar.app.sync.RecordSynchronizer;
 import org.ayfaar.app.sync.VocabularySynchronizer;
 import org.ayfaar.app.translation.TopicTranslationSynchronizer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +19,7 @@ public class MaintenanceController {
     @Inject RecordSynchronizer recordSynchronizer;
     @Inject TopicTranslationSynchronizer topicTranslationSynchronizer;
     @Inject GetVideosFormYoutube getVideosFormYoutube;
-    @Inject VocabularySynchronizer vocabularySynchronizer;
+    @Autowired(required = false) VocabularySynchronizer vocabularySynchronizer;
 
     @RequestMapping("entity-loader/clear")
     public void clearEntityLoader() {

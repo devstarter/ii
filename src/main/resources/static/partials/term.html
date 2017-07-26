@@ -1,6 +1,9 @@
 <div class="term">
     <span class="structure-item">Термин</span>
-    <span ng-hide="editMode" class="current-term-title">{{name}}</span>
+    <span class="term-title-wrapper">
+        <span ng-hide="editMode" class="current-term-title">{{name}}</span>
+        <i class="btn h glyphicon glyphicon-pencil gray" ng-click="rename()" title="Переименовать термин"></i>
+    </span>
     <div ng-show="editMode">
         <div class="input-group" style="padding-top: 20px">
             <input ng-model="query" type="text" class="form-control" placeholder="Введите термин или фразу"
@@ -218,12 +221,18 @@
     /*#search .contentResultBlock div {
         display: inline;
     }*/
+
+    .term-title-wrapper .glyphicon {visibility: hidden}
+    .term-title-wrapper:hover .glyphicon {visibility: visible}
+
     #search .prompt {
         width: 400px;
     }
     .term .current-term-title {
         font-size: 2em;
         word-break: break-all;
+    }
+    .term .term-title-wrapper {
         display: block;
     }
     @media screen and (max-width: 767px) {

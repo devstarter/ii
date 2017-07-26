@@ -50,5 +50,7 @@ public interface TermService {
 
         Optional<String> getShortDescription();
         TermProvider rename(String newName);
+
+        void markAllContentAsync();
     }
 }

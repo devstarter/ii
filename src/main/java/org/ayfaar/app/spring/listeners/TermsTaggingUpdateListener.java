@@ -22,14 +22,11 @@ public class TermsTaggingUpdateListener implements ApplicationListener<PushEvent
         if (ctx.getParent() != null) return; // fix to avoid duplications
 
         if(event instanceof TermPushEvent) {
-            taskExecutor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    if (event instanceof TermUpdatedEvent && ((TermUpdatedEvent) event).morphAlias != null) {
-                        taggingUpdater.updateSingle(((TermUpdatedEvent) event).morphAlias);
-                    } else {
-                        taggingUpdater.update(((TermPushEvent) event).getName());
-                    }
+            taskExecutor.submit(() -> {
+                if (event instanceof TermUpdatedEvent && ((TermUpdatedEvent) event).morphAlias != null) {
+                    taggingUpdater.updateSingle(((TermUpdatedEvent) event).morphAlias);
+                } else {
+                    taggingUpdater.update(((TermPushEvent) event).getName());
                 }
             });
         }

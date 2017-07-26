@@ -265,6 +265,9 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 },
                 suggest: function(q) {
                     return api.get("v2/term/suggest", {q: q})
+                },
+                rename: function(oldName, newName) {
+                    return api.get("term/rename", {oldName: oldName, newName: newName})
                 }
             },
             category: {

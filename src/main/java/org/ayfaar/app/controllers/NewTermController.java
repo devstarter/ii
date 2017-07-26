@@ -21,14 +21,12 @@ import static java.util.regex.Pattern.compile;
 @RestController
 @RequestMapping("api/v2/term")
 public class NewTermController {
-    @Inject TermServiceImpl termsMap;
-    @Inject TermsTaggingUpdater taggingUpdater;
-    @Inject AsyncTaskExecutor taskExecutor;
+    @Inject TermServiceImpl termService;
     @Inject SuggestionsController suggestionsController;
 
     @RequestMapping("{termName}/mark")
     public void mark(@PathVariable final String termName) {
-        taskExecutor.submit(() -> taggingUpdater.update(termName));
+        termService.get(termName).orElseThrow(()-> new RuntimeException()).markAllContentAsync();
     }
 
     @RequestMapping(value = "get-terms-in-text", method = RequestMethod.POST)
@@ -36,7 +34,7 @@ public class NewTermController {
         Map<String, Integer> contains = new HashMap<>();
         text = text.toLowerCase();
 
-        for (Map.Entry<String, TermService.TermProvider> entry : termsMap.getAll()) {
+        for (Map.Entry<String, TermService.TermProvider> entry : termService.getAll()) {
             String key = entry.getKey();
             Matcher matcher = compile("((" + RegExpUtils.W + ")|^)" + key
                     + "((" + RegExpUtils.W + ")|$)", Pattern.UNICODE_CHARACTER_CLASS)
