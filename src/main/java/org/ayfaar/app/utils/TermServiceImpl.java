@@ -268,6 +268,15 @@ public class TermServiceImpl implements TermService {
                 linkService.getAllLinksFor(newTerm.getUri()).forEach(link -> logger.trace(link.toString()));
             }
 
+            if (TermUtils.isComposite(newName)) {
+                String target = TermUtils.getNonCosmicCodePart(newName);
+                if (target != null) {
+                    loadMorthems(newTerm, target, newName.replace(target, ""));
+                }
+            } else if (!TermUtils.isCosmicCode(newName)) {
+                loadMorthems(newTerm, newName, "");
+            }
+
             reload();
             logger.info("Term renaming finished. Old name: `{}`, new name: `{}`", getName(), newName);
 
@@ -394,5 +403,39 @@ public class TermServiceImpl implements TermService {
             if (mainTermChanged) termDao.save(mainTerm);
         }
         reload();
+    }
+
+    @Override
+    public void loadMorthems(Term primeTerm, String target, String prefix) {
+        Morpher morpher;
+        try {
+            morpher = new Morpher(target);
+            if (morpher.getData()) {
+                Set<String> aliases = new HashSet<>();
+                for (Morpher.Morph morph : morpher.getAllMorph()) {
+                    if (morph == null) {
+                        return;
+                    }
+                    String alias = prefix+morph.text;
+                    if (!alias.isEmpty() && !alias.equals(primeTerm.getName())) {
+                        if (!aliases.contains(alias)) {
+                            TermMorph termMorph = commonDao.get(TermMorph.class, alias);
+                            if (termMorph == null) {
+                                commonDao.save(new TermMorph(alias, primeTerm.getUri()));
+
+                                logger.info("Alias added: "+alias);
+                            }
+                            aliases.add(alias);
+                        }
+                    }
+                }
+               /* for (Map.Entry<String, Term> entry : aliases.entrySet()) {
+                    if (primeTerm.uri().equals(entry.getValue().generateUri())) continue;
+                    commonDao.save(new Link(primeTerm, entry.getValue(), Link.ALIAS, Link.MORPHEME_WEIGHT));
+                }*/
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

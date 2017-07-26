@@ -26,6 +26,8 @@ public interface TermService {
 
     void save(Term term);
 
+    void loadMorthems(Term primeTerm, String target, String prefix);
+
     interface TermProvider {
         String getName();
         String getUri();

@@ -235,10 +235,10 @@ public class TermController {
             if (TermUtils.isComposite(termName)) {
                 String target = TermUtils.getNonCosmicCodePart(termName);
                 if (target != null) {
-                    findAliases(term, target, termName.replace(target, ""));
+                    termService.loadMorthems(term, target, termName.replace(target, ""));
                 }
             } else if (!TermUtils.isCosmicCode(termName)) {
-                findAliases(term, termName, "");
+                termService.loadMorthems(term, termName, "");
             }
 //            publisher.publishEvent(new NewTermEvent(term));
         } else {
@@ -261,41 +261,6 @@ public class TermController {
         publisher.publishEvent(new TermAddEvent(term.getName()));
 
         return term;
-    }
-
-    private void findAliases(Term primeTerm, String target, String prefix) {
-        Morpher morpher = null;
-        try {
-            morpher = new Morpher(target);
-            if (morpher.getData()) {
-                Set<String> aliases = new HashSet<String>();
-                for (Morpher.Morph morph : morpher.getAllMorph()) {
-                    if (morph == null) {
-                        return;
-                    }
-                    String alias = prefix+morph.text;
-                    if (morph != null && !alias.isEmpty()
-                            && !alias.equals(primeTerm.getName())) {
-                        if (!aliases.contains(alias)) {
-                            TermMorph termMorph = commonDao.get(TermMorph.class, alias);
-                            if (termMorph == null) {
-                                commonDao.save(new TermMorph(alias, primeTerm.getUri()));
-
-                                log.info("Alias added: "+alias);
-                            }
-                            aliases.add(alias);
-                        }
-                    }
-                }
-               /* for (Map.Entry<String, Term> entry : aliases.entrySet()) {
-                    if (primeTerm.uri().equals(entry.getValue().generateUri())) continue;
-                    commonDao.save(new Link(primeTerm, entry.getValue(), Link.ALIAS, Link.MORPHEME_WEIGHT));
-                }*/
-            }
-        } catch (Exception e) {
-            log.throwing(getClass().getName(), "findAliases", e);
-            throw new RuntimeException(e);
-        }
     }
 
     public Term getPrime(Term term) {
