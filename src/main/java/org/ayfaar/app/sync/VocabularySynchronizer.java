@@ -12,6 +12,7 @@ import org.ayfaar.app.model.Term;
 import org.ayfaar.app.services.GoogleSpreadsheetService;
 import org.ayfaar.app.utils.TermService;
 import org.springframework.boot.logging.LogLevel;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,9 @@ import static org.springframework.util.StringUtils.isEmpty;
 @Service
 @Slf4j
 @EnableScheduling
+@Profile("default")
 public class VocabularySynchronizer {
-    public static final String myName = "Синхронизатор словаря";
+    public static final String myName = "Словарь";
 
     @Inject TermService termService;
     @Inject GoogleSpreadsheetService spreadsheetService;
