@@ -79,6 +79,10 @@ public class LinkService {
                 .map(this::getLinkProvider);
     }
 
+    public StreamEx<? extends LinkProvider> getAll() {
+        return StreamEx.of(allLinks).map(this::getLinkProvider);
+    }
+
     public Optional<LinkProvider> getByUris(String uri1, String uri2) {
         return StreamEx.of(allLinks)
                 .filter(link -> (Objects.equals(link.getUid1(), uri1) && Objects.equals(link.getUid2(), uri2))

@@ -65,6 +65,7 @@ public class VocabularySynchronizer {
             String oldShortDescription = term.getShortDescription();
             if (isEmpty(oldShortDescription)) oldShortDescription = "<пусто>";
             term.setShortDescription(newShortDescription);
+            term.setTaggedShortDescription(null);
             termService.save(term);
             publisher.publishEvent(new SysLogEvent(myName, String.format("Обновлено короткое описание термина %s. Старый вариант: %s, новый: %s", termName, oldShortDescription, newShortDescription), LogLevel.INFO));
         } else {
@@ -75,6 +76,7 @@ public class VocabularySynchronizer {
 
     private Collection<VocabularySyncItem> getLocalData() {
         return termService.getAll().stream()
+                .parallel()
                 .map(Map.Entry::getValue)
                 .map(TermService.TermProvider::getMainOrThis)
                 .distinct()
