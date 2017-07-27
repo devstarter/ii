@@ -6,3 +6,7 @@ OPENSHIFT_EXTAPP_NAME: ii
 OPENSHIFT_HOMEDIR:
 OPENSHIFT_DATA_DIR: '/'
 OPENSHIFT_BASE_URL: 'http://ii.ayfaar.org/'
+
+logging:
+  level:
+    org.ayfaar: trace

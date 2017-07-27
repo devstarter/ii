@@ -242,6 +242,12 @@ public class TermServiceImpl implements TermService {
             final Term oldTerm = getTerm();
             commonDao.remove(oldTerm);
 
+            get(newName).ifPresent(term -> {
+                // if new term already exist, remove it
+                logger.info("Remove already existing term: " + term.getName());
+                commonDao.remove(term.getTerm());
+            });
+
             final Term newTerm = new Term(newName);
             newTerm.setShortDescription(oldTerm.getShortDescription());
             newTerm.setDescription(oldTerm.getDescription());
