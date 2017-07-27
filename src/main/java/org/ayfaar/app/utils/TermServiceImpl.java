@@ -240,13 +240,15 @@ public class TermServiceImpl implements TermService {
                     .toList();
 
             final Term oldTerm = getTerm();
-            commonDao.remove(oldTerm);
+            try{commonDao.remove(oldTerm);}catch (Exception ignore) {}
 
-            get(newName).ifPresent(term -> {
-                // if new term already exist, remove it
-                logger.info("Remove already existing term: " + term.getName());
-                commonDao.remove(term.getTerm());
-            });
+            if (!getName().toLowerCase().equals(newName.toLowerCase())) {
+                get(newName).ifPresent(term -> {
+                    // if new term already exist, remove it
+                    logger.info("Remove already existing term: " + term.getName());
+                    try {commonDao.remove(term.getTerm());}catch (Exception ignore) {}
+                });
+            }
 
             final Term newTerm = new Term(newName);
             newTerm.setShortDescription(oldTerm.getShortDescription());

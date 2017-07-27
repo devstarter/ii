@@ -27,7 +27,7 @@
     <div ng-hide="loading && termFound">
         <span ng-show="from"><span class="structure-item">Перенапраленно с</span> {{from.name}}</span>
         <span ng-show="code"><span class="structure-item">Код понятия</span> {{code.name}}</span>
-        <span ng-show="aliases.length"><span class="structure-item">Синонимы, сокращения и производные слова</span>
+        <span ng-show="aliases.length"><span class="structure-item">Синонимы, производные слова, сокращения</span>
             <span ng-repeat="alias in aliases">
                 {{alias.name}}{{$last ? '' : ', '}}
             </span>
