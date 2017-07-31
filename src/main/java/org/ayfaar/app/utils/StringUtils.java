@@ -54,4 +54,8 @@ public class StringUtils {
     public static String firstUpper(String s) {
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
+
+    public static boolean equals(String s1, String s2, boolean caseSensitive) {
+        return caseSensitive ? s1.compareTo(s2) == 0 : s1.compareToIgnoreCase(s2) == 0;
+    }
 }

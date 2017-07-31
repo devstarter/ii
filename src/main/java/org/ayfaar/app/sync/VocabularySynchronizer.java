@@ -46,6 +46,7 @@ public class VocabularySynchronizer {
         GoogleSpreadsheetSynchronizer<VocabularySyncItem> synchronizer = GoogleSpreadsheetSynchronizer.<VocabularySyncItem>build(spreadsheetService, "1h3Gy0x1-OvpznGvrugPBf7-Rqr9_MXtbj09AXrV9q2Q")
                 .keyGetter(VocabularySyncItem::term)
                 .skipFirstRow()
+                .ignoreCase()
                 .localDataLoader(this::getLocalData)
                 .columnUpdater(2, this::updateShortDescription)
                 .build();

@@ -3,6 +3,7 @@ package org.ayfaar.app.sync;
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
 import org.ayfaar.app.services.GoogleSpreadsheetService;
+import org.ayfaar.app.utils.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -20,6 +21,7 @@ public class GoogleSpreadsheetSynchronizer<T extends SyncItem> {
     private Supplier<Collection<T>> localDataLoader;
     private Function<T, String> keyGetter;
     private boolean skipFirstRow;
+    private boolean caseSensitive;
 
     private GoogleSpreadsheetSynchronizer(GoogleSpreadsheetService service, String spreadsheetId) {
         this.service = service;
@@ -49,7 +51,7 @@ public class GoogleSpreadsheetSynchronizer<T extends SyncItem> {
 
         final ArrayList<T> localToRemoteData = new ArrayList<>();
         localData.forEach(localItem -> {
-            final boolean presentOnRemoteSide = remoteData.stream().anyMatch(remoteItem -> keyGetter.apply(localItem).equals(remoteItem.get(0)));
+            final boolean presentOnRemoteSide = remoteData.stream().anyMatch(remoteItem -> StringUtils.equals(keyGetter.apply(localItem), remoteItem.get(0).toString(), caseSensitive));
             if (!presentOnRemoteSide) localToRemoteData.add(localItem);
         });
         localToRemoteData.forEach(item -> log.debug("item to remote side: " + item));
@@ -59,7 +61,7 @@ public class GoogleSpreadsheetSynchronizer<T extends SyncItem> {
 
     private void remoteToLocal(Collection<T> localData, List<List<Object>> remoteData) {
           remoteData.forEach(remoteItem -> localData.stream()
-                  .filter(localItem -> keyGetter.apply(localItem).equals(remoteItem.get(0)))
+                  .filter(localItem -> StringUtils.equals(keyGetter.apply(localItem), remoteItem.get(0).toString(), caseSensitive))
                   .forEach(localItem -> {
                       final List<Object> localRawItem = localItem.toRaw();
                       for (int i = 1; i < localRawItem.size(); i++) {
@@ -128,6 +130,16 @@ public class GoogleSpreadsheetSynchronizer<T extends SyncItem> {
 
         public Builder<T> direction(SyncDirection direction) {
             // todo
+            return this;
+        }
+
+        public Builder<T> caseSensitive() {
+            synchronizer.caseSensitive = true;
+            return this;
+        }
+
+        public Builder<T> ignoreCase() {
+            synchronizer.caseSensitive = false;
             return this;
         }
     }
