@@ -213,7 +213,7 @@ public class ContentsServiceImpl implements ContentsService {
 
        @Override
        public void reload() {
-               load();
+           load();
        }
 
        public class CategoryProviderImpl implements CategoryProvider {

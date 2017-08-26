@@ -76,10 +76,7 @@ public class TermsTaggingUpdater {
     }
 
     public void update(List<Item> items) {
-        items.stream()
-                .parallel()
-                .filter((item) -> item.getUpdatesAt() == null)
-                .forEach(this::update);
+        items.parallelStream().forEach(this::update);
     }
 
     private void updateTerms(List<Term> terms) {
@@ -91,13 +88,13 @@ public class TermsTaggingUpdater {
     }
 
     private void updateLinks(List<Link> links) {
-        for (Link link : links) {
-//            if (link.getQuote() != null && link.getTaggedQuote() == null) {
-                link.setTaggedQuote(termsMarker.mark(link.getQuote()));
-                linkDao.save(link);
+        //            if (link.getQuote() != null && link.getTaggedQuote() == null) {
 //                System.out.println(link.getLinkId());
 //            }
-        }
+        links.parallelStream().forEach(link -> {
+            link.setTaggedQuote(termsMarker.mark(link.getQuote()));
+            linkDao.save(link);
+        });
     }
 
     public void updateSingle(String morphAlias) {

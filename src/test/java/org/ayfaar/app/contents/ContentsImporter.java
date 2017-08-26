@@ -34,21 +34,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles("dev")
+//@ActiveProfiles("dev")
+@ActiveProfiles("remote")
 @WebAppConfiguration
 @SpringApplicationConfiguration(Application.class)
 @Log4j
-@Ignore
+//@Ignore
 public class ContentsImporter {
 
     @Inject CommonDao commonDao;
     @Inject ItemDao itemDao;
 
+    List<String> toma = asList("5");
+
     @Test
     public void main() throws IOException, XLSParsingException {
         log.info("Открытие файла оглавлений");
-        InputStream in = new FileInputStream("D:\\PROJECTS\\ayfaar\\ii-app\\ИИ - Содержание.xlsx");
+        InputStream in = new FileInputStream("c:\\projects\\ayfaar\\ii-app\\ИИ - Содержание.xlsx");
         log.info("Считывание данных");
         List<ItemBook> list = fillListItemBooks(in);
         in.close();
@@ -96,6 +101,8 @@ public class ContentsImporter {
             if (!sheet.getSheetName().contains("Том")) continue;
             //на листе только один том, при этом номер в 1-й строке, название во 2-й строке
             final ItemBook tom = getTom(sheet);
+
+            if (!toma.contains(tom.getCategoryNumber())) continue;
 
             categories.add(tom); //добавили том
             currentItems.put(SectionType.Tom, tom);
@@ -227,7 +234,8 @@ public class ContentsImporter {
                 itemsRange.setDescription(item.getTitle());
                 itemsRange.setFrom(item.getItemNumber());
                 itemsRange.setCategory(categories.get(item.getParent()).getUri());
-                validate(itemsRange);
+                itemsRange.setTo(null);
+//                validate(itemsRange);
                 ranges.add(commonDao.save(itemsRange));
                 itemRange.put(item, itemsRange);
             } else {
@@ -280,8 +288,8 @@ public class ContentsImporter {
 
         final Map<String, List<ItemsRange>> rangesByTom = StreamEx.of(ranges).groupingBy(r -> r.getFrom().replaceAll("^(\\d+)\\.\\d+", "$1"));
 
-        rangesByTom.entrySet().forEach(e -> {
-            final Iterator<ItemsRange> iterator = e.getValue().iterator();
+        rangesByTom.forEach((key, value) -> {
+            final Iterator<ItemsRange> iterator = value.iterator();
             ItemsRange current = null;
             while (iterator.hasNext()) {
                 final ItemsRange next = iterator.next();
@@ -291,9 +299,10 @@ public class ContentsImporter {
                 }
                 current = next;
             }
-            final String tomLastItemNumber = itemDao.getTomLastItemNumber(e.getKey());
+            final String tomLastItemNumber = itemDao.getTomLastItemNumber(key);
             current.setTo(tomLastItemNumber);
             commonDao.save(current);
+            validate(current);
         });
         categories.forEach((item, category) -> {
             String start;
@@ -313,5 +322,6 @@ public class ContentsImporter {
         Assert.isTrue(range.getCode().matches("^(\\d+\\.){3}\\d+$"), "Неверный код "+range.getCode());
         Assert.hasLength(range.getDescription(), "...");
         Assert.hasLength(range.getCategory(), "...");
+        Assert.isTrue(range.getFrom().compareTo(range.getTo()) <= 0, "From должно быть меньше чем To");
     }
 }

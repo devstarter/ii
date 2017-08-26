@@ -446,4 +446,23 @@ public class TermServiceImpl implements TermService {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public Collection<TermProvider> findTerms(String text) {
+        Set<TermProvider> contains = new HashSet<>();
+        text = text.toLowerCase();
+
+        for (Map.Entry<String, TermService.TermProvider> entry : getAll()) {
+            String key = entry.getKey();
+            Matcher matcher = compile("((" + RegExpUtils.W + ")|^)" + key
+                    + "((" + RegExpUtils.W + ")|$)", Pattern.UNICODE_CHARACTER_CLASS)
+                    .matcher(text);
+            if (matcher.find()) {
+                contains.add(entry.getValue());
+                text = text.replaceAll(key, "");
+            }
+        }
+
+        return contains;
+    }
 }

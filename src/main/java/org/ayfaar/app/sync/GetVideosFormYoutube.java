@@ -71,7 +71,7 @@ public class GetVideosFormYoutube {
                         } catch (IOException e) {
                             log.error("Error while getting data for youtube video id: " + videoId, e);
                             publisher.publishEvent(SysLogEvent.builder()
-                                    .source("GetVideosFormYoutube")
+                                    .source("Новые ответы на канале")
                                     .message("Ошибка при получении данных с ютюба для видео " + videoId)
                                     .level(LogLevel.ERROR)
                                     .build());

@@ -1,4 +1,5 @@
 function KnowledgeBaseController($scope, $state, $api, $q, entityService, auth) {
+    document.title = "Интерактивная Ииссиидиология";
     $scope.auth = function () {
         auth.authenticate().then(function (user) {
             $scope.user = user;

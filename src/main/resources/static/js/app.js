@@ -1512,7 +1512,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
         };
 
         $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
-            $timeout(function(){statistic.pageview(location.pathname)}, 1000);
+            $timeout(function(){statistic.pageview(location.pathname)}, 3000);
         });
         function isTom6(number) {
             if (number.indexOf("6.") == 0) {

@@ -16,7 +16,7 @@ public enum Action {
     TOPIC_RESOURCE_LINK_COMMENT_UPDATE("Обновление комментария в связке между <uri>{}</uri> и ключевым словом <topic>{}</topic>, новый коментарий: `{}` предложен", TOPIC),
     TOPIC_RESOURCE_LINK_RATE_UPDATE("Обновление весового коэфициента в связке между <uri>{}</uri> и ключевым словом <topic>{}</topic>, новые значение: {} предложено", TOPIC),
     TOPIC_RESOURCE_LINK_UPDATE(TOPIC), // for fix db problem
-    TOPIC_RESOURCE_LINKED("Ключевое слово <topic>{}</topic> прикреплена к <uri>{}</uri>"),
+    TOPIC_RESOURCE_LINKED("Ключевое слово <topic>{}</topic> прикреплено к <uri>{}</uri>"),
 
     ITEMS_RANGE (ROLE_EDITOR),
     ITEMS_RANGE_CREATE  (ITEMS_RANGE),
@@ -29,14 +29,14 @@ public enum Action {
     TOPIC_UNLINK_TOPIC("Открепление от ключевого слова <topic>{}</topic> дочернего <topic>{}</topic>", ROLE_ADMIN),
     TOPIC_UNLINK_RESOURCE("Отмена связи между <uri>{}</uri> и ключевым словом <uri>{}</uri>", TOPIC),
     TOPIC_MERGE("Объединение ключевого слова <topic>{}</topic> в ключевое слово <topic>{}</topic>", ROLE_ADMIN),
-    TOPIC_MERGED("Ключевое слово `{}` объединена с <topic>{}</topic>"),
+    TOPIC_MERGED("Ключевое слово `{}` объединено с <topic>{}</topic>"),
 
     VIDEO_ADDED("Добавлено видео <uri label='{}'>{}</uri>"),
     VIDEO_ADD("Добавление нового видео по ссылке {}", UserRole.ROLE_AUTHENTICATED),
     VIDEO_REMOVE("Удаление видео <uri>видео:youtube:{}</uri>", UserRole.ROLE_EDITOR),
     VIDEO_UPDATE_TITLE("Обновление названия видео <uri>{}</uri> на `{}`", UserRole.ROLE_EDITOR),
     VIDEO_UPDATE_CODE("Задание или изменеие кода видео <uri>видео:youtube:{}</uri>, код `{}`", UserRole.ROLE_EDITOR),
-    VIDEO_CODE_UPDATED("Кода видео <uri label='{}'>{}</uri> обновился c `{}` на `{}`", UserRole.ROLE_EDITOR),
+    VIDEO_CODE_UPDATED("Код видео <uri label='{}'>{}</uri> обновился c `{}` на `{}`", UserRole.ROLE_EDITOR),
     NEW_USER("Выполнен вход в систему новым "),
     VIDEO_REMOVED("Видео `{}` c id: {} далено из системы"),
     RECORD_RENAME("Переименование ответа <uri>запись:{}</uri> на `{}`", ROLE_EDITOR),

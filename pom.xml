@@ -28,7 +28,7 @@
 		<poi.version>3.9</poi.version>
 		<streamex.version>0.6.0</streamex.version>
 		<tika.version>1.14</tika.version>
-		<kotlin.version>1.1.2-5</kotlin.version>
+		<kotlin.version>1.1.4-2</kotlin.version>
 	</properties>
 
 	<dependencies>
@@ -37,6 +37,11 @@
 			<artifactId>skype4j</artifactId>
 			<version>0.1.5</version>
 		</dependency>-->
+		<dependency>
+			<groupId>io.github.microutils</groupId>
+			<artifactId>kotlin-logging</artifactId>
+			<version>1.4.5</version>
+		</dependency>
 		<dependency>
 			<groupId>one.util</groupId>
 			<artifactId>streamex</artifactId>

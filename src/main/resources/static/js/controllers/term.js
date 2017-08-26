@@ -1,8 +1,9 @@
 function TermController($scope, $stateParams, $api, $state, statistic, $modal, modal) {
     var pageCounter = 0, currentQuery;
     var query = $scope.query = $stateParams.name;
-    if (query == "{{url}}") return; // strange bug
-    if (!query) {
+    if (query === "{{url}}") return; // strange bug
+
+    if (!query || query === "main") {
         $state.goToHome();
         return
     }
