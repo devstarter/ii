@@ -39,7 +39,7 @@ public class DocumentController {
         Assert.hasLength(url);
         if(!url.contains("google.com")){
             File file = googleService.uploadToGoogleDrive(url, name.orElse("Новый документ"));
-            url = file.getAlternateLink();
+            url = file.getWebViewLink();
         }
         final String docId = GoogleService.extractDocIdFromUrl(url);
         return commonDao.getOpt(Document.class, generate(Document.class, docId))

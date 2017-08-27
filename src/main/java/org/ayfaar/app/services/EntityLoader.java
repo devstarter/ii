@@ -1,9 +1,11 @@
 package org.ayfaar.app.services;
 
 import org.ayfaar.app.dao.CommonDao;
+import org.ayfaar.app.model.HasUri;
 import org.ayfaar.app.model.UID;
 import org.ayfaar.app.utils.SoftCache;
 import org.ayfaar.app.utils.UriGenerator;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -27,5 +29,9 @@ public class EntityLoader {
 
     public void clear() {
         cache.clear();
+    }
+
+    public void clear(@NotNull HasUri uid) {
+        cache.clear(uid.getUri());
     }
 }

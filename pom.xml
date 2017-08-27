@@ -32,6 +32,11 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.overzealous</groupId>
+			<artifactId>remark</artifactId>
+			<version>1.1.0</version>
+		</dependency>
 		<!--<dependency>
 			<groupId>com.samczsun</groupId>
 			<artifactId>skype4j</artifactId>
@@ -252,7 +257,7 @@
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-drive</artifactId>
-			<version>v2-rev135-1.19.0</version>
+			<version>v3-rev81-1.22.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.apis</groupId>
@@ -317,8 +322,13 @@
 			<version>${kotlin.version}</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.10.2</version>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 	
 	<build>
 		<finalName>ii</finalName>
@@ -368,6 +378,10 @@
 	</build>
 	
 	<repositories>
+		<repository>
+			<id>jcenter.bintray.com</id>
+			<url>http://jcenter.bintray.com/</url>
+		</repository>
 		<repository>
 			<id>eap</id>
 			<url>http://maven.repository.redhat.com/techpreview/all</url>

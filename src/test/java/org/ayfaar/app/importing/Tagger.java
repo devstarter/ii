@@ -29,7 +29,7 @@ public class Tagger {
 
     @Test
     public void items() throws IOException {
-        final List<Item> items = itemDao.getByRegexp("number", "^[1-5]\\.");
+        final List<Item> items = itemDao.getByRegexp("number", "^1[0-5]\\.");
         taggingUpdater.update(items);
     }
 

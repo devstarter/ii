@@ -36,7 +36,11 @@
             <span class="structure-item">Словарная статья свободной интерпретации:</span>
             <div class="highlight" style="margin-top: 2px">
                 <p ng-show="shortDescription" ii-bind="shortDescription" class="shortDescription"></p>
-                <p ng-show="description" ii-bind="description"></p>
+                <p ng-show="description"><span ii-bind="description"></span>
+                    <a ng-show="descriptionGid" href="https://docs.google.com/document/d/{{descriptionGid}}" target="_blank">
+                        <i class="btn h glyphicon glyphicon-pencil gray" title="Изменить словарную статью"></i>
+                    </a>
+                </p>
             </div>
         </div>
         <div style="padding-top: 20px">

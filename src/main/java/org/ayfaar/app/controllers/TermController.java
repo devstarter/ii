@@ -163,9 +163,8 @@ public class TermController {
         modelMap.put("related", toPlainObjectWithoutContent(related));
         modelMap.put("aliases", toPlainObjectWithoutContent(aliases));
         modelMap.put("categories", searchController.inCategories(termName));
-        topicOpt.ifPresent(topicProvider -> {
-            modelMap.put("topicResources", topicProvider.resources());
-        });
+        modelMap.put("descriptionGid", term.getDescriptionGid());
+        topicOpt.ifPresent(topicProvider -> modelMap.put("topicResources", topicProvider.resources()));
 
         return modelMap;
     }

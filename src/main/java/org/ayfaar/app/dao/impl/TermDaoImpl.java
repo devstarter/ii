@@ -10,6 +10,7 @@ import java.util.List;
 
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.ilike;
+import static org.hibernate.criterion.Restrictions.isNotNull;
 
 @Repository
 public class TermDaoImpl extends AbstractHibernateDAO<Term> implements TermDao {
@@ -51,5 +52,12 @@ public class TermDaoImpl extends AbstractHibernateDAO<Term> implements TermDao {
             termsInfo.add(new TermInfo((String) info[0], (Integer)info[1] == 1));
         }
         return termsInfo;
+    }
+
+    @Override
+    public List<Term> getAllWithDescriptionGid() {
+        return criteria()
+                .add(isNotNull("descriptionGid"))
+                .list();
     }
 }

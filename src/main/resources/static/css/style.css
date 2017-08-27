@@ -1,3 +1,9 @@
+.italic {
+    font-style: italic;
+}
+.bold {
+    font-weight: bold;
+}
 .record-code {
     font-size: 80%;
 }

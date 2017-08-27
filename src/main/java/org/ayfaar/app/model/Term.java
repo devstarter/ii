@@ -16,15 +16,17 @@ import javax.persistence.PrimaryKeyJoinColumn;
 public class Term extends UID {
 
     @Column(unique = true)
-    private String name;
+    public String name;
     @Column(columnDefinition = "TEXT")
-    private String shortDescription;
+    public String shortDescription;
     @Column(columnDefinition = "TEXT")
-    private String taggedShortDescription;
+    public String taggedShortDescription;
     @Column(columnDefinition = "TEXT")
-    private String description;
+    public String description;
     @Column(columnDefinition = "TEXT")
-    private String taggedDescription;
+    public String taggedDescription;
+    public String descriptionGid; // google doc is
+    public Long descriptionGVersion; // google doc etag
 
 
     public Term(String name) {

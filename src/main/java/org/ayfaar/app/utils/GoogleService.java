@@ -46,9 +46,11 @@ import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 
+@SuppressWarnings("JavadocReference")
 @Slf4j
 @Component
 public class GoogleService {
+    private static Drive driveService;
     private static Sheets sheetsService;
     private static YouTube youtubeService;
 
@@ -197,13 +199,13 @@ public class GoogleService {
         }
 
         File fileMetadata = new File();
-        fileMetadata.setTitle(title);
+        fileMetadata.setName(title);
 
         InputStreamContent mediaContent = new InputStreamContent("", new BufferedInputStream(data));
 
-        Drive.Files.Insert insert;
+        Drive.Files.Create insert;
         try {
-            insert = drive.files().insert(fileMetadata, mediaContent);
+            insert = drive.files().create(fileMetadata, mediaContent);
         } catch (IOException e) {
             throw new RuntimeException("Google Drive file inserting error", e);
         }
@@ -239,7 +241,7 @@ public class GoogleService {
                 .setType("anyone")
                 .setRole("reader");
         try {
-            drive.permissions().insert(id, userPermission)
+            drive.permissions().create(id, userPermission)
                     .setFields("id")
                     .queue(batch, callback);
 
@@ -290,6 +292,16 @@ public class GoogleService {
                     .build();
         }
         return sheetsService;
+    }
+
+    public static Drive getDriveService() throws IOException {
+        if (driveService == null) {
+            Credential credential = authorize(DriveScopes.DRIVE, DriveScopes.DRIVE_METADATA);
+            driveService = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+        }
+        return driveService;
     }
 
     public static YouTube getYoutubeService() throws IOException {

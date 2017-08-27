@@ -15,8 +15,10 @@ public interface TermDao extends BasicCrudDao<Term> {
 
     List<TermInfo> getAllTermInfo();
 
+    List<Term> getAllWithDescriptionGid();
+
     @Data
-    public static class TermInfo {
+    class TermInfo {
         private String name;
         private boolean hasShortDescription;
 

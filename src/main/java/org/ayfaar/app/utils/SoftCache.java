@@ -23,4 +23,10 @@ public class SoftCache<K, V> {
     public void clear() {
         map.clear();
     }
+
+    public void clear(K uri) {
+        SoftReference<V> reference = map.get(uri);
+        if (reference != null) reference.clear();
+        map.remove(uri);
+    }
 }
