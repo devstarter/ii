@@ -58,7 +58,7 @@ class TermDescriptionImporter @Inject constructor(val termDao: TermDao,
         termDao.save(term)
         loader.clear(term)
         eventPublisher.publishEvent(SysLogEvent(myName,
-                String.format("Обновилась словарная статья для термина %s, на основании обновлённого <a href='https://docs.google.com/document/d/%s/edit' _target='blank'>документа</a>", term.name, term.descriptionGid),
+                String.format("Обновилась словарная статья для термина <uri>%s</uri>, на основании <a href='https://docs.google.com/document/d/%s/edit' target='_blank'>документа</a>", term.uri, term.descriptionGid),
                 LogLevel.INFO))
     }
 }
