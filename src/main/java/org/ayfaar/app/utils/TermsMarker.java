@@ -1,6 +1,6 @@
 package org.ayfaar.app.utils;
 
-import org.ayfaar.app.utils.TermService.TermProvider;
+import org.ayfaar.app.services.ItemService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -16,6 +16,11 @@ public class TermsMarker {
     public final static String TAG_NAME = "term";
 
     @Inject TermService termService;
+    @Inject ItemService itemService;
+
+    public String mark(String content) {
+        return mark(content, false);
+    }
 
     /**
      * Пометить все термины в тексте тегами <term></term>.
@@ -26,16 +31,22 @@ public class TermsMarker {
      * @param content исходный текст с терминами
      * @return текст с тегами терминов
      */
-    public String mark(String content) {
+    public String mark(String content, Boolean withItems) {
         if (content == null || content.isEmpty()) return content;
 
         content = content.replace("–","-").replace("—","-");
+
+        content = markTerms(content);
+        if (withItems) content = markItems(content);
+
+        return content;
+    }
+
+    private String markTerms(String content) {
         // копируем исходный текст, в этой копии мы будем производить тегирование слов
         StringBuilder result = new StringBuilder(content);
         //перед обходом отсортируем по длине термина, сначала самые длинные
-
-
-        for (Map.Entry<String, TermProvider> entry : termService.getAll()) {
+        for (Map.Entry<String, TermService.TermProvider> entry : termService.getAll()) {
             // получаем слово связаное с термином, напрмер "времени" будет связано с термином "Время"
             String word = entry.getKey();
             // составляем условие по которому проверяем есть ли это слов в тексте
@@ -67,9 +78,9 @@ public class TermsMarker {
                     // формируем маску для тегирования, title="%s" это дополнительное требования, не описывал ещё в задаче
                     //String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
                     //пока забыли о  title="...."
-                    final TermProvider termProvider = entry.getValue();
+                    final TermService.TermProvider termProvider = entry.getValue();
                     boolean hasMainTerm = termProvider.hasMain();
-                    final TermProvider mainTermProvider = hasMainTerm ? termProvider.getMain().get() : null;
+                    final TermService.TermProvider mainTermProvider = hasMainTerm ? termProvider.getMain().get() : null;
                     boolean hasShortDescription = hasMainTerm ? mainTermProvider.hasShortDescription() : termProvider.hasShortDescription();
 
                     String attributes = hasShortDescription ? " has-short-description=\"true\"" : "";
@@ -80,6 +91,61 @@ public class TermsMarker {
                             wordPrefix == null ? "" : wordPrefix,
                             hasMainTerm ? mainTermProvider.getName() : termProvider.getName(),
                             attributes,
+                            foundWord,
+                            charAfter
+                    );
+                    //System.out.println("charbefore " + charBefore + " entry " + entry.getValue().getTerm().getName());
+                    // заменяем найденое слово тегированным вариантом
+                    //result = matcher.replaceAll(replacer);
+                    result.replace(matcher.start(), matcher.end(), replacer);
+                    //увеличим смещение с учетом замены
+                    offset = matcher.start() + replacer.length();
+                    // убираем обработанный термин, чтобы не заменить его более мелким
+                    content = contentMatcher.replaceAll(" ");
+                }
+            }
+        }
+        return result.toString();
+    }
+
+    private String markItems(String content) {
+        // копируем исходный текст, в этой копии мы будем производить тегирование слов
+        StringBuilder result = new StringBuilder(content);
+        //перед обходом отсортируем по длине термина, сначала самые длинные
+        for (String item : itemService.getAllUriNumbers().values()) {
+            // получаем слово связаное с термином, напрмер "времени" будет связано с термином "Время"
+
+            // составляем условие по которому проверяем есть ли это слов в тексте
+            //Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|\\-])|^)(" + word
+            Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[|])|^)("+ item + ")(([^A-Za-zА-Яа-я0-9Ёё\\]|])|$)",
+                    UNICODE_CHARACTER_CLASS | UNICODE_CASE | CASE_INSENSITIVE);
+            Matcher contentMatcher = pattern.matcher(content);
+            // если есть:
+            if (contentMatcher.find()) {
+                // ищем в результирующем тексте
+                Matcher matcher = pattern.matcher(result);
+                int offset = 0;
+                // if (matcher.find()) {
+                //перенесем обрамления для каждого слова - одно слово может встречаться несколько раз с разными обрамл.
+                while (offset < result.length() && matcher.find(offset)) {
+                    offset = matcher.end();
+                    //убедимся что это не уже обработанный термин, а следующий(в им.падеже)
+                    //String sub = result.substring(matcher.start() - 3, matcher.start());
+                    //if (sub.equals("id=")) {
+                    if (wordInTag(result.substring(0, matcher.start()))) {
+                        continue;
+                    }
+                    // сохраняем найденое слово из текста так как оно может быть в разных регистрах,
+                    // например с большой буквы, или полностью большими буквами
+                    String foundWord = matcher.group(3);
+                    String charBefore = matcher.group(2) != null ? matcher.group(2) : "";
+                    String charAfter = matcher.group(4) != null ? matcher.group(4) : "";
+                    // формируем маску для тегирования, title="%s" это дополнительное требования, не описывал ещё в задаче
+                    //String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
+                    //пока забыли о  title="...."
+
+                    String replacer = format("%s<uri>%s</uri>%s",
+                            charBefore,
                             foundWord,
                             charAfter
                     );

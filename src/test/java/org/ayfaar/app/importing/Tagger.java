@@ -37,5 +37,10 @@ public class Tagger {
     public void quotes() throws IOException {
         taggingUpdater.updateAllQuotes();
     }
+
+    @Test
+    public void termDescriptions() throws IOException {
+        taggingUpdater.updateAllTerms();
+    }
 }
 

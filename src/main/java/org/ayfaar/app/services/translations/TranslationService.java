@@ -5,14 +5,13 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.model.Translation;
 import org.ayfaar.app.translation.TranslationItem;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.stream.Stream;
 
 @Slf4j
-@Service
+//@Service
 public class TranslationService {
 	private CommonDao commonDao;
 	private List<Translation> translations;

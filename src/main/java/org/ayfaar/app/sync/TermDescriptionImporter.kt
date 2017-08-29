@@ -53,7 +53,7 @@ class TermDescriptionImporter @Inject constructor(val termDao: TermDao,
         val simplified = Remark().convert(html)
 
         term.description = simplified
-        term.taggedDescription = marker.mark(simplified)
+        term.taggedDescription = marker.mark(simplified, true)
         term.descriptionGVersion = file.version
         termDao.save(term)
         loader.clear(term)

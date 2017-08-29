@@ -5,7 +5,6 @@ import org.ayfaar.app.sync.GetVideosFormYoutube
 import org.ayfaar.app.sync.RecordSynchronizer
 import org.ayfaar.app.sync.TermDescriptionImporter
 import org.ayfaar.app.sync.VocabularySynchronizer
-import org.ayfaar.app.translation.TopicTranslationSynchronizer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -16,7 +15,7 @@ import javax.inject.Inject
 class MaintenanceController @Inject
 constructor(val entityLoader: EntityLoader,
             val recordSynchronizer: RecordSynchronizer,
-            val topicTranslationSynchronizer: TopicTranslationSynchronizer,
+//            val topicTranslationSynchronizer: TopicTranslationSynchronizer,
             val getVideosFormYoutube: GetVideosFormYoutube,
             val termDescriptionImporter: TermDescriptionImporter) {
 
@@ -32,11 +31,11 @@ constructor(val entityLoader: EntityLoader,
     fun synchronizeRecords() {
         recordSynchronizer.synchronize()
     }
-
+    /*
     @RequestMapping("sync/translations")
     fun synchronizeTranslations() {
         topicTranslationSynchronizer.synchronize()
-    }
+    }*/
 
     @RequestMapping("sync/videos")
     fun synchronizeVideos() {

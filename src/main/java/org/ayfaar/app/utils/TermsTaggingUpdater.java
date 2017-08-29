@@ -81,8 +81,8 @@ public class TermsTaggingUpdater {
 
     private void updateTerms(List<Term> terms) {
         for (Term term : terms) {
-            term.setTaggedDescription(termsMarker.mark(term.getDescription()));
-            term.setTaggedShortDescription(termsMarker.mark(term.getShortDescription()));
+            term.setTaggedDescription(termsMarker.mark(term.getDescription(), true));
+            term.setTaggedShortDescription(termsMarker.mark(term.getShortDescription(), true));
             termDao.save(term);
         }
     }

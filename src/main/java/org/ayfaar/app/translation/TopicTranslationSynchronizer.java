@@ -10,7 +10,6 @@ import org.ayfaar.app.services.translations.TranslationService;
 import org.ayfaar.app.utils.Language;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.logging.LogLevel;
-import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,7 +25,7 @@ import static org.ayfaar.app.services.moderation.Action.SYSLOG_TRANSLATION_UPDAT
 import static org.slf4j.helpers.MessageFormatter.arrayFormat;
 
 @Slf4j
-@Service
+//@Service
 public class TopicTranslationSynchronizer {
     private static final String NO_UPDATES = "Синхронизация: без обновлений";
     private static final String PREFIX_NEW_TRANSLATION = "Добавлен перевод для: ";

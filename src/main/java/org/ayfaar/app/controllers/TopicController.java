@@ -13,15 +13,12 @@ import org.ayfaar.app.services.moderation.Action;
 import org.ayfaar.app.services.moderation.ModerationService;
 import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
-import org.ayfaar.app.translation.TopicTranslationSynchronizer;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.UriGenerator;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -30,7 +27,6 @@ import java.util.*;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.hasLength;
 import static org.springframework.util.StringUtils.isEmpty;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -43,17 +39,23 @@ public class TopicController {
     private final ModerationService moderationService;
     private final LinkService linkService;
     private final NewSuggestionsController suggestionsController;
-    private TopicTranslationSynchronizer translationSynchronizer;
+//    private TopicTranslationSynchronizer translationSynchronizer;
 
     @Inject
-    public TopicController(TopicService topicService, NewSuggestionsController suggestionsController, ModerationService moderationService, LinkService linkService, CommonDao commonDao, LinkDao linkDao, TopicTranslationSynchronizer translationSynchronizer) {
+    public TopicController(TopicService topicService,
+                           NewSuggestionsController suggestionsController,
+                           ModerationService moderationService,
+                           LinkService linkService,
+                           CommonDao commonDao,
+                           LinkDao linkDao/*,
+                           TopicTranslationSynchronizer translationSynchronizer*/) {
         this.topicService = topicService;
         this.suggestionsController = suggestionsController;
         this.moderationService = moderationService;
         this.linkService = linkService;
         this.commonDao = commonDao;
         this.linkDao = linkDao;
-        this.translationSynchronizer = translationSynchronizer;
+//        this.translationSynchronizer = translationSynchronizer;
     }
 
     @RequestMapping("for/{uri}")
@@ -283,9 +285,9 @@ public class TopicController {
         return commonDao.getPage(Topic.class, pageable);
     }
 
-    @RequestMapping(value = "sync-translation", method = GET)
+    /*@RequestMapping(value = "sync-translation", method = GET)
     public ResponseEntity<?> syncTranslation() {
         translationSynchronizer.synchronize();
         return new ResponseEntity<>(HttpStatus.OK);
-    }
+    }*/
 }
