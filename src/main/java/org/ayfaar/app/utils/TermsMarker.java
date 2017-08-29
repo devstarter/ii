@@ -117,7 +117,7 @@ public class TermsMarker {
 
             // составляем условие по которому проверяем есть ли это слов в тексте
             //Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[\\|\\-])|^)(" + word
-            Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё\\[|])|^)("+ item + ")(([^A-Za-zА-Яа-я0-9Ёё\\]|])|$)",
+            Pattern pattern = compile("(([^A-Za-zА-Яа-я0-9Ёё]|\\[)|^)("+ item + ")(([^A-Za-zА-Яа-я0-9Ёё]|])|$)",
                     UNICODE_CHARACTER_CLASS | UNICODE_CASE | CASE_INSENSITIVE);
             Matcher contentMatcher = pattern.matcher(content);
             // если есть:
