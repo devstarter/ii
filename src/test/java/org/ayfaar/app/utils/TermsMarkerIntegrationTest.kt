@@ -1,6 +1,7 @@
 package org.ayfaar.app.utils
 
 import org.ayfaar.app.IntegrationTest
+import org.ayfaar.app.model.Item
 import org.junit.Ignore
 import org.junit.Test
 
@@ -73,8 +74,8 @@ class TermsMarkerIntegrationTest : IntegrationTest() {
 
     @Test
     fun testItems() {
-        assertEquals("<uri>1.0001</uri>", marker.mark("1.0001", true))
-        assertEquals("[<uri>1.0001</uri>]", marker.mark("[1.0001]", true))
+        assertEquals("<uri>${Item.NS}1.0001</uri>", marker.mark("1.0001", true))
+        assertEquals("[<uri>${Item.NS}1.0001</uri>]", marker.mark("[1.0001]", true))
     }
 
     @Test

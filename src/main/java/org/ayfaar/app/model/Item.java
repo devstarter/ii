@@ -10,12 +10,14 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import java.util.Date;
 
 import static java.lang.Float.parseFloat;
+import static org.ayfaar.app.model.Item.NS;
 
 @Entity
 @PrimaryKeyJoinColumn(name="uri")
 @Setter @Getter
-@Uri(nameSpace = "ии:пункт:", field = "number")
+@Uri(nameSpace = NS, field = "number")
 public class Item extends UID {
+    public static final String NS = "ии:пункт:";
 
     @Column(unique = true, nullable = false)
     private String number;
