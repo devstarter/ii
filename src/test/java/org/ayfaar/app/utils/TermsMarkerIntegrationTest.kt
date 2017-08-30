@@ -2,12 +2,10 @@ package org.ayfaar.app.utils
 
 import org.ayfaar.app.IntegrationTest
 import org.ayfaar.app.model.Item
+import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
-
 import javax.inject.Inject
-
-import org.junit.Assert.assertEquals
 import kotlin.test.assertTrue
 
 class TermsMarkerIntegrationTest : IntegrationTest() {
@@ -82,6 +80,6 @@ class TermsMarkerIntegrationTest : IntegrationTest() {
     @Ignore
     fun testQuotes() {
         //TODO: implement
-        assertTrue { marker.mark("«личностное» Самосознание").matches(Regex("<term.+>«личностное» Самосознание</term>")) }
+        assertTrue { marker.mark("«личностное» Самосознание")!!.matches(Regex("<term.+>«личностное» Самосознание</term>")) }
     }
 }

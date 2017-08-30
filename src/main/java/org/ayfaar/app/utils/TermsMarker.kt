@@ -20,7 +20,9 @@ class TermsMarker @Inject constructor(private val termService: TermService, priv
      * @return текст с тегами терминов
      */
     @JvmOverloads
-    fun mark(content: String, withItems: Boolean? = false): String {
+    fun mark(content: String?, withItems: Boolean? = false): String? {
+        if (content == null) return null
+
         var content = content
         if (content.isEmpty()) return content
 
