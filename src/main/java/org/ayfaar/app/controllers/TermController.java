@@ -220,7 +220,7 @@ public class TermController {
     }
 
     public Term add(String name, String shortDescription, String description) {
-        name = name.replace("\"", "").replace("«", "").replace("»", "").trim();
+        name = name/*.replace("\"", "").replace("«", "").replace("»", "")*/.trim();
 //        name = WordUtils.capitalize(name, new char[]{'@'}); // Делаем первую букву большой, @ - знак который не появляеться в названии, чтобы поднялась только первая буква всей фразы
         Term term = termDao.getByName(name);
         if (term == null) {
