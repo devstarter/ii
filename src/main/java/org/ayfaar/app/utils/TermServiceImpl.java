@@ -98,7 +98,7 @@ public class TermServiceImpl implements TermService {
 
         for(TermMorph morph : allTermMorphs) {
             final TermProvider termProvider = aliasesMap.get(getValueFromUri(Term.class, morph.getTermUri()).toLowerCase());
-            aliasesMap.put(morph.getName().toLowerCase(), termProvider);
+            if (termProvider != null) aliasesMap.put(morph.getName().toLowerCase(), termProvider);
         }
 
         // prepare sorted List by term name length, longest terms first
