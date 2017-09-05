@@ -291,7 +291,7 @@
     </div>
     <div class="modal-body">
         <input id="search-input" ng-model="term" type="text" class="form-control"
-               ii-lookup autocomplete="off"
+               ii-lookup autocomplete="off" term-only="true"
                typeahead="suggestion for suggestion in $getSuggestions($viewValue)"/>
         <textarea class="full-width form-control" ng-model="text" style="margin-top: 10px; min-height: 100px"></textarea>
     </div>

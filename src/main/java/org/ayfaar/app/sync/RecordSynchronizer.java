@@ -14,6 +14,7 @@ import org.ayfaar.app.services.GoogleSpreadsheetService;
 import org.ayfaar.app.services.record.RecordService;
 import org.ayfaar.app.services.videoResource.VideoResourceService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -40,6 +41,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 @Service
 @EnableScheduling
 @Slf4j
+@Profile("!dev")
 public class RecordSynchronizer {
     private final RecordService recordService;
     private final VideoResourceService videoResourceService;

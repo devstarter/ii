@@ -14,13 +14,13 @@ import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.sync.RecordSynchronizer;
 import org.ayfaar.app.utils.Transliterator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +45,7 @@ public class RecordController {
     private EventPublisher publisher;
     private final RecordDao recordDao;
 
-    @Inject
+    @Autowired(required = false)
     public RecordController(RecordDao recordDao, TopicService topicService, ModerationService moderationService, RecordSynchronizer recordSynchronizer, EventPublisher publisher) {
         this.recordDao = recordDao;
         this.topicService = topicService;
