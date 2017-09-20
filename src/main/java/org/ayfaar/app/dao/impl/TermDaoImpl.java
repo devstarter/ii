@@ -3,6 +3,7 @@ package org.ayfaar.app.dao.impl;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.Term;
 import org.hibernate.criterion.Restrictions;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -19,9 +20,9 @@ public class TermDaoImpl extends AbstractHibernateDAO<Term> implements TermDao {
     }
 
     @Override
-    public Term getByName(String name) {
+    public Term getByName(@NotNull String name) {
         return (Term) criteria()
-                .add(eq("name", name))
+                .add(eq("name", name.trim()))
                 .uniqueResult();
     }
 

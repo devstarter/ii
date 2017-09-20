@@ -255,6 +255,8 @@ public class TermServiceImpl implements TermService {
             newTerm.setDescription(oldTerm.getDescription());
             newTerm.setTaggedShortDescription(oldTerm.getTaggedShortDescription());
             newTerm.setTaggedDescription(oldTerm.getTaggedDescription());
+            newTerm.setDescriptionGid(oldTerm.getDescriptionGid());
+            newTerm.setDescriptionGVersion(oldTerm.getDescriptionGVersion());
             commonDao.save(newTerm);
 
             allLinks.forEach(link -> {

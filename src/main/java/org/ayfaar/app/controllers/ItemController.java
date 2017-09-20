@@ -50,7 +50,7 @@ public class ItemController {
         return item;
     }
 
-    @RequestMapping("{number}!")
+    @RequestMapping("{number}/update")
     public void update(@PathVariable String number, HttpServletResponse response) throws IOException {
         taggingUpdater.update(itemDao.getByNumber(number));
         response.sendRedirect(number);

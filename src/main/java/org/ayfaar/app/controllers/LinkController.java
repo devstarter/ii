@@ -68,6 +68,8 @@ public class LinkController {
     public Integer addAlias(@RequestParam("term1") String term,
                             @RequestParam("term2") String alias,
                             @RequestParam Byte type) throws MessagingException {
+        term = term.trim();
+        alias = alias.trim();
         Term primTerm = termDao.getByName(term);
         if (primTerm == null) {
             primTerm = termController.add(term);

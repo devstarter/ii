@@ -2,12 +2,12 @@ package org.ayfaar.app.dao;
 
 import lombok.Data;
 import org.ayfaar.app.model.Term;
-
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface TermDao extends BasicCrudDao<Term> {
-    Term getByName(String name);
+    Term getByName(@NotNull String name);
 
     List<Term> getLike(String field, String value);
 

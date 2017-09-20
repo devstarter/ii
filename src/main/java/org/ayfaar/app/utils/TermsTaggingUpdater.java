@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class TermsTaggingUpdater {
@@ -107,8 +108,11 @@ public class TermsTaggingUpdater {
     }
 
     public void update(Item item) {
-        item.setTaggedContent(termsMarker.mark(item.getContent()));
-        item.setUpdatesAt(new Date());
-        itemDao.save(item);
+        String newTaggedContent = termsMarker.mark(item.getContent());
+        if (!Objects.equals(newTaggedContent, item.getTaggedContent())) {
+            item.setTaggedContent(newTaggedContent);
+            item.setUpdatesAt(new Date());
+            itemDao.save(item);
+        }
     }
 }
