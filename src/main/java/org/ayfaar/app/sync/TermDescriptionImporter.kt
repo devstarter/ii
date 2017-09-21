@@ -3,6 +3,7 @@ package org.ayfaar.app.sync
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.model.File
 import com.overzealous.remark.Remark
+import mu.KotlinLogging
 import org.ayfaar.app.dao.TermDao
 import org.ayfaar.app.event.EventPublisher
 import org.ayfaar.app.event.SysLogEvent
@@ -25,18 +26,22 @@ class TermDescriptionImporter @Inject constructor(val termDao: TermDao,
                                                   val marker: TermsMarker,
                                                   val loader: EntityLoader,
                                                   val eventPublisher: EventPublisher) {
+    private val logger = KotlinLogging.logger {}
+
     val myName = "Обновление словарных статей"
 
     @Scheduled(cron = "0 0 * * * *") // every hour
     fun import() {
         val service = getService()
-        termDao.getAllWithDescriptionGid().parallelStream().forEach {
+        termDao.allWithDescriptionGid.parallelStream().forEach {
             val file: File = service.files().get(it.descriptionGid).setFields("*").execute()
 
             val weHaveStaleVersion = it.descriptionGVersion == null || file.version != it.descriptionGVersion
 
-            if (weHaveStaleVersion) {
+            if (weHaveStaleVersion) try {
                 updateDescription(it, file)
+            } catch (e: Exception) {
+                logger.error( e, { "TermDescriptionImporter error while import description for term ${it.name} (doc id: ${it.descriptionGid})" })
             }
         }
     }
