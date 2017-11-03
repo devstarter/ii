@@ -1,9 +1,9 @@
 # DB
 spring:
   datasource:
-    url: jdbc:mysql://${OPENSHIFT_EXTMYSQL_DB_HOST}:${OPENSHIFT_EXTMYSQL_DB_PORT}/${OPENSHIFT_EXTAPP_NAME}?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false
-    username: ${OPENSHIFT_EXTMYSQL_DB_USERNAME}
-    password: ${OPENSHIFT_EXTMYSQL_DB_PASSWORD}
+    url: jdbc:mysql://localhost/ii?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false
+    username: ii
+    password: sd90kjsdmkh
     platform: org.hibernate.dialect.MySQL5Dialect
     test-while-idle: true
     test-on-borrow: true
@@ -18,7 +18,7 @@ spring:
 
 
 logging:
-  file: ${OPENSHIFT_DATA_DIR}logs/app.log
+  file: /ii/ii.log
   level:
     org: warn
     org.ayfaar: info
@@ -27,15 +27,13 @@ logging:
 #    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
 
 site-base-url: 'http://ii.ayfaar.org'
-sitemap-dir: ${OPENSHIFT_DATA_DIR}
-drive-dir: ${OPENSHIFT_DATA_DIR}
+sitemap-dir: /ii/data
+drive-dir: /ii/data
 this-url: http://${server.address:localhost}:${server.port:8080}
 
 mail.user: some@gmail.com
 mail.password: some
 
-pushbullet.key: v1Izhxi9HgremmZ8ZqEyAh0xbW7xJHLYWYujz0VEpiRR6
-pushbullet.channel: ii
 google.api.key: ${GOOGLE_API_KEY:'no_key'}
 
 server:

@@ -1,9 +1,9 @@
-OPENSHIFT_EXTMYSQL_DB_HOST: 127.0.0.1
-OPENSHIFT_EXTMYSQL_DB_USERNAME: root
-OPENSHIFT_EXTMYSQL_DB_PASSWORD:
-OPENSHIFT_EXTMYSQL_DB_PORT: 3306
-OPENSHIFT_EXTAPP_NAME: ii
-OPENSHIFT_HOMEDIR:
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/ii?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false
+    username: root
+    password:
+
 OPENSHIFT_DATA_DIR: '/'
 OPENSHIFT_BASE_URL: 'http://ii.ayfaar.org/'
 

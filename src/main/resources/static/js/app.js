@@ -1427,7 +1427,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         return;
                     case "item":
                         var number = entityService.getName(uri);
-                        if (isTom6(number)) return;
+                        // if (isTom6(number)) return;
                         originStateGo.bind($state)("item", {number: number});
                         return;
                     case "category":
@@ -1438,7 +1438,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                         return;
                     case "paragraph":
                         var number = entityService.getName(uri);
-                        if (isTom6(number)) return;
+                        // if (isTom6(number)) return;
                         originStateGo.bind($state)("paragraph", {number: number});
                         return;
                     case "article":

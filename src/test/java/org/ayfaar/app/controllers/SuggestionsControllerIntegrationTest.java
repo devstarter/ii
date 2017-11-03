@@ -74,4 +74,11 @@ public class SuggestionsControllerIntegrationTest extends IntegrationTest {
         List<String> suggestions = searchController.suggestions(query);
         assertEquals("ССЛОО-СС-СНАА",suggestions.get(0));
     }
+
+    @Test
+    public void test_квант() {
+        String query = "квант";
+        List<String> suggestions = searchController.suggestions(query);
+        assertEquals("квант", suggestions.get(0));
+    }
 }

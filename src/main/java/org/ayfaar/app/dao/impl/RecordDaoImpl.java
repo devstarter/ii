@@ -25,6 +25,7 @@ public class RecordDaoImpl extends AbstractHibernateDAO<Record> implements Recor
 
         if (nameOrCode != null && !nameOrCode.isEmpty())
             criteria.add(Restrictions.or(
+                like("uri", nameOrCode, MatchMode.ANYWHERE),
                 like("code", nameOrCode, MatchMode.ANYWHERE),
                 like("name", nameOrCode, MatchMode.ANYWHERE)));
 

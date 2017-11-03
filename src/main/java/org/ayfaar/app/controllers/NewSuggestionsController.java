@@ -53,9 +53,13 @@ public class NewSuggestionsController {
                 .values();
     }
 
+    public LinkedHashMap<String, String> suggestions(@RequestParam String q) {
+        return suggestions(q,  false, true, false, false, false, false, false, false, false, false, false);
+    }
+
     @RequestMapping("all")
     @ResponseBody
-    public Map<String, String> suggestions(@RequestParam String q,
+    public LinkedHashMap<String, String> suggestions(@RequestParam String q,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_terms,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_topic,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_category_name,
@@ -68,7 +72,7 @@ public class NewSuggestionsController {
                                            @RequestParam(required = false, defaultValue = "true") boolean with_record_code,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_images
     ) {
-        Map<String, String> allSuggestions = new LinkedHashMap<>();
+        LinkedHashMap<String, String> allSuggestions = new LinkedHashMap<>();
         List<Suggestions> items = new ArrayList<>();
         if (with_terms) items.add(Suggestions.TERM); //default
         if (with_topic) items.add(Suggestions.TOPIC);

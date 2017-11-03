@@ -222,11 +222,11 @@
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>com.pushbullet</groupId>
 			<artifactId>pushbullet-api</artifactId>
 			<version>1.1-SNAPSHOT</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>com.github.dfabulich</groupId>
 			<artifactId>sitemapgen4j</artifactId>

@@ -40,7 +40,7 @@ public class ItemsImporter {
     public void main() throws IOException {
         currentItem = null;
 
-        for(String line: FileUtils.readLines(new File("C:\\PROJECTS\\ayfaar\\texts\\Том 5.txt"))) {
+        for(String line: FileUtils.readLines(new File("C:\\PROJECTS\\ayfaar\\texts\\Том 6.txt"))) {
 
             Matcher matcher = compile("(\\d+\\.\\d\\d\\d\\d+)\\.\\s(.+)").matcher(line);
             if (matcher.find()) {

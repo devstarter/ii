@@ -21,6 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,16 +42,15 @@ public class RecordController {
 
     private final TopicService topicService;
     private final ModerationService moderationService;
-    private final RecordSynchronizer recordSynchronizer;
+    @Autowired(required = false) private RecordSynchronizer recordSynchronizer;
     private EventPublisher publisher;
     private final RecordDao recordDao;
 
-    @Autowired(required = false)
-    public RecordController(RecordDao recordDao, TopicService topicService, ModerationService moderationService, RecordSynchronizer recordSynchronizer, EventPublisher publisher) {
+    @Inject
+    public RecordController(RecordDao recordDao, TopicService topicService, ModerationService moderationService, EventPublisher publisher) {
         this.recordDao = recordDao;
         this.topicService = topicService;
         this.moderationService = moderationService;
-        this.recordSynchronizer = recordSynchronizer;
         this.publisher = publisher;
     }
 
@@ -88,7 +88,7 @@ public class RecordController {
     @Moderated(value = Action.RECORD_RENAME, command = "@recordController.rename")
     public void rename(@PathVariable String code, @RequestParam String name) {
         final Record record = recordDao.get("code", code);
-        if (record == null) throw new RuntimeException("Record not found");
+        if (record == null) throw new RuntimeException("Record "+code+" not found");
 
         record.setPreviousName(record.getName());
         record.setName(name);
@@ -100,7 +100,7 @@ public class RecordController {
     @RequestMapping(value = "{code}/download/{any}", method = RequestMethod.GET)
     public void download(@PathVariable String code, HttpServletResponse response) throws IOException{
         final Record record = recordDao.get("code", code);
-        if (record == null) throw new RuntimeException("Record not found");
+        if (record == null) throw new RuntimeException("Record "+code+" not found");
 
         final String url = record.getAudioUrl();
         if (url == null) throw new RuntimeException("Has no download url for record");

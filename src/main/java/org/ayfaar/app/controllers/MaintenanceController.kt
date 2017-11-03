@@ -14,13 +14,12 @@ import javax.inject.Inject
 @RequestMapping("api")
 class MaintenanceController @Inject
 constructor(val entityLoader: EntityLoader,
-            val recordSynchronizer: RecordSynchronizer,
-//            val topicTranslationSynchronizer: TopicTranslationSynchronizer,
             val getVideosFormYoutube: GetVideosFormYoutube,
             val termDescriptionImporter: TermDescriptionImporter) {
 
 
     @Autowired(required = false) var vocabularySynchronizer: VocabularySynchronizer? = null
+    @Autowired(required = false) var recordSynchronizer: RecordSynchronizer? = null
 
     @RequestMapping("entity-loader/clear")
     fun clearEntityLoader() {
@@ -29,7 +28,7 @@ constructor(val entityLoader: EntityLoader,
 
     @RequestMapping("sync/records")
     fun synchronizeRecords() {
-        recordSynchronizer.synchronize()
+        recordSynchronizer?.synchronize() ?: throw RuntimeException("Not available on dev profile")
     }
     /*
     @RequestMapping("sync/translations")

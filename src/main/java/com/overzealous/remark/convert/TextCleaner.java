@@ -346,7 +346,7 @@ public class TextCleaner {
 	 */
 	public String unescapeLeadingCharacters(String input) {
 		// removes any leading escapes...
-		return unescapeLeadingChars.matcher(input).replaceAll("$1$2");
+		return input == null || input.isEmpty() ? input : unescapeLeadingChars.matcher(input).replaceAll("$1$2");
 	}
 
 	/**
