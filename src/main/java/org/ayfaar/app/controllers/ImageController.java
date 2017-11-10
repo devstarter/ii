@@ -110,7 +110,7 @@ public class ImageController {
         Map<String, String> allSuggestions = new LinkedHashMap<>();
         List<Suggestions> items = new ArrayList<>();
         items.add(Suggestions.IMAGES);
-        items.add(Suggestions.TOPIC);   //image-keywords
+        items.add(Suggestions.TOPICS);   //image-keywords
         for (Suggestions item : items) {
             Queue<String> queriesQueue = searchSuggestions.getQueue(q);
             List<Map.Entry<String, String>> suggestions = getSuggestions(queriesQueue, item);
@@ -134,7 +134,7 @@ public class ImageController {
             Map<String, String> mapUriWithNames = null;
 
             switch (item) {
-                case TOPIC://image-keywords
+                case TOPICS://image-keywords
                     mapUriWithNames = imageService.getImagesKeywords();
                     break;
                 case IMAGES:

@@ -4,6 +4,7 @@ import org.ayfaar.app.IntegrationTest;
 import org.junit.Test;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +19,8 @@ public class NewSuggestionsControllerIntegrationTest extends IntegrationTest {
     @Test
     public void test_квант() {
         String query = "квант";
-        Map<String, String> suggestions = suggestionsController.suggestions(query);
-        assertTrue(suggestions.containsValue("квант"));
+        Collection<String> suggestions = suggestionsController.suggestionTerms(query);
+        assertTrue(suggestions.contains("квант"));
         // TODO: проверить что этот элемент является первым в списке
     }
 }

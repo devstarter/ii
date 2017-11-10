@@ -350,11 +350,11 @@ function ItemController($scope, $stateParams, $state, $api, modal) {
         $state.goToHome();
         return
     }
-    if ($scope.number.indexOf("6.") == 0) {
+    /*if ($scope.number.indexOf("6.") == 0) {
         modal.message("", "6 том пока официально не опубликован, по этому его текста нет в системе");
         $state.goToHome();
         return
-    }
+    }*/
     document.title = $scope.number;
 
     $scope.content = "Загрузка...";

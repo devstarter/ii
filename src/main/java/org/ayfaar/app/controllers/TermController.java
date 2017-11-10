@@ -103,7 +103,8 @@ public class TermController {
         UID code = provider.getCode().isPresent() ? provider.getCode().get().getTerm() : null;
 
         // Нужно также включить цитаты всех синонимов и сокращений и кода
-        Set<UID> aliasesQuoteSources = new HashSet<UID>(aliases);
+        Set<UID> aliasesQuoteSources = new HashSet<>(aliases);
+        aliasesQuoteSources.add(term);
         if (code != null) {
             aliasesQuoteSources.add(code);
         }
@@ -127,6 +128,9 @@ public class TermController {
         }
 
         aliases.removeIf(item -> item.getUri().equals(term.getUri()));
+        related.removeIf(item -> item.getUri().equals(term.getUri()));
+        if (code != null) related.removeIf(item -> item.getUri().equals(code.getUri()));
+        aliases.forEach((uid) -> related.removeIf(item -> item.getUri().equals(uid.getUri())));
 
         quotes.sort(Comparator.comparing(o -> o.uri));
 

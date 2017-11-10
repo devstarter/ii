@@ -31,8 +31,8 @@ public class ItemsImporter {
     private Item currentItem;
     private Item prevItem;
     @Autowired private ApplicationContext ctx;
-//    private String skipUntilNumber = "1.0780";
     private boolean saveAllowed = true;
+//    private String skipUntilNumber = "6.1569"; // saveAllowed = false;
     @Autowired private ItemDao itemDao;
     @Autowired private TermsTaggingUpdater taggingUpdater;
 
@@ -66,7 +66,7 @@ public class ItemsImporter {
             currentItem = storedItem;
 //            currentItem.setUri(UriGenerator.generate(currentItem));
         }
-        currentItem.setContent(currentItem.getContent().trim());
+        currentItem.setContent(trimSurrogateCharacters(currentItem.getContent().trim()));
         currentItem.setContent(ItemsHelper.clean(currentItem.getContent()));
 //        taggingUpdater.update(currentItem); //saved inside update
         itemDao.save(currentItem);
@@ -77,6 +77,17 @@ public class ItemsImporter {
         }
 
         prevItem = currentItem;
+    }
+
+    private String trimSurrogateCharacters(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (!Character.isHighSurrogate(ch) && !Character.isLowSurrogate(ch)) {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
     }
 }
 

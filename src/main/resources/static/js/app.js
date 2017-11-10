@@ -486,7 +486,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     case 'categoryT': //том
                         return uri.replace("категория:", "");
                     case 'article':
-                        return uri.replace("статья:", "");
+                        return uri.replace("статья:", "9 том: ");
                     case 'paragraph':
                         return uri.replace("ии:пункты:", "");
                     case 'record':
@@ -1514,12 +1514,12 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
         $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
             $timeout(function(){statistic.pageview(location.pathname)}, 3000);
         });
-        function isTom6(number) {
+        /*function isTom6(number) {
             if (number.indexOf("6.") == 0) {
                 modal.message("", "6 том пока официально не опубликован, поэтому его текста нет в системе");
                 return true;
             }
-        }
+        }*/
     })
     .filter('cut', function () {
         return function (value, wordwise, max, tail) {

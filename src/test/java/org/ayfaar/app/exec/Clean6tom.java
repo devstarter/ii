@@ -1,9 +1,8 @@
-package org.ayfaar.app.importing;
+package org.ayfaar.app.exec;
 
 import org.ayfaar.app.Application;
 import org.ayfaar.app.dao.ItemDao;
-import org.ayfaar.app.model.Item;
-import org.ayfaar.app.utils.TermsTaggingUpdater;
+import org.hibernate.criterion.MatchMode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,35 +12,26 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.io.IOException;
-import java.util.List;
-
-import static java.util.regex.Pattern.compile;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class,
         initializers = ConfigFileApplicationContextInitializer.class)
 @ActiveProfiles("remote")
 @WebAppConfiguration
-public class Tagger {
+public class Clean6tom {
+
     @Autowired private ItemDao itemDao;
-    @Autowired private TermsTaggingUpdater taggingUpdater;
 
     @Test
-    public void items() throws IOException {
-        final List<Item> items = itemDao.getByRegexp("number", "^[6]\\.");
-//        final List<Item> items = itemDao.getByRegexp("number", "^1[0-5]\\.");
-        taggingUpdater.update(items);
-    }
+    public void main() {
 
-    @Test
-    public void quotes() throws IOException {
-        taggingUpdater.updateAllQuotes();
-    }
+       itemDao.getLike("number", "6.", MatchMode.START).forEach((item -> {
+            String content = item.getContent();
 
-    @Test
-    public void termDescriptions() throws IOException {
-        taggingUpdater.updateAllTerms();
+            content = content.replaceAll("\\?—\\?", " — ");
+
+            item.setContent(content);
+            item.setTaggedContent(null);
+            itemDao.save(item);
+       }));
     }
 }
-

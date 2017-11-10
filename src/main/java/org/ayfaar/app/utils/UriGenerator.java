@@ -40,8 +40,8 @@ public class UriGenerator implements IdentifierGenerator {
         }
         String uri = null;
         try {
-            Object property = PropertyUtils.getProperty(object, annotation.field());
-            uri = nameSpace + property;
+            Object uriKeyValue = PropertyUtils.getProperty(object, annotation.field());
+            uri = nameSpace + uriKeyValue;
         } catch (Exception e) {
             e.printStackTrace();
         }
