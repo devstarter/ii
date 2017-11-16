@@ -13,7 +13,6 @@ import org.ayfaar.app.services.moderation.UserRole;
 import org.ayfaar.app.services.topics.TopicProvider;
 import org.ayfaar.app.services.topics.TopicService;
 import org.ayfaar.app.sync.RecordSynchronizer;
-import org.ayfaar.app.utils.Transliterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -88,7 +87,10 @@ public class RecordController {
     @Moderated(value = Action.RECORD_RENAME, command = "@recordController.rename")
     public void rename(@PathVariable String code, @RequestParam String name) {
         final Record record = recordDao.get("code", code);
-        if (record == null) throw new RuntimeException("Record "+code+" not found");
+        if (record == null) {
+            log.warn("Record "+code+" not found");
+            return;
+        }
 
         record.setPreviousName(record.getName());
         record.setName(name);
@@ -100,15 +102,17 @@ public class RecordController {
     @RequestMapping(value = "{code}/download/{any}", method = RequestMethod.GET)
     public void download(@PathVariable String code, HttpServletResponse response) throws IOException{
         final Record record = recordDao.get("code", code);
-        if (record == null) throw new RuntimeException("Record "+code+" not found");
+        if (record == null) {
+            log.warn("Record "+code+" not found");
+            return;
+        }
 
         final String url = record.getAudioUrl();
         if (url == null) throw new RuntimeException("Has no download url for record");
 
         final int bufferSize = 4096;
         final String mimeType = "audio/mpeg";
-        String name = Transliterator.transliterate(record.getName()).replace("\"", "");
-        String headerValue = String.format("attachment;");
+        String headerValue = "attachment;";
 
         InputStream  inputStream = new URL(url).openStream();
 
@@ -123,7 +127,6 @@ public class RecordController {
         }
         inputStream.close();
         outputStream.close();
-//        return "redirect:" + url;
     }
 
     @RequestMapping("sync")

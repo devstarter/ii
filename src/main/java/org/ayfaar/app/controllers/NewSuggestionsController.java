@@ -49,9 +49,13 @@ public class NewSuggestionsController {
 
     @RequestMapping("term")
     @ResponseBody
-    public Collection<String> suggestionTerms(@RequestParam String q) {
+    public Collection<String> suggestTerms(@RequestParam String q) {
         return suggestions(q, true, false, false, false, false, false, false, false, false, false, false, false)
                 .values();
+    }
+
+    public LinkedHashMap<String, String> suggestTopics(@RequestParam String q) {
+        return suggestions(q,  false,  true,  false,  false,  false,  false,  false,  false,  false,  false,  false,  false);
     }
 
     public LinkedHashMap<String, String> suggestions(@RequestParam String q) {

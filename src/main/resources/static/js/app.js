@@ -1000,8 +1000,12 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                 if (!obj) return;
                 element.attr('href', getUrl(obj));
                 var label = obj.hasOwnProperty("name") ? obj.name : entityService.getName(obj);
-                if (entityService.getType(obj) == 'paragraph') {
+                var type = entityService.getType(obj);
+                if (type == 'paragraph') {
                     label = obj.from + "-" + obj.to;
+                }
+                if (type == 'article') {
+                    label = "9 том: " + label;
                 }
                 obj._label = label;
                 element.bind('click', function() {

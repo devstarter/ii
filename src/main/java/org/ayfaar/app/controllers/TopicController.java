@@ -179,7 +179,7 @@ public class TopicController {
     public Collection<String> suggest(@RequestParam(name = "q", required = false) String q,
                                       @RequestParam(name = "filter[filters][0][value]", required = false) String kendoQ) {
         if (kendoQ != null) q = kendoQ;
-        return suggestionsController.suggestions(q).values();
+        return suggestionsController.suggestTopics(q).values();
     }
 
     @RequestMapping("add-child")
