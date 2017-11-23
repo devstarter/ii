@@ -64,19 +64,22 @@ public class NewSuggestionsController {
 
     @RequestMapping("all")
     @ResponseBody
+    /**
+     * for speed optimization switch off all except terms and topics
+     */
     public LinkedHashMap<String, String> suggestions(@RequestParam String q,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_terms,
                                            @RequestParam(required = false, defaultValue = "true") boolean with_topic,
-                                           @RequestParam(required = false, defaultValue = "true") boolean with_category_name,
-                                           @RequestParam(required = false, defaultValue = "true") boolean with_category_description,
-                                           @RequestParam(required = false, defaultValue = "true") boolean with_doc,
-                                           @RequestParam(required = false, defaultValue = "true") boolean with_video,
-                                           @RequestParam(required = false, defaultValue = "true") boolean with_video_code,
-                                           @RequestParam(required = false, defaultValue = "true") boolean with_item,
-                                           @RequestParam(required = false, defaultValue = "true") boolean with_record_name,
-                                           @RequestParam(required = false, defaultValue = "true") boolean with_record_code,
-                                           @RequestParam(required = false, defaultValue = "true") boolean with_articles,
-                                           @RequestParam(required = false, defaultValue = "true") boolean with_images
+                                           @RequestParam(required = false, defaultValue = "false") boolean with_category_name,
+                                           @RequestParam(required = false, defaultValue = "false") boolean with_category_description,
+                                           @RequestParam(required = false, defaultValue = "false") boolean with_doc,
+                                           @RequestParam(required = false, defaultValue = "false") boolean with_video,
+                                           @RequestParam(required = false, defaultValue = "false") boolean with_video_code,
+                                           @RequestParam(required = false, defaultValue = "false") boolean with_item,
+                                           @RequestParam(required = false, defaultValue = "false") boolean with_record_name,
+                                           @RequestParam(required = false, defaultValue = "false") boolean with_record_code,
+                                           @RequestParam(required = false, defaultValue = "false") boolean with_articles,
+                                           @RequestParam(required = false, defaultValue = "false") boolean with_images
     ) {
         LinkedHashMap<String, String> allSuggestions = new LinkedHashMap<>();
         List<Suggestions> items = new ArrayList<>();
