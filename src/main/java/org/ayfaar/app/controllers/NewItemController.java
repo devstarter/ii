@@ -2,6 +2,7 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.services.ItemService;
 import org.ayfaar.app.utils.ContentsService;
 import org.ayfaar.app.utils.ContentsService.ParagraphProvider;
 import org.ayfaar.app.utils.TermsMarker;
@@ -35,6 +36,7 @@ public class NewItemController {
     @Inject TermsMarker termsMarker;
     @Inject AsyncTaskExecutor taskExecutor;
     @Inject TermsTaggingUpdater taggingUpdater;
+    @Inject ItemService itemService;
 
     @RequestMapping
     @ResponseBody
@@ -58,7 +60,7 @@ public class NewItemController {
     @RequestMapping("{number}/{more}more")
     @ResponseBody
     public List<ItemPresentation> getMore(@PathVariable String number, @PathVariable Integer more) {
-        List<ItemPresentation> presentations = new ArrayList<ItemPresentation>();
+        List<ItemPresentation> presentations = new ArrayList<>();
 
         for (Item item : itemDao.getNext(number, more)) {
             presentations.add(new ItemPresentation(item));
@@ -73,14 +75,18 @@ public class NewItemController {
         notNull(item, format("Item `%s` not found", from));
         notNull(itemDao.getByNumber(to), format("Item `%s` not found", to));
 
-        List<ItemPresentation> items = new ArrayList<ItemPresentation>();
+        List<ItemPresentation> items = new ArrayList<>();
 
         final ItemPresentation itemPresentation = new ItemPresentation(item);
 //        itemPresentation.parents = parents(item.getNumber());
         items.add(itemPresentation);
 
         while (!item.getNumber().equals(to)) {
-            item = itemDao.get(item.getNext());
+            item = itemService.get(item.getNext());
+            if (item.getTaggedContent() == null) {
+                item.setTaggedContent(termsMarker.mark(item.getContent()));
+                itemService.save(item);
+            }
             items.add(new ItemPresentation(item));
             if (items.size() > MAXIMUM_RANGE_SIZE) {
                 throw new RuntimeException(format("Maximum range size reached (from %s to %s)", from, to));

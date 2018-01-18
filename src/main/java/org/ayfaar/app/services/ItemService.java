@@ -31,4 +31,14 @@ public class ItemService {
     public Map<String, String> getAllUriNumbers() {
         return allUriNumbers;
     }
+
+    public Item get(String uri) {
+        Item item = itemDao.get(uri);
+        if (item == null) throw new RuntimeException("Item for uri "+uri+" not found");
+        return item;
+    }
+
+    public void save(Item item) {
+        itemDao.save(item);
+    }
 }

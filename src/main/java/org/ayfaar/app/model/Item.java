@@ -27,7 +27,7 @@ public class Item extends UID {
     private String taggedContent;
 //    @Column(columnDefinition = "TEXT")
 //    private String wiki;
-    private String next;
+    private String next; // uri
     // field for optimization order operation on database
     private Float orderIndex;
     private Date updatesAt;

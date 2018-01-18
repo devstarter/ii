@@ -81,6 +81,11 @@ public class NewSuggestionsController {
                                            @RequestParam(required = false, defaultValue = "false") boolean with_articles,
                                            @RequestParam(required = false, defaultValue = "false") boolean with_images
     ) {
+        if (!q.isEmpty() && q.matches(GoogleService.codeVideoPatternRegExp)) {
+            with_record_code = with_video_code = true;
+            with_terms = with_topic = false;
+        }
+
         LinkedHashMap<String, String> allSuggestions = new LinkedHashMap<>();
         List<Suggestions> items = new ArrayList<>();
         if (with_terms) items.add(Suggestions.TERMS); //default
@@ -95,6 +100,7 @@ public class NewSuggestionsController {
         if (with_item) items.add(Suggestions.ITEMS);
         if (with_articles) items.add(Suggestions.ARTICLES);
         if (with_images) items.add(Suggestions.IMAGES);
+
         for (Suggestions item : items) {
             Queue<String> queriesQueue = searchSuggestions.getQueue(q);
             List<Map.Entry<String, String>> suggestions = getSuggestions(queriesQueue, item);

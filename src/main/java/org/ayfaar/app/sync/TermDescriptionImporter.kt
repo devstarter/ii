@@ -2,7 +2,6 @@ package org.ayfaar.app.sync
 
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.model.File
-import com.overzealous.remark.Remark
 import mu.KotlinLogging
 import org.ayfaar.app.dao.TermDao
 import org.ayfaar.app.event.EventPublisher
@@ -55,7 +54,7 @@ class TermDescriptionImporter @Inject constructor(val termDao: TermDao,
         getService().files().export(term.descriptionGid, MimeTypeUtils.TEXT_HTML_VALUE).executeAndDownloadTo(outputStream)
 
         val html = outputStream.toString()
-        val simplified = Remark().convert(html)
+        val simplified = html //Remark().convert(html)
 
         term.description = simplified
         term.taggedDescription = marker.mark(simplified, true)
