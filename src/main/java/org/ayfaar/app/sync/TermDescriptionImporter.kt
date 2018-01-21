@@ -10,6 +10,7 @@ import org.ayfaar.app.model.Term
 import org.ayfaar.app.services.EntityLoader
 import org.ayfaar.app.utils.GoogleService
 import org.ayfaar.app.utils.TermsMarker
+import org.jsoup.Jsoup
 import org.springframework.boot.logging.LogLevel
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
@@ -54,7 +55,7 @@ class TermDescriptionImporter @Inject constructor(val termDao: TermDao,
         getService().files().export(term.descriptionGid, MimeTypeUtils.TEXT_HTML_VALUE).executeAndDownloadTo(outputStream)
 
         val html = outputStream.toString()
-        val simplified = html //Remark().convert(html)
+        val simplified = Jsoup.parse(html).text() //Remark().convert(html)
 
         term.description = simplified
         term.taggedDescription = marker.mark(simplified, true)
