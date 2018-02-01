@@ -11,6 +11,8 @@ import org.ayfaar.app.services.EntityLoader
 import org.ayfaar.app.utils.GoogleService
 import org.ayfaar.app.utils.TermsMarker
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.safety.Whitelist
 import org.springframework.boot.logging.LogLevel
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service
 import org.springframework.util.MimeTypeUtils
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
+
+
 
 @Service
 @EnableScheduling
@@ -55,7 +59,7 @@ class TermDescriptionImporter @Inject constructor(val termDao: TermDao,
         getService().files().export(term.descriptionGid, MimeTypeUtils.TEXT_HTML_VALUE).executeAndDownloadTo(outputStream)
 
         val html = outputStream.toString()
-        val simplified = Jsoup.parse(html).text() //Remark().convert(html)
+        val simplified = cleanPreserveLineBreaks(html) //Remark().convert(html)
 
         term.description = simplified
         term.taggedDescription = marker.mark(simplified, true)
@@ -65,5 +69,17 @@ class TermDescriptionImporter @Inject constructor(val termDao: TermDao,
         eventPublisher.publishEvent(SysLogEvent(myName,
                 String.format("Обновилась словарная статья для термина <uri>%s</uri>, на основании <a href='https://docs.google.com/document/d/%s/edit' target='_blank'>документа</a>", term.uri, term.descriptionGid),
                 LogLevel.INFO))
+    }
+
+    // see https://stackoverflow.com/questions/5640334/how-do-i-preserve-line-breaks-when-using-jsoup-to-convert-html-to-plain-text
+    // see https://stackoverflow.com/a/46344397/975169
+    fun cleanPreserveLineBreaks(bodyHtml: String): String {
+        // get pretty printed html with preserved br and p tags
+        val prettyPrintedBodyFragment = Jsoup.clean(bodyHtml, "",
+                Whitelist.none().addTags("br", "p", "a", "ul", "ol", "li"),
+                Document.OutputSettings().prettyPrint(true))
+        // get plain text with preserved line breaks by disabled prettyPrint
+        return Jsoup.clean(prettyPrintedBodyFragment, "", Whitelist.none().addTags("a", "ul", "ol", "li"),
+                Document.OutputSettings().prettyPrint(false))
     }
 }
