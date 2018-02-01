@@ -99,6 +99,21 @@ br {
     display: block;
     line-height: 200%;
 }
+
+[term-description] br {
+    line-height: unset;
+}
+[term-description] ol>br, [term-description] ul>br {
+    display: none;
+}
+[term-description] ol, [term-description] ul {
+    margin-top: 10px;
+}
+[term-description] ul li, [term-description] ol li {
+    margin-top: 10px;
+    list-style-type: unset;
+}
+
 .inline {display: inline}
 .middle {vertical-align: -webkit-baseline-middle;}
 .top-gap {padding-top: 10px}
