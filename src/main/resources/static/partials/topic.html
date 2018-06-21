@@ -31,18 +31,11 @@
         </div>
     </div>
     <div style="padding-top: 20px">
-        <div ng-show="resources.video" class="children">
-            <span class="gray">Прикреплённые видео</span>
-            <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addVideoResource()" title="Прикрепить видео"></i>
-            <div class="row">
-                <video-card ng-repeat="link in resources.video" video="link.resource" class="col-md-4"></video-card>
-            </div>
-        </div>
-        <!--<a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>-->
-    </div>
-    <div style="padding-top: 20px">
-        <div ng-show="resources.item" class="children">
+        <div ng-show="resources.item || resources.items_range" class="children">
             <span class="gray">Прикреплённые абзацы</span>
+            <div ng-repeat="range in resources.items_range">
+                <a ii-ref="range.resource">{{range.resource.code}}</a>
+            </div>
             <div ng-repeat="item in resources.item">
                 <blockquote ng-show="item.quote">
                     <div ii-bind="item.quote"></div>
@@ -52,6 +45,16 @@
                 <a ng-hide="item.quote" ii-ref="item.resource">{{item.resource.number}}</a>
             </div>
         </div>
+    </div>
+    <div style="padding-top: 20px">
+        <div ng-show="resources.video" class="children">
+            <span class="gray">Прикреплённые видео</span>
+            <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addVideoResource()" title="Прикрепить видео"></i>
+            <div class="row">
+                <video-card ng-repeat="link in resources.video" video="link.resource" class="col-md-4"></video-card>
+            </div>
+        </div>
+        <!--<a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>-->
     </div>
     <div ng-show="resources.image.length" class="children">
         <span class="gray">Прикреплённые иллюстрации и схемы</span>
