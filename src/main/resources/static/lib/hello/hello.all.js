@@ -1,4 +1,4 @@
-/*! hellojs v1.12.0 | (c) 2012-2016 Andrew Dodson | MIT https://adodson.com/hello.js/LICENSE */
+/*! hellojs v1.16.1 | (c) 2012-2017 Andrew Dodson | MIT https://adodson.com/hello.js/LICENSE */
 // ES5 Object.create
 if (!Object.create) {
 
@@ -177,7 +177,7 @@ hello.utils = {
 			if (Array.isArray(r) && Array.isArray(a)) {
 				Array.prototype.push.apply(r, a);
 			}
-			else if (r instanceof Object && a instanceof Object && r !== a) {
+			else if (r && (r instanceof Object || typeof r === 'object') && a && (a instanceof Object || typeof a === 'object') && r !== a) {
 				for (var x in a) {
 					r[x] = hello.utils.extend(r[x], a[x]);
 				}
@@ -413,7 +413,6 @@ hello.utils.extend(hello, {
 			client_id: encodeURIComponent(provider.id),
 			response_type: encodeURIComponent(responseType),
 			redirect_uri: encodeURIComponent(redirectUri),
-			display: opts.display,
 			state: {
 				client_id: provider.id,
 				network: p.network,
@@ -1395,13 +1394,13 @@ hello.utils.extend(hello.utils, {
 		if (options.height) {
 			var dualScreenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
 			var height = screen.height || window.innerHeight || documentElement.clientHeight;
-			options.top = parseInt((height - options.height) / 2, 10) + dualScreenTop;
+			options.top = (options.top) ? options.top : parseInt((height - options.height) / 2, 10) + dualScreenTop;
 		}
 
 		if (options.width) {
 			var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
 			var width = screen.width || window.innerWidth || documentElement.clientWidth;
-			options.left = parseInt((width - options.width) / 2, 10) + dualScreenLeft;
+			options.left = (options.left) ? options.left : parseInt((width - options.width) / 2, 10) + dualScreenLeft;
 		}
 
 		// Convert options into an array
@@ -1456,7 +1455,7 @@ hello.utils.extend(hello.utils, {
 			p.redirect_uri = state.redirect_uri || location.href.replace(/[\?\#].*$/, '');
 
 			// Redirect to the host
-			var path = state.oauth_proxy + '?' + _this.param(p);
+			var path = _this.qs(state.oauth_proxy, p);
 
 			location.assign(path);
 
@@ -1481,7 +1480,14 @@ hello.utils.extend(hello.utils, {
 				_this.extend(p, a);
 			}
 			catch (e) {
-				console.error('Could not decode state parameter');
+				var stateDecoded = decodeURIComponent(p.state);
+				try {
+					var b = JSON.parse(stateDecoded);
+					_this.extend(p, b);
+				}
+				catch (e) {
+					console.error('Could not decode state parameter');
+				}
 			}
 
 			// Access_token?
@@ -1521,7 +1527,7 @@ hello.utils.extend(hello.utils, {
 				var res = 'result' in p && p.result ? JSON.parse(p.result) : false;
 
 				// Trigger the callback on the parent
-				parent[p.callback](res);
+				callback(parent, p.callback)(res);
 				closeWindow();
 			}
 
@@ -1571,7 +1577,7 @@ hello.utils.extend(hello.utils, {
 				var str = JSON.stringify(obj);
 
 				try {
-					parent[cb](str);
+					callback(parent, cb)(str);
 				}
 				catch (e) {
 					// Error thrown whilst executing parent callback
@@ -1579,6 +1585,16 @@ hello.utils.extend(hello.utils, {
 			}
 
 			closeWindow();
+		}
+
+		function callback(parent, callbackID) {
+			if (callbackID.indexOf('_hellojs_') !== 0) {
+				return function() {
+					throw 'Could not execute callback ' + callbackID;
+				};
+			}
+
+			return parent[callbackID];
 		}
 
 		function closeWindow() {
@@ -3048,7 +3064,6 @@ if (typeof chrome === 'object' && typeof chrome.identity === 'object' && chrome.
 			login: function(p) {
 				// OAuth2 non-standard adjustments
 				p.qs.scope = '';
-				delete p.qs.display;
 
 				// Should this be run as OAuth1?
 				// If the redirect_uri is is HTTP (non-secure) then its required to revert to the OAuth1 endpoints
@@ -3270,6 +3285,9 @@ if (typeof chrome === 'object' && typeof chrome.identity === 'object' && chrome.
 })(hello);
 
 (function(hello) {
+	// For APIs, once a version is no longer usable, any calls made to it will be defaulted to the next oldest usable version.
+	// So we explicitly state it.
+	var version = 'v2.9';
 
 	hello.init({
 
@@ -3277,10 +3295,10 @@ if (typeof chrome === 'object' && typeof chrome.identity === 'object' && chrome.
 
 			name: 'Facebook',
 
-			// SEE https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/v2.1
+			// SEE https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
 			oauth: {
 				version: 2,
-				auth: 'https://www.facebook.com/dialog/oauth/',
+				auth: 'https://www.facebook.com/' + version + '/dialog/oauth/',
 				grant: 'https://graph.facebook.com/oauth/access_token'
 			},
 
@@ -3305,7 +3323,7 @@ if (typeof chrome === 'object' && typeof chrome.identity === 'object' && chrome.
 			},
 
 			// Refresh the access_token
-			refresh: true,
+			refresh: false,
 
 			login: function(p) {
 
@@ -3315,9 +3333,8 @@ if (typeof chrome === 'object' && typeof chrome.identity === 'object' && chrome.
 					p.qs.auth_type = 'reauthenticate';
 				}
 
-				// The facebook login window is a different size.
-				p.options.popup.width = 580;
-				p.options.popup.height = 400;
+				// Set the display value
+				p.qs.display = p.options.display || 'popup';
 			},
 
 			logout: function(callback, options) {
@@ -3339,7 +3356,7 @@ if (typeof chrome === 'object' && typeof chrome.identity === 'object' && chrome.
 			},
 
 			// API Base URL
-			base: 'https://graph.facebook.com/v2.4/',
+			base: 'https://graph.facebook.com/' + version + '/',
 
 			// Map GET requests
 			get: {
@@ -3957,10 +3974,6 @@ if (typeof chrome === 'object' && typeof chrome.identity === 'object' && chrome.
 			scope_delim: ' ',
 
 			login: function(p) {
-				if (p.qs.display === 'none') {
-					// Google doesn't like display=none
-					p.qs.display = '';
-				}
 
 				if (p.qs.response_type === 'code') {
 
@@ -4536,12 +4549,6 @@ if (typeof chrome === 'object' && typeof chrome.identity === 'object' && chrome.
 			},
 
 			scope_delim: ' ',
-
-			login: function(p) {
-				// Instagram throws errors like 'JavaScript API is unsupported' if the display is 'popup'.
-				// Make the display anything but 'popup'
-				p.qs.display = '';
-			},
 
 			base: 'https://api.instagram.com/v1/',
 
@@ -5156,6 +5163,106 @@ if (typeof chrome === 'object' && typeof chrome.identity === 'object' && chrome.
 
 })(hello);
 
+// See: https://developer.spotify.com/web-api/
+(function(hello) {
+
+	hello.init({
+
+		spotify: {
+			name: 'Spotify',
+
+			oauth: {
+				version: 2,
+				auth: 'https://accounts.spotify.com/authorize',
+				grant: 'https://accounts.spotify.com/api/token'
+			},
+
+			// See: https://developer.spotify.com/web-api/using-scopes/
+			scope_delim: ' ',
+			scope: {
+				basic: '',
+				photos: '',
+				friends: 'user-follow-read',
+				publish: 'user-library-read',
+				email: 'user-read-email',
+				share: '',
+				publish_files: '',
+				files: '',
+				videos: '',
+				offline_access: ''
+			},
+
+			// Request path translated
+			base: 'https://api.spotify.com',
+
+			// See: https://developer.spotify.com/web-api/endpoint-reference/
+			get: {
+				me: '/v1/me',
+				'me/following': '/v1/me/following?type=artist', // Only 'artist' is supported
+
+				// Because tracks, albums and playlist exist on spotify, the tracks are considered
+				// the resource for the 'me/likes' endpoint
+				'me/like': '/v1/me/tracks'
+			},
+
+			// Response handlers
+			wrap: {
+				me: formatUser,
+				'me/following': formatFollowees,
+				'me/like': formatTracks
+			},
+
+			xhr: formatRequest,
+			jsonp: false
+		}
+	});
+
+	// Move the access token from the request body to the request header
+	function formatRequest(p, qs) {
+		var token = qs.access_token;
+		delete qs.access_token;
+		p.headers.Authorization = 'Bearer ' + token;
+
+		return true;
+	}
+
+	function formatUser(o) {
+		if (o.id) {
+			o.name = o.display_name;
+			o.thumbnail = o.images.length ? o.images[0].url : null;
+			o.picture = o.thumbnail;
+		}
+
+		return o;
+	}
+
+	function formatFollowees(o) {
+		paging(o);
+		if (o && 'artists' in o) {
+			o.data = o.artists.items.forEach(formatUser);
+		}
+
+		return o;
+	}
+
+	function formatTracks(o) {
+		paging(o);
+		o.data = o.items;
+
+		return o;
+	}
+
+	function paging(res) {
+		if (res && 'next' in res) {
+			res.paging = {
+				next: res.next
+			};
+			delete res.next;
+		}
+	}
+
+})(hello);
+
 (function(hello) {
 
 	var base = 'https://api.twitter.com/';
@@ -5421,6 +5528,7 @@ if (typeof chrome === 'object' && typeof chrome.identity === 'object' && chrome.
 			get: {
 				me: function(p, callback) {
 					p.query.fields = 'id,first_name,last_name,photo_max';
+					p.query.v = '5.73';
 					callback('users.get');
 				}
 			},
@@ -5447,7 +5555,7 @@ if (typeof chrome === 'object' && typeof chrome.identity === 'object' && chrome.
 
 		if (o !== null && 'response' in o && o.response !== null && o.response.length) {
 			o = o.response[0];
-			o.id = o.uid;
+            if (o.uid) o.id = o.uid;
 			o.thumbnail = o.picture = o.photo_max;
 			o.name = o.first_name + ' ' + o.last_name;
 
