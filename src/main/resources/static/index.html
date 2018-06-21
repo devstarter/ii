@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--<html lang="ru" ng-app="app">-->
 <html lang="ru" ng-app="app" manifest="/static/cache.manifest">
 <head>
 	<meta name='yandex-verification' content='4bbcc914862aaad9' />
@@ -57,7 +58,10 @@
     </div>
 </script>
 <script type="text/ng-template" id="card-video">
-    <a ii-ref="video" class="card">
+    <a ii-ref="video" class="card" target="{{openInBlank?'_blank':'_self'}}">
+        <div ng-show="rate" class="rates">
+            <i ng-repeat="i in stars" class="glyphicon glyphicon-star"></i>
+        </div>
         <img ng-src="https://i.ytimg.com/vi/{{video.id}}/mqdefault.jpg"/>
         <div title="{{video.title}}">{{video.title | cut:false:65}}</div>
         <i class="glyphicon glyphicon-play video-play-button"></i>
@@ -76,8 +80,11 @@
            ng-click="playOrPause(record)"></i>
         <a ii-ref="record">{{record.name}}
             <span class="pointer gray nowrap small">{{record.code}}</span>
-            <span class="pointer gray nowrap small">({{record.duration | duration:'mm:ss' }})</span>
+            <span class="pointer gray nowrap small" ng-show="record.duration">({{record.duration | duration:'mm:ss' }})</span>
         </a>
+        <span ng-show="rate" class="rates">
+            <i ng-repeat="i in stars" class="glyphicon glyphicon-star"></i>
+        </span>
         <a title="Скачать"
            ng-show="record.url || record.audio_url"
            style="text-decoration: none"

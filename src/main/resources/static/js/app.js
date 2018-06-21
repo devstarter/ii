@@ -1379,8 +1379,19 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
     })
     .directive("videoCard", function () {
         return {
-            scope: { video: '=', openInBlank: '='},
-            templateUrl: "card-video"
+            scope: {
+                video: '=',
+                openInBlank: '=',
+                rate: '='
+            },
+            templateUrl: "card-video",
+            link: function(scope) {
+                var stars = [];
+                for(var i = 1; i <= scope.rate; i++) {
+                    stars.push({i: i})
+                }
+                scope.stars = stars;
+            }
         }
     })
     .directive("documentCard", function () {
@@ -1391,7 +1402,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
     })
     .directive("recordCard", function ($rootScope, $topicPrompt, $api, ngAudio, $parse, audioPlayer, $timeout) {
         return {
-            scope: { record: '=', excludeTopic: '='},
+            scope: {
+                record: '=',
+                excludeTopic: '=',
+                rate: '='
+            },
             templateUrl: "record-card",
             link: function(scope, element, attrs) {
                 if (scope.record.hasOwnProperty('resource')) {
@@ -1415,7 +1430,13 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                             if (scope.$parent.$parent.update) scope.$parent.$parent.update();
                         })
                     });
+                };
+
+                var stars = [];
+                for(var i = 1; i <= scope.rate; i++) {
+                    stars.push({i: i})
                 }
+                scope.stars = stars;
             }
         }
     })

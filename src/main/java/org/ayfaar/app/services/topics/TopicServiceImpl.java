@@ -314,11 +314,11 @@ class TopicServiceImpl implements TopicService {
             resources.record.addAll(StreamEx.of(prepareResource(Record.class))
                     .filter(r -> r.resource.getAudioUrl() != null ||
                             (currentUserProvider.get().isPresent() && currentUserProvider.get().get().getRole().accept(UserRole.ROLE_EDITOR)))
-                    .sorted((r1, r2) -> {
+                    /*.sorted((r1, r2) -> {
                         if (r1.resource.getAudioUrl() != null && r2.resource.getAudioUrl() == null) return -1;
                         if (r2.resource.getAudioUrl() != null && r1.resource.getAudioUrl() == null) return 1;
                         return r2.resource.getRecorderAt().compareTo(r1.resource.getRecorderAt());
-                    }).toList());
+                    })*/.toList());
             return resources;
         }
 
@@ -333,17 +333,17 @@ class TopicServiceImpl implements TopicService {
         }
 
         private <T extends HasUri> List<ResourcePresentation<T>> prepareResource(Class<T> resourceClass) {
-            List<ResourcePresentation<T>> list = new LinkedList<>();
             //noinspection unchecked
-            linksMap.entrySet().stream()
+            List<ResourcePresentation> list = StreamEx.of(linksMap.entrySet())
                     .filter(e -> e.getKey().getClass().isAssignableFrom(resourceClass))
                     .map(e -> new ResourcePresentation(e.getKey(), e.getValue()))
-                    .sorted()
-                    .forEachOrdered(r -> {
-                        r.topics = getAllLinkedWith(r.resource.getUri()).map(TopicProvider::name).toList();
-                        list.add(r);
-                    });
-            return list;
+                    .peek(r -> r.topics = getAllLinkedWith(r.resource.getUri()).map(TopicProvider::name).toList())
+                    .reverseSorted(Comparator.comparing(o -> o.rate))
+                    .toList();
+            // workaround for typing problem
+            List typedResult = new ArrayList<ResourcePresentation<T>>();
+            typedResult.addAll(list);
+            return typedResult;
         }
 
         private void registerLink(Link link, UID uid) {

@@ -51,7 +51,7 @@
             <span class="gray">Прикреплённые видео</span>
             <i class="h btn glyphicon glyphicon-plus-sign nopadding" ng-click="addVideoResource()" title="Прикрепить видео"></i>
             <div class="row">
-                <video-card ng-repeat="link in resources.video" video="link.resource" class="col-md-4"></video-card>
+                <video-card ng-repeat="link in resources.video" video="link.resource" rate="link.rate" class="col-md-4"></video-card>
             </div>
         </div>
         <!--<a ng-hide="resources.video" class="btn btn-link" ng-click="addVideoResource()">Прикрепить видео</a>-->
@@ -77,7 +77,7 @@
     <!--<a ng-hide="resources.document.length" class="btn btn-link" ng-click="addDocResource()">Прикрепить документ</a>-->
     <div ng-show="resources.record" class="children">
         <span class="gray">Прикреплённые аудио записи</span>
-        <record-card ng-repeat="record in resources.record" record="record" exclude-topic="name"></record-card>
+        <record-card ng-repeat="record in resources.record" rate="record.rate" record="record.resource" exclude-topic="name"></record-card>
     </div>
     <a class="btn btn-default" ng-hide="term" ng-click="search(name)">
         <i class="icon-search"></i> Искать в тексте Ииссиидиологии

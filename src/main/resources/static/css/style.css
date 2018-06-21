@@ -32,6 +32,10 @@
 }
 .record-block .h {visibility: hidden}
 .record-block:hover .h {visibility: visible}
+.record-block .rates {
+    font-size: 75%;
+    color: grey;
+}
 .play-button {
     width: 20px;
     font-size: 120%;
@@ -79,6 +83,10 @@
     font-size: 90%;
     color: darkblue;
     /*word-break: break-all;*/
+}
+.card .rates {
+    position: absolute;
+    color: gold;
 }
 .nopadding {padding: 0}
 .padding, .padding-10 {padding: 10px}
