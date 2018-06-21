@@ -25,7 +25,7 @@ public class Morpher {
     public boolean getData() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        doc = builder.parse("http://morpher.ru/WebService.asmx/GetXml?s="+word.replace(" ", "%20"));
+        doc = builder.parse("https://ws3.morpher.ru/russian/declension?s="+word.replace(" ", "%20"));
         Element root = doc.getDocumentElement();
         return !root.getNodeName().equals("error");
     }
