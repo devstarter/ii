@@ -16,12 +16,14 @@
             <topics owner-uri="record.uri" style="padding-top: 20px; display: block"></topics>
         </div>
         <div ng-hide="singleMode">
-            <div class="pointer" ng-click="showFilters = !showFilters" style="padding-bottom: 20px">
-                <h3 style="display: inline">Ответы</h3> <span ng-hide="showFilters" class="gray">фильтровать</span>
+            <div class="pointer" style="padding-bottom: 20px">
+                <h3 style="display: inline">Аудио Ответы</h3>
             </div>
-            <div ng-show="showFilters" style="padding-bottom: 20px">
+            <div style="padding-bottom: 20px">
                 Год: <select class="form-control" ng-model="yearFilter" style="display: inline; width: 85px;" ng-change="update()">
                     <option></option>
+                    <option>2018</option>
+                    <option>2017</option>
                     <option>2016</option>
                     <option>2015</option>
                     <option>2014</option>

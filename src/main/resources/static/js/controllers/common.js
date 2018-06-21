@@ -446,7 +446,10 @@ function ResourcesController($scope, $stateParams, $state, Video, errorService, 
     $scope.newTopic = {};
     $scope.last = [];
     document.title = "Последние видео ответы";
-    var pager = $pager.createGroupedByDate($api.resource.video.last, "created_at", 6);
+    function loader(page, size) {
+        return $api.resource.video.last(page, size, $scope.nameFilter, $scope.yearFilter)
+    }
+    var pager = $pager.createGroupedByDate(loader, "created_at", 6);
 
     if ($stateParams.id) {
         $scope.videoLoading = true;
@@ -485,6 +488,11 @@ function ResourcesController($scope, $stateParams, $state, Video, errorService, 
             $scope.lastNoMore = data.last;
         })   
     }
+
+    $scope.filter = function() {
+        pager.reset();
+        getLast()
+    };
 
     $scope.updateCode = function() {
         modal.prompt("Код видео", $scope.video.code, "Указать/Изменить").then(function (code) {

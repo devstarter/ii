@@ -309,9 +309,11 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     add: function (url) {
                         return api.authPost("resource/video", {url: url})
                     },
-                    last: function (page, size) {
+                    last: function (page, size, nameOrCode, year) {
                         var params = {page: page};
                         if (size) params.size = size;
+                        if (nameOrCode) params.nameOrCode = nameOrCode;
+                        if (year) params.year = year;
                         return api.get("resource/video/last-created", params)
                     },
                     updateCode: function (id, code) {
@@ -724,7 +726,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
 
                 function loadHelloAndOpenModal() {
                     if (typeof hello === 'undefined') {
-                        requirejs(["static/lib/hello/hello.min.js"], function (hello) {
+                        requirejs(["static/lib/hello/hello.all.js"], function (hello) {
                             hello.init({
                                 facebook: "917074828411840",
                                 vk: "5371182",
@@ -1008,7 +1010,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     label = "9 том: " + label;
                 }
                 obj._label = label;
-                element.bind('click', function() {
+                if (attrs.target != '_blank') element.bind('click', function() {
                     $state.go(obj)
                 })
             }
@@ -1377,7 +1379,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
     })
     .directive("videoCard", function () {
         return {
-            scope: { video: '='},
+            scope: { video: '=', openInBlank: '='},
             templateUrl: "card-video"
         }
     })
@@ -1742,10 +1744,12 @@ function groupByDate(data, field) {
             header = "За последние сутки"
         } else if (diff < 7*24*60*60000) {
             header = "За последнюю неделю"
-        } else if (diff < 30*7*24*60*60000) {
+        } else if (diff < 30*24*60*60000) {
             header = "За последний месяц"
-        } else {
+        } else if (diff < 356*24*60*60000) {
             header = "Больше чем месяц назад"
+        } else {
+            header = "Больше года тому назад"
         }
         if (!grouped[header]) grouped[header] = [];
         grouped[header].push(v)

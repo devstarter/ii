@@ -1,10 +1,31 @@
 <div>
     <div ng-show="showUrlInput && !video">
+        <div class="pointer" style="padding-bottom: 20px">
+            <h3 style="display: inline">Видео Ответы</h3>
+        </div>
+        <div style="padding-bottom: 20px">
+            Год:
+            <select class="form-control" ng-model="yearFilter" style="display: inline; width: 85px;" ng-change="update()">
+                <option></option>
+                <option>2018</option>
+                <option>2017</option>
+                <option>2016</option>
+                <option>2015</option>
+                <option>2014</option>
+                <option>2013</option>
+                <option>2012</option>
+                <option>2011</option>
+                <option>2010</option>
+            </select>
+
+            <input placeholder="Название или код содержит"  class="form-control" ng-model="nameFilter" style="display: inline;width: 400px;"/>
+            <a ng-click="filter()" class="btn btn-default">Обновить</a>
+        </div>
         <div style="padding-top: 20px">
             <div ng-repeat="(header, videos) in last">
                 <span class="grey">{{header}}</span>
                 <div class="row">
-                    <video-card ng-repeat="video in videos" video="video" class="col-md-4"></video-card>
+                    <video-card ng-repeat="video in videos" video="video" open-in-blank="nameFilter || yearFilter" class="col-md-4 col-sm-6 col-xs-12"></video-card>
                 </div>
             </div>
             <a ng-click="getMore()" ng-hide="lastNoMore" class="btn btn-link" ng-class="lastLoading ? 'disabled' : ''">{{lastLoading ? 'Загрузка...' : 'Загрузить ещё'}}</a>

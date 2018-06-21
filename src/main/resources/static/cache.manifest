@@ -20,6 +20,7 @@ lib/angular-ui-router.min.js
 lib/angular.audio.min.js
 lib/ui-bootstrap/ui-bootstrap-0.11.2.min.js
 lib/require/require.min.js
+lib/hello/hello.all.js
 js/controllers/common.js
 js/controllers/term.js
 js/app.js

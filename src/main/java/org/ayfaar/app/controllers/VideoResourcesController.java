@@ -2,6 +2,7 @@ package org.ayfaar.app.controllers;
 
 import org.ayfaar.app.annotations.Moderated;
 import org.ayfaar.app.dao.CommonDao;
+import org.ayfaar.app.dao.VideoResourceDao;
 import org.ayfaar.app.model.User;
 import org.ayfaar.app.model.VideoResource;
 import org.ayfaar.app.services.moderation.Action;
@@ -28,16 +29,18 @@ public class VideoResourcesController {
     private final CommonDao commonDao;
     private final GoogleService youtubeService;
     private final ModerationService moderationService;
+    private final VideoResourceDao videoResourceDao;
 
     @Inject
-    public VideoResourcesController(GoogleService youtubeService, CommonDao commonDao, ModerationService moderationService) {
+    public VideoResourcesController(GoogleService youtubeService, CommonDao commonDao, ModerationService moderationService, VideoResourceDao videoResourceDao) {
         this.youtubeService = youtubeService;
         this.commonDao = commonDao;
         this.moderationService = moderationService;
+        this.videoResourceDao = videoResourceDao;
     }
 
     @RequestMapping("{id}")
-    public VideoResource get(@PathVariable String id) throws Exception {
+    public VideoResource get(@PathVariable String id) {
         VideoResource video = commonDao.get(VideoResource.class, "id", id);
         if (video != null) {
             if (video.getTitle() == null) {
@@ -52,13 +55,15 @@ public class VideoResourcesController {
     }
 
     @RequestMapping("last-created")
-    public List<VideoResource> lastCreated(@PageableDefault(size = 6, sort = "createdAt", direction = DESC) Pageable pageable) throws Exception {
-        return commonDao.getPage(VideoResource.class, pageable);
+    public List<VideoResource> lastCreated(@RequestParam(required = false) String nameOrCode,
+                                           @RequestParam(required = false) String year,
+                                           @PageableDefault(size = 6, sort = "createdAt", direction = DESC) Pageable pageable) {
+        return videoResourceDao.get(nameOrCode, year, pageable);
     }
 
     @RequestMapping(method = POST)
     @Moderated(value = Action.VIDEO_ADD, command = "@videoResourcesController.add")
-    public VideoResource add(@RequestParam String url, @AuthenticationPrincipal User user) throws Exception {
+    public VideoResource add(@RequestParam String url, @AuthenticationPrincipal User user) {
         hasLength(url);
         final String videoId = extractVideoIdFromYoutubeUrl(url);
         return commonDao.getOpt(VideoResource.class, "id", videoId).orElseGet(() -> {
