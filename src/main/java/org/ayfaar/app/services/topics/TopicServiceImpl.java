@@ -333,12 +333,26 @@ class TopicServiceImpl implements TopicService {
         }
 
         private <T extends HasUri> List<ResourcePresentation<T>> prepareResource(Class<T> resourceClass) {
-            //noinspection unchecked
             List<ResourcePresentation> list = StreamEx.of(linksMap.entrySet())
                     .filter(e -> e.getKey().getClass().isAssignableFrom(resourceClass))
                     .map(e -> new ResourcePresentation(e.getKey(), e.getValue()))
                     .peek(r -> r.topics = getAllLinkedWith(r.resource.getUri()).map(TopicProvider::name).toList())
-                    .reverseSorted(Comparator.comparing(o -> o.rate))
+                    .reverseSorted((o1, o2) -> {
+                        if (Objects.equals(o1.rate, o2.rate)) {
+                            if (resourceClass == Record.class) {
+                                return ((Record) o1.resource).getCode().compareTo(((Record) o2.resource).getCode());
+                            } else if (resourceClass == VideoResource.class) {
+                                return ((VideoResource) o1.resource).getPublishedAt().compareTo(((VideoResource) o2.resource).getPublishedAt());
+                            }
+                            return 0;
+                        } else if (o1.rate == null) {
+                            return -1;
+                        } else if (o2.rate == null) {
+                            return 1;
+                        } else {
+                            return o1.rate.compareTo(o2.rate);
+                        }
+                    })
                     .toList();
             // workaround for typing problem
             List typedResult = new ArrayList<ResourcePresentation<T>>();
