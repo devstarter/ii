@@ -981,7 +981,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
                     }
                 });
                 function find() {
-                    $state.goToTerm(query)
+                    window.location = "/" + query
                 }
                 function internalOnEnter() {
                     if (data && data.length) {

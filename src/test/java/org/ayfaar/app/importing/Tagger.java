@@ -13,10 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.io.IOException;
 import java.util.List;
-
-import static java.util.regex.Pattern.compile;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class,
@@ -28,19 +25,18 @@ public class Tagger {
     @Autowired private TermsTaggingUpdater taggingUpdater;
 
     @Test
-    public void items() throws IOException {
+    public void items() {
         final List<Item> items = itemDao.getByRegexp("number", "^[6]\\.");
-//        final List<Item> items = itemDao.getByRegexp("number", "^1[0-5]\\.");
         taggingUpdater.update(items);
     }
 
     @Test
-    public void quotes() throws IOException {
+    public void quotes() {
         taggingUpdater.updateAllQuotes();
     }
 
     @Test
-    public void termDescriptions() throws IOException {
+    public void termDescriptions() {
         taggingUpdater.updateAllTerms();
     }
 }

@@ -9,7 +9,7 @@
                    ng-click="playOrPause(record)" style="font-size: 170%"></i>
                 &nbsp;<h2 class="inline">{{record.name}}</h2>
                 <span class="gray">({{record.duration | duration:'mm:ss' }})</span>
-                &nbsp;<a title="Скачать" style="text-decoration: none" class="pointer glyphicon glyphicon-download gray" target="_blank" href="api/record/{{record.code}}/download/{{record.code}} {{record.name}}.mp3"></a>
+                &nbsp;<a title="Скачать" style="text-decoration: none" class="pointer glyphicon glyphicon-download gray" target="_blank" href="api/record/{{record.code}}/download/{{record.code}} {{record.name | limitTo: 40}}{{record.name.length > 40 ? '...' : ''}}.mp3"></a>
                 &nbsp;<i class="pointer h glyphicon glyphicon-pencil gray" ng-click="rename(record)" title="Переименовать ответ"></i>
             </div>
             <span class="gray">{{record.code}}</span>

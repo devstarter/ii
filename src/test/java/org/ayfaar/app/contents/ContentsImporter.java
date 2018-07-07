@@ -48,7 +48,7 @@ public class ContentsImporter {
     @Inject CommonDao commonDao;
     @Inject ItemDao itemDao;
 
-    List<String> toma = asList("5");
+    List<String> toma = asList("6");
 
     @Test
     public void main() throws IOException, XLSParsingException {
@@ -220,6 +220,8 @@ public class ContentsImporter {
         List<ItemsRange> ranges = new ArrayList<>();
         Map<ItemBook, ItemsRange> itemRange = new LinkedHashMap<>();
 
+        log.info("First pass category and ranges creation...");
+
         itemBookList.forEach(item -> {
             String name = null;
             if (item.getType() == SectionType.Paragraph) {
@@ -237,6 +239,9 @@ public class ContentsImporter {
                 itemsRange.setTo(null);
 //                validate(itemsRange);
                 ranges.add(commonDao.save(itemsRange));
+
+                System.out.print(itemsRange.getFrom() + " ");
+
                 itemRange.put(item, itemsRange);
             } else {
                 switch (item.getType()) {
@@ -266,8 +271,12 @@ public class ContentsImporter {
                     category.setParent(categories.get(item.getParent()).getUri());
                 }
                 categories.put(item, commonDao.save(category));
+
+                System.out.println("\n"+category.getName());
             }
         });
+
+        log.info("Setting next property for categories...");
 
         final Map<SectionType, List<Map.Entry<ItemBook, Category>>> typeCategoryMap = StreamEx.of(categories.entrySet()).groupingBy(e -> e.getKey().getType());
 
@@ -281,10 +290,14 @@ public class ContentsImporter {
                 if (current != null) {
                     current.setNext(next.getUri());
                     commonDao.save(current);
+
+                    System.out.print(current.getName() + " ");
                 }
                 current = next;
             }
         });
+
+        log.info("Setting to property for ranges...");
 
         final Map<String, List<ItemsRange>> rangesByTom = StreamEx.of(ranges).groupingBy(r -> r.getFrom().replaceAll("^(\\d+)\\.\\d+", "$1"));
 
@@ -296,6 +309,8 @@ public class ContentsImporter {
                 if (current != null) {
                     current.setTo(ItemController.getPrev(next.getFrom()));
                     commonDao.save(current);
+
+                    System.out.print(current.getFrom() + "-"+current.getTo()+" ");
                 }
                 current = next;
             }
@@ -313,7 +328,9 @@ public class ContentsImporter {
             }
             category.setStart(start);
             commonDao.save(category);
+            System.out.print(category.getName() + " ");
         });
+        log.info("Finish");
     }
 
     private static void validate(ItemsRange range) {

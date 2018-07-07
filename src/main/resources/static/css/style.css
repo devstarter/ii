@@ -1,3 +1,6 @@
+.menu {
+    font-size: 16px;
+}
 .italic {
     font-style: italic;
 }
@@ -181,7 +184,7 @@ aside {
 body {
     margin: 0 auto;
     padding-bottom: 50px;
-    font-size: 16px;
+    font-size: 18px;
 }
 .structure-item {
     color: #969696;
