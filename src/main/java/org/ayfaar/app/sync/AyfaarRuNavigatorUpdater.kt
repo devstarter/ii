@@ -1,15 +1,33 @@
 package org.ayfaar.app.sync
 
-import com.google.api.services.sheets.v4.model.Sheet
 import com.google.gson.Gson
 import mu.KotlinLogging
+import org.apache.commons.net.ftp.FTPClient
 import org.ayfaar.app.utils.GoogleService
 import org.ayfaar.app.utils.Transliterator
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Service
+import java.io.File
+import java.io.IOException
+import java.util.regex.Pattern
 
+
+@Service
+@EnableScheduling
 class AyfaarRuNavigatorUpdater {
+    constructor() {}
+    internal constructor(ftpLogin: String, ftpPassword: String) {
+        this.ftpLogin = ftpLogin
+        this.ftpPassword = ftpPassword
+    }
+
     private val log = KotlinLogging.logger {  }
+    @Value("ftp.ayfaar.ru.login") private lateinit var ftpLogin: String
+    @Value("ftp.ayfaar.ru.password") private lateinit var ftpPassword: String
     val map = listOf(
-            Pair("Тест", "1s1kYDmSrL2fShaPrMUO2oWrP-3tyySkp440Z29AuMFg"),
+//            Pair("Тест", "1s1kYDmSrL2fShaPrMUO2oWrP-3tyySkp440Z29AuMFg"),
             Pair("Устройство мироздания", "1KBA_9B9bySStHtA_7B1uR83uOT-EnKz2-pH3bREVd1Y"),
             Pair("Сознание и биология человека", "1LYaTF2Tu0qfboAXtbserFK40C1JFr3tfikJHD078Aq0"),
             Pair("Взаимоотношения людей", "1pbLXSJ82xdvhU4UuEE4juivEUpS14dp-PE1tMjEgFVU"),
@@ -17,18 +35,32 @@ class AyfaarRuNavigatorUpdater {
             Pair("Будущее человечества", "18IETRXsA-lWxAuNxzuuWItlE5vEnBUBS56_SYfyj2N0")
     )
 
+    @Scheduled(cron = "0 0 * * * *") // every hour
     fun sync() {
         log.info("Synchronization started")
 
-        val jsonMap = HashMap<String, Any>()
+        val dsJsonMap = HashMap<String, Any>()
+        val topicsJsonMap = HashMap<String, Any>()
 
-        map.map { Pair(it.first, loadGoogleData(it.second)) }.forEach {
-            jsonMap[it.first] = it.second.map { mapOf(
-                    Pair("name", it),
-                    Pair("alias", Transliterator.forUrl(it.first))
+        val ds = map.map { Pair(it.first, loadGoogleData(it.second)) }
+        ds.forEach { (topicName, subtopics) ->
+            dsJsonMap[topicName] = subtopics.map { (title, blocks) -> mapOf(
+                    Pair("name", title),
+                    Pair("alias", Transliterator.forUrl(title)),
+                    Pair("blocks", blocks)
+            ) }
+            topicsJsonMap[topicName] = subtopics.map { (title, _) -> mapOf(
+                    Pair("name", title),
+                    Pair("alias", Transliterator.forUrl(title))
             ) }
         }
-        log.info { Gson().toJson(jsonMap) }
+        val ftpHost = "ftp.ayfaar.ru"
+
+        uploadData("navigator-datasource.json", Gson().toJson(dsJsonMap)!!, ftpHost, ftpLogin, ftpPassword)
+        log.info("navigator-datasource.json uploaded")
+
+        uploadData("navigator-topics.json", Gson().toJson(topicsJsonMap)!!, ftpHost, ftpLogin, ftpPassword)
+        log.info("navigator-topics.json uploaded")
 
         log.info("Synchronization finished")
     }
@@ -38,20 +70,53 @@ class AyfaarRuNavigatorUpdater {
                 .get(id)
                 .execute()
                 .sheets
-                .map { Pair(it.properties.title, it.loadData(id) ) }
-
-
+                .map { Pair(it.properties.title, loadData(id, it.properties.title)) }
 }
 
-private fun Sheet.loadData(id: String) = GoogleService.getSheetsService()
-        .spreadsheets()
-        .values()
-        .get(id, "A:Z")
-        .execute()
-        .getValues()
-        .parseData()
+/////////////////////////////////// UTILS /////////////////////////////////
 
-fun List<List<Any>>.parseData(): Pair<Block?, Block?> {
+fun uploadData(remoteFilename: String, json: String, ftpHost: String, ftpLogin: String, ftpPassword: String) {
+    val file = File.createTempFile("navigator", ".json")
+    file.writeText(json)
+
+    val client = FTPClient()
+
+    try {
+        client.connect(ftpHost)
+        client.login(ftpLogin, ftpPassword)
+        client.enterLocalPassiveMode()
+        client.storeFile("/domains/ayfaar.ru/public_html/tpl/static/izuchenie_ii/$remoteFilename", file.inputStream())
+        client.logout()
+    } catch (e: IOException) {
+        e.printStackTrace()
+    } finally {
+        try {
+            client.disconnect()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+}
+
+private fun loadData(id: String, sheetId: String): Blocks {
+    val log = KotlinLogging.logger {  }
+//    log.info { "loading sheet $id#$sheetId" }
+    return GoogleService.getSheetsService()
+            .spreadsheets()
+            .values()
+            .get(id, "$sheetId!A:Z")
+            .execute()
+            .getValues()
+            .parseData()
+            .also {
+                log.info { "$id#$sheetId loaded: ${it.summary()}" }
+            }
+}
+
+
+
+
+fun List<List<Any>>.parseData(): Blocks {
     val iterator = CoolIterator(this)
     var newbieBlock: Block? = null
     var advancedBlock: Block? = null
@@ -65,7 +130,7 @@ fun List<List<Any>>.parseData(): Pair<Block?, Block?> {
 
         }
     }
-    return Pair(newbieBlock, advancedBlock)
+    return Blocks(newbieBlock, advancedBlock)
 }
 
 fun `разбор материала начальной сложности`(iterator: CoolIterator, startIndex: Int = 0): Block {
@@ -77,13 +142,20 @@ fun `разбор материала начальной сложности`(iter
         when {
             next.someIs(startIndex, "СТАТЬИ") -> articles = `разбор статей`(iterator, startIndex)
             next.someIs(startIndex, "ВИДЕО (цветной блок)") -> {
-                videos = `разбор блока названий и ссылок`(iterator, startIndex, startIndex + 2)
+                videos = `разбор блока названий и ссылок`(iterator, startIndex, startIndex + 2).map { it.copy(id = extractVideoIdFromUrl(it.url)) }
                 iterator.stepBack()
             }
-            next.someIs(startIndex, "АУДИО (белый блок)") -> audios = `разбор блока названий и ссылок`(iterator, startIndex, startIndex + 2)
+            next.someIs(startIndex, "АУДИО (белый блок)") -> audios = `разбор блока названий и ссылок`(iterator, startIndex, startIndex + 2).mapAudioUrls()
         }
     }
     return Block(articles, videos, audios)
+}
+
+private fun Collection<TitleUrlPair>.mapAudioUrls() = this.map {
+    if (it.url.contains("ii.ayfaar.org/r/", true)) {
+        val code = it.url.split("ii.ayfaar.org/r/")[1]
+        it.copy(url = "http://ii.ayfaar.org/api/record/$code/download/$code")
+    } else it
 }
 
 
@@ -118,12 +190,38 @@ fun `разбор блока названий и ссылок`(iterator: CoolIte
     return articles
 }
 
+val youTubeUrlRegEx = "^(https?)?(://)?(www.)?(m.)?((youtube.com)|(youtu.be))/"
+val videoIdRegex = arrayOf("\\?vi?=([A-Za-z0-9_\\-]*)", "watch\\?.*v=([A-Za-z0-9_\\-]*)", "(?:embed|vi?)/([^/?]*)", "^([A-Za-z0-9_\\-]*)")
+
+fun extractVideoIdFromUrl(url: String): String? {
+    val youTubeLinkWithoutProtocolAndDomain = youTubeLinkWithoutProtocolAndDomain(url)
+
+    for (regex in videoIdRegex) {
+        val compiledPattern = Pattern.compile(regex)
+        val matcher = compiledPattern.matcher(youTubeLinkWithoutProtocolAndDomain)
+
+        if (matcher.find()) {
+            return matcher.group(1)
+        }
+    }
+
+    return null
+}
+
+private fun youTubeLinkWithoutProtocolAndDomain(url: String): String {
+    val compiledPattern = Pattern.compile(youTubeUrlRegEx)
+    val matcher = compiledPattern.matcher(url)
+
+    return if (matcher.find()) {
+        url.replace(matcher.group(), "")
+    } else url
+}
 
 private fun List<String>.someIs(index: Int, str: String) = if (this.size > index) this[index].trim() == str else false
 private fun List<String>.firstIs(str: String) = this.firstOrNull()?.trim() == str
 private fun List<String>.firstNot(str: String) = this.firstOrNull()?.trim() != str
 
-data class TitleUrlPair(val title: String, val url: String)
+data class TitleUrlPair(val title: String, val url: String, val id: String? = null)
 
 
 class CoolIterator(private val list: List<List<Any>>) {
@@ -157,4 +255,17 @@ class CoolIterator(private val list: List<List<Any>>) {
 
 }
 
-data class Block(val articles: Articles?, val videos: List<TitleUrlPair>?, val audios: List<TitleUrlPair>?)
+data class Block(val articles: Articles?, val videos: List<TitleUrlPair>?, val audios: List<TitleUrlPair>?) {
+    fun summary(): String {
+        return "Oris articles: ${articles?.oris?.size}, " +
+                "others articles ${articles?.others?.size}, " +
+                "videos: ${videos?.size}, " +
+                "audios: ${audios?.size}"
+    }
+}
+
+data class Blocks(val newbie: Block?, val advanced: Block?) {
+    fun summary(): String {
+        return "newbie: ${newbie?.summary()}, advanced: ${advanced?.summary()}"
+    }
+}

@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost/ii?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false
-    username: root
-    password:
+    username: ii
+    password: ii
 
 OPENSHIFT_DATA_DIR: '/'
 OPENSHIFT_BASE_URL: 'http://ii.ayfaar.org/'

@@ -9,7 +9,7 @@ class AyfaarRuNavigatorUpdaterTest {
 
     @Test
     fun sync() {
-        AyfaarRuNavigatorUpdater().sync()
+        AyfaarRuNavigatorUpdater("", "").sync()
     }
 
     @Test
@@ -27,6 +27,34 @@ class AyfaarRuNavigatorUpdaterTest {
             expect(advancedBlock?.articles?.others).toBeEmpty()
             expect(advancedBlock?.videos).toHaveSize(1)
             expect(advancedBlock?.audios).toHaveSize(3)
+        }
+    }
+
+    @Test
+    fun uploadDataTest() {
+//        uploadData("test")
+    }
+
+    @Test
+    fun getYoutubeIdFromUrlTest() {
+        listOf(
+                "http://www.youtube.com/watch?feature=player_embedded&v=dm_APzDxNN4",
+                "http://www.youtube.com/v/dm_APzDxNN4?fs=1&hl=en_US&rel=0",
+                "http://www.youtube.com/embed/dm_APzDxNN4?rel=0",
+                "http://www.youtube.com/watch?v=dm_APzDxNN4&feature=feedrec_grec_index",
+                "http://www.youtube.com/watch?v=dm_APzDxNN4",
+                "http://youtu.be/dm_APzDxNN4",
+                "http://www.youtube.com/watch?v=dm_APzDxNN4#t=0m10s",
+                "http://youtu.be/dm_APzDxNN4",
+                "http://www.youtube.com/embed/dm_APzDxNN4",
+                "http://www.youtube.com/v/dm_APzDxNN4",
+                "http://www.youtube.com/watch?v=dm_APzDxNN4",
+                "https://www.youtube.com/watch?v=dm_APzDxNN4",
+                "http://www.youtube-nocookie.com/v/dm_APzDxNN4?version=3&hl=en_US&rel=0").forEach {url ->
+            extractVideoIdFromUrl(url).let { id ->
+                println(url)
+                expect(id).toEqual("dm_APzDxNN4")
+            }
         }
     }
 }

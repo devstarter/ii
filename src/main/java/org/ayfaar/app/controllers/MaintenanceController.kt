@@ -1,10 +1,7 @@
 package org.ayfaar.app.controllers
 
 import org.ayfaar.app.services.EntityLoader
-import org.ayfaar.app.sync.GetVideosFormYoutube
-import org.ayfaar.app.sync.RecordSynchronizer
-import org.ayfaar.app.sync.TermDescriptionImporter
-import org.ayfaar.app.sync.VocabularySynchronizer
+import org.ayfaar.app.sync.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -15,6 +12,7 @@ import javax.inject.Inject
 class MaintenanceController @Inject
 constructor(val entityLoader: EntityLoader,
             val getVideosFormYoutube: GetVideosFormYoutube,
+            val ayfaarRuNavigatorUpdater: AyfaarRuNavigatorUpdater,
             val termDescriptionImporter: TermDescriptionImporter) {
 
 
@@ -49,5 +47,10 @@ constructor(val entityLoader: EntityLoader,
     @RequestMapping("sync/import-term-descriptions")
     fun importTermDescriptions() {
         termDescriptionImporter.import()
+    }
+
+    @RequestMapping("sync/update-navigator")
+    fun updateNavigator() {
+        ayfaarRuNavigatorUpdater.sync()
     }
 }
