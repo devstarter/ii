@@ -1,5 +1,6 @@
 package org.ayfaar.app.utils;
 
+import kotlin.Pair;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Term;
@@ -30,6 +31,8 @@ public interface TermService {
     void loadMorthems(Term primeTerm, String target, String prefix);
 
     Collection<TermProvider> findTerms(String text);
+
+    Collection<Pair<String, TermProvider>> getTermRoots();
 
     interface TermProvider {
         String getName();

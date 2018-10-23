@@ -5,7 +5,6 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.utils.RegExpUtils;
 import org.ayfaar.app.utils.TermService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLDecoder;
@@ -15,8 +14,8 @@ import java.util.regex.Pattern;
 
 import static java.util.regex.Pattern.compile;
 
-@Controller
-@RequestMapping("api/integration")
+//@Controller
+//@RequestMapping("api/integration")
 public class IntegrationController {
     @Autowired
     TermService termService;

@@ -1,6 +1,7 @@
 package org.ayfaar.app.utils;
 
 
+import kotlin.Pair;
 import lombok.Data;
 import lombok.Getter;
 import org.ayfaar.app.dao.CommonDao;
@@ -466,5 +467,10 @@ public class TermServiceImpl implements TermService {
         }
 
         return contains;
+    }
+
+    @Override
+    public Collection<Pair<String, TermProvider>> getTermRoots() {
+        return Collections.emptyList();
     }
 }
