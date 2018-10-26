@@ -9,7 +9,6 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -56,7 +55,7 @@ public class TomCheck extends IntegrationTest {
     }
 
     private void findTerms(String line) {
-        contains.addAll(termService.findTerms(line));
+        contains.addAll(termService.findTerms(line).values());
     }
 
 }

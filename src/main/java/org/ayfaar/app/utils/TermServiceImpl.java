@@ -451,9 +451,10 @@ public class TermServiceImpl implements TermService {
     }
 
     @Override
-    public Collection<TermProvider> findTerms(String text) {
-        Set<TermProvider> contains = new HashSet<>();
-        text = text.toLowerCase();
+    public Map<String, TermProvider> findTerms(String originalText) {
+        long startTime = System.currentTimeMillis();
+        Map<String, TermProvider> contains = new HashMap<>();
+        String text = originalText.toLowerCase();
 
         for (Map.Entry<String, TermService.TermProvider> entry : getAll()) {
             String key = entry.getKey();
@@ -461,11 +462,12 @@ public class TermServiceImpl implements TermService {
                     + "((" + RegExpUtils.W + ")|$)", Pattern.UNICODE_CHARACTER_CLASS)
                     .matcher(text);
             if (matcher.find()) {
-                contains.add(entry.getValue());
+                contains.put(entry.getKey(), entry.getValue());
                 text = text.replaceAll(key, "");
             }
         }
-
+        long computatioTime = System.currentTimeMillis() - startTime;
+        logger.debug("Found "+contains.size()+"  terms in "+computatioTime/1000+" sec for text: "+originalText.trim().substring(0, 50)+"...");
         return contains;
     }
 

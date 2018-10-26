@@ -17,11 +17,14 @@ spring:
   jpa.hibernate.ddl-auto: update
 
 
+
 logging:
   file: /ii/ii.log
   level:
     org: warn
     org.ayfaar: info
+    org.ayfaar.app.services: debug
+    org.ayfaar.app.utils: debug
 #    org.springframework: warn
 #  pattern:
 #    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
@@ -39,6 +42,17 @@ google.api.key: ${GOOGLE_API_KEY:'no_key'}
 server:
   session:
     timeout: 2147483647
+  ssl:
+    enabled: true
+    redirect-http-to-https: false
+    key-store: /etc/letsencrypt/live/ii.ayfaar.org/keystore.p12
+    key-store-password: ayfaar
+    keyStoreType: PKCS12
+    keyAlias: ii.ayfaar.org
+  port: 443
+  http-port: 80
+
+#  security.require-ssl=true
 
 translation:
   spreadsheet-id: '1vAMl7PTVXHuRUdGI9HlbfAIYXh6X1tcPcixI1aAJgfk'

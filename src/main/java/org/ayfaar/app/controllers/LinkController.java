@@ -4,6 +4,7 @@ import org.ayfaar.app.dao.ItemDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.dao.TermMorphDao;
+import org.ayfaar.app.event.TermMorphAddedEvent;
 import org.ayfaar.app.model.Item;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.Term;
@@ -13,6 +14,7 @@ import org.ayfaar.app.utils.EmailNotifier;
 import org.ayfaar.app.utils.TermService;
 import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +36,7 @@ public class LinkController {
     @Autowired TermService termService;
     @Autowired TermMorphDao termMorphDao;
     @Autowired TermsMarker termsMarker;
-//    @Autowired ApplicationEventPublisher eventPublisher;
+    @Autowired ApplicationEventPublisher eventPublisher;
     @Autowired LinkService linkService;
 
 
@@ -76,9 +78,11 @@ public class LinkController {
         }
         if (type != null && type == 0) {
             // Morph
-            termMorphDao.save(new TermMorph(alias, primTerm.getUri()));
+            TermMorph termMorph = new TermMorph(alias, primTerm.getUri());
+            termMorphDao.save(termMorph);
             // need it to start tagging update for this term and all morph aliases
 //            eventPublisher.publishEvent(new TermUpdatedEvent(primTerm, alias));
+            eventPublisher.publishEvent(new TermMorphAddedEvent(termMorph));
             return 1;
         }
         Term aliasTerm = termDao.getByName(alias);

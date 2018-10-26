@@ -10,3 +10,6 @@ OPENSHIFT_BASE_URL: 'http://ii.ayfaar.org/'
 logging:
   level:
     org.ayfaar: trace
+server:
+  ssl:
+    key-store: D:\projects\ayfaar\ii-app\keystore.p12

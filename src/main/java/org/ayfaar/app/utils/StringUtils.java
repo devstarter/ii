@@ -58,4 +58,9 @@ public class StringUtils {
     public static boolean equals(String s1, String s2, boolean caseSensitive) {
         return caseSensitive ? s1.compareTo(s2) == 0 : s1.compareToIgnoreCase(s2) == 0;
     }
+
+    public static String formatDuration(long millis) {
+        long s = millis/1000;
+        return String.format("%d:%02d:%02d", s / 3600, (s % 3600) / 60, (s % 60));
+    }
 }

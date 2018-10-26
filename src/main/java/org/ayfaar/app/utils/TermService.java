@@ -30,7 +30,7 @@ public interface TermService {
 
     void loadMorthems(Term primeTerm, String target, String prefix);
 
-    Collection<TermProvider> findTerms(String text);
+    Map<String, TermProvider> findTerms(String text);
 
     Collection<Pair<String, TermProvider>> getTermRoots();
 
