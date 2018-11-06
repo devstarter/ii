@@ -1237,7 +1237,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
             link: function (scope) {
                 scope.$watch('code', function (newVal) {
                     if (newVal) {
-                        scope.url = $sce.trustAsResourceUrl("http://www.youtube.com/embed/" + newVal);
+                        scope.url = $sce.trustAsResourceUrl("https://www.youtube.com/embed/" + newVal);
                     }
                 });
             }

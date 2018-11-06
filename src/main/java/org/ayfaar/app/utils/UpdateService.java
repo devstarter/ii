@@ -2,7 +2,7 @@ package org.ayfaar.app.utils;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.ayfaar.app.event.TermAddEvent;
+import org.ayfaar.app.event.TermAddedeEvent;
 import org.ayfaar.app.services.itemRange.ItemRangeService;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -19,9 +19,9 @@ public class UpdateService {
 
     @EventListener
     @Async
-    public void updateTermServices(TermAddEvent termAddEvent){
+    public void updateTermServices(TermAddedeEvent termAddedeEvent){
         termService.reload();
-        termsFinder.updateTermParagraphForTerm(termAddEvent.getTerm());
+        termsFinder.updateTermParagraphForTerm(termAddedeEvent.getTerm());
         itemRangeService.reload();
     }
 }

@@ -1,5 +1,6 @@
 package org.ayfaar.app.controllers
 
+import mu.KotlinLogging
 import org.ayfaar.app.services.AyfaarRuVocabulary
 import org.ayfaar.app.services.TermTokens
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 @Controller
 @RequestMapping("api/integration")
 class IntegrationController {
+    private val log = KotlinLogging.logger {  }
     @Autowired lateinit var ayfaarRuVocabulary: AyfaarRuVocabulary
 
     @RequestMapping(consumes = arrayOf(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
@@ -21,7 +23,10 @@ class IntegrationController {
     fun getTerms(@RequestBody params: MultiValueMap<String, String>, @RequestHeader("Referer") referer: String): List<TermTokens> {
         val text = params.toSingleValueMap().entries.find { it.value.isEmpty() }?.key
         val id = params.toSingleValueMap()["id"] ?: throw Exception("No id provided")
-        if (text == null || text.isEmpty()) return emptyList()
+        if (text == null || text.isEmpty()) {
+            log.info { "No text for $referer" }
+            return emptyList()
+        }
         return ayfaarRuVocabulary.findTerms(text, referer, id)
     }
 

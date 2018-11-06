@@ -8,6 +8,7 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.event.NewLinkEvent;
+import org.ayfaar.app.event.TermMorphAddedEvent;
 import org.ayfaar.app.model.Link;
 import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Term;
@@ -17,6 +18,7 @@ import org.ayfaar.app.services.links.LinkProvider;
 import org.ayfaar.app.services.links.LinkService;
 import org.ayfaar.app.services.moderation.Action;
 import org.ayfaar.app.services.moderation.ModerationService;
+import org.ayfaar.app.utils.language.RootRecognizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +32,11 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.util.regex.Pattern.compile;
 import static org.ayfaar.app.model.LinkType.*;
+import static org.ayfaar.app.services.AyfaarRuVocabularyKt.splitToWords;
 import static org.ayfaar.app.utils.UriGenerator.getValueFromUri;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -54,6 +58,7 @@ public class TermServiceImpl implements TermService {
     // names - provider map
     private ArrayList<Map.Entry<String, TermProvider>> sortedList;
     private List<TermDao.TermInfo> termsInfo;
+    private List<Pair<String, TermProvider>> roots;
 
     @Autowired
     public TermServiceImpl(LinkDao linkDao,
@@ -105,7 +110,34 @@ public class TermServiceImpl implements TermService {
         // prepare sorted List by term name length, longest terms first
         sortedList = new ArrayList<>(aliasesMap.entrySet());
         sortedList.sort((o1, o2) -> Integer.compare(o2.getKey().length(), o1.getKey().length()));
+        loadRoots();
 		logger.info("Terms loading finish");
+    }
+
+    private void loadRoots() {
+        HashMap<Object, Object> unsortedRoots = new HashMap<>();
+        logger.debug("Load roots");
+        RootRecognizer rootRecognizer = new RootRecognizer();
+        sortedList.stream()
+                .map(Map.Entry::getValue)
+                .distinct()
+                .forEach(term -> {
+                    String name = term.getName();
+                    List<String> words = splitToWords(name);
+                    if (words.size() == 1) {
+                        String word = words.get(0).toLowerCase();
+                        if (word.length() > 5) {
+                            String root = rootRecognizer.recognize(word);
+                            unsortedRoots.put(root, term);
+                            logger.debug(name + " -> " + root);
+                        }
+                    }
+                });
+        //noinspection unchecked
+        roots = unsortedRoots.entrySet().stream()
+                .sorted((o1, o2) -> Integer.compare(o2.getKey().toString().length(), o1.getKey().toString().length()))
+                .map(e -> new Pair<>((String) e.getKey(), (TermProvider) e.getValue()))
+                .collect(Collectors.toList());
     }
 
     public void reload() {
@@ -400,6 +432,11 @@ public class TermServiceImpl implements TermService {
         }
     }
 
+    @EventListener
+    private void onNewMorph(TermMorphAddedEvent event) {
+        reload();
+    }
+
     private void onTermsLinked(Term mainTerm, Term aliasTerm, LinkType linkType) {
         if (linkType == LinkType.ALIAS) {
             boolean mainTermChanged = false;
@@ -451,7 +488,7 @@ public class TermServiceImpl implements TermService {
     }
 
     @Override
-    public Map<String, TermProvider> findTerms(String originalText) {
+    public Pair<Map<String, TermProvider>, String> findTerms(String originalText) {
         long startTime = System.currentTimeMillis();
         Map<String, TermProvider> contains = new HashMap<>();
         String text = originalText.toLowerCase();
@@ -468,11 +505,11 @@ public class TermServiceImpl implements TermService {
         }
         long computatioTime = System.currentTimeMillis() - startTime;
         logger.debug("Found "+contains.size()+"  terms in "+computatioTime/1000+" sec for text: "+originalText.trim().substring(0, 50)+"...");
-        return contains;
+        return new Pair(contains, text);
     }
 
     @Override
-    public Collection<Pair<String, TermProvider>> getTermRoots() {
-        return Collections.emptyList();
+    public List<Pair<String, TermProvider>> getTermRoots() {
+        return roots;
     }
 }

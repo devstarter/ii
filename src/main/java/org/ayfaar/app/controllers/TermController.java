@@ -7,7 +7,7 @@ import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.event.EventPublisher;
-import org.ayfaar.app.event.TermAddEvent;
+import org.ayfaar.app.event.TermAddedeEvent;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.services.EntityLoader;
 import org.ayfaar.app.services.itemRange.ItemRangeService;
@@ -261,7 +261,7 @@ public class TermController {
 //            publisher.publishEvent(new TermUpdatedEvent(term, oldShortDescription, oldDescription));
         }
 
-        publisher.publishEvent(new TermAddEvent(term.getName()));
+        publisher.publishEvent(new TermAddedeEvent(term.getName()));
 
         return term;
     }

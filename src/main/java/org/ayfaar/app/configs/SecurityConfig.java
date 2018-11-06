@@ -28,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasAnyAuthority("ROLE_EDITOR", "ROLE_ADMIN")
                 .and().logout().logoutSuccessUrl("/")
                 .and().csrf().disable();
+        http.headers().frameOptions().disable();
     }
 
     @Override

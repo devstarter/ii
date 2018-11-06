@@ -5,7 +5,6 @@ import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Term;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,9 +29,9 @@ public interface TermService {
 
     void loadMorthems(Term primeTerm, String target, String prefix);
 
-    Map<String, TermProvider> findTerms(String text);
+    Pair<Map<String, TermProvider>, String> findTerms(String text);
 
-    Collection<Pair<String, TermProvider>> getTermRoots();
+    List<Pair<String, TermProvider>> getTermRoots();
 
     interface TermProvider {
         String getName();

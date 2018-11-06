@@ -55,7 +55,7 @@ public class TomCheck extends IntegrationTest {
     }
 
     private void findTerms(String line) {
-        contains.addAll(termService.findTerms(line).values());
+        contains.addAll(termService.findTerms(line).getFirst().values());
     }
 
 }

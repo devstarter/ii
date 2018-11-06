@@ -18,7 +18,7 @@ class AyfaarRuVocabularyTest {
         val termService = getTermServiceMock()
         val termProvider = getTermProviderMock()
 
-        `when`(termService.termRoots).thenReturn(listOf(Pair("супервакансивн", termProvider)))
+//        `when`(termService.termRoots).thenReturn(listOf(Pair("супервакансивн", termProvider)))
         `when`(termProvider.shortDescription).thenReturn(Optional.of("test"))
 
         AyfaarRuVocabulary(termService).findTerms("Итак, супервакансивное состояние, обусловленное").let {
