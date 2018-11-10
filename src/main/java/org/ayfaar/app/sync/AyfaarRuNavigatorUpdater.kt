@@ -27,12 +27,12 @@ class AyfaarRuNavigatorUpdater {
     @Value("ftp.ayfaar.ru.login") private lateinit var ftpLogin: String
     @Value("ftp.ayfaar.ru.password") private lateinit var ftpPassword: String
     val map = listOf(
-//            Pair("Тест", "1s1kYDmSrL2fShaPrMUO2oWrP-3tyySkp440Z29AuMFg"),
-            Pair("Устройство мироздания", "1KBA_9B9bySStHtA_7B1uR83uOT-EnKz2-pH3bREVd1Y"),
-            Pair("Сознание и биология человека", "1LYaTF2Tu0qfboAXtbserFK40C1JFr3tfikJHD078Aq0"),
-            Pair("Взаимоотношения людей", "1pbLXSJ82xdvhU4UuEE4juivEUpS14dp-PE1tMjEgFVU"),
-            Pair("Связь человека с мирозданием", "1D_r68VGcIucDFstNvhTDJp_Ir8Aruo2Cj7BRT31s9no"),
-            Pair("Будущее человечества", "18IETRXsA-lWxAuNxzuuWItlE5vEnBUBS56_SYfyj2N0")
+            Pair("Тест", "1mvEvkeYkaJrt_skpY4oKr3CiPPnbH2yJp0Ri1qR0lPk")
+//            Pair("Устройство мироздания", "1KBA_9B9bySStHtA_7B1uR83uOT-EnKz2-pH3bREVd1Y"),
+//            Pair("Сознание и биология человека", "1LYaTF2Tu0qfboAXtbserFK40C1JFr3tfikJHD078Aq0"),
+//            Pair("Взаимоотношения людей", "1pbLXSJ82xdvhU4UuEE4juivEUpS14dp-PE1tMjEgFVU"),
+//            Pair("Связь человека с мирозданием", "1D_r68VGcIucDFstNvhTDJp_Ir8Aruo2Cj7BRT31s9no"),
+//            Pair("Будущее человечества", "18IETRXsA-lWxAuNxzuuWItlE5vEnBUBS56_SYfyj2N0")
     )
 
     @Scheduled(cron = "0 0 * * * *") // every hour
@@ -165,8 +165,8 @@ fun `разбор статей`(iterator: CoolIterator, startIndex: Int): Articl
         val next = iterator.next()
         when {
             next.firstIs("Ориса") -> {
-                articles.oris = `разбор блока названий и ссылок`(iterator.clone(), startIndex, startIndex + 1)
-                articles.others = `разбор блока названий и ссылок`(iterator.clone(), startIndex + 2, startIndex + 3)
+                articles.oris = `разбор блока названий и ссылок с темами`(iterator.clone(), startIndex, startIndex, startIndex + 1)
+                articles.others = `разбор блока названий и ссылок с темами`(iterator.clone(), startIndex, startIndex + 2, startIndex + 3)
             }
         }
         if (next.firstIs("подборка продвинутой сложности (ссылка на другую подборку)"))
@@ -175,13 +175,44 @@ fun `разбор статей`(iterator: CoolIterator, startIndex: Int): Articl
     return articles
 }
 
-data class Articles(var oris: List<TitleUrlPair>? = null, var others: List<TitleUrlPair>? = null)
+
+fun `разбор блока названий и ссылок с темами`(iterator: CoolIterator, topicIndex: Int, titleIndex: Int, urlIndex: Int): List<TopicArticles> {
+    val topicArticles = ArrayList<TopicArticles>()
+    val articles = ArrayList<TitleUrlPair>()
+    var currentTopic = ""
+
+    while (iterator.hasNext()) {
+        val next = iterator.next()
+        if (next.firstNot("подборка продвинутой сложности (ссылка на другую подборку)")) {
+            if (next.size > urlIndex) {
+                if (next[urlIndex].isBlank()) {
+                    if (articles.isNotEmpty()) {
+                        topicArticles.add(TopicArticles(ArrayList(articles), currentTopic))
+                        articles.clear()
+                    }
+                    currentTopic = next[topicIndex]
+                } else {
+                    articles.add(TitleUrlPair(next[titleIndex], next[urlIndex]))
+                }
+            }
+        } else {
+            break
+        }
+    }
+    if (articles.isNotEmpty()) {
+        topicArticles.add(TopicArticles(ArrayList(articles), currentTopic))
+    }
+    return topicArticles
+}
 
 fun `разбор блока названий и ссылок`(iterator: CoolIterator, titleIndex: Int, urlIndex: Int): ArrayList<TitleUrlPair> {
     val articles = ArrayList<TitleUrlPair>()
     while (iterator.hasNext()) {
         val next = iterator.next()
-        if (next.firstNot("подборка продвинутой сложности (ссылка на другую подборку)") && next.size > urlIndex && next[titleIndex].isNotBlank()) {
+        if (next.firstNot("подборка продвинутой сложности (ссылка на другую подборку)")
+                && next.size > urlIndex
+                && next[urlIndex].isNotBlank()
+                && next[titleIndex].isNotBlank()) {
             articles.add(TitleUrlPair(next[titleIndex], next[urlIndex]))
         } else {
             break
@@ -255,6 +286,8 @@ class CoolIterator(private val list: List<List<Any>>) {
 
 }
 
+data class Articles(var oris: List<TopicArticles>? = null, var others: List<TopicArticles>? = null)
+
 data class Block(val articles: Articles?, val videos: List<TitleUrlPair>?, val audios: List<TitleUrlPair>?) {
     fun summary(): String {
         return "Oris articles: ${articles?.oris?.size}, " +
@@ -263,6 +296,8 @@ data class Block(val articles: Articles?, val videos: List<TitleUrlPair>?, val a
                 "audios: ${audios?.size}"
     }
 }
+
+data class TopicArticles(val articles: List<TitleUrlPair>, val topic: String = "")
 
 data class Blocks(val newbie: Block?, val advanced: Block?) {
     fun summary(): String {
