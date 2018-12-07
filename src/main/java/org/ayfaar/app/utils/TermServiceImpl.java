@@ -116,7 +116,7 @@ public class TermServiceImpl implements TermService {
 
     private void loadRoots() {
         HashMap<Object, Object> unsortedRoots = new HashMap<>();
-        logger.debug("Load roots");
+//        logger.debug("Load roots");
         RootRecognizer rootRecognizer = new RootRecognizer();
         sortedList.stream()
                 .map(Map.Entry::getValue)
@@ -126,10 +126,10 @@ public class TermServiceImpl implements TermService {
                     List<String> words = splitToWords(name);
                     if (words.size() == 1) {
                         String word = words.get(0).toLowerCase();
-                        if (word.length() > 5) {
-                            String root = rootRecognizer.recognize(word);
+                        String root = rootRecognizer.recognize(word);
+                        if (root.length() > 5) {
                             unsortedRoots.put(root, term);
-                            logger.debug(name + " -> " + root);
+//                            logger.debug(name + " -> " + root);
                         }
                     }
                 });
@@ -254,7 +254,13 @@ public class TermServiceImpl implements TermService {
 
         @Override
         public Optional<String> getShortDescription() {
-            return hasShortDescription ? Optional.of(getTerm().getShortDescription()) : Optional.empty();
+            if (hasShortDescription) {
+                String shortDescription = getTerm().getShortDescription();
+                if (shortDescription != null) {
+                    return Optional.of(shortDescription);
+                }
+            }
+            return Optional.empty();
         }
 
         @Override
@@ -504,8 +510,9 @@ public class TermServiceImpl implements TermService {
             }
         }
         long computatioTime = System.currentTimeMillis() - startTime;
-        logger.debug("Found "+contains.size()+"  terms in "+computatioTime/1000+" sec for text: "+originalText.trim().substring(0, 50)+"...");
-        return new Pair(contains, text);
+        String textTrimed = originalText.trim();
+        logger.debug("Found "+contains.size()+"  terms in "+computatioTime/1000+" sec for text: "+ textTrimed.substring(0, Math.min(50, textTrimed.length() - 1))+"...");
+        return new Pair(contains, textTrimed);
     }
 
     @Override

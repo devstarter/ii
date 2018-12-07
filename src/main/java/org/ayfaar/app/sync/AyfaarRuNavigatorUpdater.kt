@@ -27,12 +27,12 @@ class AyfaarRuNavigatorUpdater {
     @Value("ftp.ayfaar.ru.login") private lateinit var ftpLogin: String
     @Value("ftp.ayfaar.ru.password") private lateinit var ftpPassword: String
     val map = listOf(
-            Pair("Тест", "1mvEvkeYkaJrt_skpY4oKr3CiPPnbH2yJp0Ri1qR0lPk")
-//            Pair("Устройство мироздания", "1KBA_9B9bySStHtA_7B1uR83uOT-EnKz2-pH3bREVd1Y"),
-//            Pair("Сознание и биология человека", "1LYaTF2Tu0qfboAXtbserFK40C1JFr3tfikJHD078Aq0"),
-//            Pair("Взаимоотношения людей", "1pbLXSJ82xdvhU4UuEE4juivEUpS14dp-PE1tMjEgFVU"),
-//            Pair("Связь человека с мирозданием", "1D_r68VGcIucDFstNvhTDJp_Ir8Aruo2Cj7BRT31s9no"),
-//            Pair("Будущее человечества", "18IETRXsA-lWxAuNxzuuWItlE5vEnBUBS56_SYfyj2N0")
+//            Pair("Тест", "1mvEvkeYkaJrt_skpY4oKr3CiPPnbH2yJp0Ri1qR0lPk")
+            Pair("Устройство мироздания", "1KBA_9B9bySStHtA_7B1uR83uOT-EnKz2-pH3bREVd1Y"),
+            Pair("Сознание и биология человека", "1LYaTF2Tu0qfboAXtbserFK40C1JFr3tfikJHD078Aq0"),
+            Pair("Взаимоотношения людей", "1pbLXSJ82xdvhU4UuEE4juivEUpS14dp-PE1tMjEgFVU"),
+            Pair("Связь человека с мирозданием", "1D_r68VGcIucDFstNvhTDJp_Ir8Aruo2Cj7BRT31s9no"),
+            Pair("Будущее человечества", "18IETRXsA-lWxAuNxzuuWItlE5vEnBUBS56_SYfyj2N0")
     )
 
     @Scheduled(cron = "0 0 * * * *") // every hour

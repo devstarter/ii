@@ -40,6 +40,7 @@ function jqueryLoaded() {
         jQuery.post(url + "api/integration?id=" + container.getPath(), container.text(), function (response) {
             var terms = response.entryList;
             var html = container.html();
+            html = html.replace(/<img[^>]*>/g,'');
             for (var i in terms) {
                 var key = terms[i].key;
                 var term = terms[i].value;
