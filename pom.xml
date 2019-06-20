@@ -29,9 +29,22 @@
 		<streamex.version>0.6.0</streamex.version>
 		<tika.version>1.14</tika.version>
 		<kotlin.version>1.1.4-2</kotlin.version>
+		<docx4j.version>8.1.0</docx4j.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.docx4j</groupId>
+			<artifactId>docx4j-JAXB-Internal</artifactId>
+			<version>${docx4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.docx4j</groupId>
+			<artifactId>docx4j-docx-anon</artifactId>
+			<version>${docx4j.version}</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>com.overzealous</groupId>
 			<artifactId>remark</artifactId>
