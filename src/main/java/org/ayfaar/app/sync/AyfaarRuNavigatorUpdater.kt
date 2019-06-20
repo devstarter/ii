@@ -24,10 +24,10 @@ class AyfaarRuNavigatorUpdater {
     }
 
     private val log = KotlinLogging.logger {  }
-    @Value("ftp.ayfaar.ru.login") private lateinit var ftpLogin: String
-    @Value("ftp.ayfaar.ru.password") private lateinit var ftpPassword: String
+    @Value("\${ftp.ayfaar.ru.login}") private lateinit var ftpLogin: String
+    @Value("\${ftp.ayfaar.ru.password}") private lateinit var ftpPassword: String
     val map = listOf(
-//            Pair("Тест", "1mvEvkeYkaJrt_skpY4oKr3CiPPnbH2yJp0Ri1qR0lPk")
+//            Pair("Тест", "11YKrbqZdAEZ-oRiZ9OPJZrMKhYypRqph0hbY6Gqeq-I")
             Pair("Устройство мироздания", "1KBA_9B9bySStHtA_7B1uR83uOT-EnKz2-pH3bREVd1Y"),
             Pair("Сознание и биология человека", "1LYaTF2Tu0qfboAXtbserFK40C1JFr3tfikJHD078Aq0"),
             Pair("Взаимоотношения людей", "1pbLXSJ82xdvhU4UuEE4juivEUpS14dp-PE1tMjEgFVU"),
@@ -75,6 +75,8 @@ class AyfaarRuNavigatorUpdater {
 
 /////////////////////////////////// UTILS /////////////////////////////////
 
+val markers = listOf("подборка продвинутой сложности (ссылка на другую подборку)", "подборка начальной сложности (ссылка на другую подборку)")
+
 fun uploadData(remoteFilename: String, json: String, ftpHost: String, ftpLogin: String, ftpPassword: String) {
     val file = File.createTempFile("navigator", ".json")
     file.writeText(json)
@@ -83,9 +85,16 @@ fun uploadData(remoteFilename: String, json: String, ftpHost: String, ftpLogin: 
 
     try {
         client.connect(ftpHost)
-        client.login(ftpLogin, ftpPassword)
+        val loginSuccess = client.login(ftpLogin, ftpPassword)
+        if (!loginSuccess) {
+            KotlinLogging.logger {  }.error { "Login fail with login $ftpLogin and password $ftpPassword" }
+        }
         client.enterLocalPassiveMode()
-        client.storeFile("/domains/ayfaar.ru/public_html/tpl/static/izuchenie_ii/$remoteFilename", file.inputStream())
+        val remoteFile = "/domains/ayfaar.ru/public_html/tpl/static/izuchenie_ii/$remoteFilename"
+        val storingSuccess = client.storeFile(remoteFile, file.inputStream())
+        if (!storingSuccess) {
+            KotlinLogging.logger {  }.error { "Error storing ftp file $remoteFile : ${client.replyString}" }
+        }
         client.logout()
     } catch (e: IOException) {
         e.printStackTrace()
@@ -124,8 +133,8 @@ fun List<List<Any>>.parseData(): Blocks {
         val next = iterator.next()
         when {
             next.firstIs("ПОДБОРКА НАЧАЛЬНОЙ СЛОЖНОСТИ") -> {
-                newbieBlock = `разбор материала начальной сложности`(iterator.clone())
-                advancedBlock = `разбор материала начальной сложности`(iterator.clone(), 5)
+                newbieBlock = `разбор материала`(iterator.clone())
+                advancedBlock = `разбор материала`(iterator.clone(), 5)
             }
 
         }
@@ -133,7 +142,7 @@ fun List<List<Any>>.parseData(): Blocks {
     return Blocks(newbieBlock, advancedBlock)
 }
 
-fun `разбор материала начальной сложности`(iterator: CoolIterator, startIndex: Int = 0): Block {
+fun `разбор материала`(iterator: CoolIterator, startIndex: Int = 0): Block {
     var articles: Articles? = null
     var videos: List<TitleUrlPair>? = null
     var audios: List<TitleUrlPair>? = null
@@ -142,7 +151,11 @@ fun `разбор материала начальной сложности`(iter
         when {
             next.someIs(startIndex, "СТАТЬИ") -> articles = `разбор статей`(iterator, startIndex)
             next.someIs(startIndex, "ВИДЕО (цветной блок)") -> {
-                videos = `разбор блока названий и ссылок`(iterator, startIndex, startIndex + 2).map { it.copy(id = extractVideoIdFromUrl(it.url)) }
+                videos = `разбор блока названий и ссылок`(iterator, startIndex, startIndex + 2).map { titleUrlPair ->
+                    titleUrlPair.copy(id = extractVideoIdFromUrl(titleUrlPair.url).also {
+                    if (it == null)
+                        KotlinLogging.logger {  }.warn { "Не правильная ссылка для видео ${titleUrlPair.url}" }
+                }) }
                 iterator.stepBack()
             }
             next.someIs(startIndex, "АУДИО (белый блок)") -> audios = `разбор блока названий и ссылок`(iterator, startIndex, startIndex + 2).mapAudioUrls()
@@ -150,13 +163,16 @@ fun `разбор материала начальной сложности`(iter
     }
     return Block(articles, videos, audios)
 }
-
 private fun Collection<TitleUrlPair>.mapAudioUrls() = this.map {
     if (it.url.contains("ii.ayfaar.org/r/", true)) {
         val code = it.url.split("ii.ayfaar.org/r/")[1]
-        it.copy(url = "http://ii.ayfaar.org/api/record/$code/download/$code")
-    } else it
+        it.copy(url = "https://ii.ayfaar.org/api/record/$code/download/$code")
+    } else {
+        KotlinLogging.logger {  }.warn { "Не правильная ссылка для аудио ${it.url}" }
+        it
+    }
 }
+
 
 
 fun `разбор статей`(iterator: CoolIterator, startIndex: Int): Articles {
@@ -166,10 +182,10 @@ fun `разбор статей`(iterator: CoolIterator, startIndex: Int): Articl
         when {
             next.firstIs("Ориса") -> {
                 articles.oris = `разбор блока названий и ссылок с темами`(iterator.clone(), startIndex, startIndex, startIndex + 1)
-                articles.others = `разбор блока названий и ссылок с темами`(iterator.clone(), startIndex, startIndex + 2, startIndex + 3)
+                articles.others = `разбор блока названий и ссылок с темами`(iterator, startIndex, startIndex + 2, startIndex + 3)
             }
         }
-        if (next.firstIs("подборка продвинутой сложности (ссылка на другую подборку)"))
+        if (iterator.current!!.size > startIndex && markers.contains(iterator.current!![startIndex]))
             break
     }
     return articles
@@ -181,22 +197,41 @@ fun `разбор блока названий и ссылок с темами`(i
     val articles = ArrayList<TitleUrlPair>()
     var currentTopic = ""
 
+    fun saveArticlesForTopic() {
+        if (articles.isNotEmpty()) {
+            topicArticles.add(TopicArticles(ArrayList(articles), currentTopic))
+            articles.clear()
+        }
+    }
+
     while (iterator.hasNext()) {
         val next = iterator.next()
-        if (next.firstNot("подборка продвинутой сложности (ссылка на другую подборку)")) {
+        if (next.size > titleIndex && !markers.contains(next[titleIndex])) {
             if (next.size > urlIndex) {
                 if (next[urlIndex].isBlank()) {
-                    if (articles.isNotEmpty()) {
-                        topicArticles.add(TopicArticles(ArrayList(articles), currentTopic))
-                        articles.clear()
-                    }
+                    saveArticlesForTopic()
                     currentTopic = next[topicIndex]
+                    if (markers.contains(currentTopic)) {
+                        break
+                    }
                 } else {
                     articles.add(TitleUrlPair(next[titleIndex], next[urlIndex]))
                 }
+            } else {
+                saveArticlesForTopic()
+                currentTopic = next[titleIndex]
             }
         } else {
-            break
+            saveArticlesForTopic()
+            if (next.size == 1) {
+                currentTopic = next[0]
+            } else if (next.size == titleIndex - 1) {
+                currentTopic = next[titleIndex - 2]
+            }
+
+            if (markers.contains(currentTopic)) {
+                break
+            }
         }
     }
     if (articles.isNotEmpty()) {
@@ -209,7 +244,7 @@ fun `разбор блока названий и ссылок`(iterator: CoolIte
     val articles = ArrayList<TitleUrlPair>()
     while (iterator.hasNext()) {
         val next = iterator.next()
-        if (next.firstNot("подборка продвинутой сложности (ссылка на другую подборку)")
+        if (next.size > titleIndex && !markers.contains(next[titleIndex])
                 && next.size > urlIndex
                 && next[urlIndex].isNotBlank()
                 && next[titleIndex].isNotBlank()) {

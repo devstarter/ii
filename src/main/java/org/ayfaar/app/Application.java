@@ -5,6 +5,7 @@ import org.dozer.spring.DozerBeanMapperFactoryBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.orm.jpa.EntityScan;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableCaching
 @EnableAsync
 @EnableAspectJAutoProxy
+@ServletComponentScan
 @Slf4j
 @EntityScan("org.ayfaar.app.model")
 @ComponentScan("org.ayfaar.app")
