@@ -24,7 +24,7 @@ class VocabularyController {
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_OCTET_STREAM
         // Here you have to set the actual filename of your pdf
-        val filename = "output.pdf"
+        val filename = "output.docx"
         headers.setContentDispositionFormData(filename, filename)
         return ResponseEntity(file.readBytes(), headers, HttpStatus.OK)
     }
