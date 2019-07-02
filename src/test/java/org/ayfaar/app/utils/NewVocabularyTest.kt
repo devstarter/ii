@@ -49,7 +49,7 @@ class NewVocabularyTest {
             expect(pleyadyTerm).toBeFalse()
             expect(inII).toBeFalse()
             expect(conventional).toBeFalse()
-            expect(inPhrases).toEqual("айфааровские принципы; айфааровские отношения; айфааровские песни; айфааровский образ жизни; айфааровская модель отношений; айфааровский самоанализ; айфааровские субботники".split("; ").map { VocabularySubTerm(it, null) })
+            expect(inPhrases).toEqual("айфааровские принципы; айфааровские отношения; айфааровские песни; айфааровский образ жизни; айфааровская модель отношений; айфааровский самоанализ; айфааровские субботники".split("; ").map { VocabularySubTerm(it, null, true) })
         }
         print(Gson().toJson(terms))
     }
