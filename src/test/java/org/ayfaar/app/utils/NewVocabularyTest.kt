@@ -8,13 +8,15 @@ import org.ayfaar.app.vocabulary.VocabularyService
 import org.ayfaar.app.vocabulary.VocabularySubTerm
 import org.ayfaar.app.vocabulary.VocabularyTerm
 import org.junit.Test
+import org.mockito.Mockito.mock
+import org.springframework.core.io.ResourceLoader
 import java.util.*
 
 class NewVocabularyTest {
 
     @Test
     fun test() {
-        val service = VocabularyService()
+        val service = VocabularyService(mock(ResourceLoader::class.java))
 
         val terms = service.getData(getData())
 

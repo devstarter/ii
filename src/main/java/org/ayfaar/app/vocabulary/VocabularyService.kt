@@ -5,18 +5,19 @@ import org.ayfaar.app.services.GoogleSpreadsheetService
 import org.docx4j.Docx4J
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart
+import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.io.File
 import java.util.ArrayList
 
 @Service
-class VocabularyService {
+class VocabularyService(private val resourceLoader: ResourceLoader) {
     fun getDoc() = getDoc(getData())
 
     internal fun getDoc(data: List<VocabularyTerm>): File {
 
-
-        val wordMLPackage = WordprocessingMLPackage.load(File("template.docx"))
+        val template = resourceLoader.getResource("classpath:template.docx").file
+        val wordMLPackage = WordprocessingMLPackage.load(template)
         val mdp = wordMLPackage.mainDocumentPart
 
 
