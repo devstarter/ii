@@ -14,7 +14,9 @@ class VocabularyService {
     fun getDoc() = getDoc(getData())
 
     internal fun getDoc(data: List<VocabularyTerm>): File {
-        val wordMLPackage = WordprocessingMLPackage.createPackage()
+
+
+        val wordMLPackage = WordprocessingMLPackage.load(File("template.docx"))
         val mdp = wordMLPackage.mainDocumentPart
 
 
@@ -47,20 +49,31 @@ class VocabularyService {
             title += " -"
 
             mdp.addStyledParagraphOfText("Heading4", title)
-            mdp.addParagraphOfText(term.description)
+            mdp.addStyledParagraphOfText("Определение", term.description)
 
-            if (term.inPhrases.isNotEmpty()) {
-                var text = "В словосочетаниях: "
-                term.inPhrases.forEach { phrase ->
-                    text += phrase.name
-                    text += if (phrase.description != null) {
-                        " - ${phrase.description}.\n"
-                    } else {
-                        ", "
-                    }
-                }
-                mdp.addParagraphOfText(text)
+            drawSubTerm("В словосочетаниях", term.inPhrases, mdp)
+            drawSubTerm("Синонимы", term.aliases, mdp)
+            drawSubTerm("Производные", term.derivatives, mdp)
+            drawSubTerm("Антонимы", term.antonyms, mdp)
+
+            if (term.zkk != null) {
+                mdp.addStyledParagraphOfText("?", "Звуковой Космический Код (ЗКК): ${term.zkk}.")
             }
+        }
+    }
+
+    private fun drawSubTerm(label: String, subterms: MutableCollection<VocabularySubTerm>, mdp: MainDocumentPart) {
+        if (subterms.isNotEmpty()) {
+            var text = "$label: "
+            subterms.forEach { subTerm ->
+                text += if (subTerm.ii) "*${subTerm.name}*" else subTerm.name
+                text += when {
+                    subTerm.description != null -> " - ${subTerm.description}.\n"
+                    subterms.size > 1 -> "; "
+                    else -> "."
+                }
+            }
+            mdp.addParagraphOfText(text)
         }
     }
 
@@ -82,13 +95,13 @@ class VocabularyService {
         val terms = data.groupBy { it.first() }.map { (_, records) ->
             val term = getBasicData(records.first())
             records.forEach { data ->
-                setData(data, 8,  term.iiDerivatives)
-                setData(data, 10, term.conventionalDerivatives)
-                setData(data, 12, term.iiAliases)
-                setData(data, 14, term.conventionalAliases)
-                setData(data, 16, term.iiAntonyms)
-                setData(data, 18, term.conventionalAntonyms)
-                setData(data, 20, term.inPhrases)
+                setData(data, 8,  term.derivatives, true)
+                setData(data, 10, term.derivatives, false)
+                setData(data, 12, term.aliases, true)
+                setData(data, 14, term.aliases, false)
+                setData(data, 16, term.antonyms, true)
+                setData(data, 18, term.antonyms, false)
+                setData(data, 20, term.inPhrases, true)
             }
             term
         }
@@ -96,10 +109,13 @@ class VocabularyService {
         return terms
     }
 
-    private fun setData(data: MutableList<String>, index: Int, list: MutableCollection<VocabularySubTerm>) {
+    private fun setData(data: MutableList<String>, index: Int, list: MutableCollection<VocabularySubTerm>, ii: Boolean) {
         if (data.getOrNull(index)?.isNotBlank() == true) {
             data[index].split(",", ";").forEach {
-                list.add(VocabularySubTerm(name = it.trim(), description = data.getOrNull(index + 1).nullOnBlank()))
+                list.add(VocabularySubTerm(
+                        name = it.trim(),
+                        description = data.getOrNull(index + 1).nullOnBlank(),
+                        ii = ii))
             }
         }
     }
@@ -122,12 +138,9 @@ data class VocabularyTerm(
         val description: String,
         val reductions: List<String> = ArrayList(),
         val zkk: String?,
-        val iiDerivatives: MutableCollection<VocabularySubTerm> = ArrayList(),
-        val iiAliases: MutableCollection<VocabularySubTerm> = ArrayList(),
-        val iiAntonyms: MutableCollection<VocabularySubTerm> = ArrayList(),
-        val conventionalDerivatives: MutableCollection<VocabularySubTerm> = ArrayList(),
-        val conventionalAliases: MutableCollection<VocabularySubTerm> = ArrayList(),
-        val conventionalAntonyms: MutableCollection<VocabularySubTerm> = ArrayList(),
+        val derivatives: MutableCollection<VocabularySubTerm> = ArrayList(),
+        val aliases: MutableCollection<VocabularySubTerm> = ArrayList(),
+        val antonyms: MutableCollection<VocabularySubTerm> = ArrayList(),
         val inPhrases: MutableCollection<VocabularySubTerm> = ArrayList(),
         val pleyadyTerm: Boolean = false,
         val inII: Boolean = false,
@@ -136,5 +149,6 @@ data class VocabularyTerm(
 
 data class VocabularySubTerm(
         val name: String,
-        val description: String?
+        val description: String?,
+        val ii: Boolean
 )
