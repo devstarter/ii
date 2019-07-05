@@ -1,4 +1,4 @@
-var init, maybeLoadJq, url = "http://ii.ayfaar.org/";
+var init, maybeLoadJq, url = "http://ii.ayfaar.ru/";
 
 function jqueryLoaded() {
     jQuery.fn.extend({

@@ -29,7 +29,7 @@ logging:
 #  pattern:
 #    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
 
-site-base-url: 'http://ii.ayfaar.org'
+site-base-url: 'http://ii.ayfaar.ru'
 sitemap-dir: /ii/data
 drive-dir: /ii/data
 this-url: http://${server.address:localhost}:${server.port:8080}
@@ -45,10 +45,10 @@ server:
   ssl:
     enabled: false
     redirect-http-to-https: false
-    key-store: /etc/letsencrypt/live/ii.ayfaar.org/keystore.p12
+    key-store: /etc/letsencrypt/live/ii.ayfaar.ru/keystore.p12
     key-store-password: ayfaar
     keyStoreType: PKCS12
-    keyAlias: ii.ayfaar.org
+    keyAlias: ii.ayfaar.ru
   port: 80
   http-port: 80
 

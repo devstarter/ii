@@ -3,7 +3,7 @@ package org.ayfaar.app.event;
 import org.springframework.context.ApplicationEvent;
 
 public abstract class PushEvent extends ApplicationEvent {
-    public static final String BASE_URL = "http://ii.ayfaar.org";
+    public static final String BASE_URL = "http://ii.ayfaar.ru";
 
     protected String title;
     protected String message;

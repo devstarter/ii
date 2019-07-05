@@ -5,7 +5,7 @@ spring:
     password: ii
 
 OPENSHIFT_DATA_DIR: '/'
-OPENSHIFT_BASE_URL: 'http://ii.ayfaar.org/'
+OPENSHIFT_BASE_URL: 'http://ii.ayfaar.ru/'
 
 logging:
   level:

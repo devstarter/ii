@@ -253,7 +253,7 @@ public class GoogleService {
 //        Permission domainPermission = new Permission() //возможно понадобиться в дальнейшем
 //                .setType("domain")
 //                .setRole("reader")
-//                .setDomain("ii.ayfaar.org");
+//                .setDomain("ii.ayfaar.ru");
 //        drive.permissions().insert(fileId, domainPermission)
 //                .setFields("id")
 //                .queue(batch, callback);

@@ -25,7 +25,7 @@ public class EmailNotifier {
             helper.setFrom(FROM);
             helper.setTo(TO);
             helper.setSubject("Создана связь (" + termName + " + " + itemNumber + ")");
-            helper.setText(quote + "\nlink id: " + linkId + " " + getRemoveLink(linkId) + "\nhttp://ii.ayfaar.org/#"
+            helper.setText(quote + "\nlink id: " + linkId + " " + getRemoveLink(linkId) + "\nhttp://ii.ayfaar.ru/#"
                     + termName.replace(" ", "+"));
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -42,8 +42,8 @@ public class EmailNotifier {
             helper.setSubject("Создана связь (" + term + " + " + alias + ")");
             helper.setText("link id: " + linkId
                     + " удалить связь " + getRemoveLink(linkId)
-                    + "\nhttp://ii.ayfaar.org/#" + term
-                    + "\nhttp://ii.ayfaar.org/#" + alias);
+                    + "\nhttp://ii.ayfaar.ru/#" + term
+                    + "\nhttp://ii.ayfaar.ru/#" + alias);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -51,7 +51,7 @@ public class EmailNotifier {
     }
 
     private String getRemoveLink(Integer linkId) {
-        return "http://ii.ayfaar.org/api/link/remove/" + linkId;
+        return "http://ii.ayfaar.ru/api/link/remove/" + linkId;
     }
 
     public void rate(Term term, Item item, String quote, Integer linkId) {

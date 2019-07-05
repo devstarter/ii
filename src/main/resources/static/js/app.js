@@ -153,7 +153,7 @@ var app = angular.module('app', ['ui.router', 'ngResource', 'ngSanitize', 'ngCoo
     })
     .factory("$api", function($rootScope, $state, $http, errorService, $q, config, $httpParamSerializer, $injector, modal, $cookies){
         var apiUrl = config.apiUrl;
-//        var apiUrl = "https://ii.ayfaar.org/api/";
+//        var apiUrl = "https://ii.ayfaar.ru/api/";
         function authenticate() {
             var auth = $injector.get("auth");
             if (auth.isAuthenticated()) {

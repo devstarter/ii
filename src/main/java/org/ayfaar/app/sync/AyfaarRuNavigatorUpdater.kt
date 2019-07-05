@@ -164,9 +164,9 @@ fun `разбор материала`(iterator: CoolIterator, startIndex: Int = 
     return Block(articles, videos, audios)
 }
 private fun Collection<TitleUrlPair>.mapAudioUrls() = this.map {
-    if (it.url.contains("ii.ayfaar.org/r/", true)) {
-        val code = it.url.split("ii.ayfaar.org/r/")[1]
-        it.copy(url = "https://ii.ayfaar.org/api/record/$code/download/$code")
+    if (it.url.contains("ii.ayfaar.ru/r/", true)) {
+        val code = it.url.split("ii.ayfaar.ru/r/")[1]
+        it.copy(url = "https://ii.ayfaar.ru/api/record/$code/download/$code")
     } else {
         KotlinLogging.logger {  }.warn { "Не правильная ссылка для аудио ${it.url}" }
         it
