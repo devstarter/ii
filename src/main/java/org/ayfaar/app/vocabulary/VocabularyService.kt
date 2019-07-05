@@ -8,10 +8,15 @@ import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.io.File
-import java.util.ArrayList
+import java.util.*
+import javax.inject.Inject
 
 @Service
-class VocabularyService(private val resourceLoader: ResourceLoader) {
+class VocabularyService {
+
+    @Inject
+    private lateinit var resourceLoader: ResourceLoader
+
     fun getDoc() = getDoc(getData())
 
     internal fun getDoc(data: List<VocabularyTerm>): File {

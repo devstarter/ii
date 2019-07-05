@@ -75,7 +75,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         @Override
         public Resource resolveResource(HttpServletRequest request, String requestPath, List<? extends Resource> locations, ResourceResolverChain chain) {
             if (requestPath.startsWith("template/")
-                    || requestPath.startsWith(".well-known") // https://ii.ayfaar.org/.well-known/acme-challenge/EqdmKfzENEqmvSQkX1GeW9li7yy-Sf5y6onYtD6Nou4
+                    || requestPath.startsWith(".well-known") // http://ii.ayfaar.org/.well-known/acme-challenge/EqdmKfzENEqmvSQkX1GeW9li7yy-Sf5y6onYtD6Nou4
                     || requestPath.equals("sitemap.xml")) {
                 // don't change path
             } else if (requestPath.startsWith("static/")) {

@@ -2,21 +2,15 @@ package org.ayfaar.app.utils
 
 import com.google.gson.Gson
 import com.mscharhag.oleaster.matcher.Matchers.expect
-import nullOnBlank
-import org.ayfaar.app.services.GoogleSpreadsheetService
 import org.ayfaar.app.vocabulary.VocabularyService
 import org.ayfaar.app.vocabulary.VocabularySubTerm
-import org.ayfaar.app.vocabulary.VocabularyTerm
 import org.junit.Test
-import org.mockito.Mockito.mock
-import org.springframework.core.io.ResourceLoader
-import java.util.*
 
 class NewVocabularyTest {
 
     @Test
     fun test() {
-        val service = VocabularyService(mock(ResourceLoader::class.java))
+        val service = VocabularyService()
 
         val terms = service.getData(getData())
 
