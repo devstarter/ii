@@ -1,4 +1,4 @@
-package org.ayfaar.app.utils
+package org.ayfaar.app.vocabulary
 
 import com.google.gson.Gson
 import com.mscharhag.oleaster.matcher.Matchers.expect
@@ -12,10 +12,9 @@ class NewVocabularyTest {
     fun test() {
         val service = VocabularyService()
 
-        val terms = service.getData(getData())
+        val terms = service.getData(/*getData()*/)
 
-        with(terms[0]) {
-            expect(name).toEqual("ааииааическое информационное состояние")
+        with(terms.find { it.name == "ааииааическое информационное состояние"}!!) {
             expect(source).toBeNull()
             expect(description).toEqual("состояние Фокусной Динамики (ФД) Высших Формо-Творцов Вселенского Коллективного Космического Разума (ВККР) Мироздания с наименьшей для них степенью субъективизма; свойственно глубинным Уровням консумматизации в ллууввумической бирвуляртности")
             expect(reductions).toBeEmpty()
@@ -25,8 +24,7 @@ class NewVocabularyTest {
             expect(conventional).toBeFalse()
         }
 
-        with(terms[1]) {
-            expect(name).toEqual("«РЕЗОСКОНЦЕОННАЯ» Инволюционная Ветвь")
+        with(terms.find { it.name == "«РЕЗОСКОНЦЕОННАЯ» Инволюционная Ветвь" }!!) {
             expect(source).toEqual("(по смыслу образовано от слов «резонанс» и «концентрация»)")
             expect(description).toEqual("одна из 24-х Ветвей одновременного Процесса Самопознания Высшего Разума")
             expect(zkk).toEqual("ВКРЦЫЫЫЙЙ-ККР")
@@ -36,16 +34,36 @@ class NewVocabularyTest {
             expect(conventional).toBeFalse()
         }
 
-        with(terms[5]) {
-            expect(name).toEqual("айфааровский")
+        with(terms.find { it.name == "айфааровский"}!!) {
             expect(source).toBeNull()
-            expect(description).toEqual("относящийся к парадигме «Айфаар». Применимо для различных сфер жизни айфааровских сообществ. \n")
+            expect(description).toEqual("относящийся к парадигме «Айфаар». Применимо для различных сфер жизни айфааровских сообществ.")
             expect(zkk).toBeNull()
             expect(reductions).toBeEmpty()
             expect(pleyadyTerm).toBeFalse()
             expect(inII).toBeFalse()
             expect(conventional).toBeFalse()
             expect(inPhrases).toEqual("айфааровские принципы; айфааровские отношения; айфааровские песни; айфааровский образ жизни; айфааровская модель отношений; айфааровский самоанализ; айфааровские субботники".split("; ").map { VocabularySubTerm(it, null, true) })
+        }
+
+        with(terms.find { it.name == "Примордиум"}!!) {
+            expect(derivatives).toHaveSize(1)
+            expect(derivatives.first().name).toEqual("примордиумация")
+            expect(derivatives.first().description).toMatch("^перенос.+меркавгнации$")
+        }
+
+        with(terms.find { it.name == "амплификационный"}!!) {
+            expect(source).toEqual("(от лат. amplification – усиление, расширение, улучшение)")
+            expect(description).toEqual("эволюционный, эволюционирующий")
+            expect(zkk).toBeNull()
+            expect(reductions).toBeEmpty()
+            expect(pleyadyTerm).toBeFalse()
+            expect(inII).toBeFalse()
+            expect(conventional).toBeFalse()
+            expect(inPhrases).toHaveSize(3)
+            expect(inPhrases).toContain(VocabularySubTerm("амплификационная функция", "эволюционная Задача", true))
+            expect(inPhrases.find { it.name == "амплификационный организационно-направляющий Импульс" }).toBeNotNull()
+            expect(inPhrases.find { it.name == "амплификационный организационно-направляющий Импульс" }?.description).toMatch("^эгллеролифтивный.+в целом$")
+            expect(inPhrases.find { it.name == "Амплификационные/Квалитационные Векторы и Ветви" }).toBeNotNull()
         }
         print(Gson().toJson(terms))
     }

@@ -8,26 +8,28 @@ import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.io.File
-import java.util.*
-import javax.inject.Inject
+import java.util.ArrayList
 
 @Service
-class VocabularyService {
+class VocabularyService(private val resourceLoader: ResourceLoader) {
+    fun getDoc() = getDoc(getData(), resourceLoader.getResource("classpath:template.docx").file)
 
-    @Inject
-    private lateinit var resourceLoader: ResourceLoader
+    internal fun getDoc(data: List<VocabularyTerm>, template: File): File {
 
-    fun getDoc() = getDoc(getData())
-
-    internal fun getDoc(data: List<VocabularyTerm>): File {
-
-        val template = resourceLoader.getResource("classpath:template.docx").file
         val wordMLPackage = WordprocessingMLPackage.load(template)
         val mdp = wordMLPackage.mainDocumentPart
 
 
         data.groupBy { if (it.name[0] != '«') it.name[0] else it.name[1] }.forEach { (firstLetter, terms) ->
-            mdp.addStyledParagraphOfText("Heading3", firstLetter.toString().toUpperCase())
+            mdp.addParagraph("<w:p w:rsidR=\"00686B58\" w:rsidRDefault=\"0001734C\"\n" +
+                    "             w:rsidP=\"00686B58\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
+                    "            <w:pPr>\n" +
+                    "                <w:pStyle w:val=\"aa\"/>\n" +
+                    "            </w:pPr>\n" +
+                    "            <w:r w:rsidRPr=\"00792F94\">\n" +
+                    "                <w:t>${firstLetter.toString().toUpperCase()}</w:t>\n" +
+                    "            </w:r>\n" +
+                    "        </w:p>")
             drawTerms(mdp, terms)
         }
 
@@ -39,28 +41,30 @@ class VocabularyService {
 
     private fun drawTerms(mdp: MainDocumentPart, terms: List<VocabularyTerm>) {
         terms.forEach { term ->
-            var title = term.name
+            drawTermFirstLine(term, mdp)
 
-            if (term.reductions.isNotEmpty()) {
-                title += " ("
-                title += term.reductions.joinToString(", ")
-                title += ")"
-            }
-            if (term.zkk != null) {
-                title += " - Звуковой Космический Код (ЗКК)"
-            }
-            if (term.source != null) {
-                title += " ${term.source}"
-            }
-            title += " -"
+            var description = term.description.trim('.')
 
-            mdp.addStyledParagraphOfText("Heading4", title)
-            mdp.addStyledParagraphOfText("Определение", term.description)
+            val haveNextText = listOf(term.inPhrases, term.aliases, term.derivatives, term.antonyms).any { it.isNotEmpty() } || term.zkk != null
+            val hasDotInside = description.contains('.')
+            if (haveNextText || hasDotInside) {
+                description += "."
+            }
 
-            drawSubTerm("В словосочетаниях", term.inPhrases, mdp)
-            drawSubTerm("Синонимы", term.aliases, mdp)
-            drawSubTerm("Производные", term.derivatives, mdp)
-            drawSubTerm("Антонимы", term.antonyms, mdp)
+            mdp.addParagraph("<w:p w:rsidR=\"00686B58\" w:rsidRPr=\"00792F94\"\n" +
+                    "             w:rsidRDefault=\"00686B58\" w:rsidP=\"00686B58\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
+                    "            <w:pPr>\n" +
+                    "                <w:pStyle w:val=\"ac\"/>\n" +
+                    "            </w:pPr>\n" +
+                    "            <w:r w:rsidRPr=\"00792F94\">\n" +
+                    "                <w:t>$description</w:t>\n" +
+                    "            </w:r>\n" +
+                    "        </w:p>")
+
+            drawSubTerm("В словосочетании:", "В словосочетаниях", term.inPhrases, mdp)
+            drawSubTerm("Синоним", "Синонимы", term.aliases, mdp)
+            drawSubTerm("Производное", "Производные", term.derivatives, mdp)
+            drawSubTerm("Антоним", "Антонимы", term.antonyms, mdp)
 
             if (term.zkk != null) {
                 mdp.addStyledParagraphOfText("?", "Звуковой Космический Код (ЗКК): ${term.zkk}.")
@@ -68,24 +72,105 @@ class VocabularyService {
         }
     }
 
-    private fun drawSubTerm(label: String, subterms: MutableCollection<VocabularySubTerm>, mdp: MainDocumentPart) {
+    private fun drawTermFirstLine(term: VocabularyTerm, mdp: MainDocumentPart) {
+        var title = "<w:p w:rsidR=\"0042601B\" w:rsidRDefault=\"000D3B19\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
+                "    <w:pPr>\n" +
+                "        <w:pStyle w:val=\"4\"/>\n" +
+                "        <w:rPr>\n" +
+                "            <w:b w:val=\"0\"/>\n" +
+                "            <w:bCs w:val=\"0\"/>\n" +
+                "            <w:i/>\n" +
+                "            <w:iCs/>\n" +
+                "            <w:sz w:val=\"20\"/>\n" +
+                "            <w:szCs w:val=\"20\"/>\n" +
+                "        </w:rPr>" +
+                "    </w:pPr>\n" +
+                "    <w:r>\n" +
+                "        <w:t xml:space=\"preserve\">${term.name} </w:t>\n" +
+                "    </w:r>"
+
+        if (term.reductions.isNotEmpty()) {
+            title += " ("
+            title += term.reductions.joinToString(", ")
+            title += ")"
+        }
+        if (term.zkk != null) {
+            title += "  <w:r>\n" +
+                    "       <w:rPr>\n" +
+            "                    <w:rStyle w:val=\"-Char0\"/>\n" +
+            "                    <w:b w:val=\"0\"/>\n" +
+            "                    <w:sz w:val=\"24\"/>\n" +
+            "                </w:rPr>" +
+                    "        <w:t xml:space=\"preserve\">- Звуковой Космический Код (ЗКК)</w:t>\n" +
+                    "    </w:r>\n"
+        }
+        if (term.source != null) {
+            title += "  <w:r>\n" +
+                    "       <w:rPr>\n" +
+                    "            <w:b w:val=\"0\"/>\n" +
+                    "            <w:bCs w:val=\"0\"/>\n" +
+                    "            <w:i/>\n" +
+                    "            <w:iCs/>\n" +
+                    "            <w:sz w:val=\"20\"/>\n" +
+                    "            <w:szCs w:val=\"20\"/>\n" +
+                    "        </w:rPr>" +
+                    "        <w:t xml:space=\"preserve\">${term.source}</w:t>\n" +
+                    "    </w:r>\n"
+        }
+        title += "  <w:r>\n" +
+                "        <w:t xml:space=\"preserve\"> -</w:t>\n" +
+                "    </w:r>\n" +
+                "</w:p>"
+
+        mdp.addParagraph(title)
+    }
+
+    private fun drawSubTerm(singleLabel: String, multyLabel: String, subterms: MutableCollection<VocabularySubTerm>, mdp: MainDocumentPart) {
         if (subterms.isNotEmpty()) {
-            var text = "$label: "
+            val label = if (subterms.size > 1) multyLabel else singleLabel
+            var text = "<w:p w:rsidR=\"00FC21A7\" w:rsidRPr=\"00792F94\"\n" +
+                    "             w:rsidRDefault=\"00FC21A7\" w:rsidP=\"00573F0F\"  xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" >\n" +
+                    "            <w:pPr>\n" +
+                    "                <w:pStyle w:val=\"af0\"/>\n" +
+                    "            </w:pPr>\n" +
+                    "            <w:r w:rsidRPr=\"00792F94\">\n" +
+                    "                <w:t xml:space=\"preserve\">$label: </w:t>\n" +
+                    "            </w:r>"
             subterms.forEach { subTerm ->
-                text += if (subTerm.ii) "*${subTerm.name}*" else subTerm.name
+                text += if (subTerm.ii) {
+                    "<w:r w:rsidRPr=\"008B7EE6\">\n" +
+                            "                <w:rPr>\n" +
+                            "                    <w:rStyle w:val=\"-Char\"/>\n" +
+                            "                </w:rPr>\n" +
+                            "                <w:t>${subTerm.name}</w:t>\n" +
+                            "            </w:r>"
+                } else {
+                    "<w:r w:rsidRPr=\"000B27BF\">\n" +
+                            "                <w:rPr>\n" +
+                            "                    <w:rStyle w:val=\"Char6\"/>\n" +
+                            "                </w:rPr>\n" +
+                            "                <w:t>${subTerm.name}</w:t>\n" +
+                            "            </w:r>"
+                }
                 text += when {
-                    subTerm.description != null -> " - ${subTerm.description}.\n"
-                    subterms.size > 1 -> "; "
-                    else -> "."
+                    subTerm.description != null -> "<w:r w:rsidRPr=\"0041222C\">\n" +
+                            "                <w:rPr>\n" +
+                            "                    <w:rStyle w:val=\"Char1\"/>\n" +
+                            "                </w:rPr>\n" +
+                            "                <w:t> – ${subTerm.description}</w:t>\n" +
+                            "            </w:r>\n"
+                    subterms.size > 1 -> "<w:r><w:t>; </w:t></w:r>"
+                    else -> "<w:r><w:t>.</w:t></w:r>"
                 }
             }
-            mdp.addParagraphOfText(text)
+            text += "</w:p>"
+            mdp.addParagraph(text)
         }
     }
 
     private fun loadData(): MutableList<MutableList<String>> {
         val service = GoogleSpreadsheetService()
-        val spreadsheetId = "1Xm_bw6PEHPN8N6aaHia_0kHlad8Hp7LJBELfn2I2mDE"
+        val spreadsheetId = "1W2zWkPVV2PirPDb6UHT-M4b-g0ZFeRDolcOOApg3bNY"
         return service.read(spreadsheetId, "A:Z") as MutableList<MutableList<String>>
     }
 
@@ -101,13 +186,13 @@ class VocabularyService {
         val terms = data.groupBy { it.first() }.map { (_, records) ->
             val term = getBasicData(records.first())
             records.forEach { data ->
-                setData(data, 8,  term.derivatives, true)
-                setData(data, 10, term.derivatives, false)
-                setData(data, 12, term.aliases, true)
-                setData(data, 14, term.aliases, false)
-                setData(data, 16, term.antonyms, true)
-                setData(data, 18, term.antonyms, false)
-                setData(data, 20, term.inPhrases, true)
+                setData(data, 10,  term.derivatives, true)
+                setData(data, 12, term.derivatives, false)
+                setData(data, 14, term.aliases, true)
+                setData(data, 17, term.aliases, false)
+                setData(data, 19, term.antonyms, true)
+                setData(data, 21, term.antonyms, false)
+                setData(data, 3, term.inPhrases, true)
             }
             term
         }
@@ -127,14 +212,14 @@ class VocabularyService {
     }
 
     private fun getBasicData(data: MutableList<String>) = VocabularyTerm(
-            name = data.get(0),
-            source = data.getOrNull(1).nullOnBlank(),
-            description = data.get(2),
-            reductions = data.getOrNull(4)?.split(",", ";")?.mapNotNull { it.trim().nullOnBlank() } ?: emptyList(),
-            zkk = data.getOrNull(6).nullOnBlank(),
+            name = data[0],
+            description = data[1],
+            source = data.getOrNull(2).nullOnBlank(),
+            reductions = data.getOrNull(6)?.split(",", ";")?.mapNotNull { it.trim().nullOnBlank() } ?: emptyList(),
+            zkk = data.getOrNull(8).nullOnBlank(),
             pleyadyTerm = data.getOrNull(23).equals("да", true),
-            inII = data.getOrNull(23).equals("да", true),
-            conventional = data.getOrNull(23).equals("да", true)
+            inII = data.getOrNull(24).equals("да", true),
+            conventional = data.getOrNull(25).equals("да", true)
     )
 }
 
