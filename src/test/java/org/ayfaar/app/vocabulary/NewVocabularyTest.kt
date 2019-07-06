@@ -2,8 +2,6 @@ package org.ayfaar.app.vocabulary
 
 import com.google.gson.Gson
 import com.mscharhag.oleaster.matcher.Matchers.expect
-import org.ayfaar.app.vocabulary.VocabularyService
-import org.ayfaar.app.vocabulary.VocabularySubTerm
 import org.junit.Test
 
 class NewVocabularyTest {

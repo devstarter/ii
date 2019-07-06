@@ -8,10 +8,13 @@ import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.io.File
-import java.util.ArrayList
+import java.util.*
+import javax.inject.Inject
 
 @Service
-class VocabularyService(private val resourceLoader: ResourceLoader) {
+class VocabularyService {
+    @Inject lateinit var resourceLoader: ResourceLoader
+
     fun getDoc() = getDoc(getData(), resourceLoader.getResource("classpath:template.docx").file)
 
     internal fun getDoc(data: List<VocabularyTerm>, template: File): File {
@@ -20,16 +23,8 @@ class VocabularyService(private val resourceLoader: ResourceLoader) {
         val mdp = wordMLPackage.mainDocumentPart
 
 
-        data.groupBy { if (it.name[0] != '«') it.name[0] else it.name[1] }.forEach { (firstLetter, terms) ->
-            mdp.addParagraph("<w:p w:rsidR=\"00686B58\" w:rsidRDefault=\"0001734C\"\n" +
-                    "             w:rsidP=\"00686B58\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
-                    "            <w:pPr>\n" +
-                    "                <w:pStyle w:val=\"aa\"/>\n" +
-                    "            </w:pPr>\n" +
-                    "            <w:r w:rsidRPr=\"00792F94\">\n" +
-                    "                <w:t>${firstLetter.toString().toUpperCase()}</w:t>\n" +
-                    "            </w:r>\n" +
-                    "        </w:p>")
+        data.groupBy { if (it.name[0] != '«') it.name[0].toLowerCase() else it.name[1].toLowerCase() }.forEach { (firstLetter, terms) ->
+            mdp.addStyledParagraphOfText("aa", firstLetter.toString().toUpperCase())
             drawTerms(mdp, terms)
         }
 
@@ -54,7 +49,7 @@ class VocabularyService(private val resourceLoader: ResourceLoader) {
             mdp.addParagraph("<w:p w:rsidR=\"00686B58\" w:rsidRPr=\"00792F94\"\n" +
                     "             w:rsidRDefault=\"00686B58\" w:rsidP=\"00686B58\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
                     "            <w:pPr>\n" +
-                    "                <w:pStyle w:val=\"ac\"/>\n" +
+                    "                <w:pStyle w:val=\"a6\"/>\n" +
                     "            </w:pPr>\n" +
                     "            <w:r w:rsidRPr=\"00792F94\">\n" +
                     "                <w:t>$description</w:t>\n" +
@@ -131,7 +126,7 @@ class VocabularyService(private val resourceLoader: ResourceLoader) {
             var text = "<w:p w:rsidR=\"00FC21A7\" w:rsidRPr=\"00792F94\"\n" +
                     "             w:rsidRDefault=\"00FC21A7\" w:rsidP=\"00573F0F\"  xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" >\n" +
                     "            <w:pPr>\n" +
-                    "                <w:pStyle w:val=\"af0\"/>\n" +
+                    "                <w:pStyle w:val=\"a7\"/>\n" +
                     "            </w:pPr>\n" +
                     "            <w:r w:rsidRPr=\"00792F94\">\n" +
                     "                <w:t xml:space=\"preserve\">$label: </w:t>\n" +
