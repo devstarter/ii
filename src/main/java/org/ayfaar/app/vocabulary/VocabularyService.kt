@@ -13,18 +13,21 @@ import javax.inject.Inject
 
 @Service
 class VocabularyService {
+    private lateinit var styles: VocabularyStyles
     @Inject lateinit var resourceLoader: ResourceLoader
 
-    fun getDoc() = getDoc(getData(), resourceLoader.getResource("classpath:template.docx").file)
+    fun getDoc() = getDoc(getData()/*, resourceLoader.getResource("classpath:template.docx").file*/)
 
-    internal fun getDoc(data: List<VocabularyTerm>, template: File): File {
+    internal fun getDoc(data: List<VocabularyTerm>/*, template: File*/): File {
 
-        val wordMLPackage = WordprocessingMLPackage.load(template)
+        val wordMLPackage = WordprocessingMLPackage.createPackage()//load(template)
         val mdp = wordMLPackage.mainDocumentPart
 
+        styles = VocabularyStyles()
+        styles.init(mdp)
 
         data.groupBy { if (it.name[0] != '«') it.name[0].toLowerCase() else it.name[1].toLowerCase() }.forEach { (firstLetter, terms) ->
-            mdp.addStyledParagraphOfText("aa", firstLetter.toString().toUpperCase())
+            mdp.addStyledParagraphOfText(styles.alphabet, firstLetter.toString().toUpperCase())
             drawTerms(mdp, terms)
         }
 
@@ -46,12 +49,11 @@ class VocabularyService {
                 description += "."
             }
 
-            mdp.addParagraph("<w:p w:rsidR=\"00686B58\" w:rsidRPr=\"00792F94\"\n" +
-                    "             w:rsidRDefault=\"00686B58\" w:rsidP=\"00686B58\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
+            mdp.addParagraph("<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
                     "            <w:pPr>\n" +
-                    "                <w:pStyle w:val=\"a6\"/>\n" +
+                    "                <w:pStyle w:val=\"${styles.description}\"/>\n" +
                     "            </w:pPr>\n" +
-                    "            <w:r w:rsidRPr=\"00792F94\">\n" +
+                    "            <w:r>\n" +
                     "                <w:t>$description</w:t>\n" +
                     "            </w:r>\n" +
                     "        </w:p>")
@@ -62,26 +64,28 @@ class VocabularyService {
             drawSubTerm("Антоним", "Антонимы", term.antonyms, mdp)
 
             if (term.zkk != null) {
-                mdp.addStyledParagraphOfText("?", "Звуковой Космический Код (ЗКК): ${term.zkk}.")
+                mdp.addParagraph("<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
+                        "   <w:pPr><w:pStyle w:val=\"${styles.description}\"/></w:pPr> " +
+                        "   <w:r>\n" +
+                        "     <w:rPr>\n" +
+                        "        <w:i/>" +
+                        "     </w:rPr>\n" +
+                        "        <w:t xml:space=\"preserve\">Звуковой Космический Код (ЗКК): </w:t>\n" +
+                        "    </w:r>"  +
+                        "    <w:r>\n" +
+                        "        <w:t xml:space=\"preserve\">${term.zkk}</w:t>\n" +
+                        "    </w:r></w:p>")
             }
         }
     }
 
     private fun drawTermFirstLine(term: VocabularyTerm, mdp: MainDocumentPart) {
-        var title = "<w:p w:rsidR=\"0042601B\" w:rsidRDefault=\"000D3B19\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
+        var title = "<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
                 "    <w:pPr>\n" +
-                "        <w:pStyle w:val=\"4\"/>\n" +
-                "        <w:rPr>\n" +
-                "            <w:b w:val=\"0\"/>\n" +
-                "            <w:bCs w:val=\"0\"/>\n" +
-                "            <w:i/>\n" +
-                "            <w:iCs/>\n" +
-                "            <w:sz w:val=\"20\"/>\n" +
-                "            <w:szCs w:val=\"20\"/>\n" +
-                "        </w:rPr>" +
+                "        <w:pStyle w:val=\"${styles.term}\"/>\n" +
                 "    </w:pPr>\n" +
                 "    <w:r>\n" +
-                "        <w:t xml:space=\"preserve\">${term.name} </w:t>\n" +
+                "        <w:t xml:space=\"preserve\">${term.name} ${if (term.source == null && term.zkk == null) "—" else ""}</w:t>\n" +
                 "    </w:r>"
 
         if (term.reductions.isNotEmpty()) {
@@ -92,11 +96,12 @@ class VocabularyService {
         if (term.zkk != null) {
             title += "  <w:r>\n" +
                     "       <w:rPr>\n" +
-            "                    <w:rStyle w:val=\"-Char0\"/>\n" +
+            "                    <w:rStyle w:val=\"${styles.term}\"/>\n" +
             "                    <w:b w:val=\"0\"/>\n" +
+            "                    <w:i/>\n" +
             "                    <w:sz w:val=\"24\"/>\n" +
             "                </w:rPr>" +
-                    "        <w:t xml:space=\"preserve\">- Звуковой Космический Код (ЗКК)</w:t>\n" +
+                    "        <w:t xml:space=\"preserve\">— Звуковой Космический Код (ЗКК) —</w:t>\n" +
                     "    </w:r>\n"
         }
         if (term.source != null) {
@@ -109,13 +114,10 @@ class VocabularyService {
                     "            <w:sz w:val=\"20\"/>\n" +
                     "            <w:szCs w:val=\"20\"/>\n" +
                     "        </w:rPr>" +
-                    "        <w:t xml:space=\"preserve\">${term.source}</w:t>\n" +
+                    "        <w:t xml:space=\"preserve\">— ${term.source} —</w:t>\n" +
                     "    </w:r>\n"
         }
-        title += "  <w:r>\n" +
-                "        <w:t xml:space=\"preserve\"> -</w:t>\n" +
-                "    </w:r>\n" +
-                "</w:p>"
+        title += "</w:p>"
 
         mdp.addParagraph(title)
     }
@@ -123,34 +125,34 @@ class VocabularyService {
     private fun drawSubTerm(singleLabel: String, multyLabel: String, subterms: MutableCollection<VocabularySubTerm>, mdp: MainDocumentPart) {
         if (subterms.isNotEmpty()) {
             val label = if (subterms.size > 1) multyLabel else singleLabel
-            var text = "<w:p w:rsidR=\"00FC21A7\" w:rsidRPr=\"00792F94\"\n" +
-                    "             w:rsidRDefault=\"00FC21A7\" w:rsidP=\"00573F0F\"  xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" >\n" +
+            var text = "<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" >\n" +
                     "            <w:pPr>\n" +
-                    "                <w:pStyle w:val=\"a7\"/>\n" +
+                    "                <w:pStyle w:val=\"${styles.subTermLabel}\"/>\n" +
                     "            </w:pPr>\n" +
-                    "            <w:r w:rsidRPr=\"00792F94\">\n" +
+                    "            <w:r>\n" +
                     "                <w:t xml:space=\"preserve\">$label: </w:t>\n" +
                     "            </w:r>"
             subterms.forEach { subTerm ->
                 text += if (subTerm.ii) {
                     "<w:r w:rsidRPr=\"008B7EE6\">\n" +
                             "                <w:rPr>\n" +
-                            "                    <w:rStyle w:val=\"-Char\"/>\n" +
+                            "                    <w:rStyle w:val=\"${styles.description}\"/>\n" +
+                            "                    <w:b/>" +
                             "                </w:rPr>\n" +
                             "                <w:t>${subTerm.name}</w:t>\n" +
                             "            </w:r>"
                 } else {
-                    "<w:r w:rsidRPr=\"000B27BF\">\n" +
+                    "<w:r>\n" +
                             "                <w:rPr>\n" +
-                            "                    <w:rStyle w:val=\"Char6\"/>\n" +
+                            "                    <w:rStyle w:val=\"${styles.description}\"/>\n" +
                             "                </w:rPr>\n" +
                             "                <w:t>${subTerm.name}</w:t>\n" +
                             "            </w:r>"
                 }
                 text += when {
-                    subTerm.description != null -> "<w:r w:rsidRPr=\"0041222C\">\n" +
+                    subTerm.description != null -> "<w:r>\n" +
                             "                <w:rPr>\n" +
-                            "                    <w:rStyle w:val=\"Char1\"/>\n" +
+                            "                    <w:rStyle w:val=\"${styles.description}\"/>\n" +
                             "                </w:rPr>\n" +
                             "                <w:t> – ${subTerm.description}</w:t>\n" +
                             "            </w:r>\n"
