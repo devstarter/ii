@@ -18,7 +18,8 @@ class VocabularyDocTest {
     fun test() {
         val type = object : TypeToken<List<VocabularyTerm>>() {}.type
         val termsJson = File("src/test/resources/org/ayfaar/app/vocabulary/terms.json").readText()
-        val data = Gson().fromJson<List<VocabularyTerm>>(termsJson, type)//.subList(0, 10)
+        val data = Gson().fromJson<List<VocabularyTerm>>(termsJson, type)
+//                .filter { it.name == "Поля Сознания" || it.name == "гуманация" }//.subList(0, 10)
 
         val service = VocabularyService()
         service.getDoc(data/*, File("src/main/resources/template.docx")*/)

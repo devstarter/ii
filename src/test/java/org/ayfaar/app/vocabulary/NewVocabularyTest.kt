@@ -8,7 +8,7 @@ class NewVocabularyTest {
 
     @Test
     fun test() {
-        val service = VocabularyService()
+        val service = VocabularyLoader()
 
         val terms = service.getData(/*getData()*/)
 
