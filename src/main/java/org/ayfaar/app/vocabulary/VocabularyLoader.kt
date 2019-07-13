@@ -53,12 +53,21 @@ class VocabularyLoader {
             name = data[0],
             description = data[1],
             source = data.getOrNull(2).nullOnBlank(),
-            reductions = data.getOrNull(6)?.split(",", ";")?.mapNotNull { it.trim().nullOnBlank() } ?: emptyList(),
-            zkk = data.getOrNull(8).nullOnBlank(),
-            pleyadyTerm = data.getOrNull(23).equals("да", true),
-            inII = data.getOrNull(24).equals("да", true),
-            conventional = data.getOrNull(25).equals("да", true)
+            reductions = data.getOrNull(5)?.split(",", ";")?.mapNotNull { it.trim().nullOnBlank() } ?: emptyList(),
+            zkk = data.getOrNull(6).nullOnBlank(),
+            pleyadyTerm = data.getOrNull(21).equals("да", true),
+            inII = data.getOrNull(23).equals("да", true),
+            conventional = data.getOrNull(24).equals("да", true),
+            indication = parseIndications(data.getOrNull(25))
     )
+
+}
+
+internal fun parseIndications(text: String?)
+        = text?.split("\n")?.map { it.split("#") }?.map {
+    val type = if (it.size > 1) VocabularyIndicationType.resolve(it[0]) else VocabularyIndicationType.ITALIC
+    val text = it.last()
+    VocabularyIndication(text, type)
 }
 
 data class VocabularyTerm(
@@ -73,7 +82,26 @@ data class VocabularyTerm(
         val inPhrases: MutableCollection<VocabularySubTerm> = ArrayList(),
         val pleyadyTerm: Boolean = false,
         val inII: Boolean = false,
-        val conventional: Boolean = false
+        val conventional: Boolean = false,
+        val indication: Collection<VocabularyIndication>?
+)
+
+enum class VocabularyIndicationType {
+    ITALIC, BOLD, UNDERSCORE;
+
+    companion object {
+        fun resolve(text: String) = when(text) {
+            "курсив" -> ITALIC
+            "подчёркивание" -> UNDERSCORE
+            "жирным" -> BOLD
+            else -> throw Exception("Cannot understand $text as indication type")
+        }
+
+    }
+}
+data class VocabularyIndication(
+        val text: String,
+        val type: VocabularyIndicationType = VocabularyIndicationType.ITALIC
 )
 
 data class VocabularySubTerm(

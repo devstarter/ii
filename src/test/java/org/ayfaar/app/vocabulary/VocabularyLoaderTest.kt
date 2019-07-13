@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import com.mscharhag.oleaster.matcher.Matchers.expect
 import org.junit.Test
 
-class NewVocabularyTest {
+class VocabularyLoaderTest {
 
     @Test
     fun test() {

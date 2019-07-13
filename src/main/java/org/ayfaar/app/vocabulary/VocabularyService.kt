@@ -7,7 +7,10 @@ import org.docx4j.wml.*
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.io.File
+import java.util.regex.Pattern
 import javax.inject.Inject
+import org.ayfaar.app.utils.RegExpUtils.W as W
+import org.ayfaar.app.vocabulary.VocabularyIndicationType.*
 
 @Service
 class VocabularyService {
@@ -39,7 +42,7 @@ class VocabularyService {
         terms.forEach { term ->
             drawTermFirstLine(term, mdp)
 
-            var description = term.description.trim().trim('.')
+            var description = term.description.proceed()
 
             val haveNextText = listOf(term.inPhrases, term.aliases, term.derivatives, term.antonyms).any { it.isNotEmpty() } || term.zkk != null
             val hasDotInside = description.contains('.')
@@ -47,14 +50,7 @@ class VocabularyService {
                 description += "."
             }
 
-            mdp.addParagraph("<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
-                    "            <w:pPr>\n" +
-                    "                <w:pStyle w:val=\"${styles.description}\"/>\n" +
-                    "            </w:pPr>\n" +
-                    "            <w:r>\n" +
-                    "                <w:t>$description</w:t>\n" +
-                    "            </w:r>\n" +
-                    "        </w:p>")
+            mdp.addObject(P().styled(styles.description).withContent(description, term.indication))
 
             drawSubTerm("В словосочетании", "В словосочетаниях", term.inPhrases.map { it.copy(ii = false) }, mdp)
             drawSubTerm("Синоним", "Синонимы", term.aliases, mdp)
@@ -137,16 +133,16 @@ class VocabularyService {
 
             if (subterms.first().description == null) {
                 subterms.forEach { subTerm ->
-                    p.addHead(subTerm.name, subTerm.ii)
+                    p.addHead(subTerm.name.proceed(), subTerm.ii)
                     p.addContent(if (subterms.last() == subTerm) "." else ", ")
                 }
                 mdp.addObject(p)
             } else {
                 subterms.forEach { subTerm ->
                     val lastOne = subterms.last() == subTerm
-                    p.addHead(subTerm.name, subTerm.ii)
+                    p.addHead(subTerm.name.proceed(), subTerm.ii)
                     val tail = if (lastOne) "." else ";"
-                    p.addContent(" – ${subTerm.description}$tail", styles.description) {
+                    p.addContent(" – ${subTerm.description?.proceed()}$tail", styles.description) {
                         i = False()
                     }
                     mdp.addObject(p)
@@ -157,14 +153,59 @@ class VocabularyService {
     }
 }
 
+internal fun String.proceed() = this.trim().trim('.').trim().let { s ->
+    s.replace(Regex("\"(.+?)\"")) { "«${it.groupValues[1]}»" }
+            .replace(Regex("($W)[-–]($W)"), "$1—$2")
+}
+
 private fun P.styled(style: String) = this.apply {
     pPr = PPr().apply { pStyle = PPrBase.PStyle().apply { `val` = style } }
 }
 
-private operator fun P.plusAssign(s: String) = this.addContent(s)
+private operator fun P.plusAssign(s: String)  = this.addContent(s)
 
 private fun P.addContent(text: String) {
     this.content.add(R().also { r -> r.content.add(Text().also { t -> t.space = "preserve"; t.value = text }) })
+}
+
+private fun P.withContent(text: String): P {
+    this.addContent(text)
+    return this
+}
+
+internal fun P.withContent(text: String, indication: Collection<VocabularyIndication>?): P {
+    if (indication == null) return this.withContent(text)
+
+    val matcher = Pattern.compile(indication.joinToString("|") {
+        it.text.replace("(", "\\(").replace(")", "\\)")
+    }).matcher(text)
+
+    var parts: MutableList<Pair<String, VocabularyIndicationType?>> = ArrayList()
+    var start = 0
+
+    while (matcher.find()) {
+        parts.add(text.substring(start, matcher.start()) to null)
+        parts.add(matcher.group() to indication.find { it.text == matcher.group() }?.type)
+        start = matcher.end()
+    }
+    parts.add(text.substring(start) to null)
+
+    parts = parts.filter { it.first.isNotEmpty() }.toMutableList()
+
+    parts.map { (text, identType) ->
+        this.content.add(R().also { r ->
+            when(identType) {
+                ITALIC -> r.rPr = RPr().apply { i = BooleanDefaultTrue() }
+                BOLD -> r.rPr = RPr().apply { b = BooleanDefaultTrue() }
+                UNDERSCORE -> r.rPr = RPr().apply { u = U().apply { `val` = UnderlineEnumeration.SINGLE } }
+            }
+            r.content.add(Text().also { t ->
+                t.space = "preserve"; t.value = text
+            })
+        })
+    }
+
+    return this
 }
 
 private fun P.addContent(text: String, style: String, block: RPr.() -> Unit) {
