@@ -2,6 +2,7 @@ package org.ayfaar.app.sync
 
 import com.google.gson.Gson
 import mu.KotlinLogging
+import org.apache.commons.net.PrintCommandListener
 import org.apache.commons.net.ftp.FTPClient
 import org.ayfaar.app.utils.GoogleService
 import org.ayfaar.app.utils.Transliterator
@@ -82,6 +83,7 @@ fun uploadData(remoteFilename: String, json: String, ftpHost: String, ftpLogin: 
     file.writeText(json)
 
     val client = FTPClient()
+//    client.addProtocolCommandListener(PrintCommandListener(System.out))
 
     try {
         client.connect(ftpHost)
@@ -163,15 +165,17 @@ fun `разбор материала`(iterator: CoolIterator, startIndex: Int = 
     }
     return Block(articles, videos, audios)
 }
-private fun Collection<TitleUrlPair>.mapAudioUrls() = this.map {
-    if (it.url.contains("ii.ayfaar.ru/r/", true)) {
-        val code = it.url.split("ii.ayfaar.ru/r/")[1]
-        it.copy(url = "https://ii.ayfaar.ru/api/record/$code/download/$code")
-    } else {
-        KotlinLogging.logger {  }.warn { "Не правильная ссылка для аудио ${it.url}" }
-        it
-    }
-}
+private fun Collection<TitleUrlPair>.mapAudioUrls() = this
+        .map { it.copy( url = it.url.replace("ii.ayfaar.org", "ii.ayfaar.ru")) }
+        .map {
+            if (it.url.contains("ii.ayfaar.ru/r/", true)) {
+                val code = it.url.split("ii.ayfaar.ru/r/")[1]
+                it.copy(url = "https://ii.ayfaar.ru/api/record/$code/download/$code")
+            } else {
+                KotlinLogging.logger {  }.warn { "Не правильная ссылка для аудио ${it.url}" }
+                it
+            }
+        }
 
 
 
