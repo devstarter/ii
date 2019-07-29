@@ -43,13 +43,13 @@ server:
   session:
     timeout: 2147483647
   ssl:
-    enabled: false
-    redirect-http-to-https: false
+    enabled: true
+    redirect-http-to-https: true
     key-store: /etc/letsencrypt/live/ii.ayfaar.ru/keystore.p12
     key-store-password: ayfaar
     keyStoreType: PKCS12
     keyAlias: ii.ayfaar.ru
-  port: 80
+  port: 443
   http-port: 80
 
 #  security.require-ssl=true
