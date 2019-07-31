@@ -5,6 +5,7 @@ import org.ayfaar.app.dao.TermDao;
 import org.ayfaar.app.model.LinkType;
 import org.ayfaar.app.model.Term;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,11 +19,13 @@ public interface TermService {
      * (обычно в именительном падеже). Например "времени" => "Время", "времён" => "Время" и т. д.
      */
     List<Map.Entry<String, TermProvider>> getAll();
+    Collection<String> getAllUppers();
     List<TermDao.TermInfo> getAllInfoTerms();
     Optional<TermProvider> get(String name);
     Optional<TermProvider> getByUri(String uri);
     Optional<TermProvider> getMainOrThis(String name);
     Term getTerm(String name);
+
     void reload();
 
     void save(Term term);

@@ -114,6 +114,19 @@ public class TermServiceImpl implements TermService {
 		logger.info("Terms loading finish");
     }
 
+    @Override
+    public Collection<String> getAllUppers() {
+        return /*new Gson().toJson(*/termsInfo.stream().map(TermDao.TermInfo::getName).filter(TermServiceImpl::isUpper).collect(Collectors.toList());//);
+    }
+
+    public static boolean isUpper(String s) {
+        for(char c : s.toCharArray()) {
+            if(! Character.isUpperCase(c))
+                return false;
+        }
+        return true;
+    }
+
     private void loadRoots() {
         HashMap<Object, Object> unsortedRoots = new HashMap<>();
 //        logger.debug("Load roots");
