@@ -3,8 +3,6 @@ package org.ayfaar.app.vocabulary
 import com.mscharhag.oleaster.matcher.Matchers.expect
 import org.junit.Test
 
-import org.junit.Assert.*
-
 class VocabularyService_TextProceedTest {
 
     @Test
@@ -12,8 +10,17 @@ class VocabularyService_TextProceedTest {
         "привет \"малыш\", ты прекрасно \"выглядишь\"".proceed().let {
             expect(it).toEqual("привет «малыш», ты прекрасно «выглядишь»")
         }
+
         " привет . ".proceed().apply {
             expect(this).toEqual("привет")
+        }
+
+        "“объекта”".proceed().apply {
+            expect(this).toEqual("«объекта»")
+        }
+
+        "нами как “деградация «личности”".proceed().apply {
+            expect(this).toEqual("нами как «деградация «личности»")
         }
     }
 
@@ -29,4 +36,12 @@ class VocabularyService_TextProceedTest {
             expect(it).toEqual("слю-да")
         }
     }
+
+    @Test
+    fun invalid_letters() {
+        "наименьшей".proceed().apply {
+            expect(this).toEqual("наименьшей")
+        }
+    }
+    //
 }

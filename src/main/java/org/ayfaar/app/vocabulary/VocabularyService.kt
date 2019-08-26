@@ -11,15 +11,16 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 import org.ayfaar.app.utils.RegExpUtils.W as W
 import org.ayfaar.app.vocabulary.VocabularyIndicationType.*
+import java.math.BigInteger
 
 @Service
-class VocabularyService {
+class VocabularyService(private val helper: VocabularyUpperWordsHelper) {
     private lateinit var styles: VocabularyStyles
     @Inject lateinit var resourceLoader: ResourceLoader
 
-    fun getDoc() = getDoc(VocabularyLoader().getData()/*, resourceLoader.getResource("classpath:template.docx").file*/)
+    fun getDoc(fileName: String = "test.docx") = getDoc(VocabularyLoader().getData(), fileName/*, resourceLoader.getResource("classpath:template.docx").file*/)
 
-    internal fun getDoc(data: List<VocabularyTerm>/*, template: File*/): File {
+    internal fun getDoc(data: List<VocabularyTerm>, fileName: String/*, template: File*/): File {
 
         val wordMLPackage = WordprocessingMLPackage.createPackage()//load(template)
         val mdp = wordMLPackage.mainDocumentPart
@@ -27,13 +28,24 @@ class VocabularyService {
         styles = VocabularyStyles()
         styles.init(mdp)
 
-        data.groupBy { if (it.name[0] != '«') it.name[0].toLowerCase() else it.name[1].toLowerCase() }.forEach { (firstLetter, terms) ->
+        val groupedByFirstLetter = data.groupBy { if (it.name[0] != '«') it.name[0].toLowerCase() else it.name[1].toLowerCase() }
+        var first = true
+
+        groupedByFirstLetter.forEach { (firstLetter, terms) ->
+            if (first) {
+                first = false
+            } else {
+                mdp.addObject(P().apply {
+                    content.add(R().apply {
+                        content.add(Br().apply { type = STBrType.PAGE })
+                    })
+                })
+            }
             mdp.addStyledParagraphOfText(styles.alphabet, firstLetter.toString().toUpperCase())
             drawTerms(mdp, terms)
         }
 
-
-        val file = File("test.docx")
+        val file = File(fileName)
         Docx4J.save(wordMLPackage, file)
         return file
     }
@@ -42,7 +54,7 @@ class VocabularyService {
         terms.forEach { term ->
             drawTermFirstLine(term, mdp)
 
-            var description = term.description.proceed()
+            var description = term.description.proceed().let { helper.check(it) }
 
             val haveNextText = listOf(term.inPhrases, term.aliases, term.derivatives, term.antonyms).any { it.isNotEmpty() } || term.zkk != null
             val hasDotInside = description.contains('.')
@@ -50,12 +62,29 @@ class VocabularyService {
                 description += "."
             }
 
-            mdp.addObject(P().styled(styles.description).withContent(description, term.indication))
+            var p = P().styled(styles.description)
 
-            drawSubTerm("В словосочетании", "В словосочетаниях", term.inPhrases.map { it.copy(ii = false) }, mdp)
-            drawSubTerm("Синоним", "Синонимы", term.aliases, mdp)
-            drawSubTerm("Производное", "Производные", term.derivatives, mdp)
-            drawSubTerm("Антоним", "Антонимы", term.antonyms, mdp)
+            if (term.inPleadsCivilisations) p.addContent("в плеядеянских цивилизациях: ") { i = True() }
+            if (term.pleadsTerm) p.addContent("плеядианский термин: ") { i = True() }
+            if (term.inII) p.addContent("в ииссиидиологии: ") { i = True() }
+            if (term.conventional) p.addContent("совпадает с общепринятым значением: ") { i = True() }
+
+            if (description.contains("\n")) {
+                description.split("\n", "\r").forEach {
+                    p.withContent(it, term.indication)
+                    mdp.addObject(p)
+                    p = P().styled(styles.description)
+                }
+            } else {
+                p.withContent(description, term.indication)
+                mdp.addObject(p)
+            }
+
+
+            drawSubTerm("В словосочетании", "В словосочетаниях", term.inPhrases.map { it.copy(ii = true) }, mdp, term.indication)
+            drawSubTerm("Синоним", "Синонимы", term.aliases, mdp, term.indication)
+            drawSubTerm("Производное", "Производные", term.derivatives, mdp, term.indication)
+            drawSubTerm("Антоним", "Антонимы", term.antonyms, mdp, term.indication)
 
             if (term.zkk != null) {
                 mdp.addParagraph("<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
@@ -74,49 +103,46 @@ class VocabularyService {
     }
 
     private fun drawTermFirstLine(term: VocabularyTerm, mdp: MainDocumentPart) {
-        var title = "<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
+        val termName = term.name.let { helper.check(it) }
+//        val tail = if (term.source == null && term.zkk == null && term.reductions.isEmpty()) "—" else ""
+        val p = P()
+                .styled(styles.term)
+                .addContent(termName)
+        /*var title = "<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
                 "    <w:pPr>\n" +
                 "        <w:pStyle w:val=\"${styles.term}\"/>\n" +
                 "    </w:pPr>\n" +
                 "    <w:r>\n" +
-                "        <w:t xml:space=\"preserve\">${term.name} ${if (term.source == null && term.zkk == null) "—" else ""}</w:t>\n" +
-                "    </w:r>"
+                "        <w:t xml:space=\"preserve\">$termName ${if (term.source == null && term.zkk == null) "—" else ""}</w:t>\n" +
+                "    </w:r>"*/
 
         if (term.reductions.isNotEmpty()) {
-            title += " ("
-            title += term.reductions.joinToString(", ")
-            title += ")"
-        }
-        if (term.zkk != null) {
-            title += "  <w:r>\n" +
-                    "       <w:rPr>\n" +
-            "                    <w:rStyle w:val=\"${styles.term}\"/>\n" +
-            "                    <w:b w:val=\"0\"/>\n" +
-            "                    <w:i/>\n" +
-            "                    <w:sz w:val=\"24\"/>\n" +
-            "                </w:rPr>" +
-                    "        <w:t xml:space=\"preserve\">— Звуковой Космический Код (ЗКК) —</w:t>\n" +
-                    "    </w:r>\n"
+            p.addContent(" (" + term.reductions.joinToString(", ") + ")")
         }
         if (term.source != null) {
-            title += "  <w:r>\n" +
-                    "       <w:rPr>\n" +
-                    "            <w:b w:val=\"0\"/>\n" +
-                    "            <w:bCs w:val=\"0\"/>\n" +
-                    "            <w:i/>\n" +
-                    "            <w:iCs/>\n" +
-                    "            <w:sz w:val=\"20\"/>\n" +
-                    "            <w:szCs w:val=\"20\"/>\n" +
-                    "        </w:rPr>" +
-                    "        <w:t xml:space=\"preserve\">— ${term.source} —</w:t>\n" +
-                    "    </w:r>\n"
+            p.addContent(" " + term.source.proceed()) {
+                b = False()
+                bCs = False()
+                i = True()
+                iCs = True()
+                sz = HpsMeasure().apply { `val` = BigInteger.valueOf(20L) }
+                szCs = HpsMeasure().apply { `val` = BigInteger.valueOf(20L) }
+            }
         }
-        title += "</w:p>"
+        if (term.zkk != null) {
+            p.addContent(" — Звуковой Космический Код (ЗКК)", styles.term) {
+                b = False()
+                i = True()
+                sz = HpsMeasure().apply { `val` = BigInteger.valueOf(24L) }
+            }
+        }
 
-        mdp.addParagraph(title)
+        p.addContent(" —")
+
+        mdp.addObject(p)
     }
 
-    private fun drawSubTerm(singleLabel: String, multyLabel: String, subterms: Collection<VocabularySubTerm>, mdp: MainDocumentPart) {
+    private fun drawSubTerm(singleLabel: String, multyLabel: String, subterms: Collection<VocabularySubTerm>, mdp: MainDocumentPart, indication: Collection<VocabularyIndication>?) {
         if (subterms.isNotEmpty()) {
             val label = if (subterms.size > 1) multyLabel else singleLabel
 
@@ -142,7 +168,9 @@ class VocabularyService {
                     val lastOne = subterms.last() == subTerm
                     p.addHead(subTerm.name.proceed(), subTerm.ii)
                     val tail = if (lastOne) "." else ";"
-                    p.addContent(" – ${subTerm.description?.proceed()}$tail", styles.description) {
+
+                    val description = subTerm.description?.proceed()?.let { helper.check(it) }
+                    p.withContent(" — $description$tail", indication, styles.description) {
                         i = False()
                     }
                     mdp.addObject(p)
@@ -153,19 +181,29 @@ class VocabularyService {
     }
 }
 
-internal fun String.proceed() = this.trim().trim('.').trim().let { s ->
-    s.replace(Regex("\"(.+?)\"")) { "«${it.groupValues[1]}»" }
+private fun P.pageBreak() = this.content.add(Br().apply { type = STBrType.PAGE })
+
+internal fun String.proceed() = this.trim().trim('.').trim().let { s -> s
+            .replace("й", "й")
+            .replace(Regex("“(.+?)”")) { "«${it.groupValues[1]}»" }
+            .replace(Regex("\"(.+?)\"")) { "«${it.groupValues[1]}»" }
             .replace(Regex("($W)[-–]($W)"), "$1—$2")
 }
 
 private fun P.styled(style: String) = this.apply {
     pPr = PPr().apply { pStyle = PPrBase.PStyle().apply { `val` = style } }
+    return this
 }
 
-private operator fun P.plusAssign(s: String)  = this.addContent(s)
+private fun R.styled(style: String) = this.apply {
+    rPr = RPr().apply { rStyle = RStyle().apply { `val` = style } }
+}
 
-private fun P.addContent(text: String) {
+private operator fun P.plusAssign(s: String)  { this.addContent(s) }
+
+private fun P.addContent(text: String): P {
     this.content.add(R().also { r -> r.content.add(Text().also { t -> t.space = "preserve"; t.value = text }) })
+    return this
 }
 
 private fun P.withContent(text: String): P {
@@ -173,8 +211,8 @@ private fun P.withContent(text: String): P {
     return this
 }
 
-internal fun P.withContent(text: String, indication: Collection<VocabularyIndication>?): P {
-    if (indication == null) return this.withContent(text)
+internal fun P.withContent(text: String, indication: Collection<VocabularyIndication>?, style: String? = null, block: (RPr.() -> Unit)? = null): P {
+    if (indication == null) return this.addContent(text, style, block)
 
     val matcher = Pattern.compile(indication.joinToString("|") {
         it.text.replace("(", "\\(").replace(")", "\\)")
@@ -194,10 +232,13 @@ internal fun P.withContent(text: String, indication: Collection<VocabularyIndica
 
     parts.map { (text, identType) ->
         this.content.add(R().also { r ->
+            style?.let { r.styled(it) }
+            r.rPr = RPr()
+            block?.let { it(r.rPr) }
             when(identType) {
-                ITALIC -> r.rPr = RPr().apply { i = BooleanDefaultTrue() }
-                BOLD -> r.rPr = RPr().apply { b = BooleanDefaultTrue() }
-                UNDERSCORE -> r.rPr = RPr().apply { u = U().apply { `val` = UnderlineEnumeration.SINGLE } }
+                ITALIC -> r.rPr.apply { i = BooleanDefaultTrue() }
+                BOLD -> r.rPr.apply { b = BooleanDefaultTrue() }
+                UNDERSCORE -> r.rPr.apply { u = U().apply { `val` = UnderlineEnumeration.SINGLE } }
             }
             r.content.add(Text().also { t ->
                 t.space = "preserve"; t.value = text
@@ -208,16 +249,18 @@ internal fun P.withContent(text: String, indication: Collection<VocabularyIndica
     return this
 }
 
-private fun P.addContent(text: String, style: String, block: RPr.() -> Unit) {
+private fun P.addContent(text: String, style: String? = null, block: (RPr.() -> Unit)? = null): P {
     R().also { r ->
         r.rPr = RPr().apply {
-            rStyle = RStyle().apply { `val` = style }
-            block(this)
+            rStyle?.let { rStyle = RStyle().apply { `val` = style } }
+            block?.let { it(this) }
         }
         r.content.add(Text().also { t -> t.space = "preserve"; t.value = text })
     }.also {
         this.content.add(it)
     }
+    return this
 }
 
+private fun True() = BooleanDefaultTrue()
 private fun False() = BooleanDefaultTrue().apply { isVal = false }

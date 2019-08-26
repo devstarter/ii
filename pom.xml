@@ -28,7 +28,7 @@
 		<poi.version>3.9</poi.version>
 		<streamex.version>0.6.0</streamex.version>
 		<tika.version>1.14</tika.version>
-		<kotlin.version>1.1.4-2</kotlin.version>
+		<kotlin.version>1.2.51</kotlin.version>
 		<docx4j.version>8.1.0</docx4j.version>
 	</properties>
 
@@ -389,6 +389,16 @@
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-maven-plugin</artifactId>
 				<version>${kotlin.version}</version>
+				<configuration>
+					<args>
+						<arg>-Xjsr305=strict</arg>
+					</args>
+					<compilerPlugins>
+						<plugin>spring</plugin>
+						<plugin>jpa</plugin>
+					</compilerPlugins>
+					<jvmTarget>1.8</jvmTarget>
+				</configuration>
 				<executions>
 					<execution>
 						<id>compile</id>
@@ -405,6 +415,13 @@
 						</goals>
 					</execution>
 				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.jetbrains.kotlin</groupId>
+						<artifactId>kotlin-maven-allopen</artifactId>
+						<version>${kotlin.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
