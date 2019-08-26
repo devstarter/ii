@@ -1,5 +1,7 @@
 package org.ayfaar.app.vocabulary
 
+import org.ayfaar.app.utils.RegExpUtils.W
+import org.ayfaar.app.vocabulary.VocabularyIndicationType.*
 import org.docx4j.Docx4J
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart
@@ -7,11 +9,9 @@ import org.docx4j.wml.*
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.io.File
+import java.math.BigInteger
 import java.util.regex.Pattern
 import javax.inject.Inject
-import org.ayfaar.app.utils.RegExpUtils.W as W
-import org.ayfaar.app.vocabulary.VocabularyIndicationType.*
-import java.math.BigInteger
 
 @Service
 class VocabularyService(private val helper: VocabularyUpperWordsHelper) {
@@ -185,6 +185,7 @@ private fun P.pageBreak() = this.content.add(Br().apply { type = STBrType.PAGE }
 
 internal fun String.proceed() = this.trim().trim('.').trim().let { s -> s
             .replace("й", "й")
+            .replace("ё", "ё")
             .replace(Regex("“(.+?)”")) { "«${it.groupValues[1]}»" }
             .replace(Regex("\"(.+?)\"")) { "«${it.groupValues[1]}»" }
             .replace(Regex("($W)[-–]($W)"), "$1—$2")

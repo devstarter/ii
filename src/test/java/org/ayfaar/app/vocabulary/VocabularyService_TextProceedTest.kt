@@ -38,6 +38,16 @@ class VocabularyService_TextProceedTest {
     }
 
     @Test
+    fun йё() {
+        "й".proceed().let {
+            expect(it).toEqual("й")
+        }
+        "ё".proceed().let {
+            expect(it).toEqual("ё")
+        }
+    }
+
+    @Test
     fun invalid_letters() {
         "наименьшей".proceed().apply {
             expect(this).toEqual("наименьшей")

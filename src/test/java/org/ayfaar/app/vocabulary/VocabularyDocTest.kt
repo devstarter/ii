@@ -3,9 +3,9 @@ package org.ayfaar.app.vocabulary
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import fromJson
-import org.ayfaar.app.utils.any
 import org.junit.Test
-import org.mockito.Mockito.*
+import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.spy
 import java.io.File
 
 
@@ -14,7 +14,7 @@ class VocabularyDocTest {
     @Test
     fun release() {
         val service = VocabularyService(VocabularyUpperWordsHelper())
-        service.getDoc("словарь.2019.08.19.0.docx")
+        service.getDoc("словарь.2019.08.26.0.docx")
     }
 
     @Test
