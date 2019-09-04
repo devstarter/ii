@@ -13,6 +13,7 @@ class MaintenanceController @Inject
 constructor(val entityLoader: EntityLoader,
             val getVideosFormYoutube: GetVideosFormYoutube,
             val ayfaarRuNavigatorUpdater: AyfaarRuNavigatorUpdater,
+            val abbreviationExporter: AbbreviationExporter,
             val termDescriptionImporter: TermDescriptionImporter) {
 
 
@@ -52,5 +53,10 @@ constructor(val entityLoader: EntityLoader,
     @RequestMapping("sync/update-navigator")
     fun updateNavigator() {
         ayfaarRuNavigatorUpdater.sync()
+    }
+
+    @RequestMapping("sync/export-abbreviations")
+    fun exportAbbreviations() {
+        abbreviationExporter.sync()
     }
 }
