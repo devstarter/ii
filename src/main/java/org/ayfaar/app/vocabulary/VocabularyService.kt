@@ -81,10 +81,10 @@ class VocabularyService(private val helper: VocabularyUpperWordsHelper) {
             }
 
 
-            drawSubTerm("В словосочетании", "В словосочетаниях", term.inPhrases.map { it.copy(ii = true) }, mdp, term.indication)
             drawSubTerm("Синоним", "Синонимы", term.aliases, mdp, term.indication)
-            drawSubTerm("Производное", "Производные", term.derivatives, mdp, term.indication)
             drawSubTerm("Антоним", "Антонимы", term.antonyms, mdp, term.indication)
+            drawSubTerm("В словосочетании", "В словосочетаниях", term.inPhrases.map { it.copy(ii = true) }, mdp, term.indication)
+            drawSubTerm("Производное", "Производные", term.derivatives, mdp, term.indication)
 
             if (term.zkk != null) {
                 mdp.addParagraph("<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
@@ -157,14 +157,25 @@ class VocabularyService(private val helper: VocabularyUpperWordsHelper) {
                 i = False()
             }
 
-            if (subterms.first().description == null) {
-                subterms.forEach { subTerm ->
+            val withoutDescription = subterms.filter { it.description == null }
+            val withDescription = subterms.filterNot { it.description == null }
+
+            if (withoutDescription.isNotEmpty()) {
+                withoutDescription.forEach { subTerm ->
                     p.addHead(subTerm.name.proceed(), subTerm.ii)
-                    p.addContent(if (subterms.last() == subTerm) "." else ", ")
+                    val tail = when {
+                        subterms.last() == subTerm && withDescription.isEmpty() -> "."
+                        withDescription.isNotEmpty() -> ";"
+                        else -> ", "
+                    }
+                    p.withContent(tail) { i = False() }
                 }
                 mdp.addObject(p)
-            } else {
-                subterms.forEach { subTerm ->
+                if (withDescription.isNotEmpty()) p = P().styled(styles.subTermLabel)
+            }
+
+            if (withDescription.isNotEmpty()) {
+                withDescription.forEach { subTerm ->
                     val lastOne = subterms.last() == subTerm
                     p.addHead(subTerm.name.proceed(), subTerm.ii)
                     val tail = if (lastOne) "." else ";"
@@ -212,7 +223,7 @@ private fun P.withContent(text: String): P {
     return this
 }
 
-internal fun P.withContent(text: String, indication: Collection<VocabularyIndication>?, style: String? = null, block: (RPr.() -> Unit)? = null): P {
+internal fun P.withContent(text: String, indication: Collection<VocabularyIndication>? = null, style: String? = null, block: (RPr.() -> Unit)? = null): P {
     if (indication == null) return this.addContent(text, style, block)
 
     val matcher = Pattern.compile(indication.joinToString("|") {

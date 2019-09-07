@@ -14,7 +14,7 @@ class VocabularyDocTest {
     @Test
     fun release() {
         val service = VocabularyService(VocabularyUpperWordsHelper())
-        service.getDoc("словарь.2019.08.26.0.docx")
+        service.getDoc("словарь.2019.09.06.0.docx")
     }
 
     @Test
@@ -23,7 +23,7 @@ class VocabularyDocTest {
         val termsJson = File("src/test/resources/org/ayfaar/app/vocabulary/terms.json").readText()
         val data = Gson().fromJson<List<VocabularyTerm>>(termsJson, type)
 //                .filter { it.name == "Поля Сознания" || it.name == "гуманация" || it.name == "психонация" || it.name == "эгрегор" }//.subList(0, 10)
-//                .filter { it.name == "бифариусный" }//.subList(0, 10)
+//                .filter { it.name == "димидиомиттенсный" }//.subList(0, 10)
 
         val helper = spy(VocabularyUpperWordsHelper())
         doReturn(upperTermsJson.fromJson()).`when`(helper).loadUpperWords()
