@@ -74,7 +74,7 @@ class VocabularyService {
             val haveNextText = listOf(term.inPhrases, term.aliases, term.derivatives, term.antonyms).any { it.isNotEmpty() } || term.zkk != null
             val hasDotInside = description.contains('.')
             if (haveNextText || hasDotInside) {
-                description += "."
+                description += ". "
             }
 
             var p = P().styled(styles.description)
@@ -96,24 +96,31 @@ class VocabularyService {
             }
 
 
-            drawSubTerm("Синоним", "Синонимы", term.aliases, mdp, term.indication)
-            drawSubTerm("Антоним", "Антонимы", term.antonyms, mdp, term.indication)
-            drawSubTerm("В словосочетании", "В словосочетаниях", term.inPhrases.map { it.copy(ii = true) }, mdp, term.indication)
-            drawSubTerm("Производное", "Производные", term.derivatives, mdp, term.indication)
+            drawSubTerm("Сокращение", "Сокращения", term.reductions.map { VocabularySubTerm(it, null, false) }, mdp, null, true)
+            addZkk(mdp, term.zkk)
+            drawSubTerm("Синоним", "Синонимы", term.aliases, mdp, term.indication, true)
+            drawSubTerm("Антоним", "Антонимы", term.antonyms, mdp, term.indication, true)
+            drawSubTerm("В словосочетании", "В словосочетаниях", term.inPhrases.map { it.copy(ii = true) }, mdp, term.indication, false)
+            drawSubTerm("Производное", "Производные", term.derivatives, mdp, term.indication, false)
 
-            if (term.zkk != null) {
-                mdp.addParagraph("<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
-                        "   <w:pPr><w:pStyle w:val=\"${styles.description}\"/></w:pPr> " +
-                        "   <w:r>\n" +
-                        "     <w:rPr>\n" +
-                        "        <w:i/>" +
-                        "     </w:rPr>\n" +
-                        "        <w:t xml:space=\"preserve\">Звуковой Космический Код (ЗКК): </w:t>\n" +
-                        "    </w:r>"  +
-                        "    <w:r>\n" +
-                        "        <w:t xml:space=\"preserve\">${term.zkk.proceed()}</w:t>\n" +
-                        "    </w:r></w:p>")
-            }
+        }
+    }
+
+    private fun addZkk(mdp: MainDocumentPart, zkk: String?) {
+        if (zkk != null) {
+            mdp.lastP().withContent("Звуковой Космический Код (ЗКК): ") { i = True()}
+            mdp.lastP().withContent(zkk.proceed() + ". ")
+            /*mdp.addParagraph("<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
+                    "   <w:pPr><w:pStyle w:val=\"${styles.description}\"/></w:pPr> " +
+                    "   <w:r>\n" +
+                    "     <w:rPr>\n" +
+                    "        <w:i/>" +
+                    "     </w:rPr>\n" +
+                    "        <w:t xml:space=\"preserve\">Звуковой Космический Код (ЗКК): </w:t>\n" +
+                    "    </w:r>" +
+                    "    <w:r>\n" +
+                    "        <w:t xml:space=\"preserve\">${zkk.proceed()}</w:t>\n" +
+                    "    </w:r></w:p>")*/
         }
     }
 
@@ -131,9 +138,9 @@ class VocabularyService {
                 "        <w:t xml:space=\"preserve\">$termName ${if (term.source == null && term.zkk == null) "—" else ""}</w:t>\n" +
                 "    </w:r>"*/
 
-        if (term.reductions.isNotEmpty()) {
+        /*if (term.reductions.isNotEmpty()) {
             p.addContent(" (" + term.reductions.joinToString(", ").proceed() + ")")
-        }
+        }*/
         if (term.source != null) {
             p.addContent(" " + term.source.proceed()) {
                 b = False()
@@ -144,7 +151,7 @@ class VocabularyService {
                 szCs = HpsMeasure().apply { `val` = BigInteger.valueOf(20L) }
             }
         }
-        if (term.zkk != null) {
+        if (term.isZkk) {
             p.addContent(" — Звуковой Космический Код (ЗКК)", styles.term) {
                 b = False()
                 i = True()
@@ -152,18 +159,25 @@ class VocabularyService {
             }
         }
 
-        p.addContent(" —")
+        p.withContent(" —") { if (term.source != null || term.isZkk) b = False() }
 
         mdp.addObject(p)
     }
 
-    private fun drawSubTerm(singleLabel: String, multyLabel: String, subterms: Collection<VocabularySubTerm>, mdp: MainDocumentPart, indication: Collection<VocabularyIndication>?) {
+    private fun drawSubTerm(
+            singleLabel: String,
+            multyLabel: String,
+            subterms: Collection<VocabularySubTerm>,
+            mdp: MainDocumentPart,
+            indication: Collection<VocabularyIndication>?,
+            inline: Boolean
+    ) {
         if (subterms.isNotEmpty()) {
             val label = if (subterms.size > 1) multyLabel else singleLabel
 
-            var p = P().styled(styles.subTermLabel)
+            var p = if (inline) mdp.lastP() else P().styled(styles.subTermLabel)
 
-            p += "$label: "
+            p.withContent("$label: ", style = styles.subTermLabel) { i = True() }
 
             fun P.addHead(name: String, ii: Boolean) = this.addContent(name, styles.description) {
                 if (ii) {
@@ -177,15 +191,15 @@ class VocabularyService {
 
             if (withoutDescription.isNotEmpty()) {
                 withoutDescription.forEach { subTerm ->
-                    p.addHead(subTerm.name.proceed(), subTerm.ii)
                     val tail = when {
-                        subterms.last() == subTerm && withDescription.isEmpty() -> "."
-                        withDescription.isNotEmpty() -> ";"
+                        inline && subterms.last() == subTerm  -> ". "
+                        subterms.last() == subTerm && withDescription.isEmpty() -> ". "
+                        withDescription.isNotEmpty() -> "; "
                         else -> ", "
                     }
-                    p.withContent(tail) { i = False() }
+                    p.addHead(subTerm.name.proceed() + tail, subTerm.ii)
                 }
-                mdp.addObject(p)
+                if (!inline) mdp.addObject(p)
                 if (withDescription.isNotEmpty()) p = P().styled(styles.subTermLabel)
             }
 
@@ -206,6 +220,8 @@ class VocabularyService {
         }
     }
 }
+
+private fun MainDocumentPart.lastP() = this.content.filterIsInstance(P::class.java).last()
 
 private fun P.pageBreak() = this.content.add(Br().apply { type = STBrType.PAGE })
 

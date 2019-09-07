@@ -15,7 +15,7 @@ class VocabularyDocTest {
     fun release() {
         val service = VocabularyService()
         service.helper = VocabularyUpperWordsHelper()
-        service.getDoc("словарь.2019.09.07.0.docx", File("src/main/resources/vocabulary-template.docx"))
+        service.getDoc("словарь.2019.09.08.0.docx", File("src/main/resources/vocabulary-template.docx"))
     }
 
     @Test

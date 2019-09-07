@@ -56,11 +56,12 @@ class VocabularyLoader {
             reductions = data.getOrNull(5)?.split(",", ";")?.mapNotNull { it.trim().nullOnBlank() } ?: emptyList(),
             synonymousPhrase = data.getOrNull(14)?.split(",", ";")?.mapNotNull { it.trim().nullOnBlank() } ?: emptyList(),
             zkk = data.getOrNull(6).nullOnBlank(),
+            isZkk = data.getOrNull(7).equals("да", true),
             pleadsTerm = data.getOrNull(21).equals("да", true),
-            inPleadsCivilisations = data.getOrNull(22).equals("да", true),
-            inII = data.getOrNull(23).equals("да", true),
-            conventional = data.getOrNull(24).equals("да", true),
-            indication = parseIndications(data.getOrNull(25))
+//            inPleadsCivilisations = data.getOrNull(22).equals("да", true),
+            inII = data.getOrNull(22).equals("да", true),
+            conventional = data.getOrNull(23).equals("да", true),
+            indication = parseIndications(data.getOrNull(24))
     )
 
 }
@@ -79,12 +80,13 @@ data class VocabularyTerm(
         val reductions: List<String> = ArrayList(),
         val synonymousPhrase: List<String> = ArrayList(),
         val zkk: String?,
+        val isZkk: Boolean,
         val derivatives: MutableCollection<VocabularySubTerm> = ArrayList(),
         val aliases: MutableCollection<VocabularySubTerm> = ArrayList(),
         val antonyms: MutableCollection<VocabularySubTerm> = ArrayList(),
         val inPhrases: MutableCollection<VocabularySubTerm> = ArrayList(),
         val pleadsTerm: Boolean = false,
-        val inPleadsCivilisations: Boolean = false,
+//        val inPleadsCivilisations: Boolean = false,
         val inII: Boolean = false,
         val conventional: Boolean = false,
         val indication: Collection<VocabularyIndication>?
