@@ -4,7 +4,6 @@ import org.ayfaar.app.services.GoogleSpreadsheetService
 import org.ayfaar.app.utils.TermService
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import java.util.function.Supplier
 import javax.inject.Inject
 
 @Service
@@ -18,15 +17,17 @@ class AbbreviationExporter {
                 .keyGetter { it.abbreviation }
                 .skipFirstRow()
                 .ignoreCase()
-                .localDataLoader(Supplier { getAbbreviationMap() })
+                .localDataLoader { getAbbreviationMap() }
                 .build()
         synchronizer.sync()
     }
 
     private fun getAbbreviationMap() = termService.all
-                .map { it.value }
-                .filter { it.isAbbreviation }
-                .map { AbbreviationSyncItem(it.name, it.mainOrThis.name) }
+            .map { it.value }
+            .filter { it.isAbbreviation }
+            .distinctBy { it.name }
+            .reversed()
+            .map { AbbreviationSyncItem(it.name, it.mainOrThis.name) }
 
 }
 
