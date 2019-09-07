@@ -9,6 +9,7 @@ import org.docx4j.wml.*
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.io.File
+import java.io.InputStream
 import java.math.BigInteger
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -21,10 +22,10 @@ class VocabularyService {
     @Inject lateinit var resourceLoader: ResourceLoader
     @Inject lateinit var helper: VocabularyUpperWordsHelper
 
-    fun getDoc(fileName: String = "test.docx", template: File? = null) = getDoc(VocabularyLoader().getData(), fileName, template
-            ?: resourceLoader.getResource("classpath:vocabulary-template.docx").file)
+    fun getDoc(fileName: String = "test.docx", template: File? = null) = getDoc(VocabularyLoader().getData(), fileName, template?.inputStream()
+            ?: resourceLoader.getResource("classpath:vocabulary-template.docx").inputStream)
 
-    internal fun getDoc(data: List<VocabularyTerm>, fileName: String, template: File): File {
+    internal fun getDoc(data: List<VocabularyTerm>, fileName: String, template: InputStream): File {
 
         val wordMLPackage = WordprocessingMLPackage.load(template) //createPackage()
         val mdp = wordMLPackage.mainDocumentPart

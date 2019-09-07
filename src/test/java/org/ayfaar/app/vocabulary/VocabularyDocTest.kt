@@ -31,7 +31,7 @@ class VocabularyDocTest {
 
         val service = VocabularyService()
         service.helper = helper
-        service.getDoc(data, "test.docx", File("src/main/resources/vocabulary-template.docx"))
+        service.getDoc(data, "test.docx", File("src/main/resources/vocabulary-template.docx").inputStream())
     }
 
     /*fun getHelperMock() = mock(VocabularyUpperWordsHelper::class.java).also {
