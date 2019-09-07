@@ -13,8 +13,9 @@ class VocabularyDocTest {
 
     @Test
     fun release() {
-        val service = VocabularyService(VocabularyUpperWordsHelper())
-        service.getDoc("словарь.2019.09.06.0.docx")
+        val service = VocabularyService()
+        service.helper = VocabularyUpperWordsHelper()
+        service.getDoc("словарь.2019.09.07.0.docx", File("src/main/resources/vocabulary-template.docx"))
     }
 
     @Test
@@ -28,8 +29,9 @@ class VocabularyDocTest {
         val helper = spy(VocabularyUpperWordsHelper())
         doReturn(upperTermsJson.fromJson()).`when`(helper).loadUpperWords()
 
-        val service = VocabularyService(helper)
-            service.getDoc(data, "test.docx"/*, File("src/main/resources/template.docx")*/)
+        val service = VocabularyService()
+        service.helper = helper
+        service.getDoc(data, "test.docx", File("src/main/resources/vocabulary-template.docx"))
     }
 
     /*fun getHelperMock() = mock(VocabularyUpperWordsHelper::class.java).also {

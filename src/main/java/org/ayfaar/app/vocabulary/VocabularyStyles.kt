@@ -12,6 +12,7 @@ class VocabularyStyles {
     val term: String = "term"
     val description: String = "description"
     val subTermLabel: String = "subTermLabel"
+    val footer: String = "footer"
 
     fun init(mdp: MainDocumentPart) {
         val sdp = mdp.styleDefinitionsPart
@@ -20,6 +21,7 @@ class VocabularyStyles {
         initTerm(sdp)
         initDescription(sdp)
         initSubTermLabel(sdp)
+        initFooterStyle(sdp)
     }
 
     private fun initDescription(sdp: StyleDefinitionsPart) {
@@ -68,6 +70,20 @@ class VocabularyStyles {
         style.styleId = subTermLabel
         style.rPr = Context.getWmlObjectFactory().createRPr().also {
             it.i = BooleanDefaultTrue()
+        }
+        style.isCustomStyle = true
+
+        sdp.jaxbElement.style.add(style)
+    }
+
+    private fun initFooterStyle(sdp: StyleDefinitionsPart) {
+        val style = Context.getWmlObjectFactory().createStyle()
+        style.type = "paragraph"
+        style.name = createName(footer)
+        style.basedOn = createBasedOn("DefaultParagraphFont")
+        style.styleId = footer
+        style.rPr = Context.getWmlObjectFactory().createRPr().also {
+            it.color = Color().apply { `val` = "555555" }
         }
         style.isCustomStyle = true
 

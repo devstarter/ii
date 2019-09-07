@@ -10,19 +10,23 @@ import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.io.File
 import java.math.BigInteger
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 import javax.inject.Inject
 
 @Service
-class VocabularyService(private val helper: VocabularyUpperWordsHelper) {
+class VocabularyService {
     private lateinit var styles: VocabularyStyles
     @Inject lateinit var resourceLoader: ResourceLoader
+    @Inject lateinit var helper: VocabularyUpperWordsHelper
 
-    fun getDoc(fileName: String = "test.docx") = getDoc(VocabularyLoader().getData(), fileName/*, resourceLoader.getResource("classpath:template.docx").file*/)
+    fun getDoc(fileName: String = "test.docx", template: File? = null) = getDoc(VocabularyLoader().getData(), fileName, template
+            ?: resourceLoader.getResource("classpath:vocabulary-template.docx").file)
 
-    internal fun getDoc(data: List<VocabularyTerm>, fileName: String/*, template: File*/): File {
+    internal fun getDoc(data: List<VocabularyTerm>, fileName: String, template: File): File {
 
-        val wordMLPackage = WordprocessingMLPackage.createPackage()//load(template)
+        val wordMLPackage = WordprocessingMLPackage.load(template) //createPackage()
         val mdp = wordMLPackage.mainDocumentPart
 
         styles = VocabularyStyles()
@@ -45,9 +49,19 @@ class VocabularyService(private val helper: VocabularyUpperWordsHelper) {
             drawTerms(mdp, terms)
         }
 
+        addFooter(mdp)
+
         val file = File(fileName)
         Docx4J.save(wordMLPackage, file)
         return file
+    }
+
+    private fun addFooter(mdp: MainDocumentPart) {
+        repeat(5) { mdp.addObject(P()) }
+
+        val p = P().styled(styles.footer)
+        p.addContent("Автоматически сгенерировано ${LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))}. Последняя версия доступна по адресу https://ayfaar.ru/dictionary")
+        mdp.addObject(p)
     }
 
     private fun drawTerms(mdp: MainDocumentPart, terms: List<VocabularyTerm>) {
@@ -96,14 +110,14 @@ class VocabularyService(private val helper: VocabularyUpperWordsHelper) {
                         "        <w:t xml:space=\"preserve\">Звуковой Космический Код (ЗКК): </w:t>\n" +
                         "    </w:r>"  +
                         "    <w:r>\n" +
-                        "        <w:t xml:space=\"preserve\">${term.zkk}</w:t>\n" +
+                        "        <w:t xml:space=\"preserve\">${term.zkk.proceed()}</w:t>\n" +
                         "    </w:r></w:p>")
             }
         }
     }
 
     private fun drawTermFirstLine(term: VocabularyTerm, mdp: MainDocumentPart) {
-        val termName = term.name.let { helper.check(it) }
+        val termName = term.name.let { helper.check(it) }.proceed()
 //        val tail = if (term.source == null && term.zkk == null && term.reductions.isEmpty()) "—" else ""
         val p = P()
                 .styled(styles.term)
@@ -117,7 +131,7 @@ class VocabularyService(private val helper: VocabularyUpperWordsHelper) {
                 "    </w:r>"*/
 
         if (term.reductions.isNotEmpty()) {
-            p.addContent(" (" + term.reductions.joinToString(", ") + ")")
+            p.addContent(" (" + term.reductions.joinToString(", ").proceed() + ")")
         }
         if (term.source != null) {
             p.addContent(" " + term.source.proceed()) {
@@ -196,7 +210,9 @@ private fun P.pageBreak() = this.content.add(Br().apply { type = STBrType.PAGE }
 
 internal fun String.proceed() = this.trim().trim('.').trim().let { s -> s
             .replace("й", "й")
+            .replace("Й", "Й")
             .replace("ё", "ё")
+            .replace("Ё", "Ё")
             .replace(Regex("“(.+?)”")) { "«${it.groupValues[1]}»" }
             .replace(Regex("\"(.+?)\"")) { "«${it.groupValues[1]}»" }
             .replace(Regex("($W)[-–]($W)"), "$1—$2")

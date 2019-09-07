@@ -42,8 +42,17 @@ class VocabularyService_TextProceedTest {
         "й".proceed().let {
             expect(it).toEqual("й")
         }
+        "дйюррууллсный".proceed().let {
+            expect(it).toEqual("дйюррууллсный")
+        }
+        "ЙЙЮЛЛУЙГ-Форм".proceed().let {
+            expect(it).toEqual("ЙЙЮЛЛУЙГ-Форм")
+        }
         "ё".proceed().let {
             expect(it).toEqual("ё")
+        }
+        "Ё".proceed().let {
+            expect(it).toEqual("Ё")
         }
     }
 

@@ -7,6 +7,8 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 
@@ -23,7 +25,7 @@ class VocabularyController {
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_OCTET_STREAM
         // Here you have to set the actual filename of your pdf
-        val filename = "vocabulary.docx"
+        val filename = "словарь.${LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))}.docx"
         headers.setContentDispositionFormData(filename, filename)
         return ResponseEntity(file.readBytes(), headers, HttpStatus.OK)
     }
