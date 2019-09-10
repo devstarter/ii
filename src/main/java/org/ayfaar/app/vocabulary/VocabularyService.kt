@@ -79,7 +79,7 @@ class VocabularyService {
 
             var p = P().styled(styles.description)
 
-            if (term.inPleadsCivilisations) p.addContent("в плеядеянских цивилизациях: ") { i = True() }
+//            if (term.inPleadsCivilisations) p.addContent("в плеядеянских цивилизациях: ") { i = True() }
             if (term.pleadsTerm) p.addContent("плеядианский термин: ") { i = True() }
             if (term.inII) p.addContent("в ииссиидиологии: ") { i = True() }
             if (term.conventional) p.addContent("совпадает с общепринятым значением: ") { i = True() }
@@ -97,7 +97,7 @@ class VocabularyService {
 
 
             drawSubTerm("Сокращение", "Сокращения", term.reductions.map { VocabularySubTerm(it, null, false) }, mdp, null, true)
-            addZkk(mdp, term.zkk)
+            if (!term.isZkk) addZkk(mdp, term.zkk)
             drawSubTerm("Синоним", "Синонимы", term.aliases, mdp, term.indication, true)
             drawSubTerm("Антоним", "Антонимы", term.antonyms, mdp, term.indication, true)
             drawSubTerm("В словосочетании", "В словосочетаниях", term.inPhrases.map { it.copy(ii = true) }, mdp, term.indication, false)
@@ -108,19 +108,9 @@ class VocabularyService {
 
     private fun addZkk(mdp: MainDocumentPart, zkk: String?) {
         if (zkk != null) {
-            mdp.lastP().withContent("Звуковой Космический Код (ЗКК): ") { i = True()}
-            mdp.lastP().withContent(zkk.proceed() + ". ")
-            /*mdp.addParagraph("<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
-                    "   <w:pPr><w:pStyle w:val=\"${styles.description}\"/></w:pPr> " +
-                    "   <w:r>\n" +
-                    "     <w:rPr>\n" +
-                    "        <w:i/>" +
-                    "     </w:rPr>\n" +
-                    "        <w:t xml:space=\"preserve\">Звуковой Космический Код (ЗКК): </w:t>\n" +
-                    "    </w:r>" +
-                    "    <w:r>\n" +
-                    "        <w:t xml:space=\"preserve\">${zkk.proceed()}</w:t>\n" +
-                    "    </w:r></w:p>")*/
+            mdp.lastP()
+                    .withContent("Звуковой Космический Код (ЗКК): ") { i = True()}
+                    .withContent(zkk.proceed() + ". ")
         }
     }
 

@@ -14,7 +14,8 @@ constructor(val entityLoader: EntityLoader,
             val getVideosFormYoutube: GetVideosFormYoutube,
             val ayfaarRuNavigatorUpdater: AyfaarRuNavigatorUpdater,
             val abbreviationExporter: AbbreviationExporter,
-            val termDescriptionImporter: TermDescriptionImporter) {
+            val termDescriptionImporter: TermDescriptionImporter,
+            val `9TomExporter`: `9TomExporter`) {
 
 
     @Autowired(required = false) var vocabularySynchronizer: VocabularySynchronizer? = null
@@ -58,5 +59,10 @@ constructor(val entityLoader: EntityLoader,
     @RequestMapping("sync/export-abbreviations")
     fun exportAbbreviations() {
         abbreviationExporter.sync()
+    }
+
+    @RequestMapping("sync/9tom")
+    fun export9Tom() {
+        `9TomExporter`.sync()
     }
 }
