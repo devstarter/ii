@@ -32,7 +32,7 @@ logging:
 site-base-url: 'http://ii.ayfaar.ru'
 sitemap-dir: /ii/data
 drive-dir: /ii/data
-this-url: http://${server.address:localhost}:${server.port:8080}
+this-url: https://${server.address:localhost}:${server.port:8080}
 
 mail.user: some@gmail.com
 mail.password: some
