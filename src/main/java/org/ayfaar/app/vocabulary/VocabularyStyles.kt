@@ -47,7 +47,7 @@ class VocabularyStyles {
         val style = Context.getWmlObjectFactory().createStyle()
         style.type = "paragraph"
         style.name = createName(term)
-        style.basedOn = createBasedOn("Heading4")
+        style.basedOn = createBasedOn("4")
         style.styleId = term
         style.rPr = Context.getWmlObjectFactory().createRPr().also {
             it.b = BooleanDefaultTrue()
@@ -103,7 +103,7 @@ class VocabularyStyles {
         val style = Context.getWmlObjectFactory().createStyle()
         style.type = "paragraph"
         style.name = createName(alphabet /*+ " Char"*/)
-        style.basedOn = createBasedOn("Heading3")
+        style.basedOn = createBasedOn("3")
         style.styleId = alphabet
         style.rPr = Context.getWmlObjectFactory().createRPr().also {
             it.b = BooleanDefaultTrue()

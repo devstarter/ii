@@ -182,7 +182,7 @@ class VocabularyService {
             if (withoutDescription.isNotEmpty()) {
                 withoutDescription.forEach { subTerm ->
                     val tail = when {
-                        inline && subterms.last() == subTerm  -> ". "
+//                        inline && subterms.last() == subTerm && withDescription.isEmpty()  -> ". "
                         subterms.last() == subTerm && withDescription.isEmpty() -> ". "
                         withDescription.isNotEmpty() -> "; "
                         else -> ", "
