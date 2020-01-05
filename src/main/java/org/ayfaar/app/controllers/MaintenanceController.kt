@@ -15,6 +15,7 @@ constructor(val entityLoader: EntityLoader,
             val ayfaarRuNavigatorUpdater: AyfaarRuNavigatorUpdater,
             val abbreviationExporter: AbbreviationExporter,
             val termDescriptionImporter: TermDescriptionImporter,
+            val termDetailsExporter: TermDetailsExporter,
             val `9TomExporter`: `9TomExporter`) {
 
 
@@ -59,6 +60,11 @@ constructor(val entityLoader: EntityLoader,
     @RequestMapping("sync/export-abbreviations")
     fun exportAbbreviations() {
         abbreviationExporter.sync()
+    }
+
+    @RequestMapping("sync/term-details")
+    fun exportTermDetails() {
+        termDetailsExporter.sync()
     }
 
     @RequestMapping("sync/9tom")

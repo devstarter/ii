@@ -1,5 +1,6 @@
 package org.ayfaar.app.vocabulary
 
+import mu.KotlinLogging
 import org.ayfaar.app.services.GoogleSpreadsheetService
 import org.ayfaar.app.utils.TermUtils
 import org.springframework.stereotype.Component
@@ -8,6 +9,7 @@ import java.util.regex.Pattern
 @Component
 class VocabularyUpperWordsHelper(/*private val termService: TermService*/) {
     private var upperWords: Collection<String>? = null
+    private val logger = KotlinLogging.logger {  }
 
     fun check(text: String): String {
         if (upperWords == null) {
@@ -19,10 +21,15 @@ class VocabularyUpperWordsHelper(/*private val termService: TermService*/) {
     internal fun loadUpperWords(): Collection<String> {
         val service = GoogleSpreadsheetService()
         val spreadsheetId = "1Tv6rXLp8A3XkGXDUtotX9iyPB1yhp0i7cLQ9ocscgEo"
-        return service.read(spreadsheetId, "Словарь ЗКК!A:Z")
-                .map { it[0] as String }
-                .filterIndexed { index, _ -> index != 0 } // skip  head
-                .map { item -> TermUtils.getNonCosmicCodePart(item)?.let { item.replace(it, "") } ?: item }
+        return try {
+            service.read(spreadsheetId, "Словарь ЗКК!A:Z")
+                    .map { it[0] as String }
+                    .filterIndexed { index, _ -> index != 0 } // skip  head
+                    .map { item -> TermUtils.getNonCosmicCodePart(item)?.let { item.replace(it, "") } ?: item }
+        } catch (e: Exception) {
+            logger.warn("Error while getting upper case words", e)
+            emptyList()
+        }
     }
 }
 

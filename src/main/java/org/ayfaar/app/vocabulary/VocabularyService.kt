@@ -33,6 +33,17 @@ class VocabularyService {
         styles = VocabularyStyles()
         styles.init(mdp)
 
+        addNotes(mdp)
+        mdp.addObject(P().pageBreak())
+        mdp.addObject(P().addContent("ТЕРМИНОЛОГИЧЕСКИЙ СЛОВАРЬ\nИИССИИДИОЛОГИЧЕСКИХ НЕОЛОГИЗМОВ") {
+            sz = size(28)
+            szCs = size(28)
+        }.apply { pPr = PPr().apply {
+            pStyle = PPrBase.PStyle().apply { `val` = styles.description }
+            jc = Jc().apply { `val` = JcEnumeration.CENTER } }
+        }
+        )
+
         val groupedByFirstLetter = data.groupBy { if (it.name[0] != '«') it.name[0].toLowerCase() else it.name[1].toLowerCase() }
         var first = true
 
@@ -50,14 +61,12 @@ class VocabularyService {
             drawTerms(mdp, terms)
         }
 
-        addFooter(mdp)
-
         val file = File(fileName)
         Docx4J.save(wordMLPackage, file)
         return file
     }
 
-    private fun addFooter(mdp: MainDocumentPart) {
+    private fun addNotes(mdp: MainDocumentPart) {
         repeat(5) { mdp.addObject(P()) }
 
         val p = P().styled(styles.footer)
@@ -120,17 +129,7 @@ class VocabularyService {
         val p = P()
                 .styled(styles.term)
                 .addContent(termName)
-        /*var title = "<w:p xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">\n" +
-                "    <w:pPr>\n" +
-                "        <w:pStyle w:val=\"${styles.term}\"/>\n" +
-                "    </w:pPr>\n" +
-                "    <w:r>\n" +
-                "        <w:t xml:space=\"preserve\">$termName ${if (term.source == null && term.zkk == null) "—" else ""}</w:t>\n" +
-                "    </w:r>"*/
 
-        /*if (term.reductions.isNotEmpty()) {
-            p.addContent(" (" + term.reductions.joinToString(", ").proceed() + ")")
-        }*/
         if (term.source != null) {
             p.addContent(" " + term.source.proceed()) {
                 b = False()
@@ -209,11 +208,19 @@ class VocabularyService {
             }
         }
     }
+
+    fun getTerms() = VocabularyLoader().getData()
 }
+
+private fun size(value: Int) = HpsMeasure().apply { `val` = BigInteger.valueOf(value.toLong()) }
 
 private fun MainDocumentPart.lastP() = this.content.filterIsInstance(P::class.java).last()
 
-private fun P.pageBreak() = this.content.add(Br().apply { type = STBrType.PAGE })
+private fun P.pageBreak() = this.apply {
+    content.add(R().apply {
+        content.add(Br().apply { type = STBrType.PAGE })
+    })
+}
 
 internal fun String.proceed() = this.trim().trim('.').trim().let { s -> s
             .replace("й", "й")
