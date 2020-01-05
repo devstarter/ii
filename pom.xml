@@ -27,7 +27,7 @@
 		<junit.version>4.11</junit.version>
 		<poi.version>3.9</poi.version>
 		<streamex.version>0.6.0</streamex.version>
-		<tika.version>1.14</tika.version>
+		<tika.version>1.23</tika.version>
 		<kotlin.version>1.2.51</kotlin.version>
 		<docx4j.version>8.1.0</docx4j.version>
 	</properties>
