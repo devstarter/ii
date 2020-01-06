@@ -16,7 +16,8 @@ constructor(val entityLoader: EntityLoader,
             val abbreviationExporter: AbbreviationExporter,
             val termDescriptionImporter: TermDescriptionImporter,
             val termDetailsExporter: TermDetailsExporter,
-            val `9TomExporter`: `9TomExporter`) {
+            val `9TomExporter`: `9TomExporter`,
+            val ayfaarRuVocabularySync: AyfaarRuVocabularySync) {
 
 
     @Autowired(required = false) var vocabularySynchronizer: VocabularySynchronizer? = null
@@ -70,5 +71,10 @@ constructor(val entityLoader: EntityLoader,
     @RequestMapping("sync/9tom")
     fun export9Tom() {
         `9TomExporter`.sync()
+    }
+
+    @RequestMapping("sync/ayfaar-ru-vocabulary")
+    fun ayfaaRuVocabularySync() {
+        ayfaarRuVocabularySync.sync()
     }
 }

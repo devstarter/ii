@@ -16,7 +16,7 @@ class TermDetailsExporter {
 
 //    @Scheduled(cron = "0 0 * * * *")  // every hour
     fun sync() {
-        logger.info { "Sync started..." }
+        logger.info { "Sync started" }
         val synchronizer = GoogleSpreadsheetSynchronizer.build<TermDetailsSyncItem>(spreadsheetService, "1s98bAG5N77uOKYpieDIg6ddYbL9JDHZkHlPb-1_HFKE")
                 .keyGetter { it.term }
                 .skipFirstRow()

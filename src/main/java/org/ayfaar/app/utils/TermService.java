@@ -47,6 +47,7 @@ public interface TermService {
         Term getTerm();
         List<String> getMorphs();
         List<TermProvider> getAliases();
+        List<TermProvider> getRelated();
         List<TermProvider> getAbbreviations();
         Optional<TermProvider> getCode();
         LinkType getType();

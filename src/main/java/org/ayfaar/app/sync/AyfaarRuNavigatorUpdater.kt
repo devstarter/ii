@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import mu.KotlinLogging
 import org.apache.commons.net.PrintCommandListener
 import org.apache.commons.net.ftp.FTPClient
+import org.ayfaar.app.utils.AyfaarRuFileTransfer
 import org.ayfaar.app.utils.GoogleService
 import org.ayfaar.app.utils.Transliterator
 import org.springframework.beans.factory.annotation.Value
@@ -13,20 +14,16 @@ import org.springframework.stereotype.Service
 import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 
 @Service
 @EnableScheduling
 class AyfaarRuNavigatorUpdater {
-    constructor() {}
-    internal constructor(ftpLogin: String, ftpPassword: String) {
-        this.ftpLogin = ftpLogin
-        this.ftpPassword = ftpPassword
-    }
-
     private val log = KotlinLogging.logger {  }
-    @Value("\${ftp.ayfaar.ru.login}") private lateinit var ftpLogin: String
-    @Value("\${ftp.ayfaar.ru.password}") private lateinit var ftpPassword: String
+
+    @Inject lateinit var fileTransfer: AyfaarRuFileTransfer
+
     val map = listOf(
 //            Pair("Тест", "11YKrbqZdAEZ-oRiZ9OPJZrMKhYypRqph0hbY6Gqeq-I")
             Pair("Устройство мироздания", "1KBA_9B9bySStHtA_7B1uR83uOT-EnKz2-pH3bREVd1Y"),
@@ -57,10 +54,10 @@ class AyfaarRuNavigatorUpdater {
         }
         val ftpHost = "ftp.ayfaar.ru"
 
-        uploadData("navigator-datasource.json", Gson().toJson(dsJsonMap)!!, ftpHost, ftpLogin, ftpPassword)
+        fileTransfer.upload("tpl/static/izuchenie_ii/navigator-datasource.json", Gson().toJson(dsJsonMap)!!)
         log.info("navigator-datasource.json uploaded")
 
-        uploadData("navigator-topics.json", Gson().toJson(topicsJsonMap)!!, ftpHost, ftpLogin, ftpPassword)
+        fileTransfer.upload("tpl/static/izuchenie_ii/navigator-topics.json", Gson().toJson(topicsJsonMap)!!)
         log.info("navigator-topics.json uploaded")
 
         log.info("Synchronization finished")
@@ -78,36 +75,7 @@ class AyfaarRuNavigatorUpdater {
 
 val markers = listOf("подборка продвинутой сложности (ссылка на другую подборку)", "подборка начальной сложности (ссылка на другую подборку)")
 
-fun uploadData(remoteFilename: String, json: String, ftpHost: String, ftpLogin: String, ftpPassword: String) {
-    val file = File.createTempFile("navigator", ".json")
-    file.writeText(json)
 
-    val client = FTPClient()
-//    client.addProtocolCommandListener(PrintCommandListener(System.out))
-
-    try {
-        client.connect(ftpHost)
-        val loginSuccess = client.login(ftpLogin, ftpPassword)
-        if (!loginSuccess) {
-            KotlinLogging.logger {  }.error { "Login fail with login $ftpLogin and password $ftpPassword" }
-        }
-        client.enterLocalPassiveMode()
-        val remoteFile = "/domains/ayfaar.ru/public_html/tpl/static/izuchenie_ii/$remoteFilename"
-        val storingSuccess = client.storeFile(remoteFile, file.inputStream())
-        if (!storingSuccess) {
-            KotlinLogging.logger {  }.error { "Error storing ftp file $remoteFile : ${client.replyString}" }
-        }
-        client.logout()
-    } catch (e: IOException) {
-        e.printStackTrace()
-    } finally {
-        try {
-            client.disconnect()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-}
 
 private fun loadData(id: String, sheetId: String): Blocks {
     val log = KotlinLogging.logger {  }

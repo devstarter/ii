@@ -203,6 +203,10 @@ public class TermServiceImpl implements TermService {
             return getListProviders(ALIAS, getName());
         }
 
+        public List<TermProvider> getRelated() {
+            return getListProviders(null, getName());
+        }
+
         public List<TermProvider> getAbbreviations() {
             return getListProviders(ABBREVIATION, getName());
         }

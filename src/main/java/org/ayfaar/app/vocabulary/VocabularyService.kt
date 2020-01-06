@@ -45,10 +45,10 @@ class VocabularyService {
         )
 
         val groupedByFirstLetter = data.groupBy { if (it.name[0] != '«') it.name[0].toLowerCase() else it.name[1].toLowerCase() }
-        var first = true
+//        var first = true
 
         groupedByFirstLetter.forEach { (firstLetter, terms) ->
-            if (first) {
+            /*if (first) {
                 first = false
             } else {
                 mdp.addObject(P().apply {
@@ -56,10 +56,12 @@ class VocabularyService {
                         content.add(Br().apply { type = STBrType.PAGE })
                     })
                 })
-            }
+            }*/
             mdp.addStyledParagraphOfText(styles.alphabet, firstLetter.toString().toUpperCase())
             drawTerms(mdp, terms)
+            mdp.lastP().content.add(Br().apply { type = STBrType.PAGE })
         }
+        mdp.lastP().content.removeIf { it is Br }
 
         val file = File(fileName)
         Docx4J.save(wordMLPackage, file)
