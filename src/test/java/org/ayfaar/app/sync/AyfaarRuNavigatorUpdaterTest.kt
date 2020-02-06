@@ -2,6 +2,7 @@ package org.ayfaar.app.sync
 
 import com.google.gson.Gson
 import com.mscharhag.oleaster.matcher.Matchers.expect
+import org.ayfaar.app.utils.AyfaarRuFileTransfer
 import org.junit.Test
 
 @Suppress("UNCHECKED_CAST")

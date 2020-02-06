@@ -22,6 +22,11 @@ import javax.inject.Inject
 class AyfaarRuNavigatorUpdater {
     private val log = KotlinLogging.logger {  }
 
+    constructor()
+    constructor(fileTransfer: AyfaarRuFileTransfer) {
+        this.fileTransfer = fileTransfer
+    }
+
     @Inject lateinit var fileTransfer: AyfaarRuFileTransfer
 
     val map = listOf(
