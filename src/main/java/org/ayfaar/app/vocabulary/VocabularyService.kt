@@ -94,7 +94,7 @@ class VocabularyService {
 
 //            if (term.inPleadsCivilisations) p.addContent("в плеядеянских цивилизациях: ") { i = True() }
             if (term.pleadsTerm) p.addContent("плеядианский термин: ") { i = True() }
-            if (term.inII) p.addContent("в ииссиидиологии: ") { i = True() }
+            if (term.inII) p.addContent("в ииссиидиологии термин означает: ") { i = True() }
             if (term.conventional) p.addContent("совпадает с общепринятым значением: ") { i = True() }
 
             if (description.contains("\n")) {
