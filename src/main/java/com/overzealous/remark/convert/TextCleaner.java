@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package com.overzealous.remark.convert;
 
@@ -28,18 +29,22 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+*/
 /**
  * This class is used to clean up plain text fields based on the selected set of options.
  * It optionally escapes certain special characters, as well as replacing various
  * HTML and Unicode entities with their plaintext equivalents.
  *
  * @author Phil DeJarnett
- */
+ *//*
+
 public class TextCleaner {
 
-	/**
+	*/
+/**
 	 * Internal class simply used to hold the various escape regexes.
-	 */
+	 *//*
+
 	private class Escape {
 		final Pattern pattern;
 		final String replacement;
@@ -49,13 +54,21 @@ public class TextCleaner {
 		}
 	}
 
-	/** Used to track the replacements based on matched groups. */
+	*/
+/** Used to track the replacements based on matched groups. *//*
+
 	private Map<String, String> replacements;
-	/** Compiled entity replacement pattern. */
+	*/
+/** Compiled entity replacement pattern. *//*
+
 	private Pattern entityReplacementsPattern;
-	/** Compiled unicode replacement pattern. */
+	*/
+/** Compiled unicode replacement pattern. *//*
+
 	private Pattern unicodeReplacementsPattern = null;
-	/** List of possible escapes */
+	*/
+/** List of possible escapes *//*
+
 	private List<Escape> escapes = Collections.emptyList();
 	private Pattern unescapeLeadingChars;
 
@@ -64,19 +77,23 @@ public class TextCleaner {
 	
 	private static final Pattern URL_CLEANER = Pattern.compile("([\\(\\) ])");
 
-	/**
+	*/
+/**
 	 * Create a new TextCleaner based on the configured options.
 	 * @param options Options that will affect what is cleaned.
-	 */
+	 *//*
+
 	public TextCleaner(Options options) {
 //		setupReplacements(options);
 //		setupEscapes(options);
 	}
 
-	/**
+	*/
+/**
 	 * Configures the basic replacements based on the configured options.
 	 * @param options Options that will affect what is replaced.
-	 */
+	 *//*
+
 	@SuppressWarnings({"OverlyLongMethod"})
 	private void setupReplacements(Options options) {
 		this.replacements = new HashMap<>();
@@ -128,12 +145,14 @@ public class TextCleaner {
 		}
 	}
 
-	/**
+	*/
+/**
 	 * Utility method to make the code above easier to read.
 	 * @param regex A character buffer to append the replacement to
 	 * @param original Original character or string.
 	 * @param replacement Replacement character or string.
-	 */
+	 *//*
+
 	private void addRepl(StringBuilder regex, String original, String replacement) {
 		replacements.put(original, replacement);
 		if(original.charAt(0) == '&') {
@@ -146,10 +165,12 @@ public class TextCleaner {
 		}
 	}
 
-	/**
+	*/
+/**
 	 * Configures the basic escapes based on the configured options.
 	 * @param options Options that will affect what is escaped.
-	 */
+	 *//*
+
 	private void setupEscapes(Options options) {
 		escapes = new ArrayList<Escape>();
 
@@ -179,29 +200,34 @@ public class TextCleaner {
 		unescapeLeadingChars = Pattern.compile(leadingChars.insert(6, "\\\\").toString());
 	}
 
-	/**
+	*/
+/**
 	 * Clean the given input text based on the original configuration Options.
 	 * Newlines are also replaced with a single space.
 	 *
 	 * @param input The text to be cleaned. Can be any object. JSoup nodes are handled specially.
 	 * @return The cleaned text.
-	 */
+	 *//*
+
 	public String clean(Object input) {
 		return clean(input, true);
 	}
 
-	/**
+	*/
+/**
 	 * Clean the given input text based on the original configuration Options.
 	 * The text is treat as code, so it is not escaped, and newlines are preserved.
 	 *
 	 * @param input The text to be cleaned. Can be any object. JSoup nodes are handled specially.
 	 * @return The cleaned text.
-	 */
+	 *//*
+
 	public String cleanCode(Object input) {
 		return clean(input, false);
 	}
 
-	/**
+	*/
+/**
 	 * Clean the given input text based on the original configuration Options.
 	 * Optionally, don't escape special characters.
 	 *
@@ -209,7 +235,8 @@ public class TextCleaner {
 	 * @param normalText If false, don't escape special characters.  This is usually only used for
 	 * 					 inline code or code blocks, because they don't need to be escaped.
 	 * @return The cleaned text.
-	 */
+	 *//*
+
 	private String clean(Object oinput, boolean normalText) {
 		String input;
 		if(oinput instanceof TextNode) {
@@ -256,14 +283,16 @@ public class TextCleaner {
 		return result;
 	}
 
-	/**
+	*/
+/**
 	 * Replaces all {@code <br/>} tags with a newline in a copy of the input node, and
 	 * returns the resulting innter text.
 	 * This is necessary to ensure that manual linebreaks are supported in preformatted code.
 	 * 
 	 * @param oinput Preformatted node to process
 	 * @return inner text of the node.
-	 */
+	 *//*
+
 	private String getPreformattedText(Element oinput) {
 		Element el = oinput.clone();
 		fixLineBreaks(el);
@@ -282,12 +311,14 @@ public class TextCleaner {
 		}
 	}
 
-	/**
+	*/
+/**
 	 * Handles running the regex-based replacements in the input
 	 * @param input String to process
 	 * @param regex Pattern to use
 	 * @return cleaned up input string
-	 */
+	 *//*
+
 	private StringBuffer doReplacements(CharSequence input, Pattern regex) {
 		StringBuffer output = new StringBuffer();
 
@@ -309,7 +340,8 @@ public class TextCleaner {
 		return output;
 	}
 
-	/**
+	*/
+/**
 	 * Method to clean inline code, and, if necessary, add spaces to make sure that internal, leading, or
 	 * trailing {@code '`'} characters don't break the inline code.
 	 * Newlines are also replaced with spaces.
@@ -318,7 +350,8 @@ public class TextCleaner {
 	 *
 	 * @param input String to clean. Can be any object. JSoup nodes are handled specially.
 	 * @return The cleaned text.
-	 */
+	 *//*
+
 	public String cleanInlineCode(Object input) {
 		String output = clean(input, false).replace('\n', ' ');
 		if(output.indexOf('`') != -1) {
@@ -338,23 +371,27 @@ public class TextCleaner {
 		return output;
 	}
 
-	/**
+	*/
+/**
 	 * Removes the escaping on leading characters, for example, when they are going to be rendered inside
 	 * another node, such as a table.
 	 * @param input String to process
 	 * @return Cleaned string.
-	 */
+	 *//*
+
 	public String unescapeLeadingCharacters(String input) {
 		// removes any leading escapes...
 		return input == null || input.isEmpty() ? input : unescapeLeadingChars.matcher(input).replaceAll("$1$2");
 	}
 
-	/**
+	*/
+/**
 	 * Handles escaping special characters in URLs to avoid issues when they are rendered out
 	 * (ie: spaces, parentheses)
 	 * @param input URL to process
 	 * @return Cleaned URL
-	 */
+	 *//*
+
 	public String cleanUrl(String input) {
 		StringBuffer output = new StringBuffer();
 
@@ -449,3 +486,4 @@ public class TextCleaner {
 	}
 
 }
+*/
