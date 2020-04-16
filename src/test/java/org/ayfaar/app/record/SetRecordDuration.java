@@ -1,3 +1,4 @@
+/*
 package org.ayfaar.app.record;
 
 import org.ayfaar.app.Application;
@@ -15,3 +16,4 @@ public class SetRecordDuration {
 		recordHelper.setRecordsDuration();
 	}
 }
+*/

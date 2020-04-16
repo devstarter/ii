@@ -4,6 +4,7 @@ package org.ayfaar.app.utils;
 import kotlin.Pair;
 import lombok.Data;
 import lombok.Getter;
+import one.util.streamex.StreamEx;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.dao.TermDao;
@@ -402,6 +403,11 @@ public class TermServiceImpl implements TermService {
     @Override
     public List<Map.Entry<String, TermProvider>> getAll() {
         return sortedList;
+    }
+
+    @Override
+    public List<String> getAllNames() {
+        return StreamEx.of(getAll()).map(Map.Entry::getKey).toList();
     }
 
     @Override

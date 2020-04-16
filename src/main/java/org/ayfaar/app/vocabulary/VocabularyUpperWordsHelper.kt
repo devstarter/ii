@@ -1,24 +1,23 @@
 package org.ayfaar.app.vocabulary
 
 import mu.KotlinLogging
-import org.ayfaar.app.services.GoogleSpreadsheetService
-import org.ayfaar.app.utils.TermUtils
+import org.ayfaar.app.utils.TermService
 import org.springframework.stereotype.Component
 import java.util.regex.Pattern
 
 @Component
-class VocabularyUpperWordsHelper(/*private val termService: TermService*/) {
+class VocabularyUpperWordsHelper(private val termService: TermService) {
     private var upperWords: Collection<String>? = null
     private val logger = KotlinLogging.logger {  }
 
     fun check(text: String): String {
         if (upperWords == null) {
-            upperWords = loadUpperWords()//upperTermsJson.fromJson()//termService.allNames.filter { it == it.toUpperCase() }
+            upperWords = loadUpperWords(termService.allNames)//upperTermsJson.fromJson()//termService.allNames.filter { it == it.toUpperCase() }
         }
         return makeCodesUpper(text, upperWords!!)
     }
 
-    internal fun loadUpperWords(): Collection<String> {
+    /*internal fun loadUpperWords(): Collection<String> {
         val service = GoogleSpreadsheetService()
         val spreadsheetId = "1Tv6rXLp8A3XkGXDUtotX9iyPB1yhp0i7cLQ9ocscgEo"
         return try {
@@ -30,7 +29,12 @@ class VocabularyUpperWordsHelper(/*private val termService: TermService*/) {
             logger.warn("Error while getting upper case words", e)
             emptyList()
         }
-    }
+    }*/
+}
+
+internal fun loadUpperWords(terms: List<String>): List<String> {
+    val regex = Regex("([A-ZА-ЯЁ-]+)(-[A-Za-zА-Яа-я0-9Ёё-]+)?")
+    return terms.mapNotNull { regex.matchEntire(it)?.groups?.get(1)?.value }
 }
 
 internal fun makeCodesUpper(text: String, upperWords: Collection<String>): String {

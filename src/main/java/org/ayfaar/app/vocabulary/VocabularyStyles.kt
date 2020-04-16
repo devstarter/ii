@@ -33,7 +33,7 @@ class VocabularyStyles {
         style.rPr = Context.getWmlObjectFactory().createRPr().also {
             it.sz = HpsMeasure().also { it.`val` = BigInteger.valueOf(24L) }
             it.szCs = HpsMeasure().also { it.`val` = BigInteger.valueOf(24L) }
-            it.rFonts = schoolBookFonts()
+            it.rFonts = defaultFonts()
             it.color = Color().also { it.`val` = "000000" }
             it.lang = CTLanguage().also { it.eastAsia="ru-RU" }
         }
@@ -53,7 +53,7 @@ class VocabularyStyles {
             it.b = BooleanDefaultTrue()
             it.i = BooleanDefaultTrue().also { it.isVal = false }
             it.sz = HpsMeasure().also { it.`val` = BigInteger.valueOf(28L) }
-            it.rFonts = schoolBookFonts()
+            it.rFonts = defaultFonts()
             it.color = Color().also { it.`val` = "000000" }
             it.lang = CTLanguage().also { it.eastAsia="ru-RU" }
         }
@@ -90,11 +90,11 @@ class VocabularyStyles {
         sdp.jaxbElement.style.add(style)
     }
 
-    private fun schoolBookFonts(): RFonts {
+    private fun defaultFonts(): RFonts {
         return RFonts().also {
-            it.ascii = "SchoolBook"
+            it.ascii = "Times New Roman"
             it.eastAsia = "Times New Roman"
-            it.hAnsi = "SchoolBook"
+            it.hAnsi = "Times New Roman"
             it.cs = "Calibri"
         }
     }

@@ -3,9 +3,9 @@ package org.ayfaar.app.vocabulary
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import fromJson
+import org.ayfaar.app.utils.TermService
 import org.junit.Test
-import org.mockito.Mockito.doReturn
-import org.mockito.Mockito.spy
+import org.mockito.Mockito.*
 import java.io.File
 
 
@@ -13,8 +13,11 @@ class VocabularyDocTest {
 
     @Test
     fun release() {
+        val termService = mock(TermService::class.java)
+        val helper = spy(VocabularyUpperWordsHelper(termService))
+        doReturn((upperTermsJson.fromJson() as List<String>).map {  }).`when`(termService).allNames
         val service = VocabularyService()
-        service.helper = VocabularyUpperWordsHelper()
+        service.helper = helper
         service.getDoc("словарь.2019.09.11.3.docx", File("src/main/resources/vocabulary-template.docx"))
     }
 
@@ -26,8 +29,9 @@ class VocabularyDocTest {
 //                .filter { it.name == "Поля Сознания" || it.name == "гуманация" || it.name == "психонация" || it.name == "эгрегор" }//.subList(0, 10)
 //                .filter { it.name == "димидиомиттенсный" }//.subList(0, 10)
 
-        val helper = spy(VocabularyUpperWordsHelper())
-        doReturn(upperTermsJson.fromJson()).`when`(helper).loadUpperWords()
+        val termService = mock(TermService::class.java)
+        val helper = spy(VocabularyUpperWordsHelper(termService))
+        doReturn(upperTermsJson.fromJson()).`when`(termService).allNames
 
         val service = VocabularyService()
         service.helper = helper

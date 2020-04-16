@@ -19,6 +19,7 @@ public interface TermService {
      * (обычно в именительном падеже). Например "времени" => "Время", "времён" => "Время" и т. д.
      */
     List<Map.Entry<String, TermProvider>> getAll();
+    List<String> getAllNames();
     Collection<String> getAllUppers();
     List<TermDao.TermInfo> getAllInfoTerms();
     Optional<TermProvider> get(String name);
