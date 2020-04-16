@@ -59,9 +59,11 @@ class VocabularyService {
             }*/
             mdp.addStyledParagraphOfText(styles.alphabet, firstLetter.toString().toUpperCase())
             drawTerms(mdp, terms)
-            mdp.lastP().content.add(Br().apply { type = STBrType.PAGE })
+            mdp.lastP().content.add(R().apply {
+                content.add(Br().apply { type = STBrType.PAGE })
+            })
         }
-        mdp.lastP().content.removeIf { it is Br }
+        mdp.lastP().content.removeIf { it is R }
 
         val file = File(fileName)
         Docx4J.save(wordMLPackage, file)

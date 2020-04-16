@@ -14,7 +14,8 @@ class VocabularyDocTest {
     @Test
     fun release() {
         val termService = mock(TermService::class.java)
-        val helper = spy(VocabularyUpperWordsHelper(termService))
+        val helper = spy(VocabularyUpperWordsHelper())
+        helper.termService = termService
         doReturn((upperTermsJson.fromJson() as List<String>).map {  }).`when`(termService).allNames
         val service = VocabularyService()
         service.helper = helper
@@ -30,7 +31,8 @@ class VocabularyDocTest {
 //                .filter { it.name == "димидиомиттенсный" }//.subList(0, 10)
 
         val termService = mock(TermService::class.java)
-        val helper = spy(VocabularyUpperWordsHelper(termService))
+        val helper = spy(VocabularyUpperWordsHelper())
+        helper.termService = termService
         doReturn(upperTermsJson.fromJson()).`when`(termService).allNames
 
         val service = VocabularyService()

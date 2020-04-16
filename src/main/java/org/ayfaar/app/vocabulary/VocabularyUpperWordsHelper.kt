@@ -4,9 +4,12 @@ import mu.KotlinLogging
 import org.ayfaar.app.utils.TermService
 import org.springframework.stereotype.Component
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 @Component
-class VocabularyUpperWordsHelper(private val termService: TermService) {
+class VocabularyUpperWordsHelper {
+    @Inject lateinit var termService: TermService
+
     private var upperWords: Collection<String>? = null
     private val logger = KotlinLogging.logger {  }
 
