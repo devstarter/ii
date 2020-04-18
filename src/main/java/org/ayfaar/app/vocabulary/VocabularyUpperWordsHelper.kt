@@ -37,7 +37,7 @@ class VocabularyUpperWordsHelper {
 
 internal fun loadUpperWords(terms: List<String>): List<String> {
     val regex = Regex("([A-ZА-ЯЁ-]+)(-[A-Za-zА-Яа-я0-9Ёё-]+)?")
-    return terms.mapNotNull { regex.matchEntire(it)?.groups?.get(1)?.value }
+    return terms.mapNotNull { regex.matchEntire(it)?.groups?.get(1)?.value }.distinct()
 }
 
 internal fun makeCodesUpper(text: String, upperWords: Collection<String>): String {

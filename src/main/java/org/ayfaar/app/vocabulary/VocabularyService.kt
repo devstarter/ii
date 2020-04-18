@@ -41,8 +41,7 @@ class VocabularyService {
         }.apply { pPr = PPr().apply {
             pStyle = PPrBase.PStyle().apply { `val` = styles.description }
             jc = Jc().apply { `val` = JcEnumeration.CENTER } }
-        }
-        )
+        })
 
         val groupedByFirstLetter = data.groupBy { if (it.name[0] != '«') it.name[0].toLowerCase() else it.name[1].toLowerCase() }
 //        var first = true
@@ -63,7 +62,7 @@ class VocabularyService {
                 content.add(Br().apply { type = STBrType.PAGE })
             })
         }
-        mdp.lastP().content.removeIf { it is R }
+        mdp.lastP().content.removeIf { it is R && it.content.first() is Br && (it.content.first() as Br).type == STBrType.PAGE }
 
         val file = File(fileName)
         Docx4J.save(wordMLPackage, file)
@@ -71,7 +70,7 @@ class VocabularyService {
     }
 
     private fun addNotes(mdp: MainDocumentPart) {
-        repeat(5) { mdp.addObject(P()) }
+//        repeat(5) { mdp.addObject(P()) }
 
         val p = P().styled(styles.footer)
         p.addContent("Автоматически сгенерировано ${LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))}. Последняя версия доступна по адресу https://ayfaar.ru/dictionary")

@@ -16,10 +16,10 @@ class VocabularyDocTest {
         val termService = mock(TermService::class.java)
         val helper = spy(VocabularyUpperWordsHelper())
         helper.termService = termService
-        doReturn((upperTermsJson.fromJson() as List<String>).map {  }).`when`(termService).allNames
+        doReturn(upperTermsJson.fromJson()).`when`(termService).allNames
         val service = VocabularyService()
         service.helper = helper
-        service.getDoc("словарь.2019.09.11.3.docx", File("src/main/resources/vocabulary-template.docx"))
+        service.getDoc("словарь.docx", File("src/main/resources/vocabulary-template.docx"))
     }
 
     @Test

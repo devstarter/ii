@@ -58,10 +58,11 @@ class VocabularyLoader {
             zkk = data.getOrNull(6).nullOnBlank(),
             isZkk = data.getOrNull(7).equals("да", true),
             pleadsTerm = data.getOrNull(21).equals("да", true),
-//            inPleadsCivilisations = data.getOrNull(22).equals("да", true),
-            inII = data.getOrNull(22).equals("да", true),
-            conventional = data.getOrNull(23).equals("да", true),
-            indication = parseIndications(data.getOrNull(24))
+            inPleadCivilizations = data.getOrNull(22).equals("да", true),
+            inII = data.getOrNull(23).equals("да", true),
+            inIIMeans = data.getOrNull(24).equals("да", true),
+            conventional = data.getOrNull(25).equals("да", true),
+            indication = parseIndications(data.getOrNull(26))
     )
 
 }
@@ -86,8 +87,9 @@ data class VocabularyTerm(
         val antonyms: MutableCollection<VocabularySubTerm> = ArrayList(),
         val inPhrases: MutableCollection<VocabularySubTerm> = ArrayList(),
         val pleadsTerm: Boolean = false,
-//        val inPleadsCivilisations: Boolean = false,
+        val inPleadCivilizations: Boolean = false,
         val inII: Boolean = false,
+        val inIIMeans: Boolean = false,
         val conventional: Boolean = false,
         val indication: Collection<VocabularyIndication>?
 )
