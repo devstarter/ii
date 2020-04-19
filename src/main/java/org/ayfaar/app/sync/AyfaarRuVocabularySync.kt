@@ -1,6 +1,7 @@
 package org.ayfaar.app.sync
 
 import au.com.bytecode.opencsv.CSVWriter
+import com.google.gson.Gson
 import mu.KotlinLogging
 import org.ayfaar.app.utils.AyfaarRuFileTransfer
 import org.ayfaar.app.utils.TermService
@@ -22,13 +23,14 @@ class AyfaarRuVocabularySync {
     fun sync() {
         logger.info { "Sync started" }
         val data = getModel()
-        val stringWriter = StringWriter()
-        val writer = CSVWriter(stringWriter)
-        writer.writeAll(data.tolStringArray())
-        writer.close()
+//        val stringWriter = StringWriter()
+//        val writer = CSVWriter(stringWriter)
+//        writer.writeAll(data.tolStringArray())
+//        writer.close()
+        val json = Gson().toJson(data)
 
         logger.info { "Uploading data..." }
-        fileTransfer.upload("test.csv", stringWriter.toString())
+        fileTransfer.upload("/src/vocabulary/vocabulary.json", json)
         logger.info { "Uploading done. Sync finish" }
     }
 
