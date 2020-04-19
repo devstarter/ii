@@ -1,6 +1,5 @@
 package org.ayfaar.app.sync
 
-import au.com.bytecode.opencsv.CSVWriter
 import com.google.gson.Gson
 import mu.KotlinLogging
 import org.ayfaar.app.utils.AyfaarRuFileTransfer
@@ -8,7 +7,6 @@ import org.ayfaar.app.utils.TermService
 import org.ayfaar.app.vocabulary.VocabularyService
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import java.io.StringWriter
 import javax.inject.Inject
 
 
@@ -38,7 +36,7 @@ class AyfaarRuVocabularySync {
         val vocabularyTerms = vocabularyService.getTerms().also {
             logger.info { "Vocabulary loaded with ${it.size} terms" }
         }
-        return termService.all
+        val myTermsFirst = termService.all
                 .map { it.value to it.value.mainOrThis.term }
                 .distinctBy { (_, term) -> term.name }
                 .sortedBy { (_, term) -> term.name }
@@ -54,9 +52,21 @@ class AyfaarRuVocabularySync {
                             long = term.description,
                             vocabulary = vTerm?.description,
                             related = provider.related.map { it.name })
-                }.also {
-                    logger.info { "Map with  ${it.size} terms ready" }
                 }
+
+        val termsNotInMyBase = vocabularyTerms
+                .filter { !termService.get(it.name).isPresent || termService.get(it.name).get().mainOrThis.name != it.name }
+                .map { term ->
+                    AyfaarRuVocabularyItem(
+                            term = term.name,
+                            source = term.source,
+                            zkk = term.zkk,
+                            aliases = term.aliases.map { it.name } ,
+                            reductions = term.reductions,
+                            vocabulary = term.description,
+                            related = emptyList())
+                }
+        return myTermsFirst + termsNotInMyBase
     }
 }
 
@@ -77,9 +87,9 @@ data class AyfaarRuVocabularyItem(
         val term: String,
         val source: String?,
         val zkk: String?,
-        val short: String?,
+        val short: String? = null,
         val vocabulary: String?,
-        val long: String?,
+        val long: String? = null,
         val reductions: Collection<String>,
         val aliases: Collection<String>,
         val related: Collection<String>
