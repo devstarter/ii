@@ -39,7 +39,7 @@ class VideoExporter {
                     VideoSyncItem(
                             url = "https://youtu.be/${it.id}",
                             title = it.title,
-                            code = it.code,
+                            code = it.code ?: "",
                             keys = keys)
                 }.also {
                     logger.info { "Map with  ${it.size} records ready" }
@@ -50,7 +50,7 @@ class VideoExporter {
 
 data class VideoSyncItem(
         val url: String,
-        val code: String?,
+        val code: String,
         val title: String,
         val keys: String
 ) : SyncItem {
