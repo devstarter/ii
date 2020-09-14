@@ -50,7 +50,7 @@ class VideoExporter {
 
 data class VideoSyncItem(
         val url: String,
-        val code: String,
+        val code: String?,
         val title: String,
         val keys: String
 ) : SyncItem {
