@@ -17,6 +17,7 @@ constructor(val entityLoader: EntityLoader,
             val termDescriptionImporter: TermDescriptionImporter,
             val termDetailsExporter: TermDetailsExporter,
             val `9TomExporter`: `9TomExporter`,
+            val recordExporter: RecordExporter,
             val ayfaarRuVocabularySync: AyfaarRuVocabularySync) {
 
 
@@ -31,6 +32,11 @@ constructor(val entityLoader: EntityLoader,
     @RequestMapping("sync/records")
     fun synchronizeRecords() {
         recordSynchronizer?.synchronize() ?: throw RuntimeException("Not available on dev profile")
+    }
+
+    @RequestMapping("sync/records2")
+    fun synchronizeRecords2() {
+        recordExporter.sync()
     }
     /*
     @RequestMapping("sync/translations")
