@@ -18,9 +18,9 @@ import java.util.Date;
 @Uri(nameSpace = "запись:", field = "code")
 public class Record extends UID{
 
-    private String code;
+    public String code;
     @Column(columnDefinition = "text")
-    private String name;
+    public String name;
     private String previousName;
     private Date recorderAt;
     private Date createdAt;
