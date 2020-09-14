@@ -82,7 +82,7 @@ public class TopicController {
         return presentations;
     }
 
-    private class LinkedTopicPresentation {
+    public class LinkedTopicPresentation {
         public String comment;
         public String uri;
         public String name;

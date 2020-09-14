@@ -7,6 +7,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
+import org.ayfaar.app.controllers.TopicController;
 import org.ayfaar.app.event.RecordRenamedEvent;
 import org.ayfaar.app.model.Record;
 import org.ayfaar.app.model.VideoResource;
@@ -44,6 +45,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 @Profile("!dev")
 public class RecordSynchronizer {
     private final RecordService recordService;
+    private final TopicController topicController;
     private final VideoResourceService videoResourceService;
 
     private final GoogleSpreadsheetSynchronizer<RecordSyncData> synchronizer;
@@ -51,9 +53,11 @@ public class RecordSynchronizer {
     @Inject
     public RecordSynchronizer(GoogleSpreadsheetService spreadsheetService,
                               RecordService recordService,
+                              TopicController topicController,
                               VideoResourceService videoResourceService,
                               @Value("${sync.records.spreadsheet-id}") String spreadsheetId) {
         this.recordService = recordService;
+        this.topicController = topicController;
         this.videoResourceService = videoResourceService;
         
         synchronizer = GoogleSpreadsheetSynchronizer.<RecordSyncData>build(spreadsheetService, spreadsheetId)
@@ -62,7 +66,7 @@ public class RecordSynchronizer {
 //                .direction(TWO_WAY)
                 .columnUpdater(2, this::updateSimpleName)
                 .columnUpdater(3, this::updateOriginalName)
-                .columnUpdater(4, this::updateDescription)
+//                .columnUpdater(4, this::updateDescription)
                 .localDataLoader(this::dataLoader)
                 .build();
     }
@@ -76,7 +80,7 @@ public class RecordSynchronizer {
                 .map(record -> RecordSyncData.builder()
                         .code(record.getCode())
                         .originalName(record.getName())
-                        .description(record.getDescription())
+                        .keys(getComaSeparatedTopics(record))
                         .build())
                 .toList();
 
@@ -94,6 +98,15 @@ public class RecordSynchronizer {
             }
         });
         return syncData;
+    }
+
+    private String getComaSeparatedTopics(Record record) {
+        try {
+            return StreamEx.of(topicController.getForUri(record.getUri())).map(it -> it.name).joining(", ");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     @Scheduled(cron = "0 0 2 * * ?") // at 2 AM every day
@@ -120,13 +133,13 @@ public class RecordSynchronizer {
         });
     }
 
-    private void updateDescription(String code, String description) {
+    /*private void updateDescription(String code, String description) {
         log.info("updateDescription: update request for code: {}, new description: {}", code, description);
         recordService.getByCode(code).ifPresent(record -> {
             record.setDescription(description);
             recordService.save(record);
         });
-    }
+    }*/
 
     @Getter @Setter
     @Accessors(fluent = true)
@@ -139,14 +152,14 @@ public class RecordSynchronizer {
 
         public String originalName;
 
-        public String description;
+        public String keys;
 
         public List<Object> toRaw() {
             final ArrayList<Object> obj = new ArrayList<>();
             obj.add(code);
             obj.add(simpleName != null ? simpleName : "");
             obj.add(originalName != null ? originalName : "");
-            obj.add(description);
+            obj.add(keys);
             return obj;
         }
     }
