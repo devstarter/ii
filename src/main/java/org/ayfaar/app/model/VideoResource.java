@@ -17,15 +17,15 @@ import java.util.Date;
 public class VideoResource extends UID implements Comparable<VideoResource> {
     @Column(unique = true, nullable = false)
     @NonNull
-    private String id;
-    private String title;
+    public String id;
+    public String title;
 
     @NonNull
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Language lang;
 
-    private String code;
+    public String code;
     private Date publishedAt = new Date();
     private Date createdAt = new Date();
     private Integer createdBy;
