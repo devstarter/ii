@@ -24,7 +24,7 @@
 		<jdk.version>1.8</jdk.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<junit.version>4.11</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<poi.version>3.9</poi.version>
 		<streamex.version>0.6.0</streamex.version>
 		<kotlin.version>1.2.51</kotlin.version>
