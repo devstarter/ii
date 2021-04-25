@@ -7,6 +7,7 @@
             viewModel = kendo.observable({
                 loading: true,
                 related: [],
+                topics: [],
                 aliases: [],
                 quotes: [],
                 getLabel: function(data) {

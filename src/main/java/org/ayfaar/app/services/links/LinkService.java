@@ -4,6 +4,8 @@ import one.util.streamex.StreamEx;
 import org.ayfaar.app.dao.CommonDao;
 import org.ayfaar.app.dao.LinkDao;
 import org.ayfaar.app.event.EventPublisher;
+import org.ayfaar.app.event.LinkRemovedEvent;
+import org.ayfaar.app.event.LinksRemovedEvent;
 import org.ayfaar.app.event.NewLinkEvent;
 import org.ayfaar.app.model.HasUri;
 import org.ayfaar.app.model.LightLink;
@@ -92,12 +94,13 @@ public class LinkService {
     }
 
     public void remove(String uri1, String uri2) {
-        StreamEx.of(allLinks)
+        List<LinkProvider> links = StreamEx.of(allLinks)
                 .filter(link -> (Objects.equals(link.getUid1(), uri1) && Objects.equals(link.getUid2(), uri2))
                         || (Objects.equals(link.getUid1(), uri2) && Objects.equals(link.getUid2(), uri1)))
                 .map(this::getLinkProvider)
-                .forEach( link -> linkDao.remove(link.id()));
-        reload();
+                .peek(link -> linkDao.remove(link.id()))
+                .toList();
+        publisher.publishEvent(new LinksRemovedEvent(links));
     }
 
     private LinkProvider getLinkProvider(LightLink link) {

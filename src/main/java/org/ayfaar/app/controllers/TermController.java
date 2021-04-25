@@ -96,6 +96,7 @@ public class TermController {
                 .forEach(p -> quotes.add(getQuote(p.taggedQuote(), p.get(Item.class).get())));
 
         Set<UID> related = new LinkedHashSet<>();
+        Set<UID> topics = new LinkedHashSet<>();
         Set<UID> aliases = new LinkedHashSet<>();
 
         provider.getAbbreviations().forEach(p -> aliases.add(p.getTerm()));
@@ -117,6 +118,9 @@ public class TermController {
                             if (quotes.stream().noneMatch(q -> Objects.equals(quote.quote, q.quote))) {
                                 quotes.add(quote);
                             }
+                        }
+                        else if (source instanceof Topic) {
+                            topics.add(source);
                         }
                         else if (ABBREVIATION.equals(p.type()) || ALIAS.equals(p.type())/* || CODE.equals(p.type())*/) {
                             aliases.add(source);
@@ -165,6 +169,7 @@ public class TermController {
         modelMap.put("code", code);
         modelMap.put("quotes", quotes);
         modelMap.put("related", toPlainObjectWithoutContent(related));
+        modelMap.put("topics", toPlainObjectWithoutContent(topics));
         modelMap.put("aliases", toPlainObjectWithoutContent(aliases));
         modelMap.put("categories", searchController.inCategories(termName));
         modelMap.put("descriptionGid", term.getDescriptionGid());
