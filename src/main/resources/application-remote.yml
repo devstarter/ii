@@ -10,5 +10,5 @@ ftp:
 
 server:
   ssl:
-    key-store: D:\projects\ayfaar\ii-app\keystore.p12
+    key-store: /Users/yuriylebid/projects/ii/keystore.p12
     keyAlias: ii.ayfaar.org

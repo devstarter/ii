@@ -81,9 +81,15 @@
             });
         }
         function resetAddQuote() {
-            addQuoteContainer.find(".term")[0].value = "";
-            addQuoteContainer.find(".item")[0].value = "";
-            addQuoteContainer.find(".quote")[0].value = "";
+            $.post("/api/link/remove", {
+                term1: addQuoteContainer.find("input.term")[0].value,
+                term2: addQuoteContainer.find("input.item")[0].value
+            }, function(r) {
+                alert("Есть!");
+                addQuoteContainer.find(".term")[0].value = "";
+                addQuoteContainer.find(".item")[0].value = "";
+                addQuoteContainer.find(".quote")[0].value = "";
+            });
         }
 
         function sendAddAlias() {

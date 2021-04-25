@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -96,6 +97,19 @@ public class LinkController {
         linkService.registerNew(link);
 
         return link.getLinkId();
+    }
+
+    @RequestMapping("remove")
+    public void remove(@RequestParam("term1") String term1Name,
+                       @RequestParam("term2") String term2Name) {
+        term1Name = term1Name.trim();
+        term2Name = term2Name.trim();
+        Term term1 = termDao.getByName(term1Name);
+        Term term2 = termDao.getByName(term2Name);
+        if (term1 == null || term2 == null) {
+            return;
+        }
+        linkService.remove(term1.getUri(), term2.getUri());
     }
 
     @RequestMapping("remove/{id}")

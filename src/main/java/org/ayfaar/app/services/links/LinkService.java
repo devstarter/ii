@@ -91,6 +91,15 @@ public class LinkService {
                 .findFirst();
     }
 
+    public void remove(String uri1, String uri2) {
+        StreamEx.of(allLinks)
+                .filter(link -> (Objects.equals(link.getUid1(), uri1) && Objects.equals(link.getUid2(), uri2))
+                        || (Objects.equals(link.getUid1(), uri2) && Objects.equals(link.getUid2(), uri1)))
+                .map(this::getLinkProvider)
+                .forEach( link -> linkDao.remove(link.id()));
+        reload();
+    }
+
     private LinkProvider getLinkProvider(LightLink link) {
         return cache.getOrCreate(link, () -> new LinkProvider(link, this::linkSaver));
     }
