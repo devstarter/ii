@@ -81,15 +81,9 @@
             });
         }
         function resetAddQuote() {
-            $.post("/api/link/remove", {
-                term1: addQuoteContainer.find("input.term")[0].value,
-                term2: addQuoteContainer.find("input.item")[0].value
-            }, function(r) {
-                alert("Есть!");
-                addQuoteContainer.find(".term")[0].value = "";
-                addQuoteContainer.find(".item")[0].value = "";
-                addQuoteContainer.find(".quote")[0].value = "";
-            });
+            addQuoteContainer.find(".term")[0].value = "";
+            addQuoteContainer.find(".item")[0].value = "";
+            addQuoteContainer.find(".quote")[0].value = "";
         }
 
         function sendAddAlias() {
@@ -107,9 +101,15 @@
             });
         }
         function resetAddAlias() {
-            addAliasContainer.find("input.term1")[0].value = "";
-            addAliasContainer.find("input.term2")[0].value = "";
-            linkTypeDDL.value(null)
+            $.post("/api/link/remove", {
+                term1: addAliasContainer.find("input.term1")[0].value,
+                term2: addAliasContainer.find("input.term2")[0].value
+            }, function() {
+                alert("Есть!");
+                addAliasContainer.find("input.term1")[0].value = "";
+                addAliasContainer.find("input.term2")[0].value = "";
+                linkTypeDDL.value(null)
+            });
         }
 
         function sendAddCategory() {

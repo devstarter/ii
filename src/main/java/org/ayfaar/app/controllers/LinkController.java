@@ -99,7 +99,7 @@ public class LinkController {
         return link.getLinkId();
     }
 
-    @RequestMapping("remove")
+    @RequestMapping(value = "remove", method = POST)
     public void remove(@RequestParam("term1") String term1Name,
                        @RequestParam("term2") String term2Name) {
         term1Name = term1Name.trim();
