@@ -109,7 +109,7 @@ public class TermServiceImpl implements TermService {
         }
 
         // prepare sorted List by term name length, longest terms first
-        sortedList = new ArrayList<>(aliasesMap.entrySet());
+        sortedList = aliasesMap.entrySet().stream().filter(entry -> !entry.getKey().isEmpty()).collect(Collectors.toCollection(ArrayList::new));
         sortedList.sort((o1, o2) -> Integer.compare(o2.getKey().length(), o1.getKey().length()));
         loadRoots();
 		logger.info("Terms loading finish");
