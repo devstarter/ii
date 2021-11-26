@@ -96,11 +96,13 @@ constructor(val entityLoader: EntityLoader,
 
     @RequestMapping("update-all-tags")
     fun updateAllTags() {
-        logger.info { "Update all items..." }
-        termsTaggingUpdater.updateAllContent()
-        logger.info { "Update all terms..." }
-        termsTaggingUpdater.updateAllTerms()
-        logger.info { "Update all quotes..." }
-        termsTaggingUpdater.updateAllQuotes()
+        Thread {
+            logger.info { "Update all items..." }
+            termsTaggingUpdater.updateAllContent()
+            logger.info { "Update all terms..." }
+            termsTaggingUpdater.updateAllTerms()
+            logger.info { "Update all quotes..." }
+            termsTaggingUpdater.updateAllQuotes()
+        }.start()
     }
 }
