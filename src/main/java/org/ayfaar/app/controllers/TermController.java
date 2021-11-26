@@ -10,6 +10,7 @@ import org.ayfaar.app.event.EventPublisher;
 import org.ayfaar.app.event.TermAddedeEvent;
 import org.ayfaar.app.model.*;
 import org.ayfaar.app.services.EntityLoader;
+import org.ayfaar.app.services.ItemService;
 import org.ayfaar.app.services.itemRange.ItemRangeService;
 import org.ayfaar.app.services.links.LinkService;
 import org.ayfaar.app.services.moderation.Action;
@@ -45,6 +46,7 @@ public class TermController {
     @Autowired TermServiceImpl aliasesMap;
     @Autowired SuggestionsController suggestionsController;
     @Inject TermsMarker termsMarker;
+    @Inject ItemService itemService;
     @Inject EventPublisher publisher;
     @Inject NewSearchController searchController;
     @Inject ItemRangeService itemRangeService;
@@ -195,7 +197,12 @@ public class TermController {
 
     private Quote getQuote(String taggedQuote, String itemUri) {
         if (isEmpty(taggedQuote)) {
-            taggedQuote = entityLoader.<Item>get(itemUri).getTaggedContent();
+            Item item = entityLoader.get(itemUri);
+            if (item.getTaggedContent() == null) {
+                item.setTaggedContent(termsMarker.mark(item.getContent()));
+                itemService.save(item);
+            }
+            taggedQuote = item.getTaggedContent();
         }
         return new Quote(taggedQuote, itemUri);
     }

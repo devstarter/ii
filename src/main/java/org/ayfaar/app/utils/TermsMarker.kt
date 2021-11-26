@@ -71,7 +71,7 @@ class TermsMarker @Inject constructor(private val termService: TermService, priv
                     //String replacer = format("%s<term id=\"%s\" title=\"%s\">%s</term>%s",
                     //пока забыли о  title="...."
                     val hasMainTerm = termProvider.hasMain()
-                    val mainTermProvider = if (hasMainTerm) termProvider.main.get() else null
+                    val mainTermProvider = if (hasMainTerm && termProvider.main.isPresent) termProvider.main.get() else null
                     val hasShortDescription = if (hasMainTerm) mainTermProvider!!.hasShortDescription() else termProvider.hasShortDescription()
 
                     var attributes = if (hasShortDescription) " has-short-description=\"true\"" else ""

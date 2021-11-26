@@ -99,10 +99,15 @@ constructor(val entityLoader: EntityLoader,
         Thread {
             logger.info { "Update all items..." }
             termsTaggingUpdater.updateAllContent()
+        }.start()
+        Thread {
             logger.info { "Update all terms..." }
             termsTaggingUpdater.updateAllTerms()
+        }.start()
+        Thread {
             logger.info { "Update all quotes..." }
             termsTaggingUpdater.updateAllQuotes()
         }.start()
+
     }
 }
