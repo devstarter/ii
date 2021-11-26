@@ -1,6 +1,7 @@
 package org.ayfaar.app.controllers.search;
 
 import org.ayfaar.app.model.Item;
+import org.ayfaar.app.services.ItemService;
 import org.ayfaar.app.utils.RegExpUtils;
 import org.ayfaar.app.utils.TermsMarker;
 import org.springframework.stereotype.Component;
@@ -25,9 +26,10 @@ public class SearchQuotesHelper {
     private static final List<String> punctual = Arrays.asList(".", "?", "!", ":", ";");
 
     @Inject TermsMarker termsMarker;
+    @Inject ItemService itemService;
 
     public List<Quote> createQuotes(List<Item> foundedItems, List<String> allPossibleSearchQueries) {
-        List<Quote> quotes = new ArrayList<Quote>();
+        List<Quote> quotes = new ArrayList<>();
         String forLeftPart = "([\\.\\?!]*)([^\\.\\?!]*)(<strong>)";
         String forRightPart = "<strong>[^\\.\\?!]+[\\.\\?!]*</strong>[^\\.\\?!]*[\\.\\?!]*";
         String regexp = join(allPossibleSearchQueries, "|");
@@ -38,6 +40,12 @@ public class SearchQuotesHelper {
             String content = "";
             Pattern pattern = Pattern.compile("(^" + regexp + ")|(" + RegExpUtils.W + "+" + regexp + RegExpUtils.W +
                     "+)|(" + regexp + "$)", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+
+            if (item.getTaggedContent() == null) {
+                item.setTaggedContent(termsMarker.mark(item.getContent()));
+                itemService.save(item);
+            }
+
             Matcher matcher = pattern.matcher(item.getTaggedContent());
 
             if (matcher.find()) {

@@ -1,7 +1,9 @@
 package org.ayfaar.app.controllers
 
+import mu.KotlinLogging
 import org.ayfaar.app.services.EntityLoader
 import org.ayfaar.app.sync.*
+import org.ayfaar.app.utils.TermsTaggingUpdater
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -16,11 +18,13 @@ constructor(val entityLoader: EntityLoader,
             val abbreviationExporter: AbbreviationExporter,
             val termDescriptionImporter: TermDescriptionImporter,
             val termDetailsExporter: TermDetailsExporter,
+            val termsTaggingUpdater: TermsTaggingUpdater,
             val `9TomExporter`: `9TomExporter`,
             val recordExporter: RecordExporter,
             val videoExporter: VideoExporter,
             val ayfaarRuVocabularySync: AyfaarRuVocabularySync) {
 
+    private val logger = KotlinLogging.logger {}
 
     @Autowired(required = false) var vocabularySynchronizer: VocabularySynchronizer? = null
     @Autowired(required = false) var recordSynchronizer: RecordSynchronizer? = null
@@ -88,5 +92,15 @@ constructor(val entityLoader: EntityLoader,
     @RequestMapping("sync/ayfaar-ru-vocabulary")
     fun ayfaaRuVocabularySync() {
         ayfaarRuVocabularySync.sync()
+    }
+
+    @RequestMapping("update-all-tags")
+    fun updateAllTags() {
+        logger.info { "Update all items..." }
+        termsTaggingUpdater.updateAllContent()
+        logger.info { "Update all terms..." }
+        termsTaggingUpdater.updateAllTerms()
+        logger.info { "Update all quotes..." }
+        termsTaggingUpdater.updateAllQuotes()
     }
 }
